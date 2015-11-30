@@ -32,7 +32,7 @@ library, character.only=T)
 #IMPORTING DATA
 #####################################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/home/joao/Desktop/backPainHaglund.csv",sep=",")
+data<-read.csv("/home/joao/Dropbox/datasets/DGNN/back_pain/backPainHaglund_3.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 #Import data from Dropbox, in .csv format
@@ -104,9 +104,17 @@ fit <- aov(introduction ~ FUP, data=data)
 summary(fit)
 
 
+data_plot<-reshape()
 
 
 
+ggplot(data=data, aes(x=as.factor(year), y=general)) + geom_boxplot(fill="grey") + ylab("Resident Performance") + xlab("Time") + theme_bw()
+
+
+
++ scale_colour_manual(values=c("#999999", "#E69F00", "#56B4E9","darkred"), name="Latent Profiles", breaks=c("1", "2","3","4"), labels=c("Introversive", "Extroversive","Ambiversive","BFI Norm"))
+
+#, group=Profile, color=Profile
 
 
 
@@ -204,3 +212,5 @@ wilcox.test(scores$scores[,1]~data_bea$risk_classification)
 wilcox.test(scores$scores[,2]~data_bea$risk_classification)
 wilcox.test(scores$scores[,3]~data_bea$risk_classification)
 #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
+
+

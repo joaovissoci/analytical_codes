@@ -1,14 +1,14 @@
 
-data<-read.csv("/home/joao/Desktop/IHD_data.csv")
+data<-read.csv("/home/joao/Desktop/Moran_table.csv")
 data<-data[-2]
 
 library(ggplot2)
 library(reshape2)
-cor_data<-melt(data,by="Estados")
+cor_data<-melt(data,by="State")
 cor_data$value2<-round(cor_data$value,digits=2)
 
 # heatmap by regions
-ggplot(cor_data, aes(y=Estados, x=variable, fill=value2)) + geom_tile() + geom_text(aes(y=Estados, x=variable, label=value2)) + scale_fill_gradient2(low="darkblue",high="darkred", limits=c(-1,1)) + facet_grid(regions ~ .,scales="free_y",space="free") 
+ggplot(cor_data, aes(y=State, x=variable, fill=value2)) + geom_tile() + geom_text(aes(y=State, x=variable, label=value2)) + scale_fill_gradient2(low="darkblue",high="darkred", limits=c(-1,1)) + facet_grid(regions ~ .,scales="free_y",space="free") 
 
 
 ## Dendogram
