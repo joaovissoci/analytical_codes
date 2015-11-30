@@ -1,0 +1,206 @@
+#####################################################################################
+#BASIC R STATISTICS TEMPLATE
+#####################################################################################
+#
+#
+#
+#
+#
+#####################################################################################
+#SETTING ENVIRONMENT
+#####################################################################################
+#PASCKAGES INSTALLATION CODES
+#install.packages("Hmisc")
+#install.packages("car")
+#install.packages("psych")
+#install.packages("nortest")
+#install.packages("ggplot2")
+#install.packages("pastecs")
+#install.packages("repmis")
+#install.packages("mvnormtest")
+#install.packages("polycor")
+
+#PACKAGES LOADING CODE
+#Load packages neededz for the analysis
+#library(Hmisc)
+
+#All packages must be installes with install.packages() function
+lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis",
+	"mvnormtest","polycor"), 
+library, character.only=T)
+#####################################################################################
+#IMPORTING DATA
+#####################################################################################
+#LOADING DATA FROM A .CSV FILE
+data<-read.csv("/home/joao/Desktop/backPainHaglund.csv",sep=",")
+#information between " " are the path to the directory in your computer where the data is stored
+
+#Import data from Dropbox, in .csv format
+#Instructions here http://goo.gl/Ofa7gQ
+#data1 <- repmis::source_DropboxData("pem_parasito.csv",
+#                                  "tkxmkg9pybmtsgh",
+#                                  sep = ",",
+#                                  header = TRUE)
+
+###########################################################################################
+#DATA MANAGEMENT
+###########################################################################################
+#Creating a data frame (group of variables)
+#numeric<-with(data, data.frame(Peso,Altura,IMC,
+#                          Idade))
+#
+##Change variables properties
+##Change variable to factor
+#data$Classificacao<-as.factor(data$Classificacao)
+#
+##Change variable to character
+#data$Classificacao<-as.character(data$Classificacao)
+#
+##Change variable to numeric
+#data$Classificacao<-as.numeric(data$Classificacao)
+#
+##Recoding variables
+#data$Classificacao<-car::recode(data$Classificacao,"#1='baixo';2='medio';
+#	3='alto'")
+
+data_1 <- subset(data,data$FUP !='2011')
+data_cleande<-subset(data_1,data_1$FUP !='2010')
+
+#####################################################################################
+#BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
+#####################################################################################
+###Section wih several exploratory data analysis functions
+#Exploratory Data Anlysis
+#dim(data)
+#str (data)
+#head(data)
+#names(data)
+#summary(data)#This comand will provide a whole set of descriptive #results for each variables
+describe(data)
+with(data,by(data,outcome,describe))
+with(data,by(data,outcome,summary))
+#stat.desc(data)
+with(data,by(data,outcome,ad.test)) # Anderson-Darling test for normality
+#skewness(data$Idade) #Will provide skweness analysis
+#kurtosis(data$Idade) - 3 #Will provide kurtosis analysis
+#qplot(data$Idade) # histogram plot
+#boxplot(data$Idade~data$Classificacao) #will provide a boxplot for the #variables to analysis potential outliers
+## Bartlett Test of Homogeneity of Variances
+#bartlett.test(data$Idade~data$Classificacao, data=data)
+## Figner-Killeen Test of Homogeneity of Variances
+#fligner.test(data$Idade~data$Classificacao, data=data)
+#leveneTest(data$Idade~data$Classificacao, data=data)
+
+#########################################################
+#ANALYSIS OF VARIANCE
+#########################################################
+describe(data_cleande)
+
+
+with(data_cleande,by(introduction,FUP,describe))
+with(data_cleande,by(introduction,FUP,ad.test)) # Anderson-Darling test for normality
+# One Way Anova (Completely Randomized Design)
+fit <- aov(introduction ~ FUP, data=data)
+summary(fit)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Randomized Block Design (B is the blocking factor) 
+fit <- aov(Idade ~ Classificacao+Sexo, data=data)
+summary(fit)
+
+# Two Way Factorial Design 
+fit <- aov(Idade ~ Classificacao*Sexo, data=data)
+summary(fit)
+
+# Tukey Honestly Significant Differences
+TukeyHSD(fit) # where fit comes from aov()
+
+# Analysis of Covariance 
+fit <- aov(Idade ~ Classificacao + IMC, data=data)
+summary(fit)
+
+# Kruskal Wallis Test One Way Anova by Ranks 
+kruskal.test(Idade ~ Classificacao, data=data) # where y1 is numeric and A is a factor
+
+#########################################################
+#PRINCIPAL COMPONENT
+#########################################################
+#Correlation dataset
+cor_data<-data_cleande[4:25]
+
+# generating correlation matrix
+network_data<-cor_auto(cor_data)
+
+#visualizing correlation matrix with a network
+qgraph(cor_data,layout="spring",min=0.40)
+
+varNames<-c("Allowed patient to tell own story and raise questions","About the history of present illness","About quality and location of back pain","Whether the pain is continuous or intermittent","What makes pain better and worse","About radicular symptoms","About loss of motor function and loss of bowel/bladder control","About significant past medical history","About systemic symptoms","What medications currently taking","Washed his/her hands either before OR after encounter","Considered patient comfort during exam","General appearance","Had patient bend forward, backward and to both sides","Palpate spine","Deep tendon reflexes of knee","Deep tendon reflexes of ankle","Strength in leg","Sensation in both legs","Problems and plan communicated effectively to patient","Problem list","General impression of resident performance")
+
+
+qsgg3<-qgraph(network_data,layout="spring",vsize=6,esize=20,graph="glasso",sampleSize=nrow(cor_data),legend.cex = 0.5,GLratio=1.5)
+qsgg2<-qgraph(cor_data,layout="spring",vsize=6,esize=20,graph="pcor",threshold="holm",sampleSize=nrow(cor_data),legend.cex = 0.5,GLratio=1.5)
+qsgg1<-qgraph(cor_data,layout="spring",vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
+Lqsg<-averageLayout(qsgg1,qsgg2,qsgg3)
+
+qsgG1<-qgraph(cor_data,layout=Lqsg,vsize=6,esize=20,legend.cex = 0.3,cut = 0.3, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#nodeNames=nomesqsg,
+qsgG2<-qgraph(cor_data,layout=Lqsg,vsize=6,esize=20,graph="pcor",legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#,nodeNames=nomesqsg
+
+tiff("/home/joao/Desktop/back_pain_network.tiff", width = 1300, height = 700,compression = 'lzw')
+qsgG3<-qgraph(network_data,layout="spring",esize=20,graph="glasso",sampleSize=nrow(cor_data),legend.cex = 0.6,cut = 0.2, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,borders = TRUE,nodeNames=varNames)#,gray=T,)#,nodeNames=nomesqsg,groups=qsggr,layout=Lqsg,nodeNames=nomesqsg,vsize=vSize*3,color=c("gold","steelblue","red","grey80")
+dev.off()
+#legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
+centralityPlot(qsgG3)
+clusteringPlot(qsgG3)
+g<-as.igraph(qsgg3)
+h<-walktrap.community(g)
+plot(h,g)
+
+
+predictors<-centrality(qsgG3)$ShortestPaths[,22]
+
+3,5,7,10,12,14,16,18,19,20,21
+
+
+# Define the amout of factor to retain
+#Group of functinos to determine the number os items to be extracted
+par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
+ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
+ev # Show eigend values
+ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
+summary(ap)
+nS <- nScree(ev$values) #Set up the Scree Plot 
+plotnScree(nS) # Plot the ScreePlot Graph
+my.vss <- VSS(cor_data,title="VSS of BEA data")
+print(my.vss[,1:12],digits =2)
+VSS.plot(my.vss, title="VSS of 24 mental tests")
+scree(cor_data)
+VSS.scree(cor_data)
+fa.parallel(cor_data,n.obs=36)
+
+# Pricipal Components Analysis
+# entering raw data and extracting PCs 
+# from the correlation matrix 
+fit <- principal(cor_data,4,rotate="varimax",scores=TRUE)
+summary(fit) # print variance accounted for 
+loadings(fit) # pc loadings 
+fit$scores
+predict(fit,cor_data)
+scores<-scoreItems(fit$weights,pca_data)
+describe(scores$scores)
+by(scores$scores,data_bea$risk_classification,summary)
+wilcox.test(scores$scores[,1]~data_bea$risk_classification)
+wilcox.test(scores$scores[,2]~data_bea$risk_classification)
+wilcox.test(scores$scores[,3]~data_bea$risk_classification)
+#wilcox.test(scores$scores[,4]~data_bea$risk_classification)

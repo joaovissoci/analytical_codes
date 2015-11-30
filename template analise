@@ -1,0 +1,133 @@
+######################################################
+#PRINCIPAL COMPONENT ANALYSIS - From psych package - http://twt.lk/bdAQ or http://twt.lk/bdAR or http://twt.lk/bdAS
+######################################################
+pca_data<-with(data_bea,data.frame(road_area,road_design,intersections,conflict_intersections___0,conflict_intersections___1,conflict_intersections___2,lane_type,pavement,road_narrow,roadside,roadside_danger,unevenness_roadside,bus_stop,bump,road_traffic_signs,speed_limit,curve_type,night_lights))#,outcome=bancocerto$Q13)
+
+# generating correlation matrix
+cor_data<-polychoric(pca_data)$rho
+
+#visualizing correlation matrix with a network
+qgraph(cor_data,layout="spring")
+
+# Define the amout of factor to retain
+#Group of functinos to determine the number os items to be extracted
+par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
+ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
+ev # Show eigend values
+ap <- parallel(subject=nrow(pca_data),var=ncol(pca_data),rep=100,cent=.05) #Calculate the acceleration factor
+summary(ap)
+nS <- nScree(ev$values) #Set up the Scree Plot 
+plotnScree(nS) # Plot the ScreePlot Graph
+my.vss <- VSS(cor_data,title="VSS of BEA data")
+print(my.vss[,1:12],digits =2)
+VSS.plot(my.vss, title="VSS of 24 mental tests")
+scree(pca_data)
+VSS.scree(cor_data)
+fa.parallel(cor_data,n.obs=36)
+
+# Pricipal Components Analysis
+# entering raw data and extracting PCs 
+# from the correlation matrix 
+fit <- principal(cor_data,3,rotate="varimax",scores=TRUE)
+summary(fit) # print variance accounted for 
+loadings(fit) # pc loadings 
+fit$scores
+predict(fit,cor_data)
+scores<-scoreItems(fit$weights,pca_data)
+describe(scores$scores)
+by(scores$scores,data_bea$risk_classification,summary)
+wilcox.test(scores$scores[,1]~data_bea$risk_classification)
+wilcox.test(scores$scores[,2]~data_bea$risk_classification)
+wilcox.test(scores$scores[,3]~data_bea$risk_classification)
+#wilcox.test(scores$scores[,4]~data_bea$risk_classification)
+
+######################################################
+#CLUSTER ANALYSIS - From http://twt.lk/bdAP
+######################################################
+library(mclust)
+
+test<-t(scores$scores)
+x<-cor(test)
+
+qsgG3<-qgraph(x,layout="spring")#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
+
+
+d <- dist(scores$scores, method = "euclidean") # distance matrix
+fit <- hclust(d, method="ward") 
+plot(fit) # display dendogram
+cluster_groups <- cutree(fit, k=4) # cut tree into 5 clusters
+# draw dendogram with red borders around the 5 clusters 
+rect.hclust(fit, k=4, border="red")
+cluster_groups_cat<-car::recode(cluster_groups, "1='Pattern4';2='Pattern2';3='Pattern3';4='Pattern1'")
+by(scores$scores,cluster_groups_cat,summary)
+boxplot_data<-melt(data.frame(scores$scores,cluster_groups_cat),by=c("cluster_groups_cat"))
+boxplot(value~cluster_groups_cat*variable,data=boxplot_data,col=c("gold","darkgreen","red"))
+
+log_bea<-glm(data_bea$risk_classification ~ cluster_groups_cat,family=binomial)
+summary(log_bea)
+logistic.display(log_bea)
+
+######################################################
+#QUALITATIVE COMPARATIVE ANALYSIS - From http://twt.lk/bdAP
+######################################################
+#Pacckages Needed
+#library(QCA)
+#library(VennDiagram)
+
+# Organizing dataset
+#####################
+
+# Organize dataset with dichotomous respondes for cQCA or with proportions from 0 to 1 for fQCA
+qca_data<-with(data_bea,data.frame(road_area,road_design,intersections,conflict_intersections___0,conflict_intersections___1,conflict_intersections___2,lane_type,pavement,road_narrow,roadside,roadside_danger,unevenness_roadside,bus_stop,bump,road_traffic_signs,speed_limit,curve_type,night_lights,risk_classification))#,outcome=bancocerto$Q13)
+
+### Calibration of numeric variables to crispy sets
+# Transform a set os thresholds to be calibrated from (cathegorized from)
+# Using quantiles as reference
+th <- quantile(b, c(0.1, 0.5, 0.9))
+
+# Calibrate a vector (1st argument) based on a set of threshods
+# To a bivalent crisp set
+calibrate(b, thresholds = th[2])
+
+# Calibrate a trivalient set using thresholds derived from cluster analysis
+# Calls in the findTh function with an interval cased variable, a desired number of groups, clustering method (from hclust), distance measure used.
+pred1<-calibrate(scores$scores[,1], thresholds = findTh(scores$scores[,1], groups = 2, hclustm="complete", distm="euclidean"))
+pred2<-calibrate(scores$scores[,2], thresholds = findTh(scores$scores[,2], groups = 2, hclustm="complete", distm="euclidean"))
+pred3<-calibrate(scores$scores[,3], thresholds = findTh(scores$scores[,3], groups = 2, hclustm="complete", distm="euclidean"))
+
+### Fuzzification - transform a variablie into an interval from 0 to 1
+# Argument type="fuzzy" to calculate end-point or mid-point concepts
+# Calibrate fuzzy set using logistic function
+round(calibrate(b, type = "fuzzy", thresholds = th), 2)
+plot(x, calibrate(x, type = "fuzzy", thresholds = th[c(1,2,3,3,4,5)]),
+ylab = "Fuzzy Set Membership")
+
+# Analysis of Necessity
+#########################
+
+# Evaluates necessity based on a set o conditions. Returns 3 values
+nec_test<-superSubset(qca_data, outcome = "risk_classification", cov.cut = 0.52)
+
+#Calculate Truth Table -A table with all variables coded and theis consequent outcome displaying which conditions are necessary and sufficient for the outcome to exist
+TT <- truthTable(qca_data, outcome = "risk_classification", incl.cut1 = 0.5,show.cases = TRUE, sort.by = c("incl", "n"), complete=TRUE) 
+# neg.out=TRUE -- use outcome negative value
+
+####
+
+# solution complex
+dataCS <- eqmcc(TT, details = TRUE)#, show.cases = TRUE)
+dataCS
+
+dataPS<- eqmcc(TT, include = "?", rowdom = FALSE, details = TRUE)
+dataPS
+
+dataIS<-eqmcc(TT, include = "?", direxp = c(1,1,1,1,1), details = TRUE)
+dataIS
+
+# Venn Diagrams
+#####################
+
+dataIS$PIchart$i.sol$C1P1
+
+dataIS$pims$i.sol$C1P1
+
