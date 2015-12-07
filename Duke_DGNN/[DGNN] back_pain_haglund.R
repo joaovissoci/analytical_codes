@@ -25,15 +25,15 @@
 #library(Hmisc)
 
 #All packages must be installes with install.packages() function
-lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis",
-	"mvnormtest","polycor"), 
-library, character.only=T)
+lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis","mvnormtest","polycor"), library, character.only=T)
 #####################################################################################
 #IMPORTING DATA
 #####################################################################################
 #LOADING DATA FROM A .CSV FILE
 data<-read.csv("/home/joao/Dropbox/datasets/DGNN/back_pain/backPainHaglund_3.csv",sep=",")
-#information between " " are the path to the directory in your computer where the data is stored
+#information between " " are the path to the directory in your computer where the data is storedtest
+
+data_year2_test<-read.csv("/home/joao/Dropbox/datasets/DGNN/back_pain/backPainHaglund_2_year2.csv")
 
 #Import data from Dropbox, in .csv format
 #Instructions here http://goo.gl/Ofa7gQ
@@ -63,8 +63,12 @@ data<-read.csv("/home/joao/Dropbox/datasets/DGNN/back_pain/backPainHaglund_3.csv
 #data$Classificacao<-car::recode(data$Classificacao,"#1='baixo';2='medio';
 #	3='alto'")
 
-data_1 <- subset(data,data$FUP !='2011')
-data_cleande<-subset(data_1,data_1$FUP !='2010')
+data$group<-"Year 1"
+
+data_year2<-t(data_year2_test[,-1])
+colnames(data_year2)<-data_year2_test[,1]
+data_year2$group<-"Year 2"
+data_year2<-as.data.frame(data_year2)
 
 #####################################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -94,67 +98,54 @@ with(data,by(data,outcome,ad.test)) # Anderson-Darling test for normality
 #########################################################
 #ANALYSIS OF VARIANCE
 #########################################################
-describe(data_cleande)
-
-
+#YEAR 1
 with(data_cleande,by(introduction,FUP,describe))
 with(data_cleande,by(introduction,FUP,ad.test)) # Anderson-Darling test for normality
 # One Way Anova (Completely Randomized Design)
 fit <- aov(introduction ~ FUP, data=data)
 summary(fit)
 
-
-data_plot<-reshape()
-
-
+#data_plot<-reshape()
 
 ggplot(data=data, aes(x=as.factor(year), y=general)) + geom_boxplot(fill="grey") + ylab("Resident Performance") + xlab("Time") + theme_bw()
 
+#YEAR 2
+ggplot(data=data_year2, aes(x=as.factor(Year_2), y=General_2)) + geom_boxplot(fill="grey") + ylab("Resident Performance") + xlab("Time") + theme_bw()
 
 
-+ scale_colour_manual(values=c("#999999", "#E69F00", "#56B4E9","darkred"), name="Latent Profiles", breaks=c("1", "2","3","4"), labels=c("Introversive", "Extroversive","Ambiversive","BFI Norm"))
+#Comparison YEAR 1 Vs. YEAR 2
+comparison_data<-c(data$general,data_year2$General_2)
+comparison_data2<-c(data$group,data_year2$group)
+comparison_data3<-c(data$year,data_year2$Year_2)
+comparison<-data.frame(value=comparison_data,group=comparison_data2)
 
-#, group=Profile, color=Profile
+ggplot(data=comparison, aes(x=group, y=value)) + geom_boxplot(fill="grey") + ylab("Resident Performance") + xlab("Year") + theme_bw()
 
+with(comparison,wilcox.test(value~group))
 
-
-
-
-
-
-
-
-# Randomized Block Design (B is the blocking factor) 
-fit <- aov(Idade ~ Classificacao+Sexo, data=data)
-summary(fit)
-
-# Two Way Factorial Design 
-fit <- aov(Idade ~ Classificacao*Sexo, data=data)
-summary(fit)
-
-# Tukey Honestly Significant Differences
-TukeyHSD(fit) # where fit comes from aov()
-
-# Analysis of Covariance 
-fit <- aov(Idade ~ Classificacao + IMC, data=data)
-summary(fit)
-
-# Kruskal Wallis Test One Way Anova by Ranks 
-kruskal.test(Idade ~ Classificacao, data=data) # where y1 is numeric and A is a factor
+comparison<-data.frame(value=comparison_data,group=comparison_data2,year=comparison_data3)
+ggplot(data=comparison, aes(x=as.factor(year), y=value, fill=group)) + geom_boxplot() + ylab("Resident Performance") + xlab("Year") + theme_bw()
 
 #########################################################
-#PRINCIPAL COMPONENT
+#Network
 #########################################################
 #Correlation dataset
-cor_data<-data_cleande[4:25]
-
+cor_data<-data[,-c(1,25,26)]
+cor_data<-na.omit(cor_data)
 # generating correlation matrix
+network_data<-cor(cor_data,method="spearman")
 network_data<-cor_auto(cor_data)
 
-#visualizing correlation matrix with a network
-qgraph(cor_data,layout="spring",min=0.40)
+library(reshape2)
+melted_cormat <- melt(network_data)
+head(melted_cormat)
 
-varNames<-c("Allowed patient to tell own story and raise questions","About the history of present illness","About quality and location of back pain","Whether the pain is continuous or intermittent","What makes pain better and worse","About radicular symptoms","About loss of motor function and loss of bowel/bladder control","About significant past medical history","About systemic symptoms","What medications currently taking","Washed his/her hands either before OR after encounter","Considered patient comfort during exam","General appearance","Had patient bend forward, backward and to both sides","Palpate spine","Deep tendon reflexes of knee","Deep tendon reflexes of ankle","Strength in leg","Sensation in both legs","Problems and plan communicated effectively to patient","Problem list","General impression of resident performance")
+ggplot(melted_cormat, aes(y=X1, x=X2, fill=value)) + geom_tile() + scale_fill_gradient2(low="darkblue",high="darkred", limits=c(-1,1))# + facet_grid(regions ~ .,scales="free_y",space="free") + geom_text(aes(y=X1, x=X2, label=value)) 
+
+#visualizing correlation matrix with a network
+#qgraph(cor_data,layout="spring",min=0.40)
+
+varNames<-c("Interacted in a professional manner","Allowed patient to tell own story and raise questions","About the history of present illness","About quality and location of back pain","Whether the pain is continuous or intermittent","What makes pain better and worse","About radicular symptoms","Loss of motor function and bowel/bladder control","About significant past medical history","About systemic symptoms","What medications currently taking","Washed hands before OR after encounter","Considered patient comfort during exam","General appearance","Bend forward, backward and to both sides","Palpate spine","Deep tendon reflexes of knee","Deep tendon reflexes of ankle","Strength in leg","Sensation in both legs","Problems and plan communicated effectivel","Problem list","General impression of resident performance")
 
 
 qsgg3<-qgraph(network_data,layout="spring",vsize=6,esize=20,graph="glasso",sampleSize=nrow(cor_data),legend.cex = 0.5,GLratio=1.5)
@@ -171,14 +162,20 @@ dev.off()
 #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 centralityPlot(qsgG3)
 clusteringPlot(qsgG3)
-g<-as.igraph(qsgg3)
+g<-as.igraph(qsgG3)
 h<-walktrap.community(g)
 plot(h,g)
 
 
-predictors<-centrality(qsgG3)$ShortestPaths[,22]
+predictors<-centrality(qsgG3)$ShortestPaths[,23]
 
 3,5,7,10,12,14,16,18,19,20,21
+
+
+
+
+
+
 
 
 # Define the amout of factor to retain
