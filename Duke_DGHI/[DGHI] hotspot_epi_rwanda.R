@@ -24,7 +24,10 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArota
 #IMPORTING DATA
 #######################################################
 
-data <- read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/rwanda/hotspot_epi_rwanda_data.csv")
+#Linux path
+#data <- read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/rwanda/hotspot_epi_rwanda_data.csv")
+
+data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Rwanda/hotspot_epi_rwanda_data.csv")
 
 #data set with information for Hamiton's Anxiety Symptoms
 #data <- repmis::source_DropboxData("epi_sri_lanka_data.csv","5b3k7j4du69tmt2",sep = ",",header = TRUE)
@@ -43,6 +46,24 @@ outcome4<-car::recode(data$victim2_injury,"0=1;1=100;3=1;2=100;else=0")
 outcome5<-car::recode(data$victim3_injury,"0=1;1=100;3=1;2=100;else=0")
 outcome6<-rowSums(data.frame(outcome1,outcome2,outcome3,outcome4,outcome5))
 data_epi$outcome<-car::recode(outcome6,"0=NA;1:99=0;100:500=1")
+
+#recoding outcome variable - Number of victims
+outcome1a<-car::recode(data$driver1_injuries,"0=0;1=1;3=0;2=1;else=NA")
+outcome2a<-car::recode(data$driver2_injuries,"0=0;1=1;3=0;2=1;else=NA")
+outcome3a<-car::recode(data$victim1_injury,"0=0;1=1;3=0;2=1;else=NA")
+outcome4a<-car::recode(data$victim2_injury,"0=0;1=1;3=0;2=1;else=NA")
+outcome5a<-car::recode(data$victim3_injury,"0=0;1=1;3=0;2=1;else=NA")
+#soutcome6a<-rowSums(data.frame(outcome1,outcome2,outcome3,outcome4,outcome5))
+#data_epi$outcome<-car::recode(outcome6,"0=NA;1:99=0;100:500=1")
+victimis_outcome_driversonly<-c(outcome1a,outcome2a)
+victimis_outcome_all<-c(outcome1a,outcome2a,outcome3a,outcome4a,outcome5a)
+
+#number of victims in all crashes
+#outcome 1 = 2452
+#outcome 2 = 2119
+#outcome 3 = 106
+#outcome 4 = 10
+#outcome 5 = 2
 
 #merging more then one vector
 
@@ -111,7 +132,11 @@ data_epi$type_vehicle2<-as.factor(data_epi$type_vehicle2)
 
 #recoding gender
 data_epi$gender<-car::recode(data$driver1_sex,"0='female';1='male';else=NA")
-data_epi$gender<-as.factor(data_epi$gender)
+#data_epi$gender<-as.factor(data_epi$gender)
+data_epi$gender2<-car::recode(data$driver2_sex,"0='female';1='male';else=NA")
+#data_epi$gender2<-as.factor(data_epi$gender2)
+victms_gender<-c(data_epi$gender,data_epi$gender2)
+victms_gender<-car::recode(victms_gender,"1='female';2='male'")
 
 #recoding type of crash
 crash_type1SUM<-rowSums(with(data,data.frame(crash_type___0,crash_type___1,crash_type___2,crash_type___5,crash_type___6)))
@@ -129,9 +154,28 @@ data_epi$crash_type<-as.factor(data_epi$crash_type)
 
 date_crash<-as.Date(data$date_crash)
 
+#recoding ages
 driver1_dob<-car::recode(data$driver1_dob,"'Kicukiro'=NA;99=NA;21=1992;29=1984;974=NA;19=1994")
 driver1_dob<-as.Date(driver1_dob,"%Y")
 data_epi$age<-as.numeric((date_crash-driver1_dob)/360)
+
+driver2_dob<-car::recode(data$driver2_dob,"'nyarugenge'=NA;'Kicukiro'=NA;7=NA;99=NA;'63 years'=1950;6=2007;5=2008;46=1967;4=2009;31=1982;30=1981;3=2010;21=1992;22=1991;29=1984;28=1985;974=NA;19=1994;199=NA;0=NA")
+driver2_dob<-as.Date(driver2_dob,"%Y")
+data_epi$age2<-as.numeric((date_crash-driver2_dob)/360)
+
+driver3_dob<-car::recode(data$victim1_age,"99=NA;1=2012;5=2008;23=1990;24=1989;31=1982;32=1981;37=1976;39=1974;41=1972;55=1958;22=1991;28=1985;19=1994;0=NA")
+driver3_dob<-as.Date(as.factor(driver3_dob),"%Y")
+data_epi$age3<-as.numeric((date_crash-driver3_dob)/360)
+
+driver4_dob<-car::recode(data$victim2_age,"99=NA;10=2003;33=1980;34=1979")
+driver4_dob<-as.Date(as.factor(driver4_dob),"%Y")
+data_epi$age4<-as.numeric((date_crash-driver4_dob)/360)
+
+driver5_dob<-car::recode(data$victim3_age,"99=NA")
+driver5_dob<-as.Date(as.factor(driver5_dob),"%Y")
+data_epi$age5<-as.numeric((date_crash-driver5_dob)/360)
+
+age_victims<-c(data_epi$age,data_epi$age2,data_epi$age3,data_epi$age4,data_epi$age5)
 
 data_epi<-as.data.frame(data_epi)
 
@@ -264,7 +308,33 @@ imp <- mice(nhanes, pred = pred, pri = FALSE) # rerun the model specifying pred 
 #######################################################
 #DESCRIPTIVE ANALYSIS
 #######################################################
+#####Victmis descriptives
 # Gender
+table<-table(victms_gender)
+table
+prop.table(table)
+table<-table(victms_gender,victimis_outcome_driversonly)
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+logmodel<-glm(victimis_outcome_driversonly ~   as.factor(victms_gender),family=binomial)
+summary(logmodel)
+#anova(reglogGEU)
+exp(coef(logmodel)) # exponentiated coefficients
+exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+#predict(model1_death, type="response") # predicted values
+#residuals(model1_death, type="deviance") # residuals
+logistic.display(logmodel)
+
+# Age
+describe(age_victims)
+describeBy(age_victims,victimis_outcome_all)
+# t-test: # independent 2-group, 2 level IV
+testName <- t.test(age_victims ~ victimis_outcome_all)
+
+# Crashes with victims
 table<-with(data_epi,table(outcome))
 table
 prop.table(table)
