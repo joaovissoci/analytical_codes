@@ -1,7 +1,7 @@
-###########################THR_SRMA_2014_SCRIPT#################################
-################################################################################
+###########################THR_SRMA_2014_SCRIPT###############################
+##############################################################################
 #template_secondary_data_analysis.R is licensed under a Creative Commons Attribution - Non commercial 3.0 Unported License. see full license at the end of this file.
-#######################################################################################
+##############################################################################
 #this script follows a combination of the guidelines proposed by Hadley Wickham http://goo.gl/c04kq as well as using the formatR package http://goo.gl/ri6ky
 #if this is the first time you are conducting an analysis using this protocol, please watch http://goo.gl/DajIN while following step by step
 
@@ -76,20 +76,24 @@ dev.off()
 funnel(metaCEFUP)
 prop<-metaCEFUP$event/metaCEFUP$n
 with(metaCement,by(prop,FUP,summary))
+metainf(metaCEFUP)
 
 #Forest Plot for Pooled Prevalence subgrouped by Cohort Mean Age
 metaCEAge<-metaprop(Revisions,Hips,Names, sm="PLN",data=metaCement,byvar=AgeGroup)
 tiff("/home/joao/Desktop/CemtAge.tiff", width = 800, height = 850,compression = 'lzw')
 meta::forest(metaCEAge)
 dev.off()
-prop<-metaCEFUP$event/metaCEFUP$n
-with(metaCement,by(prop,FUP,summary))
+prop<-metaCEAge$event/metaCEAge$n
+with(metaCement,by(prop,AgeGroup,summary))
 
 #Forest Plot for Pooled Prevalence subgrouped by Decade
 metaCEDecade<-metaprop(Revisions,Hips,Names, sm="PLN",data=metaCement,byvar=Decade)
 tiff("/home/joao/Desktop/CemtDecade.tiff", width = 800, height = 800,compression = 'lzw')
 meta::forest(metaCEDecade)
 dev.off()
+prop<-metaCEDecade$event/metaCEDecade$n
+with(metaCement,by(prop,Decade,summary))
+
 #Forest Plot for Pooled Prevalence subgrouped by %DeathLost
 metaCEDeath<-metaprop(Revisions,Hips,Names, sm="PLN",data=metaCement,byvar=DeathLost)
 tiff("/home/joao/Desktop/CemtDeath.tiff", width = 800, height = 700,compression = 'lzw')
@@ -105,25 +109,36 @@ metaUNFUP<-metaprop(Revisions,Hips,Names, sm="PLN",data=metaUNCement,byvar=FUP)
 tiff("/Users/Talitha/Desktop/MetaHip/UncemFUP.tiff", width = 800, height = 650,compression = 'lzw')
 meta::forest(metaUNFUP)
 dev.off()
+prop<-metaUNFUP$event/metaUNFUP$n
+with(metaUNCement,by(prop,FUP,summary))
+
 #Forest Plot for Pooled Prevalence subgrouped by Cohort Mean Age
 metaUNAge<-metaprop(Revisions,Hips,Names, sm="PLN",data=metaUNCement,byvar=AgeGroup)
 tiff("/Users/Talitha/Desktop/MetaHip/UncemAge.tiff", width = 800, height = 700,compression = 'lzw')
 meta::forest(metaUNAge)
 dev.off()
+prop<-metaUNAge$event/metaUNAge$n
+with(metaUNCement,by(prop,AgeGroup,summary))
+
 #Forest Plot for Pooled Prevalence subgrouped by Decade
-metaUNDecade<-metaprop(Revisions,Hips,Names, sm="PLN",data=metaUNCement,byvar=Decade)
+metaUNCement_decade<-with(metaUNCement,data.frame(Revisions,Hips,Names,Decade))
+metaUNCement_decade<-na.omit(metaUNCement_decade)
+metaUNDecade<-metaprop(Revisions,Hips,Names, sm="PLN",data=metaUNCement_decade,byvar=Decade)
 tiff("/Users/Talitha/Desktop/MetaHip/UncemDecade.tiff", width = 800, height = 750,compression = 'lzw')
 meta::forest(metaUNDecade)
 dev.off()
+prop<-metaUNDecade$event/metaUNDecade$n
+with(metaUNCement_decade,by(prop,Decade,summary))
+
 #Forest Plot for Pooled Prevalence subgrouped by %DeathLost
 metaUNDeath<-metaprop(Revisions,Hips,Names, sm="PLN",data=metaUNCement,byvar=DeathLost)
 tiff("/Users/Talitha/Desktop/MetaHip/UncemDeath.tiff", width = 800, height = 650,compression = 'lzw')
 meta::forest(metaUNDeath)
 dev.off()
 
-###########################################################################################
+##############################################################################
 #Figure 4: META POLL PREVALENCE CAUSES FOR REVISION OVER 15 YEARS Follow up 
-###########################################################################################
+##############################################################################
 
 #Forest Plot for Pooled Prevalence Revision Caused by Infection
 metaInfect<-metaprop(Infection,Revisions,Names, sm="PLN",data=data)
@@ -176,9 +191,9 @@ tiff("/Users/Talitha/Desktop/MetaHip/PolyType.tiff", width = 800, height = 1200,
 meta::forest(metaPoly)
 dev.off()
 
-###########################################################################################
+##############################################################################
 #Figure 5: META POLL PREVALENCE CAUSES FOR REVISION CEMENTED OVER 15 YEARS Follow up 
-###########################################################################################
+##############################################################################
 
 #Forest Plot for Pooled Prevalence Revision Caused by Infection
 metaCEInfect<-metaprop(Infection,Revisions,Names, sm="PLN",data=metaCement)
@@ -234,4 +249,28 @@ dev.off()
 metaUNPoly<-metaprop(Polywear/Osteolysis,Revisions,Names, sm="PLN",data=metaUNCement)
 tiff("/Users/Talitha/Desktop/Figure21.tiff", width = 800, height = 650,compression = 'lzw')
 meta::forest(metaUNPoly)
+dev.off()
+
+############################################################################
+#Figure 1. Plot 1
+############################################################################
+data_plot<-melt(data,id=c("author"))
+#data$item<-NULL
+#data$item<-car::recode(data$variable,"'internal_consistency'='reliability';'test_retest'='reliability';'content_validity'='content_validity';'structural_validity'='structural_validity';'discriminant_validity'='construct_validity';'convergent_validity'='construct_validity';'predictive_validity'='construct_validity';'responsiveness'='responsiveness'")
+#data$family<-c(rep(c('specific'),100),rep(c('nonspecific'),100))
+data_plot$family<-NULL
+data_plot$family<-c("Guidelines")
+
+data_new<-NULL
+data_new$family<-data_plot$family
+data_new$item<-data_plot$author
+data_new$score<-data_plot$variable
+data_new$value<-data_plot$value
+data_new<-as.data.frame(data_new)
+
+#tiff("C:\\Users\\Joao\\Desktop\\tbi_try7.tiff", width = 700, height = 500,compression = 'lzw')
+tiff("/Users/rpietro/Desktop/tbi_cpG_quality.tiff", width = 1000, height = 500,compression = 'lzw')
+qplot(value, reorder(item,value), data=data_new, fill=value, size=value, colour=value) + 
+ facet_grid(~score, scales="free_y", space = "free") +
+  scale_size_area()+  xlab("AGREE Score") + ylab ("")+ theme(legend.position = "none")
 dev.off()

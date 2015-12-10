@@ -42,6 +42,8 @@ data_year2_test<-read.csv("/home/joao/Dropbox/datasets/DGNN/back_pain/backPainHa
 #                                  sep = ",",
 #                                  header = TRUE)
 
+data_longitudinal_test<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGNN/back_pain/back_pain_longitudinal_data.csv")
+
 ###########################################################################################
 #DATA MANAGEMENT
 ###########################################################################################
@@ -70,6 +72,11 @@ colnames(data_year2)<-data_year2_test[,1]
 data_year2$group<-"Year 2"
 data_year2<-as.data.frame(data_year2)
 
+data_longitudinal<-t(data_longitudinal_test[,-1])
+colnames(data_longitudinal)<-data_longitudinal_test[,1]
+data_longitudinal<-as.data.frame(data_longitudinal)
+data_longitudinal[,1]<-as.numeric(as.character(data_longitudinal[,1]))
+data_longitudinal[,2]<-as.numeric(as.character(data_longitudinal[,2]))
 #####################################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
 #####################################################################################
@@ -125,6 +132,20 @@ with(comparison,wilcox.test(value~group))
 
 comparison<-data.frame(value=comparison_data,group=comparison_data2,year=comparison_data3)
 ggplot(data=comparison, aes(x=as.factor(year), y=value, fill=group)) + geom_boxplot() + ylab("Resident Performance") + xlab("Year") + theme_bw()
+
+#########################################################
+#Momentos comparison
+#########################################################
+#Comparison YEAR 1 Vs. YEAR 2
+with(data_longitudinal,describeBy(overall_performance,moment))
+with(data_longitudinal,wilcox.test(overall_performance~moment,paired=TRUE))
+
+ggplot(data=data_longitudinal, aes(x=moment, y=overall_performance)) + geom_boxplot(fill="grey") + ylab("Resident Performance") + xlab("Year") + theme_bw()
+
+with(data_longitudinal,describeBy(general_score,moment))
+with(data_longitudinal,wilcox.test(general_score~moment,paired=TRUE))
+
+ggplot(data=data_longitudinal, aes(x=moment, y=general_score)) + geom_boxplot(fill="grey") + ylab("Resident General Score") + xlab("Year") + theme_bw()
 
 #########################################################
 #Network
