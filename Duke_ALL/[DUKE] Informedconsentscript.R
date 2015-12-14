@@ -22,7 +22,7 @@ lapply(c("epicalc", "sem","Hmisc","ggplot2", "psych", "irr", "nortest", "moments
 ##############################################################
 
 #if you are using a file that is local to your computer, then replace path below by path to the data file. command will throw all the data into the templateData object. replace the word template.data by a name that might easier for you to remember and that represents your data
-infoconsent <- repmis::source_DropboxData("infoconsent2.csv","xucrht4l08z1kiw",sep = ",",header = TRUE)
+infoconsent <- read.csv("/home/joao/Dropbox/datasets/infoconsent2.csv")
 
 #Data for Demographics Graph
 #options(RCurlOptions = list(capath = system.file("CurlSSL", "cacert.pem", package = "RCurl"), ssl.verifypeer = FALSE))
@@ -122,360 +122,191 @@ plot$quantiles_3<-c(import_3quantiles_yes,import_3quantiles_no,under_3quantiles_
 ggplot(data=plot, aes(x=questions, y=scores,group=will, color=will)) + geom_line(size=1.5) + facet_grid(groups ~.) + geom_point(size=3,fill="white") + theme_bw()+ ylab("Median") + xlab("Questions") + scale_colour_manual(values=c("#999999","darkred"), name="Willing to Participate", breaks=c("yes","no"),labels=c("Yes", "No"))+ theme(legend.position=c(0.1,0.1)) + geom_segment(aes(x = questions, y = quantiles_1, xend = questions, yend = quantiles_3)) + scale_x_discrete(limits=c("Q1","Q2","Q3","Q4","Q5","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14"))
 
 #dev.off()
+##############################################################
+#PCA Score comparisons
+#############################################################
+# # Define the amout of factor to retain
+#Group of functinos to determine the number os items to be extracted
+#par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
+#ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
+#ev # Show eigend values
+#ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
+#summary(ap)
+#nS <- nScree(ev$values) #Set up the Scree Plot 
+#plotnScree(nS) # Plot the ScreePlot Graph
+#my.vss <- VSS(cor_data,title="VSS of BEA data")
+#print(my.vss[,1:12],digits =2)
+#VSS.plot(my.vss, title="VSS of 24 mental tests")
+#scree(cor_data)
+#VSS.scree(cor_data)
+#fa.parallel(cor_data,n.obs=36)
+
+# Pricipal Components Analysis
+# entering raw data and extracting PCs 
+# from the correlation matrix 
+
+summary(rowMeans(Import))
+importance_scores <- principal(Import,1,rotate="varimax",scores=TRUE)
+summary(fit) # print variance accounted for 
+loadings(fit) # pc loadings 
+importance_scores$scores
+#predict(fit,Import)
+#importance_scores<-scoreItems(fit$weights,Import,totals=TRUE)
+
+summary(rowMeans(Under))
+understanding_scores <- principal(Under,1,rotate="varimax",scores=TRUE)
+summary(fit) # print variance accounted for 
+loadings(fit) # pc loadings 
+understanding_scores$scores
+#predict(fit,Import)
+#importance_scores<-scoreItems(fit$weights,Import,totals=TRUE)
+
+reading_scores <- principal(read,1,rotate="varimax",scores=TRUE)
+summary(fit) # print variance accounted for 
+loadings(fit) # pc loadings 
+reading_scores$scores
+#predict(fit,Import)
+#importance_scores<-scoreItems(fit$weights,Import,totals=TRUE)
+
+log_model<-data.frame(bancocerto$Q13,importance_scores$scores,understanding_scores$scores)#,reading_scores$scores)
+log_model<-na.omit(log_model)
+
+fit <- glm(as.factor(bancocerto$Q13)~importance_scores$scores+understanding_scores$scores,data=log_model,family=binomial)
+
+summary(fit)
+exp(coef(fit)) # exponentiated coefficients
+exp(confint(fit)) # 95% CI for exponentiated coefficients
+
 
 ##############################################################
 #NETWORK APPROACH
 #############################################################
+
 ################# Importance ###################
 
-sem_data<-data.frame(Import,outcome=bancocerto$Q13)#,outcome=bancocerto$Q13)
-sem_data<-na.omit(sem_data)
+importance_network_data<-data.frame(Import,outcome=bancocerto$Q13)#,outcome=bancocerto$Q13)
+importance_network_data<-na.omit(importance_network_data)
 
-qsgc<-cor_auto(sem_data)
+importance_cor_data<-cor_auto(importance_network_data)
 #qsgc<-qsgc$rho
 
-qsggr<-list(Import1=c(1,2,3,6,8,15),Import2=c(4,12),Import3=c(7,13),Other=c(5,9,10,11,14))
-nomesqsg<-c("Why is this study being done?", "What is involved in this study?", "Who is going to be my doctor in this study?","How many people will take part in this study?","How long will I be in this study?","What are the benefits of being in this study?","What about compensation?","What are the risks of being in this study?","What are the costs?","Will my information be kept confidential?","What about research related injuries?","What are the alternatives to being in this study?","What if I want decline participation or withdraw?","Whom do I call if I have questions or trouble?","Willingness to participate")
-varNames<-c("Q1","Q2","Q3","Q4","Q5","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","WP")
-mean_data<-sapply(sem_data,mean)
-vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
+importance_network_groups<-list(Import1=c(1,2,3,6,8,15),Import2=c(4,12),Import3=c(7,13),Other=c(5,9,10,11,14))
+importance_node_labels<-c("Why is this study being done?", "What is involved in this study?", "Who is going to be my doctor in this study?","How many people will take part in this study?","How long will I be in this study?","What are the benefits of being in this study?","What about compensation?","What are the risks of being in this study?","What are the costs?","Will my information be kept confidential?","What about research related injuries?","What are the alternatives to being in this study?","What if I want decline participation or withdraw?","Whom do I call if I have questions or trouble?","Willingness to participate")
+importance_node_names<-c("Q1","Q2","Q3","Q4","Q5","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","WP")
+mean_data<-sapply(importance_network_data,mean)
+importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
 
-qsgg3<-qgraph(qsgc,layout="spring",vsize=6,esize=20,graph="glasso",sampleSize=nrow(sem_data),legend.cex = 0.5,GLratio=1.5)
-qsgg2<-qgraph(qsgc,layout="spring",vsize=6,esize=20,graph="pcor",threshold="holm",sampleSize=nrow(sem_data),legend.cex = 0.5,GLratio=1.5)
-qsgg1<-qgraph(qsgc,layout="spring",vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
-Lqsg<-averageLayout(qsgg1,qsgg2,qsgg3)
+importance_network_glasso<-qgraph(importance_cor_data,layout="spring",vsize=6,esize=20,graph="glasso",sampleSize=nrow(importance_network_data),legend.cex = 0.5,GLratio=1.5)
+importance_network_pcor<-qgraph(importance_cor_data,layout="spring",vsize=6,esize=20,graph="pcor",threshold="holm",sampleSize=nrow(importance_network_data),legend.cex = 0.5,GLratio=1.5)
+importance_network_cor<-qgraph(importance_cor_data,layout="spring",vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
+#layout1<-averageLayout(network_glasso,network_pcor,network_cor)
 
-qsgG1<-qgraph(qsgc,layout=Lqsg,vsize=6,esize=20,legend.cex = 0.3,cut = 0.3, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#nodeNames=nomesqsg,
-qsgG2<-qgraph(qsgc,layout=Lqsg,vsize=6,esize=20,graph="pcor",legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#,nodeNames=nomesqsg
+#qsgG1<-qgraph(qsgc,layout=Lqsg,vsize=6,esize=20,legend.cex = 0.3,cut = 0.3, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#nodeNames=nomesqsg,
+#qsgG2<-qgraph(qsgc,layout=Lqsg,vsize=6,esize=20,graph="pcor",legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#,nodeNames=nomesqsg
 
-tiff("/home/joao/Desktop/importance_network.tiff", width = 1200, height = 700,compression = 'lzw')
-qsgG3<-qgraph(qsgc,layout=Lqsg,vsize=vSize*3,esize=20,graph="glasso",sampleSize=nrow(sem_data),legend.cex = 0.6,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,nodeNames=nomesqsg,color=c("gold","steelblue","red","grey80"),borders = FALSE,labels=varNames)#,gray=T,)#,nodeNames=nomesqsg
-dev.off()
-#legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
-centralityPlot(qsgG3)
-clusteringPlot(qsgG3)
-g<-as.igraph(qsgG3)
+#centralityPlot(qsgG3)
+#clusteringPlot(qsgG3)
+g<-as.igraph(importance_network_glasso)
 h<-walktrap.community(g)
+#h<-spinglass.community(g)
 plot(h,g)
+h$membership
 
 # Para identificar no qgraph o resultado do algortimo de comunidade, criar objeto de "groups"
 # com o resultado de wcG1
-predictors<-centrality(qsgG3)$ShortestPaths[,15]
-centralityPlot(qsgG3)
+predictors<-centrality(importance_network_glasso)$ShortestPaths[,15]
+predictors
+#centralityPlot(importance_network_glasso)
 
 as.data.frame(predictors[[1]])[2,]
 dim(as.data.frame(predictors[[1]]))[1]
 
-qsgG3$Edgelist$from
-qsgG3$Edgelist$to
-qsgG3$Edgelist$weight
+importance_network_glasso$Edgelist$from
+importance_network_glasso$Edgelist$to
+importance_network_glasso$Edgelist$weight
 
-subset(qsgG3$Edgelist$weight,qsgG3$Edgelist$from==1 & qsgG3$Edgelist$to==15)
-subset(qsgG3$Edgelist$weight,qsgG3$Edgelist$from==2 & qsgG3$Edgelist$to==15)
-subset(qsgG3$Edgelist$weight,qsgG3$Edgelist$from==3 & qsgG3$Edgelist$to==15)
-subset(qsgG3$Edgelist$weight,qsgG3$Edgelist$from==10 & qsgG3$Edgelist$to==15)
-subset(qsgG3$Edgelist$weight,qsgG3$Edgelist$from==13 & qsgG3$Edgelist$to==15)
+subset(importance_network_glasso$Edgelist$weight,importance_network_glasso$Edgelist$from==1 & importance_network_glasso$Edgelist$to==15)
+subset(importance_network_glasso$Edgelist$weight,importance_network_glasso$Edgelist$from==2 & importance_network_glasso$Edgelist$to==15)
+subset(importance_network_glasso$Edgelist$weight,importance_network_glasso$Edgelist$from==3 & importance_network_glasso$Edgelist$to==15)
+subset(importance_network_glasso$Edgelist$weight,importance_network_glasso$Edgelist$from==10 & importance_network_glasso$Edgelist$to==15)
+subset(importance_network_glasso$Edgelist$weight,importance_network_glasso$Edgelist$from==13 & importance_network_glasso$Edgelist$to==15)
+
+
+log_model<-data.frame(bancocerto$Q13,Import$Q36_1,Import$Q36_2,Import$Q36_3,Import$Q36_10,Import$Q36_13)#,reading_scores$scores)
+#log_model<-na.omit(log_model)
+
+fit <- glm(as.factor(bancocerto$Q13)~Import$Q36_1+Import$Q36_2+Import$Q36_3+Import$Q36_10+Import$Q36_13,data=log_model,family=binomial)
+
+summary(fit)
+exp(coef(fit)) # exponentiated coefficients
+exp(confint(fit)) # 95% CI for exponentiated coefficients
 
 ################# Comprehension ###################
 
-sem_data<-data.frame(Under,outcome=bancocerto$Q13)
-sem_data<-na.omit(sem_data)
+comprehension_networlog_model<-data.frame(bancocerto$Q13,Import$Q36_1,Import$Q36_2,Import$Q36_3,Import$Q36_10,Import$Q36_13)#,reading_scores$scores)
+#log_model<-na.omit(log_model)
 
-qsgc<-cor_auto(sem_data)
+fit <- glm(as.factor(bancocerto$Q13)~Import$Q36_1+Import$Q36_2+Import$Q36_3+Import$Q36_10+Import$Q36_13,data=log_model,family=binomial)
+
+summary(fit)
+exp(coef(fit)) # exponentiated coefficients
+exp(confint(fit)) # 95% CI for exponentiated coefficientsk_data<-data.frame(Under,outcome=bancocerto$Q13)
+comprehension_network_data<-na.omit(comprehension_network_data)
+
+comprehension_cor_data<-cor_auto(comprehension_network_data)
 #qsgc<-qsgc$rho
 
-qsggr<-list(Under1=c(1,2,3),Under2=c(4,5,6,7,8,9),Under3=c(10,11,12,13,14),Other=c(15))
-nomesqsg<-c("Why is this study being done?", "What is involved in this study?", "Who is going to be my doctor in this study?","How many people will take part in this study?","How long will I be in this study?","What are the benefits of being in this study?","What about compensation?","What are the risks of being in this study?","What are the costs?","Will my information be kept confidential?","What about research related injuries?","What are the alternatives to being in this study?","What if I want decline participation or withdraw?","Whom do I call if I have questions or trouble?","Willingness to participate")
-varNames<-c("Q1","Q2","Q3","Q4","Q5","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","WP")
-mean_data<-sapply(sem_data,mean)
-vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
+comprehension_node_groups<-list(Under1=c(1,2,3),Under2=c(4,5,6,7,8,9),Under3=c(10,11,12,13,14),Other=c(15))
+comprehension_node_labels<-c("Why is this study being done?", "What is involved in this study?", "Who is going to be my doctor in this study?","How many people will take part in this study?","How long will I be in this study?","What are the benefits of being in this study?","What about compensation?","What are the risks of being in this study?","What are the costs?","Will my information be kept confidential?","What about research related injuries?","What are the alternatives to being in this study?","What if I want decline participation or withdraw?","Whom do I call if I have questions or trouble?","Willingness to participate")
+comprehension_node_names<-c("Q1","Q2","Q3","Q4","Q5","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","WP")
+mean_data<-sapply(comprehension_network_data,mean)
+comprehension_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
 
-qsgg3<-qgraph(qsgc,layout="spring",vsize=6,esize=20,graph="glasso",sampleSize=nrow(sem_data),legend.cex = 0.5,GLratio=1.5)
-qsgg2<-qgraph(qsgc,layout="spring",vsize=6,esize=20,graph="pcor",threshold="holm",sampleSize=nrow(sem_data),legend.cex = 0.5,GLratio=1.5)
-qsgg1<-qgraph(qsgc,layout="spring",vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
-Lqsg<-averageLayout(qsgg1,qsgg2,qsgg3)
+comprehension_network_glasso<-qgraph(comprehension_cor_data,layout="spring",vsize=6,esize=20,graph="glasso",sampleSize=nrow(comprehension_network_data),legend.cex = 0.5,GLratio=1.5)
+comprehension_network_pcor<-qgraph(comprehension_cor_data,layout="spring",vsize=6,esize=20,graph="pcor",threshold="holm",sampleSize=nrow(comprehension_network_data),legend.cex = 0.5,GLratio=1.5)
+comprehension_network_cor<-qgraph(comprehension_cor_data,layout="spring",vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
+#layout2<-averageLayout(network_glasso,network_pcor,network_cor)
 
-qsgG1<-qgraph(qsgc,layout=Lqsg,vsize=6,esize=20,legend.cex = 0.3,cut = 0.3, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#nodeNames=nomesqsg,
-qsgG2<-qgraph(qsgc,layout=Lqsg,vsize=6,esize=20,graph="pcor",legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#,nodeNames=nomesqsg
+#qsgG1<-qgraph(cor_data,layout=Lqsg,vsize=6,esize=20,legend.cex = 0.3,cut = 0.3, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#nodeNames=nomesqsg,
+#qsgG2<-qgraph(cor_data,layout=Lqsg,vsize=6,esize=20,graph="pcor",legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#,nodeNames=nomesqsg
 
-tiff("/home/joao/Desktop/comprehension_network.tiff", width = 1200, height = 700,compression = 'lzw')
-Lqsg<-averageLayout(qsgg1,qsgg2,qsgg3)
-qsgG3<-qgraph(qsgc,layout=Lqsg,vsize=vSize*3,esize=20,graph="glasso",sampleSize=nrow(sem_data),legend.cex = 0.6,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,nodeNames=nomesqsg,color=c("gold","steelblue","red","grey80"),borders = FALSE,labels=varNames)#,gray=T,)#,nodeNames=nomesqsg
-dev.off()
-centralityPlot(qsgG3)
-clusteringPlot(qsgG3)
-g<-as.igraph(qsgG3)
+#centralityPlot(qsgG3)
+#clusteringPlot(qsgG3)
+g<-as.igraph(comprehension_network_glasso)
 h<-walktrap.community(g)
 plot(h,g)
+wdensity(g,h)
+
 
 # Para identificar no qgraph o resultado do algortimo de comunidade, criar objeto de "groups"
 # com o resultado de wcG1
-predictors<-centrality(qsgG3)$ShortestPaths[,15]
-centralityPlot(qsgG3)
+predictors<-centrality(comprehension_network_glasso)$ShortestPaths[,15]
+predictors
+#centralityPlot(qsgG3)
 
-subset(qsgG3$Edgelist$weight,qsgG3$Edgelist$from==1 & qsgG3$Edgelist$to==15)
-subset(qsgG3$Edgelist$weight,qsgG3$Edgelist$from==3 & qsgG3$Edgelist$to==15)
-subset(qsgG3$Edgelist$weight,qsgG3$Edgelist$from==14 & qsgG3$Edgelist$to==15)
-##############################################################
-#SEM Model
-##############################################################
-sem_data<-data.frame(Import,outcome=bancocerto$Q13)
-sem_data<-na.omit(sem_data)
+subset(comprehension_network_glasso$Edgelist$weight,comprehension_network_glasso$Edgelist$from==1 & comprehension_network_glasso$Edgelist$to==15)
+subset(comprehension_network_glasso$Edgelist$weight,comprehension_network_glasso$Edgelist$from==3 & comprehension_network_glasso$Edgelist$to==15)
+subset(comprehension_network_glasso$Edgelist$weight,comprehension_network_glasso$Edgelist$from==14 & comprehension_network_glasso$Edgelist$to==15)
 
+log_model<-data.frame(bancocerto$Q13,Import$Q36_1,Import$Q36_3,Import$Q36_14)#,reading_scores$scores)
+#log_model<-na.omit(log_model)
 
-fit <- glm(as.factor(outcome)~Q36_1+Q36_2+Q36_3+Q36_10+Q36_13,data=sem_data,family=binomial)
+fit <- glm(as.factor(bancocerto$Q13)~Import$Q36_1+Import$Q36_2+Import$Q36_3+Import$Q36_10+Import$Q36_13,data=log_model,family=binomial)
 
 summary(fit)
 exp(coef(fit)) # exponentiated coefficients
 exp(confint(fit)) # 95% CI for exponentiated coefficients
 
+############## FINAL FIGURES ############################
+# Organizing both figures to be with the same layout
+layout_final<-averageLayout(comprehension_network_glasso,comprehension_network_pcor,comprehension_network_cor,importance_network_glasso,importance_network_glasso,importance_network_glasso)
 
 
-under_data<-data.frame(Under,outcome=bancocerto$Q13)
-under_data<-na.omit(under_data)
+tiff("/home/joao/Desktop/importance_network.tiff", width = 1200, height = 700,compression = 'lzw')
+final_importance_network<-qgraph(importance_cor_data,layout=layout_final,vsize=importance_vSize*3,esize=20,graph="glasso",sampleSize=nrow(importance_network_data),legend.cex = 0.6,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=importance_network_groups,nodeNames=importance_node_labels,color=c("gold","steelblue","red","grey80"),borders = FALSE,labels=importance_node_names)#,gray=T,)#,nodeNames=nomesqsg
+dev.off()
+#legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
-
-fit <- glm(as.factor(outcome)~Q46_1+Q46_3+Q46_14,data=under_data,family=binomial)
-
-summary(fit)
-exp(coef(fit)) # exponentiated coefficients
-exp(confint(fit)) # 95% CI for exponentiated coefficients
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-################### FACTOR ANALYSIS ##########################
-par(mfrow=c(2,2))
-ev <- eigen(cor(na.omit(Import))) # get eigenvalues
-ev
-ap <- parallel(subject=nrow(Import),var=ncol(Import),rep=100,cent=.05)
-nS <- nScree(ev$values)
-plotnScree(nS)
-
-#KMO
-kmo(na.omit(Import))
-
-#library(mvnmle)
-#mlest(Import)
-#library(mvnormtest)
-#mshapiro.test(t(Import))
-
-#center <- colMeans(t(Import)) # centroid
-#n <- nrow(t(Import)); p <- ncol(t(Import)); cov <- cov(t(Import)); 
-#d <- mahalanobis(t(Import),center,cov) # distances 
-#qqplot(qchisq(ppoints(n),df=p),d,main="QQ Plot Assessing Multivariate Normality",ylab="Mahalanobis D2")
-#abline(a=0,b=1)
-
-#FACTOR EXTRACTION
-
-#fa.poly(PCA,3,fm="pca",rotate="promax")
-Import<-remove.vars(Import,c("Q36_1","Q36_4"))
-fa(Import,4,n.obs = 216,rotate="Promax")
-fa(Import,3,n.obs = 216,rotate="Promax")
-x<-fa(Import,1,n.obs = 216,rotate="Promax")
-fa(Import,4,n.obs = 216,rotate="Varimax",fm="pa")
-fa(Import,3,n.obs = 216,rotate="Varimax",fm="pa")
-fa(Import,2,n.obs = 216,rotate="Varimax")
-fa(Import,4,n.obs = 216,rotate="Oblimin",fm="pa")
-fa(Import,3,n.obs = 216,rotate="Oblimin",fm="pa")
-fa(Import,2,n.obs = 216,rotate="Oblimin")
-
-################### MEASUREMENT MODEL ###########################
-
-Import<-na.omit(Import)
-
-#CFA Model
-cfa <- specifyModel()
-F1->Q36_1,var1,NA
-F1->Q36_2,var3,NA
-F1->Q36_3,var4,NA
-F2->Q36_4,var5,NA
-F2->Q36_5,var6,NA
-F2->Q36_6,var7,NA
-F2->Q36_7,var8,NA
-F2->Q36_8,var9,NA
-F3->Q36_9,var10,NA
-F3->Q36_10,var11,NA
-F3->Q36_11,var12,NA
-F3->Q36_12,var13,NA
-F3->Q36_13,var14,NA
-F3->Q36_14,var15,NA        
-F1<->F1,NA,1
-F2<->F2,NA,1
-F3<->F3,NA,1
-F1<->F2,latcor1,NA
-F1<->F3,latcor2,NA
-F2<->F3,latcor3,NA
-#Endofmodel
-
-# Insert de covariance matrix - CFA (or SEM) is always calculated in relation to a covariance or correlation matrix, here we will create the covariance matrix
-#cov1frm <- cov(RMorrisFactorModel, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
-cov<-cov(Import)
-
-# Estimate the model
-cfamodel<- sem(cfa, cov, N=216)
-summary(cfamodel,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", "NNFI", "CFI","RNI", "IFI", "SRMR", "AIC", "AICc","TLI"))
-modIndices(cfamodel)
-
-#Under<-data.frame(Q46_1,Q46_2,Q46_3,Q46_4,Q46_5,Q46_6,Q46_7,Q46_8,Q46_9,Q46_10,Q46_11,Q46_12,Q46_13,Q46_14)
-Under<-na.omit(Under)
-par(mfrow=c(2,2))
-ev <- eigen(cor(Under)) # get eigenvalues
-ev
-ap <- parallel(subject=nrow(Under),var=ncol(Under),rep=100,cent=.05)
-nS <- nScree(ev$values)
-plotnScree(nS)
-
-#KMO
-kmo(Under)
-
-library(mvnmle)
-mlest(Under)
-library(mvnormtest)
-mshapiro.test(t(Under))
-
-center <- colMeans(t(Under)) # centroid
-n <- nrow(t(Under)); p <- ncol(t(Under)); cov <- cov(t(Under)); 
-d <- mahalanobis(t(Under),center,cov) # distances 
-qqplot(qchisq(ppoints(n),df=p),d,
-			 main="QQ Plot Assessing Multivariate Normality",
-			 ylab="Mahalanobis D2")
-abline(a=0,b=1)
-
-#Import<-remove.vars(Import,c("Q36_1","Q36_4"))
-fa(Under,4,n.obs = 216,rotate="Promax")
-fa(Under,3,n.obs = 216,rotate="Promax",fm="pa")
-fa(Under,2,n.obs = 216,rotate="Promax")
-fa(Import,4,n.obs = 216,rotate="Varimax",fm="pa")
-fa(Import,3,n.obs = 216,rotate="Varimax",fm="pa")
-fa(Import,2,n.obs = 216,rotate="Varimax")
-fa(Import,4,n.obs = 216,rotate="Oblimin",fm="pa")
-fa(Import,3,n.obs = 216,rotate="Oblimin",fm="pa")
-fa(Import,2,n.obs = 216,rotate="Oblimin")
-
-#CFA Model
-cfa <- specifyModel()
-F1->Q46_1,var1,NA
-F1->Q46_2,var3,NA
-F1->Q46_3,var4,NA
-F2->Q46_4,var11,NA
-F2->Q46_5,var12,NA
-F2->Q46_6,var13,NA
-F2->Q46_7,var14,NA
-F2->Q46_8,var15,NA
-F3->Q46_9,var21,NA
-F3->Q46_10,var22,NA
-F3->Q46_11,var23,NA
-F3->Q46_12,var24,NA
-F3->Q46_13,var25,NA
-F3->Q46_14,var26,NA        
-F1<->F1,NA,1
-F2<->F2,NA,1
-F3<->F3,NA,1
-F1<->F2,latcor1,NA
-F1<->F3,latcor2,NA
-F2<->F3,latcor3,NA
-Q46_13<->Q46_12,erro1,NA
-Q46_4<->Q46_3,erro2,NA
-Q46_2<->Q46_1,erro3,NA
-#Endofmodel
-
-# Insert de covariance matrix - CFA (or SEM) is always calculated in relation to a covariance or correlation matrix, here we will create the covariance matrix
-#cov1frm <- cov(RMorrisFactorModel, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
-Under<-na.omit(Under)
-cov<-cov(Under)
-
-# Estimate the model
-cfamodel<- sem(cfa, cov, N=216)
-summary(cfamodel,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", "NNFI", "CFI", "RNI", "IFI", "SRMR", "AIC", "AICc","TLI"))
-modIndices(cfamodel)
-
-################### SEM read->Import+Under->Will ###################
-
-sem_model <- specifyModel()
-
-#Model 1
-Import1->Q46_1,var1,NA
-Import1->Q46_2,var3,NA
-Import1->Q46_3,var4,NA
-Import2->Q46_4,var11,NA
-Import2->Q46_5,var12,NA
-Import2->Q46_6,var13,NA
-Import2->Q46_7,var14,NA
-Import2->Q46_8,var15,NA
-Import3->Q46_9,var21,NA
-Import3->Q46_10,var22,NA
-Import3->Q46_11,var23,NA
-Import3->Q46_12,var24,NA
-Import3->Q46_13,var25,NA
-Import3->Q46_14,var26,NA        
-Import1<->Import1,NA,1
-Import2<->Import2,NA,1
-Import3<->Import3,NA,1
-#Import1<->Import2,latcor1,NA
-#Import1<->Import3,latcor2,NA
-#Import2<->Import3,latcor3,NA
-
-#Model 2
-Under1->Q36_1,var1,NA
-Under1->Q36_2,var3,NA
-Under1->Q36_3,var4,NA
-Under2->Q36_4,var5,NA
-Under2->Q36_5,var6,NA
-Under2->Q36_6,var7,NA
-Under2->Q36_7,var8,NA
-Under2->Q36_8,var9,NA
-Under3->Q36_9,var10,NA
-Under3->Q36_10,var11,NA
-Under3->Q36_11,var12,NA
-Under3->Q36_12,var13,NA
-Under3->Q36_13,var14,NA
-Under3->Q36_14,var15,NA        
-Under1<->Under1,NA,1
-Under2<->Under2,NA,1
-Under3<->Under3,NA,1
-#Under1<->Under2,latcor1,NA
-#Under1<->Under3,latcor2,NA
-#Under2<->Under3,latcor3,NA
-
-#Prediction Paths
-Import1->outcome,import_pred1,NA
-Import2->outcome,import_pred2,NA
-Import3->outcome,import_pred3,NA
-Under1->outcome,under_pred1,NA
-Under2->outcome,under_pred2,NA
-Under3->outcome,under_pred3,NA
-
-#Errors
-outcome<->outcome,erro1,NA
-#Q46_4<->Q46_3,erro2,NA
-#Q46_2<->Q46_1,erro3,NA
-#Endofmodel
-
-sem_data<-na.omit(sem_data)
-cov<-cov(sem_data)
-
-cfamodel<- sem(sem_model, cov, N=216)
-summary(cfamodel,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", "NNFI", "CFI", "RNI", "IFI", "SRMR", "AIC", "AICc","TLI"))
-modIndices(cfamodel)
-qgraph(cfamodel)
+tiff("/home/joao/Desktop/comprehension_network.tiff", width = 1200, height = 700,compression = 'lzw')
+final_comprehension_network<-qgraph(comprehension_cor_data,layout=layout_final,vsize=comprehension_vSize*3,esize=20,graph="glasso",sampleSize=nrow(comprehension_network_data),legend.cex = 0.6,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=comprehension_node_groups,nodeNames=comprehension_node_labels,color=c("gold","steelblue","red","grey80"),borders = FALSE,labels=comprehension_node_names)#,gray=T,)#,nodeNames=nomesqsg
+dev.off()

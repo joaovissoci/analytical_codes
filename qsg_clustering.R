@@ -4,7 +4,7 @@ library(qgraph)
 library(psych)
 library(nFactors)
 
-qsgb <- 
+qsgb <- read.csv("/home/joao/Dropbox/working stations/coxinhas/Artigo QSG/QSG puc.csv",sep=";")
 
 #MAMBAC(scale(NeckDisabilityIndexNA)[,1:3], Comp.Data = T)
 #EFA
@@ -41,13 +41,18 @@ heatmap(metric$ShortestPathLengths, scale='none',col=cm.colors(256))#, Colv=NA
 heatmap(cor_auto(qsgb), scale='none',col=cm.colors(256))#, Colv=NA
 heatmap(X, scale='none',col=cm.colors(256))#, Colv=NA
 
+qsgG3$Edgelist$from
+qsgG3$Edgelist$to
+sum(qsgG3$Edgelist$weight)
+
+subset(importance_network_glasso$Edgelist$weight,importance_network_glasso$Edgelist$from==1 & importance_network_glasso$Edgelist$to==15)
 
 
 
 
 centralityPlot(qsgG3)
 clusteringPlot(qsgG3)
-g<-as.igraph(qsgG1)
+g<-as.igraph(qsgg3)
 
 # Algorítmo que as pessoas mais usam
 community1<-walktrap.community(g)
@@ -62,8 +67,42 @@ plot(community2,g)
 modularity(community2)
 X<-modularity_matrix(g,community2$membership)
 
-subg1<-induced.subgraph(g, which(membership(community2)==1)) #membership id differs for each cluster
+subg1<-induced.subgraph(g, which(membership(community2)==2)) #membership id differs for each cluster
 ecount(subg1)
 ecount(g)
 intradensity1 <- ecount(subg1)/ecount(g) #for each cluster
 intradensity1
+
+vcount(subg1)
+ecount(subg1)
+E(subg1)$weight
+
+wdensity<-function(x,community) {
+	weighted_density<-NULL
+	graph<-NULL
+	output <- matrix(NA, nrow=max(membership(community))+1, ncol=2)
+	for(i in 1:max(membership(community))){
+	subg<-induced.subgraph(x, which(membership(community)==i)) #membership id differs for each cluster
+	weighted_density[i]<-2*sum(E(subg)$weight) / (abs(vcount(subg)) + sum(E(subg)$weight) - abs(ecount(subg)))*(abs(vcount(subg)) + sum(E(subg)$weight) - (abs(ecount(subg)) - 1))
+	graph[i]<-c(i)
+	output[i,]<-c(weighted_density[i],graph[i])
+	}
+	final_line<-max(membership(community))+1
+	weighted_density[final_line]<-2*sum(E(x)$weight) / (abs(vcount(x)) + sum(E(x)$weight) - abs(ecount(x)))*(abs(vcount(x)) + sum(E(x)$weight) - (abs(ecount(x)) - 1))
+	graph[final_line]<-c('general network')
+	output[final_line,]<-c(weighted_density[final_line],graph[final_line])
+	output<-as.data.frame(output)
+	output[,1]<-as.numeric(as.character(output[,1]))
+	colnames(output)<-c("wdens","com")
+	output$reliability<-output$wdens/(weighted_density[final_line]-output$wdens)
+	return(output)
+}
+wdensity(g,community1)
+
+
+
+
+#density = 2 (sum of weights) / ((|V| + sum of weights - |E|)(|V| + sum of weights - |E| - 1))
+#https://www.quora.com/How-do-you-compute-the-density-of-a-weighted-graph
+
+2*sum(E(subg1)$weight) / (abs(vcount(subg1)) + sum(E(subg1)$weight) - abs(ecount(subg1)))*(abs(vcount(subg1)) + sum(E(subg1)$weight) - (abs(ecount(subg1)) - 1))
