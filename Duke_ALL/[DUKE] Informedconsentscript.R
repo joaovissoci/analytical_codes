@@ -125,21 +125,38 @@ ggplot(data=plot, aes(x=questions, y=scores,group=will, color=will)) + geom_line
 ##############################################################
 #PCA Score comparisons
 #############################################################
-# # Define the amout of factor to retain
-#Group of functinos to determine the number os items to be extracted
-#par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
-#ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
-#ev # Show eigend values
-#ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
-#summary(ap)
-#nS <- nScree(ev$values) #Set up the Scree Plot 
-#plotnScree(nS) # Plot the ScreePlot Graph
-#my.vss <- VSS(cor_data,title="VSS of BEA data")
-#print(my.vss[,1:12],digits =2)
-#VSS.plot(my.vss, title="VSS of 24 mental tests")
-#scree(cor_data)
-#VSS.scree(cor_data)
-#fa.parallel(cor_data,n.obs=36)
+# Comparing each question
+#Importance
+with(Import,wilcox.test(Q36_1~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_2~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_3~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_4~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_5~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_6~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_7~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_8~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_9~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_10~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_11~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_12~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_13~as.factor(bancocerto$Q13)))
+with(Import,wilcox.test(Q36_14~as.factor(bancocerto$Q13)))
+
+#Comprehension
+with(Under,wilcox.test(Q46_1~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_2~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_3~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_4~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_5~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_6~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_7~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_8~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_9~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_10~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_11~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_12~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_13~as.factor(bancocerto$Q13)))
+with(Under,wilcox.test(Q46_14~as.factor(bancocerto$Q13)))
 
 # Pricipal Components Analysis
 # entering raw data and extracting PCs 

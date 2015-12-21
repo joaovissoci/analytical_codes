@@ -21,7 +21,7 @@
 
 #Load packages (after installed) with the library function
 #Loading packages
-lapply(c("metafor","ggplot2","car","RCurl","gdata","meta"), library, character.only=T)
+lapply(c("metafor","ggplot2","car","gdata","meta"), library, character.only=T)
 
 #############################################################################
 #IMPORTING DATA AND RECODING
@@ -33,7 +33,11 @@ lapply(c("metafor","ggplot2","car","RCurl","gdata","meta"), library, character.o
 #webdata <- getURL("https://docs.google.com/spreadsheet/pub?key=0AjVEotAQPzQsdFBXWHN6Yk5lWGtrOFhNQ3dQd043MVE&single=true&gid=16&output=csv")
 #data<-read.csv(textConnection(webdata)) #Data for revision all 
 
-data<-read.csv("/Users/joaovissoci/Dropbox/datasets/RoR/hip_revision_SR/hip_SR.csv")
+#imac at home
+#data<-read.csv("/Users/joaovissoci/Dropbox/datasets/RoR/hip_revision_SR/hip_SR.csv")
+#notebook
+data<-read.csv("/home/joao/Dropbox/datasets/RoR/hip_revision_SR/hip_SR.csv")
+
 
 str(data)
 
@@ -100,9 +104,9 @@ tiff("/home/joao/Desktop/CemtDeath.tiff", width = 800, height = 700,compression 
 meta::forest(metaCEDeath)
 dev.off()
 
-###########################################################################################
+#############################################################################
 #Figure 3: META POLL PREVALENCE UNCEMENTED THR REVISION SUBANALYSIS OVER 15 YEARS Follow up 
-###########################################################################################
+#############################################################################
 
 #Forest Plot for Pooled Prevalence subgrouped by Follow Up
 metaUNFUP<-metaprop(Revisions,Hips,Names, sm="PLN",data=metaUNCement,byvar=FUP)
@@ -145,21 +149,28 @@ metaInfect<-metaprop(Infection,Revisions,Names, sm="PLN",data=data)
 tiff("/Users/Talitha/Desktop/MetaHip/Infection.tiff", width = 800, height = 1000,compression = 'lzw')
 meta::forest(metaInfect)
 dev.off()
+metainf(metaInfect)
+
 #Forest Plot for Pooled Prevalence Revision Caused by Infection subgrouped by THR Type
 metaInfect<-metaprop(Infection,Revisions,Names, sm="PLN",data=data, byvar=Type)
 tiff("/Users/Talitha/Desktop/MetaHip/InfecType.tiff", width = 800, height = 1200,compression = 'lzw')
 meta::forest(metaInfect)
 dev.off()
 #Forest Plot for Pooled Prevalence Revision Caused By Aseptic Loosening
-metaAL<-metaprop(AsepticLoosening,Revisions,Names, sm="PLN",data=data)
+data_al<-with(data,data.frame(AsepticLoosening,Revisions,Names,Type))
+data_al<-na.omit(data_al)
+metaAL<-metaprop(AsepticLoosening,Revisions,Names, sm="PLN",data=data_al)
 tiff("/Users/Talitha/Desktop/MetaHip/AsepLoos.tiff", width = 800, height = 1000,compression = 'lzw')
 meta::forest(metaAL)
 dev.off()
+metainf(metaAL)
+
 #Forest Plot for Pooled Prevalence Revision Caused By Aseptic Loosening subgrouped by type
-metaAL<-metaprop(AsepticLoosening,Revisions,Names, sm="PLN",data=data, byvar=Type)
+metaAL<-metaprop(AsepticLoosening,Revisions,Names, sm="PLN",data=data_al, byvar=Type)
 tiff("/Users/Talitha/Desktop/MetaHip/AsepLoosType.tiff", width = 800, height = 1200,compression = 'lzw')
 meta::forest(metaAL)
 dev.off()
+
 #Forest Plot for Pooled Prevalence Revision Caused by Fracture
 metaFract<-metaprop(Fracture,Revisions,Names, sm="PLN",data=data)
 tiff("/Users/Talitha/Desktop/MetaHip/Fracture.tiff", width = 800, height = 1000,compression = 'lzw')
