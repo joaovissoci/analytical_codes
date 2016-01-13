@@ -25,7 +25,7 @@
 #library(Hmisc)
 
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf","reshape2","mclust","foreign","survival","memisc","lme4","lmerTest","dplyr","PMCMR"),library, character.only=T)
+lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments","GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf","reshape2","mclust","foreign","survival","memisc","lme4","lmerTest","dplyr","PMCMR"),library, character.only=T)
 
 #####################################################################################
 #IMPORTING DATA
@@ -41,9 +41,9 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArota
 #                                  sep = ",",
 #                                  header = TRUE)
 
-data<-read.csv("/home/joao/Dropbox/datasets/DGNN/SOSAS/SOSAS_gis/uganda_proportions_distance.csv",sep=',')
+data<-read.csv("/home/joao/Dropbox/datasets/DGNN/SOSAS/SOSAS_gis/districts_gis_uganda.csv",sep=',')
 
-data_hub<-read.csv("/home/joao/Desktop/hubdistance_neuro.csv",sep=',')
+#data_hub<-read.csv("/home/joao/Desktop/hubdistance_neuro.csv",sep=',')
 
 #############################################################################
 #DATA MANAGEMENT
@@ -60,33 +60,51 @@ write.csv(data_cast,"/home/joao/Desktop/deleteme2.csv")
 
 summary(data)
 
-with(data,by(tot_pop,SubRegion,ad.test))
+with(data,by(POP_TOTAL,uganda_p_4,ad.test))
 
-with(data,by(tot_pop,SubRegion,sum))/sum(data$tot_pop)
+with(data,by(POP_TOTAL,uganda_p_4,sum))/sum(data$POP_TOTAL)
 
-with(data,by(tot_urban,SubRegion,ad.test))
-with(data,by(tot_urban,SubRegion,summary))
+with(data,by(URBAN_POP,uganda_p_4,ad.test))
+with(data,by(URBAN_POP,uganda_p_4,summary))
 
-with(data,by(tot_rural,SubRegion,ad.test))
-with(data,by(tot_rural,SubRegion,ad.test))
+with(data,by(RURAL_POP,uganda_p_4,ad.test))
+with(data,by(RURAL_POP,uganda_p_4,ad.test))
 
-with(data,by(tot_prev,SubRegion,summary))
-with(data,by(km2_area,SubRegion,summary))
-with(data,by(km2_area,SubRegion,ad.test))
-with(data,by(km2_area,SubRegion,sd))
+with(data,by(USN_district,uganda_p_4,summary))
+with(data,by(area_district,uganda_p_4,summary))
+with(data,by(area_district,uganda_p_4,ad.test))
+with(data,by(area_district,uganda_p_4,sd))
 
-with(data,by(HubDist,SubRegion,summary))
-with(data,by(HubDist,SubRegion,ad.test))
-with(data,by(HubDist,SubRegion,sd))
+with(data,by(distance_district,uganda_p_4,summary))
+with(data,by(distance_district,uganda_p_4,ad.test))
+with(data,by(distance_district,uganda_p_4,sd))
 
 #####################################################################################
 #ANALYSIS OF VARIANCE
 #####################################################################################
 # One Way Anova (Completely Randomized Design)
 # Kruskal Wallis Test One Way Anova by Ranks 
-kruskal.test(HubDist ~ SubRegion, data=data) # where y1 is numeric and A is a factor
+kruskal.test(USN_district ~ uganda_p_4, data=data) # where y1 is numeric and A is a factor
 #post hoc
-with(data,posthoc.kruskal.nemenyi.test(x=km2_area, g=SubRegion, method="Tukey"))
+with(data,posthoc.kruskal.nemenyi.test(x=USN_district, g=uganda_p_4, method="Tukey"))
+
+# Kruskal Wallis Test One Way Anova by Ranks 
+kruskal.test(distance_district ~ uganda_p_4, data=data) # where y1 is numeric and A is a factor
+#post hoc
+with(data,posthoc.kruskal.nemenyi.test(x=distance_district, g=uganda_p_4, method="Tukey"))
+
+# One Way Anova (Completely Randomized Design)
+# Kruskal Wallis Test One Way Anova by Ranks 
+kruskal.test(area_district ~ uganda_p_4, data=data) # where y1 is numeric and A is a factor
+#post hoc
+with(data,posthoc.kruskal.nemenyi.test(x=area_district, g=uganda_p_4, method="Tukey"))
+
+# One Way Anova (Completely Randomized Design)
+# Kruskal Wallis Test One Way Anova by Ranks 
+kruskal.test(time_district ~ uganda_p_4, data=data) # where y1 is numeric and A is a factor
+#post hoc
+with(data,posthoc.kruskal.nemenyi.test(x=time_district, g=uganda_p_4, method="Tukey"))
+
 #####################################################################################
 #CORRELATIONS
 #####################################################################################
