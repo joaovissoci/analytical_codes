@@ -11,13 +11,13 @@ lapply(c("metafor","ggplot2","gridExtra" ,"psych", "irr", "nortest", "moments","
 #############################################################################
 #IMPORTING DATA AND RECODING
 #############################################################################
-
+#notebook
 data<-read.csv("/home/joao/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
 
 data_level3<-subset(data,data$level==3)
 
-
-data<-read.csv("/home/joao/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
+#Home PC
+data<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
 
 data_level3<-subset(data,data$level==3)
 
@@ -32,10 +32,12 @@ negative<-as.integer(with(data_level3,rowSums(data.frame(TN,FP))))
 #############################################################################
 
 # CIs
-metal_model<-with(data_level3,data.frame(TP,FP,TN,FN,study_name))
+metal_model<-with(data,data.frame(TP,FP,TN,FN,study_name))
 descrip<-madad(metal_model, type = "sens",plotci=TRUE,snames=study_name)
+descrip
 
-
+descriptors<-data.frame(descrip$sens$sens,descrip$sens$sens.ci,descrip$spec$spec,descrip$spec$spec.ci,descrip$negLR$negLR,descrip$negLR$negLR.ci,descrip$posLR$posLR,descrip$posLR$posLR.ci)
+colnames(descriptors)<-c("sens","sens_CIlower","sens_CIhigher","spec","spec_CIlower","spec_CIhigher","negLR","negLR_CIlower","negLR_CIhigher","posLR","posLR_lower","posLR_higher")
 #############################################################################
 #METANALYSIS - Snake Bites- Sensitivie and Specificity
 #############################################################################
