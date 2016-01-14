@@ -16,10 +16,16 @@ data<-read.csv("/home/joao/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_metanaly
 
 data_level3<-subset(data,data$level==3)
 
+data_outcome<-read.csv("/home/joao/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
+
 #Home PC
 data<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
 
 data_level3<-subset(data,data$level==3)
+
+data_level4<-data_level3[-c(9,10),]
+
+data_outcome<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
 
 #############################################################################
 #DATA MANEGEMENT
@@ -78,18 +84,20 @@ legend ("bottomleft", c("SROC", "conf.region"),lwd = c(2,1))
 #############################################################################
 #METANALYSIS - Time - LP positive and negative
 #############################################################################
-data1<-with(data_level3,data.frame(study_name,positive,TP,factor))
+positive<-as.integer(with(data_level4,rowSums(data.frame(TP,FN))))
+data1<-with(data_level4,data.frame(study_name,positive,TP,factor))
 data_sens<-subset(data1,factor=="time")
 m3<-metaprop(TP,positive,study_name, sm="PLN",data=data_sens)
 forest(m3)
 
+negative<-as.integer(with(data_level3,rowSums(data.frame(TN,FP))))
 data1<-with(data_level3,data.frame(study_name,negative,TN,factor))
 data_spec<-subset(data1,factor=="time")
 m3<-metaprop(TN,negative,study_name, sm="PLN",data=data_spec)
 metainf(m3)
 forest(m3)
 
-data_sb<-subset(data_level3,factor=="time")
+data_sb<-subset(data_level4,factor=="time")
 metal_model<-with(data_sb,data.frame(TP,FP,TN,FN,study_name))
 descrip<-madad(metal_model, type = "sens",plotci=TRUE,snames=study_name)
 unimeta_model<-madauni(data_sb,type="posLR",method="DSL")
@@ -99,6 +107,8 @@ summary(unimeta_model)
 #riate approach
 (fit.reitsma <- reitsma(metal_model))
 summary(fit.reitsma)
+mcmc_sum <- SummaryPts(fit.reitsma, n.iter = 10^3,FUN=list(sens))
+mcmc_sum <- SummaryPts(fit.reitsma, n.iter = 10^3,FUN=fpr)
 mcmc_sum <- SummaryPts(fit.reitsma, n.iter = 10^3,FUN=NULL)
 summary(mcmc_sum)
 plot<-plot(fit.reitsma, sroclwd = 2,
@@ -114,10 +124,11 @@ legend ("bottomleft", c("SROC", "conf.region"),lwd = c(2,1))
 #attach(data)
 
 names(data)
+data_outcome$names<-with(data_outcome,paste(study,year,sep=", "))
 
-data2<-with(data,data.frame(names,Positive,TP,Tesla))
-data2<-na.omit(data2)
-m3<-metaprop(TP,Positive,names, sm="PLN",data=data2,byvar=Tesla)
+data2<-with(data_outcome,data.frame(names,total,severe,outcome_cat))
+#data2<-na.omit(data2)
+m3<-metaprop(severe,total,names, sm="PLN",data=data_outcome,byvar=outcome_cat)
 forest(m3)
 
 data2<-with(data,data.frame(names,Negative,TN,Tesla))
