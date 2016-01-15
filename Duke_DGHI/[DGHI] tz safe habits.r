@@ -20,7 +20,7 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf","reshape2","mclust","foreign","survival","memisc","lme4","lmerTest","dplyr","qgraph"),library, character.only=T)
+lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments","GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf","reshape2","mclust","foreign","survival","memisc","lme4","lmerTest","dplyr","qgraph"),library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
 #devtools::install_github("jennybc/googlesheets")
@@ -62,6 +62,8 @@ reasons_danger<-with(data,data.frame(reason_trafficlane,reason_roadcond,reason_l
 demographics<-with(data,data.frame(age,gender,alternative_transportation,hours_alternative_transportation))
 
 work_experience<-with(data,data.frame(hours_work_onbodaboda,days_work_bodaboda,years_work_onbodaboda))
+
+work_experience$hours_work_week<-work_experience$days_work_bodaboda*work_experience$hours_work_onbodabod
 
 outcomes<-with(data,data.frame(rtc_involvement,injury,hospitalization,los,disability,out_of_work,nearmissmonth))
 outcomes$nearmissmonth<-car::recode(outcomes$nearmissmonth,"0=0;1:4=1;else=1")
@@ -105,6 +107,15 @@ ad.test(work_experience$days_work_bodaboda)
 #ci_func(work_experience$days_work_bodaboda,.95)
 by(work_experience$days_work_bodaboda,outcomes$rtc_involvement,describe)
 wilcox.test(work_experience$days_work_bodaboda~outcomes$rtc_involvement)
+
+# Hours of Work per Week 
+summary(work_experience$hours_work_week)
+sd(work_experience$hours_work_week)
+ad.test(work_experience$hours_work_week)
+#hist(work_experience$hours_work_week)
+#ci_func(work_experience$hours_work_week,.95)
+by(work_experience$hours_work_week,outcomes$rtc_involvement,describe)
+wilcox.test(work_experience$hours_work_week~outcomes$rtc_involvement)
 
 ##### OUTCOME MEASURES ###########
 
@@ -214,14 +225,6 @@ exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-
-
-
-
-
-
-
-
 ######################################################
 #PRINCIPAL COMPONENT ANALYSIS - From psych package - http://twt.lk/bdAQ or http://twt.lk/bdAR or http://twt.lk/bdAS
 ######################################################
@@ -247,10 +250,10 @@ fa.parallel(cor_auto(safe_habits_numeric),n.obs=36)
 fit <- principal(as.data.frame(safe_habits_numeric),4,rotate="varimax",scores=TRUE)
 summary(fit) # print variance accounted for 
 loadings(fit) # pc loadings 
-fit$scores
-predict(fit,safe_habits_numeric)
-safety_scores<-scoreItems(fit$weights,as.data.frame(safe_habits_numeric))$scores
-describe(scores$scores)
+safety_scores<-fit$scores
+#predict(fit,safe_habits_numeric)
+#safety_scores<-scoreItems(fit$weights,as.data.frame(safe_habits_numeric))$scores
+describe(safety_scores)
 #by(scores$scores,data_bea$risk_classification,summary)
 #wilcox.test(scores$scores[,1]~data_bea$risk_classification)
 
@@ -260,10 +263,10 @@ describe(scores$scores)
 fit <- principal(as.data.frame(work_experience),1,rotate="varimax",scores=TRUE)
 summary(fit) # print variance accounted for 
 loadings(fit) # pc loadings 
-fit$scores
-predict(fit,safe_habits_numeric)
-experience_scores<-scoreItems(fit$weights,as.data.frame(work_experience))$scores
-describe(scores$scores)
+experience_scores<-fit$scores
+#predict(fit,safe_habits_numeric)
+#experience_scores<-scoreItems(fit$weights,as.data.frame(work_experience))$scores
+describe(experience_scores)
 #by(scores$scores,data_bea$risk_classification,summary)
 #wilcox.test(scores$scores[,1]~data_bea$risk_classification)
 
@@ -308,6 +311,11 @@ exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
+
+######################################################
+#NETWORK ANALYSIS
+####################################################
+
 safety_use<-safety_scores[,1]
 helmet_condition<-safety_scores[,2]
 peer_safety<-safety_scores[,3]
@@ -322,27 +330,23 @@ network_data<-data.frame(safety_use,helmet_condition,peer_safety,safety_belief,o
 
 cor_data<-cor_auto(network_data)
 
-qsgG3<-qgraph(cor_data,layout="spring",esize=20,graph="cor",sampleSize=nrow(network_data),legend.cex = 0.6,cut = 0.1, maximum = 1, minimum = 0.1, esize = 20,vsize = 5, repulsion = 0.8,nodeNames=colnames(network_data),borders = TRUE)#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
-
-
-inj<-car::recode(outcomes$injury,"'Yes'=1;'No'=0;else=NA")
-inj<-as.numeric(as.character(inj))
-hosp<-car::recode(outcomes$hospitalization,"'Yes'=1;'No'=0;else=NA")
-hosp<-as.numeric(as.character(hosp))
-#exp=car::recode(work_experience$years_work_onbodaboda,"0:3=0;else=1")
-
-network_data<-data.frame(safety_use,helmet_condition,peer_safety,safety_belief,inj,exp,hosp)#,exp)
-network_data_2<-subset(network_data,outcome1==1)
-cor_data<-cor_auto(network_data_2)
-qsgG3<-qgraph(cor_data,layout="spring",esize=20,graph="cor",sampleSize=nrow(network_data_2),legend.cex = 0.6,cut = 0.2, maximum = 1, minimum = 0.1, esize = 20,vsize = 5,repulsion = 0.8,nodeNames=colnames(network_data_2),borders = TRUE)#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
-
-groups<-list(Infrastructure=c(1,2,3,6,8,17,18,25),AttitudesBehaviors=c(5,9,10,12,13,14,15,16,19,21,24,27),Education=c(7,11),Rules=c(4,20,22,23,26,28))
-varLabels<-c("Traffic Lane","Road Condition","Less Density","Traffic Regulation","Others Awareness","Walkways","Improve Training","Road Lighting","Reflector Vests","Helmet Usage","Education in Traffic","Respect of Rules","Carefulness","Alcohol Use","Respect for drivers","Reduce Speed","Road Signs","Wider Roads","Confident Driving","Inspect Licenses","Proper use of vehicle","Age limit for driving","Corruption","Dristracted Driving","Fines/Punishment","Risk Behavior","Vehicle condition","RR4")
-varNames<-c("IS1","IS2","IS3","RR1","AB1","IS4","ED1","IS5","AB2","AB3","ED2","AB4","AB5","AB6","AB7","AB8","IS7","IS8","AB9","RR2","AB10","RR3","RR4","AB11","IS8","RR5","AB12","RR6")
-normalize<-function(x){(x-min(x))/(max(x)-min(x))}
+groups<-list(Outcomes=c(5,6),Experience=c(7),Safety_Behavior=c(1,2,3,4))
+varLabels<-c("Safety use","Helmet condition","Peer safety","Safety belief","Road Traffic Crash","Near miss","Experience")
+#varNames<-c("SF1","SF2","SF3","SF4","OUT1","OUT2","EXP")
+#normalize<-function(x){(x-min(x))/(max(x)-min(x))}
 #mean_data<-sapply(as.data.frame(sapply(network_data,normalize)),mean)
-vSize<-normalize(colSums(reasons_danger))*7
+#vSize<-normalize(colSums(reasons_danger))*7
 
-cor_data<-cor_auto(reasons_danger)
-qsgG3<-qgraph(cor_data,layout="spring",esize=20,graph="glasso",sampleSize=nrow(network_data_2),legend.cex = 0.6,cut = 0.2, maximum = 1, minimum = 0.1, esize = 20,vsize = 5,repulsion = 0.8,nodeNames=colnames(network_data_2),borders = TRUE)#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
-PcorGRAPH<-qgraph(cor_data,layout="spring",vsize=vSize,esize=20,graph="glasso",sampleSize=nrow(network_data_2),legend.cex = 0.3,cut = 0.2, maximum = 1, minimum = 0.1, repulsion = 0.8,groups=groups,gray=FALSE,color=c("steelblue","gold"),legend=TRUE, nodeNames=varLabels,labels=varNames)#,layout=graph_layout
+PcorGRAPH<-qgraph(cor_data,layout="spring",graph="pcor",sampleSize=nrow(network_data),legend.cex = 0.6,cut = 0.1, maximum = 0.4, minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8,labels=varLabels,borders = FALSE,legend=TRUE,groups=groups,color=c("brown1","gold3","royalblue"),label.scale=FALSE,label.cex=2,edge.labels=TRUE,posCol="black",negCol="gray50")#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
+
+blabla<-function(x){
+	as.numeric(as.character(x))
+}
+
+blabla2<-lapply(safe_habits,blabla)
+
+network_data<-data.frame(work_experience,outcome1,outcome2,blabla2)#,hours)
+
+cor_data<-cor_auto(network_data)
+
+PcorGRAPH<-qgraph(cor_data,layout="spring",graph="glasso",sampleSize=nrow(network_data),legend.cex = 0.6,cut = 0.1, maximum = 0.4, minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8)#,labels=varLabels,borders = FALSE,legend=TRUE,groups=groups,color=c("brown1","gold3","royalblue"),label.scale=FALSE,label.cex=2,edge.labels=TRUE,posCol="black",negCol="gray50")#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
