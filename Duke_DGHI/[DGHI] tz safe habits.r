@@ -41,18 +41,18 @@ data<-read.csv("/home/joao/Dropbox/datasets/DGHI/safe_habits_tz/tz_safet_habits_
 safe_habits<-with(data,data.frame(safety_helmet_use,safety_helmet_use_colleague,safety_risk_driving,safety_headlight_use_day,safety_headlight_use_night,safety_purchase_helmet_after_use,safety_buckle_helmet,safety_belief_helmet_reduce_risk,safety_belief_helmetstraps_reduce_risk,helmet_cracks,helmet_scratch,helmet_broken_chin,helmet_face_shield,helmet_obscure_face_shield,helmet_fit))
 safe_habits$safety_helmet_use<-car::recode(safe_habits$safety_helmet_use,"'Always'=1;else=0")
 safe_habits$safety_helmet_use_colleague<-car::recode(safe_habits$safety_helmet_use_colleague,"'Always'=1;'Sometimes'=1;'Often'=1;else=0")
-safe_habits$safety_risk_driving<-car::recode(data$safety_risk_driving,"'Always'=1;'Sometimes'=1;'Often'=1;else=0")
+safe_habits$safety_risk_driving<-car::recode(data$safety_risk_driving,"'Always'=0;'Sometimes'=0;'Often'=0;else=1")
 safe_habits$safety_headlight_use_day<-car::recode(safe_habits$safety_headlight_use_day,"'Always'=1;else=0")
 safe_habits$safety_headlight_use_night<-car::recode(safe_habits$safety_headlight_use_night,"'Always'=1;else=0")
 safe_habits$safety_purchase_helmet_after_use<-car::recode(safe_habits$safety_purchase_helmet_after_use,"'Always'=1;else=0")
 safe_habits$safety_buckle_helmet<-car::recode(safe_habits$safety_buckle_helmet,"'Always'=1;else=0")
 safe_habits$safety_belief_helmet_reduce_risk<-car::recode(safe_habits$safety_belief_helmet_reduce_risk,"'Agree'=1;'Strongly Agree'=1;else=0")
 safe_habits$safety_belief_helmetstraps_reduce_risk<-car::recode(safe_habits$safety_belief_helmetstraps_reduce_risk,"'Agree'=1;'Strongly Agree'=1;else=0")
-safe_habits$helmet_cracks<-car::recode(safe_habits$helmet_cracks,"'Yes'=1;'No'=0;else=NA")
-safe_habits$helmet_scratch<-car::recode(safe_habits$helmet_scratch,"'Yes'=1;'No'=0;else=NA")
-safe_habits$helmet_broken_chin<-car::recode(safe_habits$helmet_broken_chin,"'Yes'=1;'No'=0;else=NA")
+safe_habits$helmet_cracks<-car::recode(safe_habits$helmet_cracks,"'Yes'=0;'No'=1;else=NA")
+safe_habits$helmet_scratch<-car::recode(safe_habits$helmet_scratch,"'Yes'=0;'No'=1;else=NA")
+safe_habits$helmet_broken_chin<-car::recode(safe_habits$helmet_broken_chin,"'Yes'=0;'No'=1;else=NA")
 safe_habits$helmet_face_shield<-car::recode(safe_habits$helmet_face_shield,"'Yes'=1;'No'=0;else=NA")
-safe_habits$helmet_obscure_face_shield<-car::recode(safe_habits$helmet_obscure_face_shield,"'Yes'=1;'No'=0;else=NA")
+safe_habits$helmet_obscure_face_shield<-car::recode(safe_habits$helmet_obscure_face_shield,"'Yes'=0;'No'=1;else=NA")
 safe_habits$helmet_fit<-car::recode(safe_habits$helmet_fit,"'Yes'=1;'No'=0;else=NA")
 
 safe_habits_numeric <-lapply(safe_habits,function(x) as.numeric(as.character(x)))
@@ -350,3 +350,12 @@ network_data<-data.frame(work_experience,outcome1,outcome2,blabla2)#,hours)
 cor_data<-cor_auto(network_data)
 
 PcorGRAPH<-qgraph(cor_data,layout="spring",graph="glasso",sampleSize=nrow(network_data),legend.cex = 0.6,cut = 0.1, maximum = 0.4, minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8)#,labels=varLabels,borders = FALSE,legend=TRUE,groups=groups,color=c("brown1","gold3","royalblue"),label.scale=FALSE,label.cex=2,edge.labels=TRUE,posCol="black",negCol="gray50")#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
+
+# Para identificar no qgraph o resultado do algortimo de comunidade, criar objeto de "groups"
+# com o resultado de wcG1
+predictors<-centrality(PcorGRAPH)$ShortestPaths[,5]
+predictors
+#centralityPlot(qsgG3)
+
+predictors<-centrality(PcorGRAPH)$ShortestPaths[,6]
+predictors
