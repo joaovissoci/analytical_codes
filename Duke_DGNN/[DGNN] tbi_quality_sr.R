@@ -18,11 +18,7 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArotation","nFactors",
-         "boot","psy", "car","vcd", "gridExtra","mi",
-         "VIM","miP","epicalc","gdata","mclust","reshape","repmis",
-         "memisc"), 
-library, character.only=T)
+lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments","GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc","gdata","mclust","reshape","repmis","memisc"), library, character.only=T)
 #####################################################################################
 #IMPORTING DATA
 #####################################################################################
@@ -41,10 +37,7 @@ library, character.only=T)
 #data <- as.data.set(spss.system.file('/Users/joaovissoci/Desktop/dados_sem_leaderspihp_profile.sav'))
 #data<-as.data.frame(data)
 
-data_entry <- repmis::source_DropboxData("[DGHI] AGREE_SUMMARY_SCORES.csv",
-                                  "0ww7uuvzdbgufq8",
-                                  sep = ",",
-                              header = TRUE)
+data_entry <- repmis::source_DropboxData("[DGHI] AGREE_SUMMARY_SCORES.csv","0ww7uuvzdbgufq8",sep = ",",header = TRUE)
 
 #####################################################################################
 #DATA MANAGEMENT
@@ -79,12 +72,19 @@ data_new$value<-data_plot$value
 data_new<-as.data.frame(data_new)
 
 #tiff("C:\\Users\\Joao\\Desktop\\tbi_try7.tiff", width = 700, height = 500,compression = 'lzw')
-tiff("/Users/rpietro/Desktop/tbi_cpG_quality.tiff", width = 1000, height = 500,compression = 'lzw')
-qplot(value, reorder(item,value), data=data_new, fill=value, size=value, colour=value) + 
- facet_grid(~score, scales="free_y", space = "free") +
-  scale_size_area()+  xlab("AGREE Score") + ylab ("")+ theme(legend.position = "none")
-dev.off()
+#tiff("/Users/rpietro/Desktop/tbi_cpG_quality.tiff", width = 1000, height = 500,compression = 'lzw')
+#qplot(value, reorder(item,value), data=data_new, fill=value, size=value,colour=value) + facet_grid(~score, scales="free_y", space = "free") + scale_size_area()+  xlab("AGREE Score") + ylab ("")+ theme(legend.position = "none")
+#dev.off()
 
+#teste
+
+library(ggplot2) #usar para carregar o pacote
+library(reshape2)
+#cor_data<-melt(data,by="State")
+data_plot$value2<-round(data_plot$value,digits=2)
+
+# heatmap by regions
+ggplot(data_plot, aes(y=author, x=variable, fill=value2)) + geom_tile() + geom_text(aes(y=author, x=variable, label=value2)) + scale_fill_gradient2( limits=c(20,100))# + facet_grid(regions ~ .,scales="free_y",space="free") 
 
 
 
