@@ -1,14 +1,14 @@
-######################################################################################
+#############################################################################
 #leadership_profiles.R is licensed under a Creative Commons Attribution - Non commercial 3.0 Unported License. see full license at the end of this file.
-#######################################################################################
+##############################################################################
 #this script follows a combination of the guidelines proposed by Hadley Wickham http://goo.gl/c04kq as well as using the formatR package http://goo.gl/ri6ky
 #if this is the first time you are conducting an analysis using this protocol, please watch http://goo.gl/DajIN while following step by step
 
 #link to manuscript
 
-#####################################################################################
+#############################################################################
 #SETTING ENVIRONMENT
-#####################################################################################
+#############################################################################
  #install.packages("VIM")
  #install.packages("VIMGUI")
  #install.packages("miP")
@@ -18,10 +18,13 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments","GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc","gdata","mclust","reshape","repmis","memisc"), library, character.only=T)
-#####################################################################################
+lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments","GPArotation",
+  "nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc",
+  "gdata","mclust","reshape","repmis","memisc"), 
+library, character.only=T)
+#############################################################################
 #IMPORTING DATA
-#####################################################################################
+#############################################################################
 
 #uploading data ---------------------------------------------------------------------
 #Load the data set.
@@ -37,7 +40,9 @@ lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments","GPArotation","nF
 #data <- as.data.set(spss.system.file('/Users/joaovissoci/Desktop/dados_sem_leaderspihp_profile.sav'))
 #data<-as.data.frame(data)
 
-data_entry <- repmis::source_DropboxData("[DGHI] AGREE_SUMMARY_SCORES.csv","0ww7uuvzdbgufq8",sep = ",",header = TRUE)
+data_entry <- repmis::source_DropboxData("[DGHI] AGREE_SUMMARY_SCORES.csv","0ww7uuvzdbgufq8",sephttps://drive.google.com/open?id=0B4TReYGK49h_WmRPbDNUc1dEcDg = ",",header = TRUE)
+
+data2<-read.csv("/home/joao/Dropbox/datasets/DGNN/TBI_quality_SR/data_barplot_AGREE.csv",sep=",")
 
 #####################################################################################
 #DATA MANAGEMENT
@@ -50,14 +55,46 @@ data$author<-apply(cbind(as.character(data_entry$Name), as.character(data_entry$
 #data<-data[-15,]
 
 #####################################################################################
-#Descriptives
+#DescriptivesE as férias
 #####################################################################################
 psych::describe(data)
 
 ############################################################################
 #Figure 1. Plot 1
 ############################################################################
-data_plot<-melt(data,id=c("author"))
+#tiff("/Users/rpietro/Desktop/tbi_cpG_quality.tiff", width = 1000, height = 500,compression = 'lzw')
+#qplot(value, reorder(item,value), data=data_new, fill=value, size=value,colour=value) + facet_grid(~score, scales="free_y", space = "free") + scale_size_area()+  xlab("AGREE Score") + ylab ("")+ theme(legend.position = "none")
+
+
+#teste
+library(ggplot2) #usar para carregar o pacote
+library(reshape2)
+#cor_data<-melt(data,by="State")
+data_plot$value2<-round(data_plot$value,digits=2)
+
+tiff("/home/joao/Desktop/tbi_try7.tiff", width = 700, height = 500,compression = 'lzw')
+# heatmap by regions
+ggplot(data_plot, aes(y=author, x=variable)) + geom_tile(fill=data_plot$color) + geom_text(aes(y=author, x=variable, label=value2, size=200)) 
+avseq <- ggplot(data_plot, aes(y=author, x=variable)) + geom_tile(fill=data_plot$color) + geom_text(aes(y=author, x=variable, label=value2, size=200)) + theme_minimal() + xlab(label="Domains") + ylab(label="CPG")
+levels<-c("SIGN, 2009","NZ, 2006","NICE, 2007","SCN, 2013","ACEP, 2009","NIHCE, 2007","BTF, 2012","NSW MoH, 2011","BTF/AANS, 2000","BTF/AANS, 1995","AAP/AAFP, 1999","AAP, 2001","BTF, 2000","RHSA, 2008","CMA, 2007","ACEP, 2002","BTF, 2007","EAST, 2002","Taiwan, 2009","EFNS, 2001","EFNS, 2002","JSN, 2006","EBIC, 1997","EAST, 2012","SINch/SIAARTI, 2000","CHOP, 2003","USP/BSN, 2001","ESICM, 1998","SINch, 1996")
+revLevels<-rev(levels)
+avseq + scale_y_discrete(limits=revLevels)
+summary (data_plot)
+data_plot$color<-NULL
+data_plot$color[data_plot$value >= 28.30 & data_plot$value < 55.88]="gray90"
+data_plot$color[data_plot$value >= 55.88 & data_plot$value < 69.75]="gray75"
+data_plot$color[data_plot$value >= 69.75 & data_plot$value < 81.97]="gray50"
+data_plot$color[data_plot$value >= 81.97]="gray40"
+dev.off()
+
+data_plot$color<-NULL
+data_plot$color[data_plot$value <= 40] ="white"
+data_plot$color[data_plot$value > 40 & data_plot$value <= 80]="blue"
+data_plot$color[data_plot$value > 80 ]="black"
+
+data_barplot<-remove.vars(data2,c("fi","A1","A2","A3","A4","A5","TOTAL_SUM","OA_MIN","OA_MAX"))
+
+data_plot<-melt(data_barplot,id=c("author"))
 #data$item<-NULL
 #data$item<-car::recode(data$variable,"'internal_consistency'='reliability';'test_retest'='reliability';'content_validity'='content_validity';'structural_validity'='structural_validity';'discriminant_validity'='construct_validity';'convergent_validity'='construct_validity';'predictive_validity'='construct_validity';'responsiveness'='responsiveness'")
 #data$family<-c(rep(c('specific'),100),rep(c('nonspecific'),100))
@@ -66,96 +103,11 @@ data_plot$family<-c("Guidelines")
 
 data_new<-NULL
 data_new$family<-data_plot$family
-data_new$item<-data_plot$author
+data_new$item<-data_plot$Name
 data_new$score<-data_plot$variable
 data_new$value<-data_plot$value
 data_new<-as.data.frame(data_new)
 
-#tiff("C:\\Users\\Joao\\Desktop\\tbi_try7.tiff", width = 700, height = 500,compression = 'lzw')
-#tiff("/Users/rpietro/Desktop/tbi_cpG_quality.tiff", width = 1000, height = 500,compression = 'lzw')
-#qplot(value, reorder(item,value), data=data_new, fill=value, size=value,colour=value) + facet_grid(~score, scales="free_y", space = "free") + scale_size_area()+  xlab("AGREE Score") + ylab ("")+ theme(legend.position = "none")
-#dev.off()
-
-#teste
-
-library(ggplot2) #usar para carregar o pacote
-library(reshape2)
-#cor_data<-melt(data,by="State")
-data_plot$value2<-round(data_plot$value,digits=2)
-
-# heatmap by regions
-ggplot(data_plot, aes(y=author, x=variable, fill=value2)) + geom_tile() + geom_text(aes(y=author, x=variable, label=value2)) + scale_fill_gradient2( limits=c(20,100))# + facet_grid(regions ~ .,scales="free_y",space="free") 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 tiff("C:\\Users\\Joao\\Desktop\\tbi_try1.tiff", width = 700, height = 500,compression = 'lzw')
 polarBarChart(data_new,  familyLabel=TRUE, direction="inwards", binSize=0.3, spaceBar=0, spaceItem=0.3, spaceFamily=1.0, innerRadius=0.1,nguides=5,circleProportion=0.8,legLabels=c("D1","D2","D3","D4","D5","D6","Avarage"),legTitle="AGREE Domains")
 dev.off()
-
-tiff("C:\\Users\\Joao\\Desktop\\tbi_try2.tiff", width = 700, height = 500,compression = 'lzw')
-#polarBarChart_stacked(data_new)
-polarHistogram(data_new) + theme(
-      panel.background=element_blank(),
-      axis.title.x=element_blank(),
-      axis.title.y=element_blank(),
-      panel.grid.major=element_blank(),
-      panel.grid.minor=element_blank(),
-      axis.text.x=element_blank(),
-      axis.text.y=element_blank(),
-      axis.ticks=element_blank()
-    )
-dev.off()
-###########################################################
-#Heatmap
-###########################################################
-#attach(qualitydata)
-#Generate ggplot graph fro quality data information
-tiff("C:\\Users\\Joao\\Desktop\\tbi_try3.tiff", width = 700, height = 500,compression = 'lzw')
-ggplot(data_new, aes(score, item)) + geom_tile(aes(fill = value)) + scale_fill_continuous(name="AGREE Score", limits=c(28.30,100),low='white', high="black") +
- theme(axis.text.x = element_text(hjust = 0, colour = "black",size=14, angle=-30),
-        axis.text.y = element_text(colour = "black",size=14),
-        axis.title.x = element_text(face="bold",size=14),
-        axis.title.y = element_text(face="bold", size=14))+theme_bw()#+
-dev.off()
-
-#scale_x_discrete(breaks=levels(qualitydata$variable),labels=c("Item generation","Population description","Population size","Questionnaire description","Scaling and scoring","Period recall","Item reduction","Internal consistency","Test-retest","Content validity","Structural validity","Discriminant validity","Convergent validity","Predictive validity","Responsiveness"),name="Psychometric Properties")+
-#facet_grid(. ~ am)
-
-
-tiff("C:\\Users\\Joao\\Desktop\\tbi_try4.tiff", width = 700, height = 500,compression = 'lzw')
-qplot(value, item, data=data_new, fill=value, size=value, colour=value) + 
- facet_grid(~score, scales="free_y", space = "free") +
-  scale_size_area()+  xlab("AGREE Score") + ylab ("")+ theme(legend.position = "none") +theme_bw(
- dev.off()
-
-
-
-
-data_graph<-t(data[-1])
-colnames(data_graph)<-data$GUIDELINE
-graph<-cor(data_graph)
-
-tiff("C:\\Users\\Joao\\Desktop\\tbi_try5.tiff", width = 700, height = 500,compression = 'lzw')
-network_meta <- qgraph(graph,layout = "spring",minimum=0.5,cut=1.0,vsize=(data$AVARAGE/12)) #,label.scale=FALSE,label.cex = label.cex,vsize=size_edges,color=color,shape=shape,greyscale=T)
-dev.off()
-#legend(0.8,-0.8, bty="n",c("Methodological Issues","Clinical Issues","Side-Effects"),cex=1.2,fill=c("steelblue","red","lightgreen"))
-
-tiff("C:\\Users\\Joao\\Desktop\\tbi_try6.tiff", width = 700, height = 1200,compression = 'lzw')
-ggplot(data =  data_new, aes(x = score, y = item)) +
-  geom_tile(aes(fill = value), colour = "white") +
-  geom_text(aes(label = sprintf("%1.2f",value)), vjust = 1) +
-  scale_fill_gradient(low = "white", high = "steelblue") +theme_bw()
-dev.off()
-
-
