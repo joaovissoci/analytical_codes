@@ -1,30 +1,107 @@
-https://cran.r-project.org/web/packages/caret/vignettes/caret.pdf
-https://www.r-project.org/nosvn/conferences/useR-2013/Tutorials/kuhn/user_caret_2up.pdf
-http://machinelearningmastery.com/caret-r-package-for-applied-predictive-modeling/
-
+#############################################################################
+#CARET PACKEGE FOR PREDICTIVE MODELING TEMPLATE
+#############################################################################
+#
+#https://cran.r-project.org/web/packages/caret/vignettes/caret.pdf
+#https://www.r-project.org/nosvn/conferences/useR-2013/Tutorials/kuhn/user_caret_2up.pdf
+#http://machinelearningmastery.com/caret-r-package-for-applied-predictive-modeling/
+#List of models supported by caret http://topepo.github.io/caret/modelList.html
+#http://topepo.github.io/caret/index.html
+#
+#############################################################################
+#SETTING ENVIRONMENT
+#############################################################################
+#PASCKAGES INSTALLATION CODES
 install.packages("caret")
 install.packages("caretNWS")
 install.packages("mlbench")
 install.packages("QSARdata")
 
+#PACKAGES LOADING CODE
+#Load packages neededz for the analysis
+#library(Hmisc)
 
-library(caret)
-library(caretNWS)
-library(mlbench)
-library(QSARdata)
+#All packages must be installes with install.packages() function
+lapply(c("caret","caretNWS","mlbench","QSARdata"), 
+library, character.only=T)
 
+#############################################################################
+#IMPORTING DATA
+#############################################################################
+#LOADING DATA FROM A .CSV FILE
+#data<-read.csv("/Users/rpietro/Desktop/MDD_BIPD_Baseline.csv",sep=",")
+#information between " " are the path to the directory in your computer where the data is stored
 
-############################################
+#Import data from Dropbox, in .csv format
+#Instructions here http://goo.gl/Ofa7gQ
+
+data(Mutagen)
+#object with the vector for the outcome
+mutagen=Mutagen_Outcome
+
+#object with the set of vector with predictors
+descr=Mutagen_Dragon
+
+############################################################################
+# Exploratory data analysis
+############################################################################
+library(AppliedPredictiveModeling)
+transparentTheme(trans = .4)
+
+# Frequency Plots
+
+#Correlation plots
+featurePlot(x = iris[, 1:4],
+            y = iris$Species,
+            plot = "ellipse",
+            ## Add a key at the top
+            auto.key = list(columns = 3))
+
+#Density plots
+transparentTheme(trans = .9)
+featurePlot(x = iris[, 1:4],
+                  y = iris$Species,
+                  plot = "density",
+                  ## Pass in options to xyplot() to 
+                  ## make it prettier
+                  scales = list(x = list(relation="free"),
+                                y = list(relation="free")),
+                  adjust = 1.5,
+                  pch = "|",
+                  layout = c(4, 1),
+                  auto.key = list(columns = 3))
+
+#boxplots
+featurePlot(x = iris[, 1:4],
+                  y = iris$Species,
+                  plot = "box",
+                  ## Pass in options to bwplot() 
+                  scales = list(y = list(relation="free"),
+                                x = list(rot = 90)),
+                  layout = c(4,1 ),
+                  auto.key = list(columns = 2))
+
+#create dummy variables
+library(earth)
+data(etitanic)
+head(model.matrix(survived ~ ., data = etitanic))
+dummies <- dummyVars(survived ~ ., data = etitanic)
+head(predict(dummies, newdata = etitanic))
+
+#Near-Zero variance
+data(mdrr)
+data.frame(table(mdrrDescr$nR11))
+nzv <- nearZeroVar(mdrrDescr, saveMetrics= TRUE)
+nzv[nzv$nzv,][1:10,]
+filteredDescr <- mdrrDescr[, -nzv]
+
+############################################################################
 # Data preparation
-############################################
+############################################################################
 
 #### Create partitioning datasets
 # Training set  will be used to performed all modeling
 # Test set will be used to test model's performance - accuracy, model comparison
-
-data(Mutagen)
-mutagen=Mutagen_Outcome
-descr=Mutagen_Dragon
 
 # set a random number to start the randomization
 set.seed(107)
@@ -52,14 +129,11 @@ which(zv)
 trainDescr = trainDescr[ ,!zv]
 testDescr = testDescr[ ,!zv]
 
-############################################
+#For time series, see http://topepo.github.io/caret/splitting.html
+
+############################################################################
 # Pre-Processing
-############################################
-
-############################################
-# Data preparation
-############################################
-
+############################################################################
 ##### Multicolinearity assessment
 
 ncol(trainDescr) #number of columns in the dataset
@@ -89,9 +163,14 @@ xTrans <- preProcess(trainDescr) #dfine pre-processing methods for each variable
 trainDescr <- predict(xTrans, trainDescr)
 testDescr <- predict(xTrans, testDescr)
 
-############################################
+#finding linear combos
+comboInfo <- findLinearCombos(ltfrDesign)
+comboInfo
+ltfrDesign[, -comboInfo$remove]
+
+############################################################################
 # Tuning training data set
-############################################
+############################################################################
 
 #For the train function, the possible resampling methods are: bootstrapping, 
 #k-fold cross- validation, leave-one-out cross-validation, and leave-group-
@@ -150,9 +229,9 @@ resampleHist(gbmFit)
 #default, 25 iterations of the bootstrap are used as the resampling scheme. #In this case, the number of iterations was increased to 200 due to the large
 #number of samples in the training set.
 
-############################################
+############################################################################
 # Prediction of new samples
-############################################
+############################################################################
 
 #predict function will predict the outcome based on the set of descriptors
 # the arguments are initially the final tunned model (svmFit) and the data to be predicted (e.g. test data)
@@ -180,9 +259,9 @@ testX = testDescr, testY = testClass)
 testProbs <- subset(probValues, dataType == "Test")
 plotClassProbs(testProbs) # for classification models
 
-############################################
+############################################################################
 # Prediction Performance
-############################################
+############################################################################
 
 #### Performance measures
 #describe the performance of classification models
@@ -196,6 +275,10 @@ svmProb <- subset(testProbs, model == "svmRadial")
 svmROC <- roc(svmProb$mutagen, svmProb$obs)
 aucRoc(vmROC)
 
+#summmary of all performance metrics
+multiClassSummary(test_results, lev = levels(test_results$obs))
+
+
 #### Variable Importance
 # works with the following object classes: lm, mars, earth, randomForest, 
 #gbm, mvr (in the pls package), rpart, RandomForest (from the party package),
@@ -205,11 +288,14 @@ gbmImp <- varImp(gbmFit, scale = FALSE)
 gbmImp
 plot(varImp(gbmFit), top = 20)
 
-############################################
+############################################################################
 # Paralell Processing exmaple
-############################################
+############################################################################
 #caretNWS method
 
 svmFit <- trainNWS(trainDescr, trainClass,
 method = "svmRadial", tuneLength = 5, scaled = FALSE)
 
+############################################################################
+# END
+############################################################################
