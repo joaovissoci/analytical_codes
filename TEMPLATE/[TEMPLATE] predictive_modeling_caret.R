@@ -28,12 +28,6 @@ library, character.only=T)
 #############################################################################
 #IMPORTING DATA
 #############################################################################
-#LOADING DATA FROM A .CSV FILE
-#data<-read.csv("/Users/rpietro/Desktop/MDD_BIPD_Baseline.csv",sep=",")
-#information between " " are the path to the directory in your computer where the data is stored
-
-#Import data from Dropbox, in .csv format
-#Instructions here http://goo.gl/Ofa7gQ
 
 data(Mutagen)
 #object with the vector for the outcome
@@ -201,14 +195,14 @@ svmFit$finalModel
 # You can also pre-process within the training function
 ## Center and scale the predictors for the training
 ## set and all future samples.
-preProc = c("center", "scale"))
+#preProc = c("center", "scale"))
 
-plsFit <- train(Class ~ .,
-data = training,
-method = "pls",
-tuneLength = 15,
-trControl = ctrl,
-preProc = c("center", "scale"))
+#plsFit <- train(Class ~ .,
+#data = training,
+#method = "pls",
+#tuneLength = 15,
+#trControl = ctrl,
+#preProc = c("center", "scale"))
 
 # Example with the bagged tree method
 # here we are controling for size of tree, iterations and learning rate
@@ -236,8 +230,8 @@ resampleHist(gbmFit)
 #predict function will predict the outcome based on the set of descriptors
 # the arguments are initially the final tunned model (svmFit) and the data to be predicted (e.g. test data)
 #code below will provide the predicted outcome for each obsevation in the test set. Here we are returning only the 5 initial observations
-predict(svmFit$finalModel, newdata = testDescr)[1:5]
-predict.train(svmFit$finalModel, newdata = testDescr, type = "prob")[1:5]
+predict(svmFit, newdata = testDescr)[1:5]
+predict.train(svmFit, newdata = testDescr, type = "prob")[1:5]
 
 
 #to predict by a set of different models, create a list with the objects for each model fitted
@@ -251,12 +245,14 @@ lapply(testPred, function(x) x[1:5] #apply prediction all together and return as
 predValues <- extractPrediction(models,
 testX = testDescr, testY = testClass)
 testValues <- subset(predValues, dataType == "Test")
-works with the following object classes: lm, mars, earth,
-randomForest, gbm, mvr (in the pls package), rpart, RandomForest (from the party package),
-pamrtrained, bagEarth, bagFDA, classbagg and regbagg
+#works with the following object classes: lm, mars, earth,
+#randomForest, gbm, mvr (in the pls package), rpart, RandomForest (from the 
+#party package),pamrtrained, bagEarth, bagFDA, classbagg and regbagg
+
 probValues <- extractProb(models,
 testX = testDescr, testY = testClass)
 testProbs <- subset(probValues, dataType == "Test")
+
 plotClassProbs(testProbs) # for classification models
 
 ############################################################################
