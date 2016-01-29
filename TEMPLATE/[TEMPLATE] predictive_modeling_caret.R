@@ -13,16 +13,18 @@
 #############################################################################
 #PASCKAGES INSTALLATION CODES
 install.packages("caret")
-install.packages("caretNWS")
+#install.packages("caretNWS")
 install.packages("mlbench")
 install.packages("QSARdata")
+install.packages("AppliedPredictiveModeling")
+
 
 #PACKAGES LOADING CODE
 #Load packages neededz for the analysis
 #library(Hmisc)
 
 #All packages must be installes with install.packages() function
-lapply(c("caret","caretNWS","mlbench","QSARdata"), 
+lapply(c("caret","mlbench","QSARdata","AppliedPredictiveModeling"), 
 library, character.only=T)
 
 #############################################################################
@@ -39,35 +41,34 @@ descr=Mutagen_Dragon
 ############################################################################
 # Exploratory data analysis
 ############################################################################
-library(AppliedPredictiveModeling)
-transparentTheme(trans = .4)
+transparentTheme(trans = .4) #from AppliedPredictmodeling package
 
 # Frequency Plots
 
 #Correlation plots
-featurePlot(x = iris[, 1:4],
-            y = iris$Species,
+featurePlot(x = descr[,1:10],
+            y = mutagen,
             plot = "ellipse",
             ## Add a key at the top
-            auto.key = list(columns = 3))
+            auto.key = list(text = levels(mutagen),columns = 3))
 
 #Density plots
-transparentTheme(trans = .9)
-featurePlot(x = iris[, 1:4],
-                  y = iris$Species,
-                  plot = "density",
-                  ## Pass in options to xyplot() to 
-                  ## make it prettier
-                  scales = list(x = list(relation="free"),
-                                y = list(relation="free")),
-                  adjust = 1.5,
-                  pch = "|",
-                  layout = c(4, 1),
-                  auto.key = list(columns = 3))
+#transparentTheme(trans = .9)
+#featurePlot(x = iris[, 1:4],
+#                  y = iris$Species,
+#                  plot = "density",
+#                  ## Pass in options to xyplot() to 
+#                  ## make it prettier
+#                  scales = list(x = list(relation="free"),
+#                                y = list(relation="free")),
+#                  adjust = 1.5,
+#                  pch = "|",
+#                  layout = c(4, 1),
+#                  auto.key = list(columns = 3))
 
 #boxplots
-featurePlot(x = iris[, 1:4],
-                  y = iris$Species,
+featurePlot(x = descr[,1:10],
+                  y = mutagen,
                   plot = "box",
                   ## Pass in options to bwplot() 
                   scales = list(y = list(relation="free"),
@@ -158,9 +159,9 @@ trainDescr <- predict(xTrans, trainDescr)
 testDescr <- predict(xTrans, testDescr)
 
 #finding linear combos
-comboInfo <- findLinearCombos(ltfrDesign)
+comboInfo <- findLinearCombos(trainDescr)
 comboInfo
-ltfrDesign[, -comboInfo$remove]
+trainDescr[, -comboInfo$remove]
 
 ############################################################################
 # Tuning training data set
