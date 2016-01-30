@@ -6,6 +6,13 @@ Within this proposal we intend to build a Big Clinical Data structure to be used
 
 ### Settings and population
 
+**Aline, por favor colocar uma descrição das UBSs e da poppulação alvo (Diabetes)**
+
+* numero da populaçao
+* local de abragência
+* estrutura da UBS
+* estrutura tecnoogica (internet, computadores, tablets)
+
 ### Virtual Cloud Reposistory. 
 
 The role of a cloud repository is to store all the data so that it can accessed by researchers during their projects. All anonymized data will be stored under a cloud environment hosted within Duke University under infrastructure provided by [...]. When working on international collaboration, we will anonymize all data so that individual patients cannot be identified (more details in the following section about data de-identification) and store the data under the Amazon Elastic Compute Cloud (Amazon EC2) using a Linux Micro Instance. This repository will contain a MySQL database server where the database is available in a normalized format. This database will be directly updated through a data collection system (REDCAp), which updates the system in real time. The database will be connected to a D2RQ Platform (version 0.8.1), which converts the relational structure into a RDF (Resource Description Framework) format and an accompanying SPARQL (a recursive acronym for SPARQL Protocol and RDF Query Language, http://www.w3.org/TR/rdf-sparql-query/) endpoint. This endpoint allows for direct data consumption through queries and connection with other data sets from the Linked Open Data (LOD) cloud (http://linkeddata.org/).
@@ -15,6 +22,12 @@ The cloud will also contain an instance of the R statistical language (version 3
 ### Data collection and management
 
 #### Data collection tools
+
+**Aline, por favor adicione uma breve descrição das ferramentas que usamos para criar o formulári de coleta de dados**
+
+* falar dos dados da ficha A
+* falar da classificacao de risco individual
+* falar da classificação de risco familiar
 
 #### Data de-identification. 
 
@@ -49,3 +62,19 @@ Predictive modeling techniques are used to assess, monitor and control environme
 After defining the best predicting variables and as a form of external validity, we will model the causal structure of the data applying Bayesian Networks (BN) algorithms. BN are Directed Acyclic Graphs that allows us to explore the relationships between the variables. In this graph analysis each node represents a variable and each edges represent the conditional dependency relationship between two nodes (variables), which can be calculated by probability distributions or even logistic regression (Nielsen & Jensen, 2007). To build the model, we used a score-based algorithm for gaussian data called Hill Climbing (hc) available within the “bnlearn” package (Scutari, 2015) for R Language (ref). This approach executes a greedy search technique (take decisions based on the best available information, not worrying about the future effects of such decisions) on the space of the directed graphs (Margaritis, 2003). During the execution of score-based algorithms, each node receives a score (network score), which will reflect the quality of fit. Then the algorithm tries to maximize this score in a iterative way in order to achieve the structure whose score is higher (Scutari, 2015). As part of this process, the algorithm need to learn the Markov Blankets for each variable which consists in discovering of all dependency relationships that best fit the model (parent and children variables). In summary, we consider all the variables that can provide information about the variable that represents the node in question (Tsamardinos, 2003). The validation of the quality of BN will be performed by bootstrap resampling (Sachs et al. 2005), learning 500 networks structures and evaluating arc that appears in at least 85% of all networks generated and direction that appears in 50% of the time in each direction. The upside of applying BN as a predictive tool is that based on its bayesian characteristics, we want to allow clinicians to interact with the modeling process through a web application and set different proportion priors as a way to simulate changes in the network and its consequent impact on the overall model and health outcomes. Putting this together as a deliverable tool for clinicians, we anticipate that this modeling technique might be used as a management tool to develop evidence-based interventions to improve health outcomes within the hospital setting.
 
 #### Geographical Information Systems
+
+**Joao Will add**
+
+We analyzed spatial data grouped by geographic areas (polygons) and individual location points, to: a) build a survaillence system able to automatically locate health users of interest (e.g. diabetes) and provide feedback on clinical characteristics and risk; b) evaluate whether the presence of spatial aggregation was associated with socioeconomic, demographic, and/or geographic variables [refs 39 e 40 luciano]. 
+
+*Mapping and geosurveillence system.* **Joao will add, LEAFLET**
+
+*Goespatial association.* We used Exploratory Spatial Data Analysis (ESDA) and to determine measures of global spatial autocorrelation and local spatial autocorrelation [ref 41 luciano]. Initially, to evaluate the existence of spatial autocorrelation, we defined a spatial weight matrix - W. This matrix allows for the measurement of non-random association between the value of a variable observed in a given geographical unit with the value of variables observed in neighboring units. Furthermore, we used the binary matrix-type Queen, which attributes a value of one for neighbors in any spatial location within the analyzed region[ref luciano 42].
+
+We calculated spatial autocorrelation evaluating diabetes rates, socioeconomic, and demographic indicators for eachsector city using the (I) Global Moran index for univariate and bivariate analysis [ref luciano 42], [ref luciano 43]. This index measures both the spatial autocorrelation and the weighted neighborhood matrix, indicating that the diabetes rates of a given region might be similar or no to those of neighboring regions. Values of Moran’s I vary between −1 and +1. Values greater or smaller than the expected value of Moran’s I [E (I) = −1/(N - 1)] indicate a positive or negative autocorrelation, respectively. If the value of Moran's I is 0 (zero), the region is considered to have spatial independence [ref luciano 42], [ref luciano 43].
+
+Moran's I values between 0 and +1 indicate positive spatial association (direct). This indicates that regions with high Moran's I values for the variable in question are surrounded by regions which also have high variable values (high/high). Similarly, regions with low variable values are surrounded by neighbors who also have low variable values (low/low). Negative values of Moran's I (from 0 to −1) represent negative spatial association (reverse). Therefore, regions with high Moran's I values are surrounded by regions with low variable values, while regions with low Moran's I variable values are surrounded by neighbors with high variable values [ref luciano 39], [ref luciano 42], [ref luciano 43].
+
+A limitation of Global Moran's I is that it can hide local patterns of spatial association since negative values of Moran's I do not necessarily indicate the absence of spatial correlation at the local level [43]. To identify patterns of spatial association that were significant and specific to each analyzed area, we used local indicators of spatial association (LISA). LISA allowed us to identify the existence of spatial clusters, or sites with high or low values for the analyzed variables, ultimately determining regions that can contribute to spatial autocorrelation [42]. com base em semelhanças entre cidades. Poderíamos, portanto, classificar estes grupos de cidades utilizando as seguintes categorias: alto-alto, ou seja, cidades com altas taxas de morte por suicídio com áreas vizinhas que indicam também altas taxas de morte; baixo-baixo, cidades com baixas taxas de mortalidade com os vizinhos, com baixas taxas de mortalidade; e baixo-alto, cidades com baixas taxas de mortalidade com os vizinhos com altas taxas de mortalidade. 
+
+Choropleth maps were generated to investigate the presence of mortality rate clusters. These values were divided by class intervals and aggregated into tracks of standard deviation in relation to average. Coefficients of global and local spatial autocorrelation were considered significant at 5%. These coefficients were analyzed by pseudo significance levels. In other words, they were confirmed through the redistribution of simulated values and examined areas using permutation tests [ref luciano 44].
