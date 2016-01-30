@@ -1,6 +1,6 @@
 # AUTOMAP-SUS: Estrutura de coleta, gerenciamento e monitoramento geoespacial de grandes bancos de dados em saúde pública.
 
-Within this proposal we intend to build a Big Clinical Data structure to be used for multiple applications in Uganda. This structure will be used to manage and deploy advanced data analysis techniques facilitating the generation of relevant clinical information from raw high quality data in automated and adaptive web applications. The elements of such innovative environment are described below.
+Nesta seção vamos descrever o conceito por trás do sistema (funcionalidade), como imaginamos sua arquitetura, as ferramentas estatísticas e computacionais associadas que serão conectadas ao sistema.
 
 ![] Figure for the process
 
