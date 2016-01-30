@@ -37,6 +37,10 @@ The importance of data de-identification is to protect the privacy of patients, 
 
 The importance of data standardization is to ensure that our prospective registry databases are codified in the same way so that comparisons and data merging can occur for specific projects. In order to ensure that the databases included in our data storage system will be compatible with other international data sets, we standardized all variable to be compliant with the [... Ben's pediatric data]. Special emphasis will be placed on socio-demographic description and lists of comorbidities since they are commonly used for risk adjustment, geolocation variables as they are a common method for linkage to large Linked Open Data (LOD, http://linkeddata.org/) repositories. Although standardization could be established in languages other than English, we opted to keep all variables standardized only in English as at this point this is widely recognized as the “scientific and business language.”
 
+#### Database and data sharing
+
+**get information with Lucas**
+
 ### Resources for automated data quality control, geographical surveillance and risk prediction calculators. 
 
 The importance of automated data quality control, association and prediction reports is to make sure that researchers can quickly understand the contents of each database, ultimately deciding whether they will be adequate to answer their research questions. In order to provide end users with an assurance regarding data quality of the primary and subsequent data sets added to the open data collection project, we will establish a system to generate automated data quality control reports. This system is based on the statistical language R, specifically with a set of packages that uses literate programming to automatically transform the statistical results into a real-time interactive web applications and PDF (Portable Document Format), deployed to our central Web site. The literate programming will be generated using the Shiny R application package (R SHINY site). Scripts for all of our procedures will be available within our Github repository at [...]
