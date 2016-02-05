@@ -20,7 +20,11 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments","GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf","reshape2","mclust","foreign","survival","memisc","lme4","lmerTest","dplyr","qgraph"),library, character.only=T)
+lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments",
+	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
+	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust","foreign",
+	"survival","memisc","lme4","lmerTest","dplyr","qgraph"),library, 
+character.only=T)
 
 #Package and codes to pull data from goodle sheets
 #devtools::install_github("jennybc/googlesheets")
@@ -34,6 +38,8 @@ lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments","GPArotation","nF
 #data_hamilton <- repmis::source_DropboxData("lena_hamilton.csv","r31zt5zeiygsc23",sep = ",",header = TRUE)
 
 data<-read.csv("/home/joao/Dropbox/datasets/DGHI/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
+
+data<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -326,18 +332,30 @@ exp<-experience_scores[,1]#work_experience$years_work_onbodaboda#car::recode(wor
 #hours<-work_experience$hours_work_onbodaboda#car::recode(work_experience$hours_work_onbodaboda,"0:8=0;else=1")
 
 
-network_data<-data.frame(safety_use,helmet_condition,peer_safety,safety_belief,outcome1,outcome2,exp)#,hours)
+network_data<-data.frame(safety_use,helmet_condition,
+	peer_safety,safety_belief,outcome1,outcome2,exp)#,hours)
 
 cor_data<-cor_auto(network_data)
 
-groups<-list(Outcomes=c(5,6),Experience=c(7),Safety_Behavior=c(1,2,3,4))
-varLabels<-c("Safety use","Helmet condition","Peer safety","Safety belief","Road Traffic Crash","Near miss","Experience")
+groups<-list(Outcomes=c(5,6),Work_Hours=c(7),Safety_Behavior=c(1,2,3,4))
+varLabels<-c("Safety use","Helmet condition","Peer safety",
+	"Safety belief","Road Traffic Crash","Near miss","Work hours")
 #varNames<-c("SF1","SF2","SF3","SF4","OUT1","OUT2","EXP")
 #normalize<-function(x){(x-min(x))/(max(x)-min(x))}
 #mean_data<-sapply(as.data.frame(sapply(network_data,normalize)),mean)
 #vSize<-normalize(colSums(reasons_danger))*7
 
-PcorGRAPH<-qgraph(cor_data,layout="spring",graph="pcor",sampleSize=nrow(network_data),legend.cex = 0.6,cut = 0.1, maximum = 0.4, minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8,labels=varLabels,borders = FALSE,legend=TRUE,groups=groups,color=c("brown1","gold3","royalblue"),label.scale=FALSE,label.cex=2,edge.labels=TRUE,posCol="black",negCol="gray50")#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
+PcorGRAPH<-qgraph(cor_data,layout="spring",
+	graph="pcor",sampleSize=nrow(network_data),
+	legend.cex = 0.6,cut = 0.1, maximum = 0.4,
+	 minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8,
+	 labels=varLabels,borders = FALSE,legend=TRUE,
+	 groups=groups,color=c("brown1","gold3","royalblue"),
+	 label.scale=FALSE,label.cex=2,edge.labels=FALSE,
+	 posCol="black",negCol="gray50")#,gray=T,)
+	 #,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3
+     #,,color=c("gold","steelblue","red","grey80"),
+     #labels=rownames(pca_data)
 
 blabla<-function(x){
 	as.numeric(as.character(x))
