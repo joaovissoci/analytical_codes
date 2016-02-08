@@ -345,6 +345,7 @@ varLabels<-c("Safety use","Helmet condition","Peer safety",
 #mean_data<-sapply(as.data.frame(sapply(network_data,normalize)),mean)
 #vSize<-normalize(colSums(reasons_danger))*7
 
+tiff("/home/joao/Desktop/tz_safehabits_figure3.tiff", units='in', width = 11, height = 6,compression = 'lzw',res=1200,bg = "white")
 PcorGRAPH<-qgraph(cor_data,layout="spring",
 	graph="pcor",sampleSize=nrow(network_data),
 	legend.cex = 0.6,cut = 0.1, maximum = 0.4,
@@ -356,18 +357,20 @@ PcorGRAPH<-qgraph(cor_data,layout="spring",
 	 #,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3
      #,,color=c("gold","steelblue","red","grey80"),
      #labels=rownames(pca_data)
+dev.off()
 
-blabla<-function(x){
-	as.numeric(as.character(x))
-}
+#not run
+#blabla<-function(x){
+#	as.numeric(as.character(x))
+#}
+#
+#blabla2<-lapply(safe_habits,blabla)
 
-blabla2<-lapply(safe_habits,blabla)
+#network_data<-data.frame(work_experience,outcome1,outcome2,blabla2)#,hours)
 
-network_data<-data.frame(work_experience,outcome1,outcome2,blabla2)#,hours)
+#cor_data<-cor_auto(network_data)
 
-cor_data<-cor_auto(network_data)
-
-PcorGRAPH<-qgraph(cor_data,layout="spring",graph="glasso",sampleSize=nrow(network_data),legend.cex = 0.6,cut = 0.1, maximum = 0.4, minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8)#,labels=varLabels,borders = FALSE,legend=TRUE,groups=groups,color=c("brown1","gold3","royalblue"),label.scale=FALSE,label.cex=2,edge.labels=TRUE,posCol="black",negCol="gray50")#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
+#PcorGRAPH<-qgraph(cor_data,layout="spring",graph="glasso",sampleSize=nrow(network_data),legend.cex = 0.6,cut = 0.1, maximum = 0.4, minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8)#,labels=varLabels,borders = FALSE,legend=TRUE,groups=groups,color=c("brown1","gold3","royalblue"),label.scale=FALSE,label.cex=2,edge.labels=TRUE,posCol="black",negCol="gray50")#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
 
 # Para identificar no qgraph o resultado do algortimo de comunidade, criar objeto de "groups"
 # com o resultado de wcG1
