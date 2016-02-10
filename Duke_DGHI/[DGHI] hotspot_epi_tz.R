@@ -32,7 +32,7 @@ data <- read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/Tz/epi_rti_tz_pol
 
 #Mac path
 #data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/epi_rti_tz_police_data.csv")
-
+holiday
 #data set with information for Hamiton's Anxiety Symptoms
 #data <- repmis::source_DropboxData("epi_sri_lanka_data.csv","5b3k7j4du69tmt2",sep = ",",header = TRUE)
 
@@ -59,150 +59,87 @@ data_epi$male<-car::recode(data2$male
 #recoding hour of crash
 hour_crash<-sapply(strsplit(as.character(data2$time_crash), ":"), "[", 1)
 hour_crash<-as.numeric(hour_crash)
-data_epi$hour_crash<-car::recode(hour_crash,"8:16='aDay';17:24='Night';0='Night';1:7='Dawn';else=NA")
+data_epi$hour_crash<-car::recode(hour_crash,"8:16='aDay';17:24='Night';
+	0='Night';1:7='Dawn';else=NA")
 data_epi$hour_crash<-as.factor(data_epi$hour_crash)
 
-#
+#CLASS OF CRASH
+data_epi$class_crash<-car::recode(data2$class_crash,
+	"0='fata'l;1='fatal';2='non-fatal';3='non-fatal';else=NA")
+data_epi$class_crash<-as.factor(data_epi$class_crash)
 
+# LOCATION OF CRASH
+data_epi$urban_location<-car::recode(data2$urban_location,
+	"0='rural';1='urban';else=NA")
 
+# NORMAL DAY Vs. HOLIDAY
+data_epi$holiday<-car::recode(data2$holiday,"0='normalday';1='weekend';
+	2='holiday';3='holiday';4='holiday';else=NA")
 
-#recoding outcome variable
-outcome1<-car::recode(data$driver1_injuries,"0=1;1=100;3=1;2=100;else=0")
-outcome2<-car::recode(data$driver2_injuries,"0=1;1=100;3=1;2=100;else=0")
-outcome3<-car::recode(data$victim1_injury,"0=1;1=100;3=1;2=100;else=0")
-outcome4<-car::recode(data$victim2_injury,"0=1;1=100;3=1;2=100;else=0")
-outcome5<-car::recode(data$victim3_injury,"0=1;1=100;3=1;2=100;else=0")
-outcome6<-rowSums(data.frame(outcome1,outcome2,outcome3,outcome4,outcome5))
-data_epi$outcome<-car::recode(outcome6,"0=NA;1:99=0;100:500=1")
+# Day OF the WEEK
+data_epi$day_week<-data2$day_week
 
-#recoding outcome variable - Number of victims
-outcome1a<-car::recode(data$driver1_injuries,"0=0;1=1;3=0;2=1;else=NA")
-outcome2a<-car::recode(data$driver2_injuries,"0=0;1=1;3=0;2=1;else=NA")
-outcome3a<-car::recode(data$victim1_injury,"0=0;1=1;3=0;2=1;else=NA")
-outcome4a<-car::recode(data$victim2_injury,"0=0;1=1;3=0;2=1;else=NA")
-outcome5a<-car::recode(data$victim3_injury,"0=0;1=1;3=0;2=1;else=NA")
-#soutcome6a<-rowSums(data.frame(outcome1,outcome2,outcome3,outcome4,outcome5))
-#data_epi$outcome<-car::recode(outcome6,"0=NA;1:99=0;100:500=1")
-victimis_outcome_driversonly<-c(outcome1a,outcome2a)
-victimis_outcome_all<-c(outcome1a,outcome2a,outcome3a,outcome4a,outcome5a)
+# TYPE OF CRASH
+data_epi$crash_type<-car::recode(data2$crash_type,"0='collision';
+	1='collision';2='collision';3='collisionVRU';4='collisionVRU';
+	5='collision';6='collision';7='collisionVRU';8='lostcontrol';
+	9='lostcontrol';10='lostcontrol';11='lostcontrol',90='Other';else=NA")
 
-#number of victims in all crashes
-#outcome 1 = 2452
-#outcome 2 = 2119
-#outcome 3 = 106
-#outcome 4 = 10
-#outcome 5 = 2
+# Road condition
+data_epi$rd_condition<-car::recode(data2$rd_condition,"0='clear';1='unclear';
+	2='unclear';3='rain';4='unclear';90='Others';else=NA")
 
-#merging more then one vector
+# Weather
+data_epi$weather<-car::recode(data2$weather,"0='clear';1='unclear';
+	2='unclear';3='unclear';4='unclear';90='Others';else=NA")
 
-#data_epi$outcome<-as.factor(data_epi$outcome)
+# Light condition
+data_epi$light_condition<-car::recode(data2$light_condition,"0='daylight';
+	1='nightnolight';2='duskdawn';3='nightnolight';4='nightgooglight';
+	else=NA")
 
-#recoding day of crash
-data_epi$day_crash<-car::recode(data$day_crash,"0='1';1='2';2='3';3='4';4='5';5='6';6='7';else=NA")
-data_epi$day_crash<-as.factor(data_epi$day_crash)
+# Type of Location
+data_epi$type_location<-car::recode(data2$type_location,"0='directroad';
+	1='junction';2='junction';3='junction';4='roudabout';5='junction';
+	6='entrance';7='railroad crossing';90='Other';else=NA")
 
+# Type of Location
+data_epi$loc_ped_invol<-car::recode(data2$loc_ped_invol,"0='pedestrian crossing'; 1='pedestrian crossing';2='pedestrian crossing';
+	3='pedestrian crossing';4='outside sidewalk';5='outside sidewalk';
+	89='No pedestrian';90='Other';else=NA")
 
+# Traffic Control
+data_epi$traffic_control<-car::recode(data2$traffic_control, "
+	0='policeorwarden';1='traffic_lights';2='signs';3='sign';
+	4='policeorwarden';5='no_control'")
 
-#recoding road type
-road_type1<-data$road_condition___4
-road_type2<-car::recode(data$road_condition___5,'1=2')
-road_type3<-rowSums(data.frame(road_type1,road_type2))
-data_epi$road_type<-car::recode(road_type3,"0=NA;1='Asphalt';2='Soil';3=NA")
-data_epi$road_type<-as.factor(data_epi$road_type)
+# Speed limit
+data_epi$speed_limit<-data2$speed_limit
 
-#recoding road_condition
-#road_condition1<-data$road_condition2___0
-#road_condition2<-car::recode(data$road_condition2___6,'1=2')
-#road_condition3<-car::recode(data$road_condition2___1,'1=3')
-#road_condition4<-car::recode(data$road_condition2___7,'1=4')
-#road_condition5<-rowSums(data.frame(road_condition1,road_condition2,road_condition3,road_condition4))
-#data_epi$road_condition<-car::recode(road_condition5,"0=NA;1='Dry';2='Wet or Damaged';3='Wet or Damaged';4='Wet or Damaged'")
-#data_epi$road_condition<-as.factor(data_epi$road_condition)
+# Speed limit sign
+data_epi$speed_limit_sign<-as.factor(data2$posted_speed_limit)
 
-# weather condition
-#weather_condition1<-data$weather_condition___2
-#weather_condition2<-car::recode(data$weather_condition___3,"1=2")
-#weather_condition3<-car::recode(data$weather_condition___4,"1=3")
-#weather_condition4<-rowSums(data.frame(weather_condition1,weather_condition2,weather_condition3))
-#weather_condition<-car::recode(weather_condition4,"1='Unclear';2='Unclear';3='Clear';else=NA")
-#data_epi$weather_condition<-as.factor(weather_condition)
+# type of vechile
+data_epi$type_vehicle<-car::recode(data2$element_type,"1='acar';2='bus';3='")
 
-#recoding special conditions
-#data_epi$special_condition1<-data$special_conditions___0
-#data_epi$special_condition2<-data$special_conditions___1
-#data_epi$special_condition3<-data$special_conditions___2
-#data_epi$special_condition4<-data$special_conditions___3
-#data_epi$special_condition5<-data$special_conditions___4
-#data_epi$special_condition6<-data$special_conditions___5
-#data_epi$special_condition7<-data$special_conditions___6
-#data_epi$special_condition8<-data$special_conditions___7
+# human_crash_factor
+data_epi$human_crash_factor<-data2$human_crash_factor
 
-#recoding visibility conditions
-visibility1<-data$visibility_conditions___0
-visibility2<-car::recode(data$visibility_conditions___1,'1=2')
-visibility3<-car::recode(data$visibility_conditions___2,'1=3')
-visibility4<-car::recode(data$visibility_conditions___3,'1=4')
-visibility5<-car::recode(data$visibility_conditions___4,'1=5')
-visibility6<-rowSums(data.frame(visibility1,visibility2,visibility3,visibility4,visibility5))
-data_epi$visibility<-car::recode(visibility6,"0=NA;1='1';2='3';3='2';4='2';5='3'")
-data_epi$visibility<-as.factor(data_epi$visibility)
+# ped_precrash
+data_epi$ped_precrash<-data2$ped_precrash
 
-#recoding type_vehicle
-data_epi$type_vehicle<-car::recode(data$class1,"0=NA;1='acar';2='bus';3='truck';4=NA;5='motorcycle';6='bus';7='bus';8='acar';9=NA;else=NA")
-data_epi$type_vehicle<-as.factor(data_epi$type_vehicle)
+#vehicle_factors
+data_epi$vehicle_factors<-data2$vehicle_factors
 
-#recoding type_vehicle 2
-data_epi$type_vehicle2<-car::recode(data$class2,"0=NA;1='acar';2='bus';3='truck';4='bicycle/pedestrian';5='motorcycle';6='bus';7='bus';8='acar';9='bicycle/pedestrian';else=NA")
-data_epi$type_vehicle2<-as.factor(data_epi$type_vehicle2)
+#alcohol
+data_epi$alcohol<-data2$alcohol
 
-#recoding gender
-data_epi$gender<-car::recode(data$driver1_sex,"0='female';1='male';else=NA")
-#data_epi$gender<-as.factor(data_epi$gender)
-data_epi$gender2<-car::recode(data$driver2_sex,"0='female';1='male';else=NA")
-#data_epi$gender2<-as.factor(data_epi$gender2)
-victms_gender<-c(data_epi$gender,data_epi$gender2)
-victms_gender<-car::recode(victms_gender,"1='female';2='male'")
+#victim_classification
+data_epi$victim_classification<-car::recode(data2$victim_classification,"0='driver';1='pedestrian';2='passenger';3='passenger';4='passenger';
+	9=NA")
 
-#recoding type of crash
-crash_type1SUM<-rowSums(with(data,data.frame(crash_type___0,crash_type___1,crash_type___2,crash_type___5,crash_type___6)))
-crash_type_collision<-car::recode(crash_type1SUM,"0=0;else=1")
-
-crash_type2SUM<-rowSums(with(data,data.frame(crash_type___3,crash_type___4,crash_type___7)))
-crash_type_runover<-car::recode(crash_type2SUM,"0=0;else=1")
-
-crash_type3SUM<-rowSums(with(data,data.frame(crash_type___8,crash_type___9,crash_type___10,crash_type___11)))
-crash_type_fallloss<-car::recode(crash_type3SUM,"0=0;else=1")
-
-crash_type<-rowSums(data.frame(crash_type3SUM,crash_type2SUM,crash_type1SUM))
-data_epi$crash_type<-car::recode(crash_type,"0=NA;1='collision';2='runover';3='runover'")
-data_epi$crash_type<-as.factor(data_epi$crash_type)
-
-date_crash<-as.Date(data$date_crash)
-
-#recoding ages
-driver1_dob<-car::recode(data$driver1_dob,"'Kicukiro'=NA;99=NA;21=1992;29=1984;974=NA;19=1994")
-driver1_dob<-as.Date(driver1_dob,"%Y")
-data_epi$age<-as.numeric((date_crash-driver1_dob)/360)
-
-driver2_dob<-car::recode(data$driver2_dob,"'nyarugenge'=NA;'Kicukiro'=NA;7=NA;99=NA;'63 years'=1950;6=2007;5=2008;46=1967;4=2009;31=1982;30=1981;3=2010;21=1992;22=1991;29=1984;28=1985;974=NA;19=1994;199=NA;0=NA")
-driver2_dob<-as.Date(driver2_dob,"%Y")
-data_epi$age2<-as.numeric((date_crash-driver2_dob)/360)
-
-driver3_dob<-car::recode(data$victim1_age,"99=NA;1=2012;5=2008;23=1990;24=1989;31=1982;32=1981;37=1976;39=1974;41=1972;55=1958;22=1991;28=1985;19=1994;0=NA")
-driver3_dob<-as.Date(as.factor(driver3_dob),"%Y")
-data_epi$age3<-as.numeric((date_crash-driver3_dob)/360)
-
-driver4_dob<-car::recode(data$victim2_age,"99=NA;10=2003;33=1980;34=1979")
-driver4_dob<-as.Date(as.factor(driver4_dob),"%Y")
-data_epi$age4<-as.numeric((date_crash-driver4_dob)/360)
-
-driver5_dob<-car::recode(data$victim3_age,"99=NA")
-driver5_dob<-as.Date(as.factor(driver5_dob),"%Y")
-data_epi$age5<-as.numeric((date_crash-driver5_dob)/360)
-
-age_victims<-c(data_epi$age,data_epi$age2,data_epi$age3,data_epi$age4,data_epi$age5)
-
-data_epi<-as.data.frame(data_epi)
+#protection
+data_epi$protection<-data2$protection
 
 #######################################################
 #ANALYZING MISSING DATA

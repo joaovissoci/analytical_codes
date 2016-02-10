@@ -1,5 +1,5 @@
 
-data1<-read.csv("/Users/joaovissoci/Desktop/jihad_cost_basedata.csv")
+data1<-read.csv("/home/joao/Dropbox/datasets/DGNN/Ug_cost_ef/jihad_cost_basedata.csv")
 
 colnames(data1)<-c("date","diagnosis","deleteme1","surgical_procedure",
 	"deleteme2","age","medications","mediations_price","deleteme3",
@@ -13,38 +13,127 @@ teste<-data1[-c(ref_lines,ref_lines+1,ref_lines+2,ref_lines+3),]
 
 which(teste$date=="Name")
 
-bla<-NULL
+#### CODING NAMES
+names<-NULL
 
-bla[ref_lines[1]:(ref_lines[1+1]-4)]<-rep(as.character(
+names[ref_lines[1]:(ref_lines[1+1]-4)]<-rep(as.character(
 	data1$diagnosis[ref_lines[1]]),
 	ref_lines[1+1]-4)
 
-bla[(ref_lines[2]-4):(ref_lines[2+1]-(1+(4*2)))]<-rep(as.character(
+names[(ref_lines[2]-4):(ref_lines[2+1]-(1+(4*2)))]<-rep(as.character(
 	data1$diagnosis[ref_lines[2]]),
 	((ref_lines[2+1]-(1+(4*2)))-(ref_lines[2]-5)))
 
-for(i in 3:500){
+for(i in 3:1430){
 
-bla[(ref_lines[i]-(4*(i-1))):(ref_lines[i+1]-(1+(4*i)))]<-rep(as.character(
+names[(ref_lines[i]-(4*(i-1))):(ref_lines[i+1]-(1+(4*i)))]<-rep(as.character(
 	data1$diagnosis[ref_lines[i]]),
 	(ref_lines[i+1]-(1+(4*i))-(ref_lines[i]-(1+(4*(i-1))))))
 
 }
 
+names[(ref_lines[1431]-(4*(1431-1))):(length(data1$diagnosis)-((4*1431)))]<-rep(as.character(
+	data1$diagnosis[ref_lines[1431]]),
+	(length(data1$diagnosis)-((4*1431))-(ref_lines[1431]-(1+(4*(1431-1))))))
+
+#### CODING NAMES
+CIDdiagnosis<-NULL
+
+CIDdiagnosis[ref_lines[1]:(ref_lines[1+1]-4)]<-rep(as.character(
+	data1$diagnosis[ref_lines[1]+1]),
+	ref_lines[1+1]-4)
+
+CIDdiagnosis[(ref_lines[2]-4):(ref_lines[2+1]-(1+(4*2)))]<-rep(as.character(
+	data1$diagnosis[ref_lines[2]+1]),
+	((ref_lines[2+1]-(1+(4*2)))-(ref_lines[2]-5)))
+
+for(i in 3:1430){
+
+CIDdiagnosis[(ref_lines[i]-(4*(i-1))):(ref_lines[i+1]-(1+(4*i)))]<-rep(as.character(
+	data1$diagnosis[ref_lines[i]+1]),
+	(ref_lines[i+1]-(1+(4*i))-(ref_lines[i]-(1+(4*(i-1))))))
+
+}
+
+CIDdiagnosis[(ref_lines[1431]-(4*(1431-1))):(length(data1$diagnosis)-((4*1431)))]<-rep(as.character(
+	data1$diagnosis[ref_lines[1431]+1]),
+	(length(data1$diagnosis)-((4*1431))-(ref_lines[1431]-(1+(4*(1431-1))))))
+
+#### SURGICAL PROCEDURE
+surgical_procedure<-NULL
+
+surgical_procedure[ref_lines[1]:(ref_lines[1+1]-4)]<-rep(as.character(
+	data1$surgical_procedure[ref_lines[1]]),
+	ref_lines[1+1]-4)
+
+surgical_procedure[(ref_lines[2]-4):(ref_lines[2+1]-(1+(4*2)))]<-rep(as.character(
+	data1$surgical_procedure[ref_lines[2]]),
+	((ref_lines[2+1]-(1+(4*2)))-(ref_lines[2]-5)))
+
+for(i in 3:1430){
+
+surgical_procedure[(ref_lines[i]-(4*(i-1))):(ref_lines[i+1]-(1+(4*i)))]<-rep(as.character(
+	data1$surgical_procedure[ref_lines[i]]),
+	(ref_lines[i+1]-(1+(4*i))-(ref_lines[i]-(1+(4*(i-1))))))
+
+}
+
+surgical_procedure[(ref_lines[1431]-(4*(1431-1))):(length(data1$surgical_procedure)-((4*1431)))]<-rep(as.character(
+	data1$surgical_procedure[ref_lines[1431]]),
+	(length(data1$surgical_procedure)-((4*1431))-(ref_lines[1431]-(1+(4*(1431-1))))))
+
+#### Age
+new_age<-NULL
+
+new_age[ref_lines[1]:(ref_lines[1+1]-4)]<-rep(as.character(
+	data1$age[ref_lines[1]]),
+	ref_lines[1+1]-4)
+
+new_age[(ref_lines[2]-4):(ref_lines[2+1]-(1+(4*2)))]<-rep(as.character(
+	data1$age[ref_lines[2]]),
+	((ref_lines[2+1]-(1+(4*2)))-(ref_lines[2]-5)))
+
+for(i in 3:1430){
+
+new_age[(ref_lines[i]-(4*(i-1))):(ref_lines[i+1]-(1+(4*i)))]<-rep(as.character(
+	data1$age[ref_lines[i]]),
+	(ref_lines[i+1]-(1+(4*i))-(ref_lines[i]-(1+(4*(i-1))))))
+
+}
+
+new_age[(ref_lines[1431]-(4*(1431-1))):(length(data1$age)-((4*1431)))]<-rep(as.character(
+	data1$age[ref_lines[1431]]),
+	(length(data1$age)-((4*1431))-(ref_lines[1431]-(1+(4*(1431-1))))))
+
+#### Gender
+gender<-NULL
+
+gender[ref_lines[1]:(ref_lines[1+1]-4)]<-rep(as.character(
+	data1$deleteme3[ref_lines[1]]),
+	ref_lines[1+1]-4)
+
+gender[(ref_lines[2]-4):(ref_lines[2+1]-(1+(4*2)))]<-rep(as.character(
+	data1$deleteme3[ref_lines[2]]),
+	((ref_lines[2+1]-(1+(4*2)))-(ref_lines[2]-5)))
+
+for(i in 3:1430){
+
+gender[(ref_lines[i]-(4*(i-1))):(ref_lines[i+1]-(1+(4*i)))]<-rep(as.character(
+	data1$deleteme3[ref_lines[i]]),
+	(ref_lines[i+1]-(1+(4*i))-(ref_lines[i]-(1+(4*(i-1))))))
+
+}
+
+gender[(ref_lines[1431]-(4*(1431-1))):(length(data1$deleteme3)-((4*1431)))]<-rep(as.character(
+	data1$deleteme3[ref_lines[1431]]),
+	(length(data1$deleteme3)-((4*1431))-(ref_lines[1431]-(1+(4*(1431-1))))))
 
 
+new_data<-data.frame(names,gender,new_age,
+	surgical_procedure,CIDdiagnosis,
+	date=teste$date,medications=teste$medications)
 
-
-
-length(ref_lines[-c(1,2)])
-
-
-
-
-bla[(ref_lines[4]-(4*(4-1))):(ref_lines[4+1]-(1+(4*4)))]<-rep(as.character(
-	data1$diagnosis[ref_lines[4]]),
-	(ref_lines[4+1]-(1+(4*4))-(ref_lines[4]-(1+(4*(4-1))))))
-
+write.csv(new_data,"/home/joao/Dropbox/datasets/DGNN/Ug_cost_ef/jihad_cost_newdata.csv")
 
 
 
