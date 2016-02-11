@@ -16,7 +16,8 @@
 
 #command below will install each package. if you run this script from the beginning you need to run every single one again
 lapply(c("epicalc", "sem","Hmisc","ggplot2", "psych", "irr", "nortest", 
-	"moments","GPArotation","nFactors","repmis","gdata","qgraph"), 
+	"moments","GPArotation","nFactors","repmis","gdata","qgraph",
+	"igraph"), 
 library, character.only=T)
 
 ##############################################################
@@ -25,6 +26,8 @@ library, character.only=T)
 
 #if you are using a file that is local to your computer, then replace path below by path to the data file. command will throw all the data into the templateData object. replace the word template.data by a name that might easier for you to remember and that represents your data
 infoconsent <- read.csv("/home/joao/Dropbox/datasets/infoconsent2.csv")
+
+infoconsent <- read.csv("/Users/joaovissoci/Dropbox/datasets/infoconsent2.csv")
 
 #subsetting data only for consenting participants
 bancocerto <-subset(infoconsent, V10==1)
@@ -126,9 +129,11 @@ plot$quantiles_3<-c(import_3quantiles_yes,import_3quantiles_no,under_3quantiles_
 
 # plot figure
 #creating EPS vector type file for Figure 1
-postscript("/home/joao/Desktop/info_consent_figure1.eps",
-	width = 1500, height = 1200,horizontal = FALSE, 
-	onefile = FALSE)
+#postscript("/home/joao/Desktop/info_consent_figure1.eps",
+#	width = 1500, height = 1200,horizontal = FALSE, 
+#	onefile = FALSE)
+tiff("/Users/joaovissoci/Desktop/descriptives.tiff",
+	width = 600, height = 400,compression = 'lzw')
 ggplot(data=plot, aes(x=questions, y=scores,group=will, color=will)) +
 	 geom_line(size=1.5) + facet_grid(groups ~.) + 
 	 geom_point(size=3,fill="white") + 
@@ -138,7 +143,7 @@ ggplot(data=plot, aes(x=questions, y=scores,group=will, color=will)) +
 	 scale_colour_manual(values=c("#999999","darkred"), 
 	 	name="Willing to Participate", breaks=c("yes","no"),
 	 	labels=c("Yes", "No"))+ 
-	 theme(legend.position=c(0.45,0.05)) + 
+	 theme(legend.position=c(0.45,0.1)) + 
 	 geom_segment(aes(x = questions, y = quantiles_1, xend = questions,
 	 	yend = quantiles_3)) + 
 	 scale_x_discrete(limits=c("Q1","Q2","Q3","Q4","Q5","Q6",
@@ -324,10 +329,13 @@ subset(importance_network_glasso$Edgelist$weight,
 	importance_network_glasso$Edgelist$to==15)
 
 #conducting logitic regression with variables showing direct path in the network
-log_model<-data.frame(Respo,Import$Q36_1,Import$Q36_2,Import$Q36_3,Import$Q36_10,Import$Q36_13)#,reading_scores$scores)
+log_model<-data.frame(Respo,Import$Q36_1,Import$Q36_2,
+	Import$Q36_3,Import$Q36_10,Import$Q36_13)#,reading_scores$scores)
 
 #fitting the model
-fit <- glm(as.factor(Respo)~Import$Q36_1+Import$Q36_2+Import$Q36_3+Import$Q36_10+Import$Q36_13,data=log_model,family=binomial)
+fit <- glm(as.factor(Respo)~Import$Q36_1+Import$Q36_2
+	+Import$Q36_3+Import$Q36_10+Import$Q36_13,
+	data=log_model,family=binomial)
 
 #summary and coefficients
 summary(fit)
@@ -346,10 +354,8 @@ comprehension_cor_data<-cor_auto(comprehension_network_data)
 
 #listing grouping variables in the network resulting from the 
 #community analysis
-comprehension_node_groups<-list(Under1=c(1,2,3),
-	Under2=c(4,5,6,7,8,9),
-	Under3=c(10,11,12,13,14),
-	Other=c(15))
+comprehension_node_groups<-list(Under1=c(1,2,3,4,5,6,7,15),
+	Under2=c(8,9,10,11,12,13,14))
 
 # creating vectors for labels
 comprehension_node_labels<-c("Why is this study being done?", 
@@ -403,6 +409,7 @@ g<-as.igraph(comprehension_network_glasso) #creating igraph object
 #h<-walktrap.community(g) #creatin community object
 h<-spinglass.community(g, weights=NA)
 plot(h,g) #plotting community network
+h$membership #extracting community membership for each node on the network
 
 #Identify SPLs within the graph and extract direct paths to WP
 predictors<-centrality(comprehension_network_glasso)$ShortestPaths[,15]
@@ -421,13 +428,13 @@ subset(comprehension_network_glasso$Edgelist$weight,
 
 #conducting logitic regression with variables
 #showing direct path in the network
-log_model<-data.frame(Respo,Import$Q36_1,Import$Q36_3,
-	Import$Q36_14)#,reading_scores$scores)
+log_model<-data.frame(Respo,Under$Q46_1,Under$Q46_3,
+	Under$Q46_14)#,reading_scores$scores)
 #log_model<-na.omit(log_model)
 
 #fitting the model
-fit <- glm(as.factor(Respo)~Import$Q36_1+Import$Q36_2+
-	Import$Q36_3+Import$Q36_10+Import$Q36_13,
+fit <- glm(as.factor(Respo)~Under$Q46_1+
+	Under$Q46_3+Under$Q46_14,
 	data=log_model,family=binomial)
 
 #summary and coefficients
@@ -437,21 +444,49 @@ exp(confint(fit)) # 95% CI for exponentiated coefficients
 
 ############## FINAL FIGURES ############################
 # Organizing both figures to be with the same layout
-layout_final<-averageLayout(comprehension_network_glasso,comprehension_network_pcor,comprehension_network_cor,importance_network_glasso,importance_network_glasso,importance_network_glasso)
-postscript("/home/joao/Desktop/info_consent_figure2.eps",
-	width = 1500, height = 1200,horizontal = FALSE, 
-	onefile = FALSE)
-#tiff("/home/joao/Desktop/importance_network.tiff", width = 1200, height = 700,compression = 'lzw')
-final_importance_network<-qgraph(importance_cor_data,layout=layout_final,vsize=importance_vSize*3,esize=20,graph="glasso",sampleSize=nrow(importance_network_data),legend.cex = 0.6,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=importance_network_groups,nodeNames=importance_node_labels,color=c("gold","steelblue","red","grey80",layoutScale=c(2,2)),borders = FALSE,labels=importance_node_names)#,gray=T,)#,nodeNames=nomesqsg
+layout_final<-averageLayout(comprehension_network_glasso,
+	comprehension_network_pcor,
+	comprehension_network_cor,
+	importance_network_glasso,
+	importance_network_glasso,
+	importance_network_glasso)
+
+#postscript("/home/joao/Desktop/info_consent_figure2.eps",
+#	width = 1500, height = 1200,horizontal = FALSE, 
+#	onefile = FALSE)
+#postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
+#	width = 1500, height = 1200,horizontal = FALSE, 
+#	onefile = FALSE)
+tiff("/Users/joaovissoci/Desktop/importance_network.tiff", width = 1200,
+ height = 700,compression = 'lzw')
+final_importance_network<-qgraph(importance_cor_data,
+	layout=layout_final,vsize=importance_vSize*3,
+	esize=20,graph="glasso",
+	sampleSize=nrow(importance_network_data),
+	legend.cex = 0.6,cut = 0.1, maximum = 1, 
+	minimum = 0, esize = 20,vsize = 5, 
+	repulsion = 0.8,groups=importance_network_groups,
+	nodeNames=importance_node_labels,
+	color=c("gold","steelblue","red","grey80",
+	layoutScale=c(2,2)),borders = FALSE,
+	labels=importance_node_names)#,gray=T,)#,nodeNames=nomesqsg
 dev.off()
 #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
-postscript("/home/joao/Desktop/info_consent_figure3.eps",
-	width = 20, height = 5,horizontal = FALSE, 
-	onefile = FALSE)
-#tiff("/home/joao/Desktop/comprehension_network.tiff", width = 1200, height = 700,compression = 'lzw')
-par(mai=c(1.02,2.82,2.82,0.42))
-final_comprehension_network<-qgraph(comprehension_cor_data,layout=layout_final,vsize=comprehension_vSize*3,esize=20,graph="glasso",sampleSize=nrow(comprehension_network_data),legend.cex = 0.6,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=comprehension_node_groups,nodeNames=comprehension_node_labels,color=c("gold","steelblue","red","grey80"),borders = FALSE,labels=comprehension_node_names)#,gray=T,)#,nodeNames=nomesqsg,layoutScale=c(2,2)
+#postscript("/home/joao/Desktop/info_consent_figure3.eps",
+#	width = 20, height = 5,horizontal = FALSE, 
+#	onefile = FALSE)
+tiff("/Users/joaovissoci/Desktop/comprehension_network.tiff",
+	width = 1200, height = 700,compression = 'lzw')
+final_comprehension_network<-qgraph(comprehension_cor_data,
+	layout=layout_final,vsize=comprehension_vSize*3,
+	esize=20,graph="glasso",
+	sampleSize=nrow(comprehension_network_data),
+	legend.cex = 0.6,cut = 0.1, maximum = 1,
+	minimum = 0, esize = 20,vsize = 5,
+	repulsion = 0.8,groups=comprehension_node_groups,
+	nodeNames=comprehension_node_labels,
+	color=c("gold","steelblue","red","grey80"),
+	borders = FALSE,labels=comprehension_node_names)
+	#,gray=T,)#,nodeNames=nomesqsg,layoutScale=c(2,2)
 dev.off()
-
-dev.size("cm")
