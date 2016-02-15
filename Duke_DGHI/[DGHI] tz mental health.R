@@ -51,18 +51,22 @@ data <- read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/Tz/tz_baseline_me
 
 data$married<-car::recode(data$married,"0=1;1=1;4=1;2=0;3=0;5=0")
 data$occupation<-car::recode(data$occupation,"89='Other'")
-data$education<-car::recode(data$education,"1:7='Primary';8:13='Form';14:16='University';")
+data$education<-car::recode(data$education,"
+	1:7='Primary';8:13='Form';14:16='University';")
 
-sf8<-with(data,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5,sf8_b6,sf8_b7,sf8_b8))
-phq9<-with(data,data.frame(phq9_b11,phq9_b12,phq9_b13,phq9_b14,phq9_b15,phq9_b16,phq9_b17,phq9_b17,phq9_b18,phq9_b19))
-phq9score<-rowSums(phq9)
+sf8<-with(data,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5,sf8_b6,
+	sf8_b7,sf8_b8))
+phq9<-with(data,data.frame(phq9_b11,phq9_b12,phq9_b13,phq9_b14,
+	phq9_b15,phq9_b16,phq9_b17,phq9_b17,phq9_b18,phq9_b19))
+data$phq9score<-rowSums(phq9)
 audit<-with(data,data.frame(h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
-auditscore<-rowSums(audit)
+data$auditscore<-rowSums(audit)
 
 phq9_cat<-car::recode(phq9score,"0:4.9='no';5:19='yes'")
-ces_score_cat<-car::recode(data$ces_score,"6:15.9='no';16:26='yes'")
-kes_score_cat<-car::recode(data$kes_score,"0:19.9='no';20:28='yes'")
+ces_score_cat<-car::recode(data$ces_score,"6:15.9='no';16:30='yes'")
+kes_score_cat<-car::recode(data$kes_score,"0:19.9='no';20:50='yes'")
 auditscore_cat<-car::recode(auditscore,"0:7.9='no';8:26='yes'")
+
 #############################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
 #############################################################################
@@ -290,16 +294,51 @@ hetcor(data)
 # x is a contingency table of counts
 polychor(data) 
 
-#####################################################################################
-#LOGISTIC REGRESSION
-#####################################################################################
-baselineXFUP3<-glm(ATTEMPT_P ~ Anxiety_presence + AGE + SEX + MARSTAT +
-                            ATTEMPT_baseline + Diagnostic
-                            ,family=binomial, data=FUP3)
-summary(baselineXFUP3)
-#anova(reglogGEU)
-#exp(coef(model1_death)) # exponentiated coefficients
-#exp(confint(model1_death)) # 95% CI for exponentiated coefficients
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-#logistic.display(baselineXFUP3)
+#############################################################################
+#GRAPH
+#############################################################################
+
+library(RColorBrewer)
+library(ggplot2)
+
+#
+x<-with(data,table(phq9_cat,redcap_event_name))
+t(x)
+y<-with(data,table(ces_score_cat,redcap_event_name))
+t(y)
+z<-with(data,table(kes_score_cat,redcap_event_name))
+t(z)
+a<-with(data,table(auditscore_cat,redcap_event_name))
+t(a)
+
+
+scales <- rep(c("Anxiety","Anxiety",
+				"Depression","Depression",
+				"Stress","Stress",
+				"Alcohol Use","Alcohol Use"),3)
+
+times <- c(rep("Admission",8),rep("FUP 3",8),rep("FUP 6",8))
+
+Prevalence <- rep(c("no","yes","no","yes","no","yes","no","yes"),3)
+
+df <- data.frame(scales,times,Prevalence)
+df
+
+df$value<-c(x[,1],y[,1],z[,1],a[,1],x[,2],y[,2],z[,2],a[,2],
+	x[,3],y[,3],z[,3],a[,3])
+
+#plot the stacked bar plot
+tiff("/home/joao/Desktop/menta_health1",
+	width = 600, height = 300,compression = 'lzw')
+ggplot(df, aes(x = times)) + geom_bar(aes(weight=value, fill = Prevalence),
+		 position = 'fill') + scale_y_continuous("", breaks=NULL) +
+	scale_fill_manual(values=c("lightblue","darkblue")) +
+	facet_grid(.~scales)+
+	xlab("Follow up Times")
+dev.off()
+
+#plot the stacked bar plot with polar coordinates
+ggplot(df, aes(x = project)) + geom_bar(aes(weight=numbers, fill = component), position = 'fill') + scale_y_continuous("", breaks=NA) + scale_fill_manual(values = rev(brewer.pal(6, "Purples"))) + 
+coord_polar()
+
+

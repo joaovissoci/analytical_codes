@@ -62,7 +62,7 @@ data_epi$hour_crash<-as.factor(data_epi$hour_crash)
 
 #CLASS OF CRASH
 data_epi$outcome<-car::recode(data2$class_crash,
-	"0='afatal';1='afatal';2='non-fatal';3='non-fatal';else=NA")
+	"0='fatal';1='fatal';2='non-fatal';3='non-fatal';else=NA")
 data_epi$outcome<-as.factor(data_epi$outcome)
 
 # LOCATION OF CRASH
