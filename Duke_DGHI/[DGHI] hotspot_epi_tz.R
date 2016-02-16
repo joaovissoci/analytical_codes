@@ -1,14 +1,14 @@
-#######################################################################################
+#########################################################################
 #epi_rti_sri_lanka.R is licensed under a Creative Commons Attribution - Non commercial 3.0 Unported License. see full license at the end of this file.
-#######################################################################################
+#########################################################################
 #this script follows a combination of the guidelines proposed by Hadley Wickham http://goo.gl/c04kq as well as using the formatR package http://goo.gl/ri6ky
 #if this is the first time you are conducting an analysis using this protocol, please watch http://goo.gl/DajIN while following step by step
 
 #link to manuscript
 
-#####################################################################################
+#########################################################################
 #SETTING ENVIRONMENT
-#####################################################################################
+#########################################################################
  #install.packages("VIM")
  #install.packages("VIMGUI")
  #install.packages("miP")
@@ -19,9 +19,10 @@
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
 lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments",
-	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra","mi",
-	"VIM","epicalc","gdata","sqldf","reshape2","mclust","foreign","survival"
-	,"memisc","foreign","mice","MissMech"), library, character.only=T)
+	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
+	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust",
+	"foreign","survival","memisc","foreign","mice","MissMech"), 
+library, character.only=T)
 
 #######################################################
 #IMPORTING DATA
@@ -29,6 +30,8 @@ lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments",
 
 #Linux path
 data <- read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/Tz/epi_rti_tz_police_data.csv")
+
+data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/epi_rti_tz_police_data.csv")
 
 #Mac path
 #data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/epi_rti_tz_police_data.csv")
@@ -39,8 +42,9 @@ data <- read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/Tz/epi_rti_tz_pol
 data2<-with(data,data.frame(age,male,time_crash,class_crash,
 	urban_location,holiday,day_week,crash_type,rd_condition,weather,
 	light_condition,type_location,loc_ped_invol,traffic_control,
-	posted_speed_limit,speed_limit,severe,element_type,human_crash_factor,
-	ped_precrash,vehicle_factors,alcohol,victim_classification,protection,rd_size))
+	posted_speed_limit,speed_limit,severe,element_type,
+	human_crash_factor,ped_precrash,vehicle_factors,alcohol,
+	victim_classification,protection,rd_size))
 
 #creating the dataset 
 data_epi<-NULL
@@ -56,13 +60,13 @@ data_epi$gender<-car::recode(data2$male
 #recoding hour of crash
 hour_crash<-sapply(strsplit(as.character(data2$time_crash), ":"), "[", 1)
 hour_crash<-as.numeric(hour_crash)
-data_epi$hour_crash<-car::recode(hour_crash,"8:16='aDay';17:24='Night';
-	0='Night';1:7='Dawn';else=NA")
+data_epi$hour_crash<-car::recode(hour_crash,"8:16='aday';17:24='night';
+	0='night';1:7='dawn';else=NA")
 data_epi$hour_crash<-as.factor(data_epi$hour_crash)
 
 #CLASS OF CRASH
 data_epi$outcome<-car::recode(data2$class_crash,
-	"0='fatal';1='fatal';2='non-fatal';3='non-fatal';else=NA")
+	"0='ayes';1='ayes';2='no';3='no';else=NA")
 data_epi$outcome<-as.factor(data_epi$outcome)
 
 # LOCATION OF CRASH
@@ -79,8 +83,8 @@ data_epi$day_week<-data2$day_week
 # TYPE OF CRASH
 data_epi$crash_type<-car::recode(data2$crash_type,"0='collision';
 	1='collision';2='collision';3='collisionVRU';4='collisionVRU';
-	5='collision';6='collision';7='collisionVRU';8='lostcontrol';
-	9='lostcontrol';10='lostcontrol';11='lostcontrol';90='Other';else=NA")
+	5='collision';6='collision';7='collisionVRU';8='collision';
+	9='collision';10='collision';11='collision';90='collision';else=NA")
 
 # Road condition
 data_epi$rd_condition<-car::recode(data2$rd_condition,"0='dry';1='slippery';
@@ -92,7 +96,7 @@ data_epi$weather<-car::recode(data2$weather,"0='clear';1='unclear';
 
 # Light condition
 data_epi$light_condition<-car::recode(data2$light_condition,"0='daylight';
-	1='nightnolight';2='duskdawn';3='nightnolight';4='nightgooglight';
+	1='nightnolight';2='daylight';3='nightnolight';4='nightgooglight';
 	else=NA")
 
 # Type of Location
@@ -118,9 +122,9 @@ data_epi$speed_limit_sign<-as.factor(data2$posted_speed_limit)
 
 # type of vechile
 data_epi$type_vehicle<-car::recode(data2$element_type,"1='acar';
-	2='bus';3='truck';4='Other';5='motorcycle';6='motorcycle';
-	7='truck';8='bus';9='bus';10='bus';11='Other';12='Other';
-	13='pedestrian';90='Other';99=NA")
+	2='bus';3='truck';4='motorcycle';5='motorcycle';6='motorcycle';
+	7='truck';8='bus';9='bus';10='bus';11='truck';12=NA;
+	13='pedestrian';90=NA;99=NA")
 
 # human_crash_factor
 data_epi$human_crash_factor<-car::recode(data2$human_crash_factor,"
@@ -222,16 +226,16 @@ imp <- mice(data_tobeimp, seed = 2222, m=50)
 data_imputed<-complete(imp,4)
 
 #Plost the distrbution of each of the 5 possibilities of imputations
-stripplot(imp,pch=20,cex=1.2)
+#stripplot(imp,pch=20,cex=1.2)
 
 #plots a scatter plot of pairs of variables
-xyplot(imp, outcome ~ visibility | .imp, pch = 20, cex = 1.4)
+#xyplot(imp, outcome ~ visibility | .imp, pch = 20, cex = 1.4)
 
 #returns the matrix specifying each variable used to -predict imputation - columns 1=predictor 0=not predictor. rows are the variables of interest
-imp$predictorMatrix
-pred <- imp$predictorMatrix #if you want to exclude  variable from the prediction model for imputation then assign an obect to pred
-pred[, "bmi"] <- 0 #transform the column values into 0's for not predictiong
-imp <- mice(nhanes, pred = pred, pri = FALSE) # rerun the model specifying pred argumento witht eh matriz recoded.
+#imp$predictorMatrix
+#pred <- imp$predictorMatrix #if you want to exclude  variable from the prediction model for imputation then assign an obect to pred
+#pred[, "bmi"] <- 0 #transform the column values into 0's for not predictiong
+#imp <- mice(nhanes, pred = pred, pri = FALSE) # rerun the model specifying pred argumento witht eh matriz recoded.
 
 #######################################################
 #DESCRIPTIVE ANALYSIS
@@ -515,17 +519,21 @@ assocstats(table) #vcd package
 #MULTIVARIATE ANALYSIS
 #######################################################
 
+data_imputed$type_vehicle<-car::recode(data_imputed$type_vehicle,"
+	'Other'='zother'")
+
+data_imputed$outcome<-car::recode(data_imputed$outcome,"
+	'ayes'='yes'")
+
 #MODEL 1 - Adding every variable
 #traffic control was not added because had cases with 0 observations
 # age and gender becaise the missing rate wsa to high
 
 logmodel<-glm(outcome ~ hour_crash +
 						urban_location +
-						holiday +
 						as.factor(day_week) +
 						crash_type +
-						rd_condition +
-						weather +
+						#rd_condition +
 						light_condition +
 						type_location +
 						speed_limit_sign +
@@ -538,36 +546,11 @@ logmodel<-glm(outcome ~ hour_crash +
 
 summary(logmodel)
 #anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-#MODEL 2 - Excluding vars with less then 0.20 i the bivariate analysis
-#traffic control was not added because had cases with 0 observations
-# age and gender becaise the missing rate wsa to high
-
-logmodel<-glm(outcome ~ 
-						urban_location +
-						crash_type +
-						light_condition +
-						type_location +
-						speed_limit_sign +
-						type_vehicle +
-						human_crash_factor +
-						alcohol_tested
-			,family=binomial, data=data_imputed)
-
-summary(logmodel)
-#anova(reglogGEU)
-# exponentiated coefficients
-# and 95% CI for exponentiated coefficients
-exp(cbind(Odds=coef(logmodel),confint(logmodel))) 
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
-
-#############################################################################
+#########################################################################
 #epi_rti_sri_lanka.R is licensed under a Creative Commons Attribution - Non commercial 3.0 Unported License. see full license at the end of this file.
-#############################################################################
+#########################################################################
