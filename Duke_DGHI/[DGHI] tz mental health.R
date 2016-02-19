@@ -44,6 +44,8 @@ library, character.only=T)
 
 data <- read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/Tz/tz_baseline_mental_health.csv", header = TRUE)
 
+data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/tz_baseline_mental_health.csv", header = TRUE)
+
 
 #############################################################################
 #DATA MANAGEMENT
@@ -62,10 +64,10 @@ data$phq9score<-rowSums(phq9)
 audit<-with(data,data.frame(h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
 data$auditscore<-rowSums(audit)
 
-phq9_cat<-car::recode(phq9score,"0:4.9='no';5:19='yes'")
+phq9_cat<-car::recode(data$phq9score,"0:4.9='no';5:19='yes'")
 ces_score_cat<-car::recode(data$ces_score,"6:15.9='no';16:30='yes'")
 kes_score_cat<-car::recode(data$kes_score,"0:19.9='no';20:50='yes'")
-auditscore_cat<-car::recode(auditscore,"0:7.9='no';8:26='yes'")
+auditscore_cat<-car::recode(data$auditscore,"0:7.9='no';8:26='yes'")
 
 #############################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -302,13 +304,13 @@ library(RColorBrewer)
 library(ggplot2)
 
 #
-x<-with(data,table(phq9_cat,redcap_event_name))
+x<-with(data,prop.table(table(phq9_cat,redcap_event_name),2))
 t(x)
-y<-with(data,table(ces_score_cat,redcap_event_name))
+y<-with(data,prop.table(table(ces_score_cat,redcap_event_name),2))
 t(y)
-z<-with(data,table(kes_score_cat,redcap_event_name))
+z<-with(data,prop.table(table(kes_score_cat,redcap_event_name),2))
 t(z)
-a<-with(data,table(auditscore_cat,redcap_event_name))
+a<-with(data,prop.table(table(auditscore_cat,redcap_event_name),2))
 t(a)
 
 
