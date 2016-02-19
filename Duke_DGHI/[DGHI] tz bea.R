@@ -491,6 +491,7 @@ qca_data<-with(data_bea,data.frame(road_area,road_design,pavement,road_narrow,un
 # Evaluates necessity based on a set o conditions. Returns 3 values
 nec_test<-superSubset(qca_data, outcome = "outcome", cov.cut = 0.7)
 nec_test
+
 #Calculate Truth Table -A table with all variables coded and theis consequent outcome displaying which conditions are necessary and sufficient for the outcome to exist
 TT <- truthTable(qca_data, outcome = "outcome", incl.cut1 = 0.7,show.cases = TRUE, sort.by = c("incl", "n"), complete=FALSE) 
 # neg.out=TRUE -- use outcome negative value
@@ -503,15 +504,12 @@ dataCS <- eqmcc(TT, details = TRUE)#, show.cases = TRUE)
 dataCS$pims
 
 dataPS<- eqmcc(TT,  include = "?", rowdom = FALSE, details = FALSE)
-dataPS
+dataPS$pims
 
-dataIS<-eqmcc(TT, include = "?", direxp = rep(1,9), details = TRUE)
-dataIS
+dataIS<-eqmcc(TT, include = "?", direxp = rep(1,7), details = TRUE)
+dataIS$pims
 
-PAVEMENT*ROAD_NARROW + pavement*unevenness_roadside +
-       ROAD_AREA*PAVEMENT*SPEED_LIMIT +
-       ROAD_DESIGN*UNEVENNESS_ROADSIDE*NIGHT_LIGHTS +
-       road_design*PAVEMENT*night_lights*DDENSITY_LEVEL
+write.csv(dataIS$pims,"/home/joao/Desktop/bea_tz.csv")
 
 # Venn Diagrams
 #####################

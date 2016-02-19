@@ -525,6 +525,9 @@ data_imputed$type_vehicle<-car::recode(data_imputed$type_vehicle,"
 data_imputed$outcome<-car::recode(data_imputed$outcome,"
 	'ayes'='yes'")
 
+data_imputed$urban_location<-car::recode(data_imputed$urban_location,"
+	'urban'='aurban'")
+
 #MODEL 1 - Adding every variable
 #traffic control was not added because had cases with 0 observations
 # age and gender becaise the missing rate wsa to high
