@@ -1,35 +1,40 @@
-################################################################################
+######################################################################
 #TEMPLATE_FOR _META_ANALYSIS_OF_DIAGNOSTIC_ACCURACY#
 #this script follows a combination of guidelines proposed by Doebler and Holling, according to (http://cran.r-project.org/web/packages/mada/vignettes/mada.pdf)#
 #
 #
-#############################################################################
+######################################################################
 #SETTING ENVIRONMENT
-#############################################################################
+######################################################################
 #Load packages (after installed) with the library function
-lapply(c("metafor","ggplot2","gridExtra" ,"psych", "irr", "nortest", "moments","GPArotation","nFactors","gdata","meta","mada"), library, character.only=T)
-#############################################################################
+lapply(c("metafor","ggplot2","gridExtra" ,"psych", "irr", "nortest",
+	"moments","GPArotation","nFactors","gdata","meta","mada"),
+library, character.only=T)
+######################################################################
 #IMPORTING DATA AND RECODING
-#############################################################################
+######################################################################
+
+### Diagnostic measures
+#computer
+data<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
+
 #notebook
 data<-read.csv("/home/joao/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
 
 data_level3<-subset(data,data$level==3)
 
-data_outcome<-read.csv("/home/joao/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
-
-#Home PC
-data<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
-
-data_level3<-subset(data,data$level==3)
-
 data_level4<-data_level3[-c(9,10),]
 
+### Outcome measures
+#mobile
+data_outcome<-read.csv("/home/joao/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
+
+#home
 data_outcome<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
 
-#############################################################################
+######################################################################
 #DATA MANEGEMENT
-#############################################################################
+######################################################################
 positive<-as.integer(with(data_level3,rowSums(data.frame(TP,FN))))
 negative<-as.integer(with(data_level3,rowSums(data.frame(TN,FP))))
 
