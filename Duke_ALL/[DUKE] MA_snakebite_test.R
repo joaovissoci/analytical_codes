@@ -32,6 +32,9 @@ data_outcome<-read.csv("/home/joao/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_
 #home
 data_outcome<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
 
+data_outcome$outcome_cat<-as.character(data_outcome$outcome_cat)
+data_outcome_level3<-data_outcome[data_outcome$level==3,]
+
 ######################################################################
 #DATA MANEGEMENT
 ######################################################################
@@ -128,16 +131,58 @@ legend ("bottomleft", c("SROC", "conf.region"),lwd = c(2,1))
 #############################################################################
 #attach(data)
 
-names(data)
-data_outcome$names<-with(data_outcome,paste(study,year,sep=", "))
+#names(data)
+data_outcome$names<-with(data_outcome,
+	paste(study,year,sep=", "))
+data_outcome_level3$names<-with(data_outcome_level3,
+	paste(study,year,sep=", "))
 
-data2<-with(data_outcome,data.frame(names,total,severe,outcome_cat))
+#sometimes when subsetting a data for metanalysis with the meta packages
+#the new subsett carries the number of levels from the full datasets#
+#if by subseting you end up excluding one level, it gives you an erros
+#for not having that level in the set.seed#
+#to fix that, I first transformed the variable into a character so it
+#would not carry the levels, then subset
+#then reach back to the factor
+data_outcome_level3$outcome_cat<-as.factor(data_outcome_level3$outcome_cat)
+
+#data2<-with(data_outcome_level3,
+#	data.frame(names,total,severe,outcome_cat))
 #data2<-na.omit(data2)
-m3<-metaprop(severe,total,names, sm="PLN",data=data_outcome,byvar=outcome_cat)
+
+### Metanalysis all studies
+m3<-metaprop(severe,total,names, sm="PLN",
+	data=data_outcome,byvar=outcome_cat)
 forest(m3)
 
-data2<-with(data,data.frame(names,Negative,TN,Tesla))
-data2<-na.omit(data2)
-m3<-metaprop(TN,Negative,names, sm="PLN",data=data2,byvar=Tesla)
+### Excluding Jorge and Nicoleti
+
+tryout<-data_outcome[-c(3,9),]
+
+m3<-metaprop(severe,total,names, sm="PLN",
+	data=tryout,byvar=outcome_cat)
+forest(m3)
+Duk
+### Metanalysis only level 3
+m3<-metaprop(severe,total,names, sm="PLN",
+	data=data_outcome_level3,byvar=outcome_cat)
 forest(m3)
 
+### Metanalysis Nicoleti = Level 4 and Janes = Level 3
+data_outcome_reshaped<-data_outcome
+data_outcome_reshaped$level[data_outcome_reshaped$study==
+			"Nicoleti et al"]<-4
+data_outcome_reshaped$level[data_outcome_reshaped$study==
+			"Janes et al"]<-3
+
+data_outcome_reshaped$outcome_cat<-as.character(
+		data_outcome_level3$outcome_cat)
+data_outcome_reshaped2<-subset(data_outcome_reshaped,
+		data_outcome_reshaped$level==3)
+data_outcome_reshaped2$outcome_cat<-as.factor(
+		data_outcome_reshaped2$outcome_cat)
+reshaped_data<-data_outcome_reshaped2[-3,]
+
+m3<-metaprop(severe,total,names, sm="PLN",
+	data=reshaped_data,byvar=outcome_cat)
+forest(m3)
