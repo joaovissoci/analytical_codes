@@ -111,3 +111,48 @@ data_new<-as.data.frame(data_new)
 tiff("C:\\Users\\Joao\\Desktop\\tbi_try1.tiff", width = 700, height = 500,compression = 'lzw')
 polarBarChart(data_new,  familyLabel=TRUE, direction="inwards", binSize=0.3, spaceBar=0, spaceItem=0.3, spaceFamily=1.0, innerRadius=0.1,nguides=5,circleProportion=0.8,legLabels=c("D1","D2","D3","D4","D5","D6","Avarage"),legTitle="AGREE Domains")
 dev.off()
+
+
+lapply(c("sem","ggplot2", "psych", "irr", "nortest", 
+	"moments","GPArotation","nFactors","boot","psy", 
+	"car","vcd", "gridExtra","mi","VIM","gdata",
+	"mclust","reshape","repmis","memisc"), 
+library, character.only=T)
+
+data <-read.csv("/Users/oper/Downloads/AGREE_DOMAINS_SCORES - Summary (6).csv",header=T)
+data_entry <-remove.vars(data,c("Fi","Name","Year"))
+
+data_entry$author<-NULL
+data_entry$author<-apply(cbind(as.character(data$Name), as.character(data$Year)), 1, paste, collapse=", ")
+psych::describe(data_entry)
+data_plot<-melt(data_entry,id=c("author"))
+data_plot$family<-NULL
+data_plot$family<- rowMeans (data_entry)
+data_new<-NULL
+data_new$family<-data_plot$family
+data_new$item<-data_plot$author
+data_new$score<-data_plot$variable
+data_new$value<-data_plot$value
+data_new<-as.data.frame(data_new)
+library(ggplot2)
+library(reshape2)
+data_plot$value2<-round(data_plot$value,digits=2)
+
+ggplot(data_plot, aes(y=author, x=variable)) + geom_tile(fill=data_plot$color) + geom_text(aes(y=author, x=variable, label=value2)) theme(text = element_text(size=16))
+avseq <- ggplot(data_plot, aes(y=author, x=variable)) + geom_tile(fill=data_plot$color) + geom_text(aes(y=author, x=variable, label=value2)) + theme_minimal() + xlab(label="Domains") + ylab(label="CPG") + theme(text = element_text(size=16)) 
+levels<-c("SIGN, 2009","NZ, 2006","SCN, 2013",
+          "ACEP, 2009","NIHCE, 2007","BTF, 2012","NSW MoH, 2011",
+          "AAP/AAFP, 1999","AAP, 2001",
+          "RHSA, 2008","CMA, 2007","BTF, 2007",
+          "EAST, 2002","Taiwan, 2009","EFNS, 2011",
+          "JSN, 2006","EBIC, 1997","EAST, 2012","SINch/SIAARTI, 2000",
+          "CHOP, 2003","USP/BSN, 2001","ESICM, 1998","SINch, 1996")
+revLevels<-rev(levels)
+avseq + scale_y_discrete(limits=revLevels)
+summary (data_plot)
+data_plot$color<-NULL
+data_plot$color[data_plot$value >= 28.30 & data_plot$value < 55.88]="lightcyan4"
+data_plot$color[data_plot$value >= 55.88 & data_plot$value < 69.75]="lightcyan3"
+data_plot$color[data_plot$value >= 69.75 & data_plot$value < 81.97]="lightcyan2"
+data_plot$color[data_plot$value >= 81.97]="lightcyan1"
+summary(data_plot)
