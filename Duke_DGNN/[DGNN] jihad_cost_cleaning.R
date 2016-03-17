@@ -1,5 +1,5 @@
 
-data1<-read.csv("/home/joao/Dropbox/datasets/DGNN/Ug_cost_ef/jihad_cost_basedata.csv")
+data1<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGNN/Ug_cost_ef/jihad_cost_basedata.csv")
 
 colnames(data1)<-c("date","diagnosis","deleteme1","surgical_procedure",
 	"deleteme2","age","medications","mediations_price","deleteme3",
@@ -131,9 +131,11 @@ gender[(ref_lines[1431]-(4*(1431-1))):(length(data1$deleteme3)-((4*1431)))]<-rep
 
 new_data<-data.frame(names,gender,new_age,
 	surgical_procedure,CIDdiagnosis,
-	date=teste$date,medications=teste$medications)
+	date=teste$date,medications=teste$medications,
+	investigations=teste$investigations,
+	bedside_procedures=teste$bedside)
 
-write.csv(new_data,"/home/joao/Dropbox/datasets/DGNN/Ug_cost_ef/jihad_cost_newdata.csv")
+write.csv(new_data,"/Users/joaovissoci/Dropbox/datasets/DGNN/Ug_cost_ef/jihad_cost_newdata.csv")
 
 
 
