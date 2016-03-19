@@ -148,6 +148,18 @@ fibrinogen$id<-c(data_rs$id,data_cp$id)
 fibrinogen$group<-c(data_rs$group,data_cp$group)
 
 ######################################################
+#POWER AND SAMPLE SIZE
+######################################################
+#https://cran.r-project.org/web/packages/longpower/longpower.pdf
+#Liu, G., & Liang, K. Y. (1997). Sample size calculations for studies with correlated observations. Biometrics, 53(3), 937-47.
+#Diggle PJ, Heagerty PJ, Liang K, Zeger SL. Analysis of longitudinal data. Second Edition. Oxford. Statistical Science Serires. 2002
+
+require(longpower)
+require(lme4)
+fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy) 
+lmmpower(fm1, pct.change = 0.30, t = seq(0,9,1), power = 0.80)
+
+######################################################
 #DEMOGRAPHICS
 ######################################################
 ## OVERALL
