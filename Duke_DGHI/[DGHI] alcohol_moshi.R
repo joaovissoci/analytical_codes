@@ -30,7 +30,7 @@ lapply(c("metafor","ggplot2","gridExtra" ,"psych",
 #data<-
 #data<-read.sas7bdat("C:\\Users\\Joao\\Desktop\\tanzclean.sas7bdat")
 #data<-read.sas7bdat("/Users/rpietro/Dropbox/datasets/Africa_DGHI/tanzclean.sas7bdat")
-data<-read.sas7bdat("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/tanzclean.sas7bdat")
+data<-read.sas7bdat("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/tanzclean.sas7bdat")
 data<-as.data.frame(data)
 ###################################################
 #DATA MANAGEMENT
@@ -219,6 +219,7 @@ c(form6,form7)
 }
 
 ssize(1.96,0.8416,2.0,15,30)
+
 ###################################################
 #TABLE 1. DESCRIPTIVES
 ###################################################
@@ -482,6 +483,150 @@ with(cleaned_data,by(alcohol_amount_1,breath_level,ad.test))
 with(cleaned_data,by(alcohol_amount_1,breath_level,describe))
 with(cleaned_data,t.test (alcohol_amount_1~breath_level))
 
+### DUMMY Variables
+dummy_data<-with(cleaned_data,data.frame(breath_level,
+	method_injury,as.factor(type_vehicle),location))
+dummy<-as.data.frame(model.matrix(breath_level~ ., data = dummy_data))
+names(dummy)<-c("Intercept",
+				"injury_fall_trip",
+				"injury_other",
+				"injury_RIT",
+				"injury_violence",
+				"vehicle2",
+				"vehicle3",
+				"vehicle4",
+				"location_drinking",
+				"home",
+				"location_outdoor",
+				"location_vehicle",
+				"location_workplace")
+
+#Fall/TRIP
+mytable <- table(dummy$injury_fall_trip,cleaned_data$breath_level)
+mytable
+prop.table(mytable,2)
+assocstats(mytable)
+
+#RTI
+mytable <- table(dummy$injury_RIT,cleaned_data$breath_level)
+mytable
+prop.table(mytable,2)
+assocstats(mytable)
+
+#violence
+mytable <- table(dummy$injury_violence,cleaned_data$breath_level)
+mytable
+prop.table(mytable,2)
+assocstats(mytable)
+
+#vehicle1
+mytable <- table(dummy$vehicle1,cleaned_data$breath_level)
+mytable
+prop.table(mytable,2)
+assocstats(mytable)
+
+#vehicle2
+mytable <- table(dummy$vehicle2,cleaned_data$breath_level)
+mytable
+prop.table(mytable,2)
+assocstats(mytable)
+
+#vehicle3
+mytable <- table(dummy$vehicle3,cleaned_data$breath_level)
+mytable
+prop.table(mytable,2)
+assocstats(mytable)
+
+#vehicle4
+mytable <- table(dummy$Intercept,cleaned_data$breath_level)
+mytable
+prop.table(mytable,2)
+assocstats(mytable)
+
+###################################################
+#REGRESSION MODEL
+###################################################
+
+regression<-with(cleaned_data,data.frame(age,gender=as.factor(gender),
+						years_education,
+						work=as.factor(work),gcs,time_to_injury,
+						rts,kts,fracture=as.factor(fracture),
+						dislocation=as.factor(dislocation),
+						open_wound=as.factor(open_wound),
+						bruise=as.factor(bruise),
+						concussion=as.factor(concussion),
+						organ_injury=as.factor(organ_injury),
+						method_injury,
+						type_vehicle=as.factor(type_vehicle),
+						motive_injury=as.factor(motive_injury),
+						location,outcome=as.factor(breath_level)))
+regression$method_injury<-car::recode(regression$method_injury,
+	"'Outros'='ZFall/Trip';'Burn'='ZFall/Trip';
+	'Fall/Trip'='ZFall/Trip'")
+regression$type_vehicle<-car::recode(regression$type_vehicle,
+	"'3'='2'")
+regression$location<-car::recode(regression$location,
+	"'drinking place'='ZOther';'vehicle'='ZOther';
+	'Other'='ZOther'")
+regression$work<-car::recode(regression$work,
+	"'9'='1'")
+regression$outcome<-car::recode(regression$outcome,
+	"'2'='0';'1'='1'")
+regression$fracture<-car::recode(regression$fracture,
+	"'2'='0';'1'='1'")
+regression$dislocation<-car::recode(regression$dislocation,
+	"'2'='0';'1'='1'")
+regression$open_wound<-car::recode(regression$open_wound,
+	"'2'='0';'1'='1'")
+regression$bruise<-car::recode(regression$bruise,
+	"'2'='0';'1'='1'")
+regression$concussion<-car::recode(regression$concussion,
+	"'2'='0';'1'='1'")
+regression$organ_injury<-car::recode(regression$organ_injury,
+	"'2'='0';'1'='1'")
+
+#Method of injury
+mytable <- with(regression,table(method_injury))
+mytable
+prop.table(mytable)
+mytable <- with(regression,table(method_injury,outcome))
+mytable
+prop.table(mytable,2)
+assocstats(mytable)
+
+#Type of RTI
+mytable <- with(regression,table(type_vehicle))
+mytable
+prop.table(mytable)
+mytable <- with(regression,table(type_vehicle,outcome))
+mytable
+prop.table(mytable,2)
+assocstats(mytable)
+
+#Location
+mytable <- with(regression,table(location))
+mytable
+prop.table(mytable)
+mytable <- with(regression,table(location,outcome))
+mytable
+prop.table(mytable,2)
+assocstats(mytable)
+
+fit <- glm(outcome~age+gender+years_education+
+						work+gcs+time_to_injury+
+						rts+kts+fracture+dislocation+
+						open_wound+bruise+concussion+
+						organ_injury+method_injury+
+						type_vehicle+motive_injury+
+						location,
+						data=regression,family=binomial())
+summary(fit) # display results
+exp(cbind(Odds=coef(fit),confint(fit,level=0.90))) 
+#predict(fit, type="response") # predicted values
+#residuals(fit, type="deviance") # residuals
+logistic.display(fit)
+
+
 ###########################################################
 #Table 2. Alchohl dosage usage
 ###########################################################
@@ -530,7 +675,6 @@ mytable
 prop.table(mytable,2)
 fisher.test(mytable)
 
-
 mytable <- with(data_moshi,table(abstainers,bottle))
 mytable
 prop.table(mytable,1)
@@ -553,8 +697,6 @@ mytable <- with(data_moshi,table(abstainers,bottle1week))
 mytable
 prop.table(mytable,1)
 assocstats(mytable)
-
-
 
 ###########################################################
 ##CLOGIT Model 1
