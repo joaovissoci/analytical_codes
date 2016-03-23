@@ -33,6 +33,7 @@ install.packages("sqldf")
 install.packages("pgirmess")
 install.packages("VIM")
 install.packages("caret")
+install.packages("wordcloud")
 
 devtools::install_github("jennybc/googlesheets")
 devtools::install_github("cran/epicalc")
