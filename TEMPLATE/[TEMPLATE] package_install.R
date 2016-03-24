@@ -34,6 +34,16 @@ install.packages("pgirmess")
 install.packages("VIM")
 install.packages("caret")
 install.packages("wordcloud")
+install.packages("psy")
+install.packages("mclust")
+install.packages("memisc")
+install.packages("lmerTest")
+install.packages("doBy")
+install.packages("geepack")
+install.packages("mada")
+install.packages("reshape")
+
+
 
 devtools::install_github("jennybc/googlesheets")
 devtools::install_github("cran/epicalc")

@@ -20,7 +20,11 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf","reshape2","mclust","foreign","survival","memisc","lme4","lmerTest","dplyr"),library, character.only=T)
+lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest", 
+	"moments","GPArotation","nFactors","boot","psy", "car",
+	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
+	"reshape2","mclust","foreign","survival","memisc","lme4",
+	"lmerTest","dplyr"),library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
 #devtools::install_github("jennybc/googlesheets")
@@ -48,10 +52,10 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArota
 #data_rs  <- get_via_lf(sheet_rs, ws = "Coagulation Data")
 #demographics_rs<-get_via_lf(sheet_rs, ws = "Demographics") 
 
-data_rs <- repmis::source_DropboxData("data_rs.csv","346fpxvufnnp0ic",sep = ",",header = TRUE)
-demographics_rs <- repmis::source_DropboxData("demographics_rs.csv","8ofis8qsgsoh27i",sep = ",",header = TRUE)
-data_cp <- repmis::source_DropboxData("data_cp.csv","2c250yhxjtd4xxe",sep = ",",header = TRUE)
-demographics_cp <- repmis::source_DropboxData("demographics_cp.csv","pfy8uzynebdauua",sep = ",",header = TRUE)
+data_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_rs.csv")
+demographics_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_rs.csv")
+data_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_cp.csv")
+demographics_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_cp.csv")
 
 #sheet_cp <- register_ss("Copy of Copperhead data")#
 #data_cp <- get_via_lf(sheet_cp, ws = "Coagulation Data") 

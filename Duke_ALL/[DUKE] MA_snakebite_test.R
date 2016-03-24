@@ -16,10 +16,10 @@ library, character.only=T)
 
 ### Diagnostic measures
 #computer
-data<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
 
 #notebook
-data<-read.csv("/home/joao/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
 
 data_level3<-subset(data,data$level==3)
 
@@ -27,10 +27,10 @@ data_level4<-data_level3[-c(9,10),]
 
 ### Outcome measures
 #mobile
-data_outcome<-read.csv("/home/joao/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
+data_outcome<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
 
 #home
-data_outcome<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
+data_outcome<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
 
 data_outcome$outcome_cat<-as.character(data_outcome$outcome_cat)
 data_outcome_level3<-data_outcome[data_outcome$level==3,]
@@ -151,10 +151,13 @@ data_outcome_level3$outcome_cat<-as.factor(data_outcome_level3$outcome_cat)
 #data2<-na.omit(data2)
 
 ### Metanalysis all studies
+tiff("/Users/jnv4/Desktop/pointestimate_MA.tiff",
+	width = 700, height = 200,compression = 'lzw')
 m3<-metaprop(severe,total,names, sm="PLN",
-	data=data_outcome,byvar=outcome_cat)
+	data=data_outcome_level3,comb.fixed=FALSE)
+m3
 forest(m3)
-
+dev.off()
 ### Excluding Jorge and Nicoleti
 
 tryout<-data_outcome[-c(3,9),]
