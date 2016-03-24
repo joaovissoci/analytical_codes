@@ -1,6 +1,44 @@
 
+library(qgraph)
 
-data<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGNN/surgical_capacity/emerging_themes_needs.csv")
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/surgical_capacity/needs_consumable_network1.csv")
+
+rownames(data[-1])<-data$X
+
+vsize=c(10,(c(0.21,0.04,0.21,0.20,0.13,0.001,0.001,0.001,0.001,0.20)+5),
+		10,(c(0.65,0.27,0.08,0.001,0.001)+5))
+
+vsize=c(10,5,2,5,5,3,2,2,2,2,5,
+		10,8,5,2,2,2)
+
+network_meta <- qgraph(data[-1],layout = "spring",
+	labels=c("Needs","Supplies","Delays in report","Drugs",
+		"Esquipament","Low budget","Basic supplies","Budget limitation",
+		"Personal supplies","RRH limitations","Stock out",
+		"Assets","Supplies","Given camp","Private facilities",
+		"Reuse","Adequate supplies"),
+	label.scale=FALSE,label.cex = c(2,1,1,1,1,1,0.8,0.8,0.8,0.8,1,
+		2,1,1,1,0.8,0.8),
+	vsize=vsize,
+	color=c("grey",rep("brown3",5),rep("darksalmon",4),"brown3",
+		"grey",rep("darkolivegreen3",3),rep("khaki1",2)),
+	shape=c(rep("circle",6),rep("square",4),"circle",
+	rep("circle",4),rep("square",2)),borders = FALSE)
+	#greyscale=T)
+	#,minimum=0.5,cut=10
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 names(data)
 
