@@ -6,11 +6,11 @@ library(xts)
 library(dygraphs)
  
 # Get IBM and Linkedin stock data from Yahoo Finance
-data2009<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2009_datecoded.csv")
-data2010<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2010_datecoded.csv")
-data2011<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2011_datecoded.csv")
-data2012<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2012_datecoded.csv")
-data2013<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2013_datecoded.csv")
+data2009<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2009_datecoded.csv")
+data2010<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2010_datecoded.csv")
+data2011<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2011_datecoded.csv")
+data2012<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2012_datecoded.csv")
+data2013<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2013_datecoded.csv")
 
 #Data on points vs. polygons by category
 all_data<-rbind(
@@ -21,11 +21,12 @@ all_data<-rbind(
 	with(data2013,data.frame(date,REPORT_NO)))
 
 
-speed_pol_data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/SPEED_POLYG_POINTS.csv")
+speed_pol_data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/SPEED_POLYG_POINTS.csv")
 impaired_pol_data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/IMPAIRED_POLYG_POINTS.csv")
 
 
-vru_pol_dates<-merge(vru_pol_data,all_data,by="REPORT_NO")
+speed_pol_dates<-merge(all_data,speed_pol_data,by="REPORT_NO")
+	
 
 #############################################################################
 #DATA MANAGEMENT
