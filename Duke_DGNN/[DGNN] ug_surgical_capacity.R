@@ -1,29 +1,41 @@
 
 library(qgraph)
 
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/surgical_capacity/needs_consumable_network1.csv")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_consumable.csv")
+
+data_naomit<-data
+
+for(i in 1:dim(data)[2]){
+
+	data_naomit[,i]<-car::recode(data[,i],"NA=0")
+}
+
 
 rownames(data[-1])<-data$X
 
-vsize=c(10,(c(0.21,0.04,0.21,0.20,0.13,0.001,0.001,0.001,0.001,0.20)+5),
-		10,(c(0.65,0.27,0.08,0.001,0.001)+5))
-
-vsize=c(10,5,2,5,5,3,2,2,2,2,5,
-		10,8,5,2,2,2)
+vsize=c(10,7,2,5,2,6,2,2,4,2,2,
+		10,5,7,5,6,2,2,2,2)
 
 network_meta <- qgraph(data[-1],layout = "spring",
 	labels=c("Needs","Supplies","Delays in report","Drugs",
 		"Esquipament","Low budget","Basic supplies","Budget limitation",
-		"Personal supplies","RRH limitations","Stock out",
-		"Assets","Supplies","Given camp","Private facilities",
-		"Reuse","Adequate supplies"),
-	label.scale=FALSE,label.cex = c(2,1,1,1,1,1,0.8,0.8,0.8,0.8,1,
-		2,1,1,1,0.8,0.8),
+		"Rationing","RRH limitations","Stock out",
+		"Assets","Supplies","Program related","Collaboration",
+		"Improvisation",
+		"Adequate supplies",
+		"Given camp",
+		"Private facilities",
+		"Reuse"),
+	label.scale=FALSE,label.cex = c(2,1,0.8,1,0.8,1,0.8,0.8,1,0.8,0.8,
+		2,1,1,1,1,0.8,0.8,0.8,0.8),
 	vsize=vsize,
-	color=c("grey",rep("brown3",5),rep("darksalmon",4),"brown3",
-		"grey",rep("darkolivegreen3",3),rep("khaki1",2)),
-	shape=c(rep("circle",6),rep("square",4),"circle",
-	rep("circle",4),rep("square",2)),borders = FALSE)
+	color=c("grey","brown3","darksalmon","brown3","darksalmon",
+		,"brown3","darksalmon","darksalmon","brown3","darksalmon",
+		"darksalmon","grey",rep("darkolivegreen3",4),rep("khaki1",4)),
+	shape=c("circle","circle","square","circle","square",
+		,"circle","square","square","circle","square",
+		"square","circle",rep("circle",4),rep("square",4)),
+	borders = FALSE)
 	#greyscale=T)
 	#,minimum=0.5,cut=10
 
