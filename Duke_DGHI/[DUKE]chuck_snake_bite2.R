@@ -52,10 +52,10 @@ lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest",
 #data_rs  <- get_via_lf(sheet_rs, ws = "Coagulation Data")
 #demographics_rs<-get_via_lf(sheet_rs, ws = "Demographics") 
 
-data_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_rs.csv")
-demographics_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_rs.csv")
-data_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_cp.csv")
-demographics_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_cp.csv")
+data_rs <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_rs.csv")
+demographics_rs <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_rs.csv")
+data_cp <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_cp.csv")
+demographics_cp <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_cp.csv")
 
 #sheet_cp <- register_ss("Copy of Copperhead data")#
 #data_cp <- get_via_lf(sheet_cp, ws = "Coagulation Data") 
@@ -161,7 +161,8 @@ fibrinogen$group<-c(data_rs$group,data_cp$group)
 require(longpower)
 require(lme4)
 fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy) 
-lmmpower(fm1, pct.change = 0.30, t = seq(0,9,1), power = 0.80)
+#lmmpower(fm1, pct.change = 0.30, t = seq(0,9,1), power = 0.80)
+# code run after the model
 
 ######################################################
 #DEMOGRAPHICS
@@ -551,6 +552,8 @@ m1.lme4_2 = lmer(outcome ~ groups + moments + (1|subject),data = nlmedata,REML=F
 m1.lme4_3 = lmer(outcome ~ groups + (1|subject),data = nlmedata,REML=FALSE)
 
 anova(m1.lme4,m1.lme4_2,m1.lme4_3)
+
+lmmpower(m1.lme4, pct.change = 0.40, t = seq(0,3,1), power = 0.80)
 
 
 # FIBRINOGEN
