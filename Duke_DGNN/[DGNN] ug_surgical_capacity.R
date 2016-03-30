@@ -1,7 +1,7 @@
 
 library(qgraph)
 
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_consumable.csv")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_consumable.csv")
 
 data_naomit<-data
 
@@ -18,7 +18,7 @@ vsize=c(10,7,2,5,2,6,2,2,4,2,2,
 
 network_meta <- qgraph(data_naomit[-1],layout = "spring",
 	labels=c("Needs","Supplies","Delays in report","Drugs",
-		"Esquipament","Low budget","Basic supplies","Budget limitation",
+		"Esquipment","Low budget","Basic supplies","Budget limitation",
 		"Rationing","RRH limitations","Stock out",
 		"Assets","Supplies","Program related","Collaboration",
 		"Improvisation",
@@ -41,7 +41,7 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 
 ##############
 
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_equipament.csv")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_equipament.csv")
 
 data_naomit<-data
 
@@ -61,9 +61,9 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 			 "Personnel",
 			 "Low budget",
 			 "Spare parts",
-			 "Lack of equipament",
+			 "Lack of equipment",
 			 "Infastructure",
-			 "Biomedical Technician",
+			 "Biomedical technician",
 			 "Lack of spare parts",
 			 "Drill",
 			 "Maintenance",
@@ -79,17 +79,17 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 			 "Uniformed purchases",
 			 "Ventilator",
 			 "Assets",
-			 "Adequate equipaments",
+			 "Adequate equipments",
 			 "Personnel",
 			 "Rationing",
 			 "Improvisation",
 			 "Back up machines",
-			 "Biomed Technicians",
+			 "Biomed technicians",
 			 "Donation",
 			 "Hospital purchased",
-			 "Personal equipament",
+			 "Personal equipment",
 			 "Preventive maintenance",
-			 "Non-protocol equipament"),
+			 "Non-protocol equipment"),
 	label.scale=FALSE,label.cex = c(
 		2,rep(1,5),rep(0.8,15),
 		2,rep(1,4),rep(0.8,7)),
@@ -104,7 +104,7 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 
 ###################
 
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_infrastructure.csv")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_infrastructure.csv")
 
 data_naomit<-data
 
@@ -125,7 +125,7 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 			 "Diagnostic capacity",
 			 "Low budget infrastructure",
 			 "Personnel",
-			 "Low budget equipament",
+			 "Low budget equipment",
 			 "Ambulance",
 			 "Blood bank",
 			 "Budget limitation",
@@ -173,7 +173,7 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 
 ###################
 
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_personnel.csv")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_personnel.csv")
 
 data_naomit<-data
 
@@ -191,7 +191,7 @@ vsize=c(10,6,5,6,6,4,rep(2,9),
 network_meta <- qgraph(data_naomit[-1],layout = "spring",
 	labels=c("Needs",
 			 "Medical specialty",
-			 "Equipament",
+			 "Equipment",
 			 "More personnel",
 			 "Personnel management",
 			 "Low budget",

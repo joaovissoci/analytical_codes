@@ -216,6 +216,16 @@ ci_func(demographics_data$severity_score,.95)
 by(demographics_data$severity_score,fibrinogen$group,summary)
 wilcox.test(demographics_data$severity_score~fibrinogen$group)
 
+## TREATMENT Descriptives
+table_overall<-table(demographics_data$Treatment)
+table_overall
+prop.table(table_overall)
+table<-table(demographics_data$Treatment,fibrinogen$group)
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
 
 ########## PLATELETS #####################
 data_rs_table2<-with(data_rs,data.frame(baselineplateletcountkmm3,nadir_platelets_rs,day5followupplateletskmm3,day8followupplateletskmm3,day15followupplateletskmm3))	
@@ -236,6 +246,20 @@ ci_lower = x_bar - t_star*s/sqrt(n)
 ci_upper = x_bar + t_star*s/sqrt(n)
 c(ci_lower, ci_upper)
 
+#Platelets <10ˆ9/L
+platelets_less150<-car::recode(data_rs_table2$baselineplateletcountkmm3,
+	"0:150='less';else='high'")
+table<-table(platelets_less150)
+table
+prop.table(table)
+
+#Platelets 50, 100, 150
+platelets_lesscats<-car::recode(data_rs_table2$baselineplateletcountkmm3,
+	"0:50='50less';50.01:100='100to50';100.01:150='150to100';else='high'")
+table<-table(platelets_lesscats)
+table
+prop.table(table)
+
 #Baseline Platelets - CP
 ad.test(data_cp_table2$baselineplateletcountkmm3)
 describe(data_cp_table2$baselineplateletcountkmm3)
@@ -246,6 +270,20 @@ t_star = qt(0.95, n-1)
 ci_lower = x_bar - t_star*s/sqrt(n)
 ci_upper = x_bar + t_star*s/sqrt(n)
 c(ci_lower, ci_upper)
+
+#Platelets <10ˆ9/L
+platelets_less150<-car::recode(data_cp_table2$baselineplateletcountkmm3,
+	"0:150='less';else='high'")
+table<-table(platelets_less150)
+table
+prop.table(table)
+
+#Platelets 50, 100, 150
+platelets_lesscats<-car::recode(data_cp_table2$baselineplateletcountkmm3,
+	"0:50='50less';50.01:100='100to50';100.01:150='150to100';else='high'")
+table<-table(platelets_lesscats)
+table
+prop.table(table)
 
 #Comparing both
 t.test(data_rs_table2$baselineplateletcountkmm3,data_cp_table2$baselineplateletcountkmm3,conf.level=.95)
@@ -376,6 +414,20 @@ ci_lower = x_bar - t_star*s/sqrt(n)
 ci_upper = x_bar + t_star*s/sqrt(n)
 c(ci_lower, ci_upper)
 
+#Fibrogen <10ˆ9/L
+fibrogen_less150<-car::recode(data_rs_table3$baselinefibrinogencountmgdl,
+	"0:150='less';else='high'")
+table<-table(fibrogen_less150)
+table
+prop.table(table)
+
+#Fibrogen 50, 100, 150
+fibrogen_lesscats<-car::recode(data_rs_table3$baselinefibrinogencountmgdl,
+	"0:50='50less';50.01:100='100to50';100.01:150='150to100';else='high'")
+table<-table(fibrogen_lesscats)
+table
+prop.table(table)
+
 #Baseline FIBRINOGEN - CP
 ad.test(data_cp_table3$baselinefibrinogencountmgdl)
 describe(data_cp_table3$baselinefibrinogencountmgdl)
@@ -386,6 +438,21 @@ t_star = qt(0.95, n-1)
 ci_lower = x_bar - t_star*s/sqrt(n)
 ci_upper = x_bar + t_star*s/sqrt(n)
 c(ci_lower, ci_upper)
+
+#Fibrogen <10ˆ9/L
+fibrogen_less150<-car::recode(data_cp_table3$baselinefibrinogencountmgdl,
+	"0:150='less';else='high'")
+table<-table(fibrogen_less150)
+table
+prop.table(table)
+
+#Fibrogen 50, 100, 150
+fibrogen_lesscats<-car::recode(data_cp_table3$baselinefibrinogencountmgdl,
+	"0:50='50less';50.01:100='100to50';100.01:150='150to100';else='high'")
+table<-table(fibrogen_lesscats)
+table
+prop.table(table)
+
 #Comparing both
 wilcox.test(data_rs_table3$baselinefibrinogencountmgdl,data_cp_table3$baselinefibrinogencountmgdl,conf.level=.95)
 
@@ -546,6 +613,7 @@ difflsmeans(m1.lme4)
 plot(difflsmeans(m1.lme4, test.effs="groups:moments"))
 lsmeans(m1.lme4)
 confint(m1.lme4,level=0.95)
+lmmpower(m1.lme4, pct.change = 0.30, t = seq(0,5,1), power = 0.80)
 
 m1.lme4_2 = lmer(outcome ~ groups + moments + (1|subject),data = nlmedata,REML=FALSE)
 
@@ -603,115 +671,182 @@ lsmeans(m1.lme4)
 platelets<-as.data.frame(platelets)
 #platelets<-na.omit(platelets)
 platelets_rs<- c(
-	with(subset(platelets,platelets$group=="Rattlesnake"),mean(baseline)),
-    with(subset(platelets,platelets$group=="Rattlesnake"),mean(na.omit(T1))),
-	with(subset(platelets,platelets$group=="Rattlesnake"),mean(na.omit(T2))),
-	with(subset(platelets,platelets$group=="Rattlesnake"),mean(na.omit(T3))),
-	with(subset(platelets,platelets$group=="Rattlesnake"),mean(na.omit(T4))))
+	with(subset(platelets,platelets$group=="Rattlesnake"),
+		mean(baseline)),
+    with(subset(platelets,platelets$group=="Rattlesnake"),
+    	mean(na.omit(T1))),
+	with(subset(platelets,platelets$group=="Rattlesnake"),
+		mean(na.omit(T2))),
+	with(subset(platelets,platelets$group=="Rattlesnake"),
+		mean(na.omit(T3))),
+	with(subset(platelets,platelets$group=="Rattlesnake"),
+		mean(na.omit(T4))))
 
 platelets_cp<- c(
-	with(subset(platelets,platelets$group=="Copperhead"),mean(baseline)),
-    with(subset(platelets,platelets$group=="Copperhead"),mean(na.omit(T1))),
-	with(subset(platelets,platelets$group=="Copperhead"),mean(na.omit(T2))),
-	with(subset(platelets,platelets$group=="Copperhead"),mean(na.omit(T3))),
-	with(subset(platelets,platelets$group=="Copperhead"),mean(na.omit(T4))))
+	with(subset(platelets,platelets$group=="Copperhead"),
+		mean(baseline)),
+    with(subset(platelets,platelets$group=="Copperhead"),
+    	mean(na.omit(T1))),
+	with(subset(platelets,platelets$group=="Copperhead"),
+		mean(na.omit(T2))),
+	with(subset(platelets,platelets$group=="Copperhead"),
+		mean(na.omit(T3))),
+	with(subset(platelets,platelets$group=="Copperhead"),
+		mean(na.omit(T4))))
 
-	plot(platelets_cp, type="o", col="red", ylim=c(120,400),axes=FALSE, ann=FALSE)
+	plot(platelets_cp, type="o", col="red", ylim=c(120,400),
+		axes=FALSE, ann=FALSE)
 	# Make x axis using tests labels
-	axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,"8 days","15 days"))
+	axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,
+		"8 days","15 days"))
 	axis(2, at=seq(from = 150, to = 400, by = 30))
 	# Create box around plot
 	#box()
 	title(xlab="Follow Up")
-	title(ylab="Platelets") #, col.lab=rgb(0,0.5,0)
-	points(c(rep(seq(0.8,1.2,0.05),10),0.8,1.0,1.2),subset(platelets$baseline,platelets$group=="Rattlesnake"),col='grey50')
-	points(c(rep(seq(0.8,1.2,0.05),2),0.8,1.0,1.2,1.0),subset(platelets$baseline,platelets$group=="Copperhead"),col='red')
-	points(c(rep(seq(1.8,2.2,0.05),10),1.8,2.2,2.0),subset(platelets$T1,platelets$group=="Rattlesnake"),col='grey50')
-	points(c(rep(seq(1.8,2.2,0.05),2),1.8,2.2,2.0,1.8),subset(platelets$T1,platelets$group=="Copperhead"),col='red')
-	points(c(rep(seq(2.8,3.2,0.05),10),2.8,3.2,3.0),subset(platelets$T2,platelets$group=="Rattlesnake"),col='grey50')
-	points(c(rep(seq(2.8,3.2,0.05),2),2.8,3.2,3.0,2.8),subset(platelets$T2,platelets$group=="Copperhead"),col='red')
-	points(c(rep(seq(3.8,4.2,0.05),10),3.8,4.2,4.0),subset(platelets$T3,platelets$group=="Rattlesnake"),col='grey50')
-	points(c(rep(seq(3.8,4.2,0.05),2),3.8,4.2,4.0,3.8),subset(platelets$T3,platelets$group=="Copperhead"),col='red')
-	points(c(rep(seq(4.8,5.2,0.05),10),4.8,5.2,5.0),subset(platelets$T4,platelets$group=="Rattlesnake"),col='grey50')
-	points(c(rep(seq(4.8,5.2,0.05),2),4.8,5.2,5.0,4.8),subset(platelets$T4,platelets$group=="Copperhead"),col='red')
+	title(ylab="Platelets 10ˆ9/L") #, col.lab=rgb(0,0.5,0)
+	points(c(rep(seq(0.8,1.2,0.05),10),0.8,1.0,1.2),
+		subset(platelets$baseline,platelets$group=="Rattlesnake"),
+		col='grey50')
+	points(c(rep(seq(0.8,1.2,0.05),2),0.8,1.0,1.2,1.0),
+		subset(platelets$baseline,platelets$group=="Copperhead"),
+		col='red')
+	points(c(rep(seq(1.8,2.2,0.05),10),1.8,2.2,2.0),
+		subset(platelets$T1,platelets$group=="Rattlesnake"),
+		col='grey50')
+	points(c(rep(seq(1.8,2.2,0.05),2),1.8,2.2,2.0,1.8),
+		subset(platelets$T1,platelets$group=="Copperhead"),
+		col='red')
+	points(c(rep(seq(2.8,3.2,0.05),10),2.8,3.2,3.0),
+		subset(platelets$T2,platelets$group=="Rattlesnake"),
+		col='grey50')
+	points(c(rep(seq(2.8,3.2,0.05),2),2.8,3.2,3.0,2.8),
+		subset(platelets$T2,platelets$group=="Copperhead"),
+		col='red')
+	points(c(rep(seq(3.8,4.2,0.05),10),3.8,4.2,4.0),
+		subset(platelets$T3,platelets$group=="Rattlesnake"),
+		col='grey50')
+	points(c(rep(seq(3.8,4.2,0.05),2),3.8,4.2,4.0,3.8),
+		subset(platelets$T3,platelets$group=="Copperhead"),
+		col='red')
+	points(c(rep(seq(4.8,5.2,0.05),10),4.8,5.2,5.0),
+		subset(platelets$T4,platelets$group=="Rattlesnake"),
+		col='grey50')
+	points(c(rep(seq(4.8,5.2,0.05),2),4.8,5.2,5.0,4.8),
+		subset(platelets$T4,platelets$group=="Copperhead"),
+		col='red')
 	lines(platelets_rs, type="o", pch=22, col="black")
-	legend(4, 180, c("Rattlesnake","Copperhead"), cex=0.8,col=c("black","red"), pch=21:24, lty=1:4,bg="white")
+	legend(4, 180, c("Other Crotaline","Copperhead"), cex=0.8,
+		col=c("black","red"), pch=21:24, lty=1:4,bg="white")
 
 
 #FIBRINOGEN
 fibrinogen<-as.data.frame(fibrinogen)
 #fibrinogen<-na.omit(fibrinogen)
 fibrinogen_rs<- c(
-	with(subset(fibrinogen,fibrinogen$group=="Rattlesnake"),mean(na.omit(baseline))),
-    with(subset(fibrinogen,fibrinogen$group=="Rattlesnake"),mean(na.omit(T1))),
-	with(subset(fibrinogen,fibrinogen$group=="Rattlesnake"),mean(na.omit(T2))),
-	with(subset(fibrinogen,fibrinogen$group=="Rattlesnake"),mean(na.omit(T3))),
-	with(subset(fibrinogen,fibrinogen$group=="Rattlesnake"),mean(na.omit(T4))))
+	with(subset(fibrinogen,fibrinogen$group=="Rattlesnake"),
+		mean(na.omit(baseline))),
+    with(subset(fibrinogen,fibrinogen$group=="Rattlesnake"),
+    	mean(na.omit(T1))),
+	with(subset(fibrinogen,fibrinogen$group=="Rattlesnake"),
+		mean(na.omit(T2))),
+	with(subset(fibrinogen,fibrinogen$group=="Rattlesnake"),
+		mean(na.omit(T3))),
+	with(subset(fibrinogen,fibrinogen$group=="Rattlesnake"),
+		mean(na.omit(T4))))
 
 fibrinogen_cp<- c(
-	with(subset(fibrinogen,fibrinogen$group=="Copperhead"),mean(na.omit(baseline))),
-    with(subset(fibrinogen,fibrinogen$group=="Copperhead"),mean(na.omit(T1))),
-	with(subset(fibrinogen,fibrinogen$group=="Copperhead"),mean(na.omit(T2))),
-	with(subset(fibrinogen,fibrinogen$group=="Copperhead"),mean(na.omit(T3))),
-	with(subset(fibrinogen,fibrinogen$group=="Copperhead"),mean(na.omit(T4))))
+	with(subset(fibrinogen,fibrinogen$group=="Copperhead"),
+		mean(na.omit(baseline))),
+    with(subset(fibrinogen,fibrinogen$group=="Copperhead"),
+    	mean(na.omit(T1))),
+	with(subset(fibrinogen,fibrinogen$group=="Copperhead"),
+		mean(na.omit(T2))),
+	with(subset(fibrinogen,fibrinogen$group=="Copperhead"),
+		mean(na.omit(T3))),
+	with(subset(fibrinogen,fibrinogen$group=="Copperhead"),
+		mean(na.omit(T4))))
 
-plot(fibrinogen_rs, type="o", col="black", ylim=c(150,450),axes=FALSE, ann=FALSE)
+plot(fibrinogen_rs, type="o", col="black", ylim=c(150,450),axes=FALSE, 
+	ann=FALSE)
 # Make x axis using tests labels
 axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,"8 days","15 days"))
 axis(2, at=seq(from = 200, to = 400, by = 20))
 # Create box around plot
 #box()
 title(xlab="Follow Up")
-title(ylab="Fibrinogen") #, col.lab=rgb(0,0.5,0)
-points(c(rep(seq(0.8,1.2,0.05),10),0.8,1.0,1.2),subset(fibrinogen$baseline,fibrinogen$group=="Rattlesnake"),col='grey50')
-points(c(rep(seq(0.8,1.2,0.05),2),0.8,1.0,1.2,1.0),subset(fibrinogen$baseline,fibrinogen$group=="Copperhead"),col='red')
-points(c(rep(seq(1.8,2.2,0.05),10),1.8,2.2,2.0),subset(fibrinogen$T1,fibrinogen$group=="Rattlesnake"),col='grey50')
-points(c(rep(seq(1.8,2.2,0.05),2),1.8,2.2,2.0,1.8),subset(fibrinogen$T1,fibrinogen$group=="Copperhead"),col='red')
-points(c(rep(seq(2.8,3.2,0.05),10),2.8,3.2,3.0),subset(fibrinogen$T2,fibrinogen$group=="Rattlesnake"),col='grey50')
-points(c(rep(seq(2.8,3.2,0.05),2),2.8,3.2,3.0,2.8),subset(fibrinogen$T2,fibrinogen$group=="Copperhead"),col='red')
-points(c(rep(seq(3.8,4.2,0.05),10),3.8,4.2,4.0),subset(fibrinogen$T3,fibrinogen$group=="Rattlesnake"),col='grey50')
-points(c(rep(seq(3.8,4.2,0.05),2),3.8,4.2,4.0,3.8),subset(fibrinogen$T3,fibrinogen$group=="Copperhead"),col='red')
-points(c(rep(seq(4.8,5.2,0.05),10),4.8,5.2,5.0),subset(fibrinogen$T4,fibrinogen$group=="Rattlesnake"),col='grey50')
-points(c(rep(seq(4.8,5.2,0.05),2),4.8,5.2,5.0,4.8),subset(fibrinogen$T4,fibrinogen$group=="Copperhead"),col='red')
+title(ylab="Fibrinogen mg/dL") #, col.lab=rgb(0,0.5,0)
+points(c(rep(seq(0.8,1.2,0.05),10),0.8,1.0,1.2),
+	subset(fibrinogen$baseline,fibrinogen$group=="Rattlesnake"),
+	col='grey50')
+points(c(rep(seq(0.8,1.2,0.05),2),0.8,1.0,1.2,1.0),
+	subset(fibrinogen$baseline,fibrinogen$group=="Copperhead"),
+	col='red')
+points(c(rep(seq(1.8,2.2,0.05),10),1.8,2.2,2.0),
+	subset(fibrinogen$T1,fibrinogen$group=="Rattlesnake"),
+	ol='grey50')
+points(c(rep(seq(1.8,2.2,0.05),2),1.8,2.2,2.0,1.8),
+	subset(fibrinogen$T1,fibrinogen$group=="Copperhead"),
+	col='red')
+points(c(rep(seq(2.8,3.2,0.05),10),2.8,3.2,3.0),
+	subset(fibrinogen$T2,fibrinogen$group=="Rattlesnake"),
+	col='grey50')
+points(c(rep(seq(2.8,3.2,0.05),2),2.8,3.2,3.0,2.8),
+	subset(fibrinogen$T2,fibrinogen$group=="Copperhead"),
+	col='red')
+points(c(rep(seq(3.8,4.2,0.05),10),3.8,4.2,4.0),
+	subset(fibrinogen$T3,fibrinogen$group=="Rattlesnake"),
+	col='grey50')
+points(c(rep(seq(3.8,4.2,0.05),2),3.8,4.2,4.0,3.8),
+	subset(fibrinogen$T3,fibrinogen$group=="Copperhead"),
+	col='red')
+points(c(rep(seq(4.8,5.2,0.05),10),4.8,5.2,5.0),
+	subset(fibrinogen$T4,fibrinogen$group=="Rattlesnake"),
+	col='grey50')
+points(c(rep(seq(4.8,5.2,0.05),2),4.8,5.2,5.0,4.8),
+	subset(fibrinogen$T4,fibrinogen$group=="Copperhead"),
+	col='red')
 lines(fibrinogen_cp, type="o", pch=22, col="red")
-legend(4, 180, c("Rattlesnake","Copperhead"), cex=0.8,col=c("black","red"), pch=21:24, lty=1:4,bg="white")
+legend(4, 180, c("Other Crotaline","Copperhead"), cex=0.8,
+	col=c("black","red"), pch=21:24, lty=1:4,bg="white")
 
+
+###### DID NOT USE FOR THE PAPER ##################
 ######### GRAPH WITH SD VALUES
 #PLATELETS
-plot(platelets_cp, type="o", col="red", ylim=c(100,350),axes=FALSE, ann=FALSE)
-lines(platelets_rs, type="o", pch=22, lty=2, col="black")
+# plot(platelets_cp, type="o", col="red", ylim=c(100,350),axes=FALSE, ann=FALSE)
+# lines(platelets_rs, type="o", pch=22, lty=2, col="black")
 # Make x axis using tests labels
-axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,"8 days","15 days"))
-axis(2, at=seq(from = 100, to = 350, by = 20))
+# axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,"8 days","15 days"))
+# axis(2, at=seq(from = 100, to = 350, by = 20))
 # Create box around plot
 #box()
-title(xlab="Follow Up")
-title(ylab="Platelets") #, col.lab=rgb(0,0.5,0)
-legend(4, 130, c("Rattlesnake","Copperhead"), cex=0.8,col=c("black","red"), pch=21:24, lty=1:4)
-segments(1,mean(platelets$baseline[platelets$group=="Rattlesnake"]),1,(mean(platelets$baseline[platelets$group=="Rattlesnake"])-sd(platelets$baseline[platelets$group=="Rattlesnake"])),col='black')
-segments(0.95,(mean(platelets$baseline[platelets$group=="Rattlesnake"])-sd(platelets$baseline[platelets$group=="Rattlesnake"])),1.05,(mean(platelets$baseline[platelets$group=="Rattlesnake"])-sd(platelets$baseline[platelets$group=="Rattlesnake"])),col='black')
-segments(1,mean(platelets$baseline[platelets$group=="Copperhead"]),1,(mean(platelets$baseline[platelets$group=="Copperhead"])+sd(platelets$baseline[platelets$group=="Copperhead"])),col='red')
-segments(0.95,(mean(platelets$baseline[platelets$group=="Copperhead"])+sd(platelets$baseline[platelets$group=="Copperhead"])),1.05,(mean(platelets$baseline[platelets$group=="Copperhead"])+sd(platelets$baseline[platelets$group=="Copperhead"])),col='red')
+# title(xlab="Follow Up")
+# title(ylab="Platelets") #, col.lab=rgb(0,0.5,0)
+# legend(4, 130, c("Rattlesnake","Copperhead"), cex=0.8,col=c("black","red"), pch=21:24, lty=1:4)
+# segments(1,mean(platelets$baseline[platelets$group=="Rattlesnake"]),1,(mean(platelets$baseline[platelets$group=="Rattlesnake"])-sd(platelets$baseline[platelets$group=="Rattlesnake"])),col='black')
+# segments(0.95,(mean(platelets$baseline[platelets$group=="Rattlesnake"])-sd(platelets$baseline[platelets$group=="Rattlesnake"])),1.05,(mean(platelets$baseline[platelets$group=="Rattlesnake"])-sd(platelets$baseline[platelets$group=="Rattlesnake"])),col='black')
+# segments(1,mean(platelets$baseline[platelets$group=="Copperhead"]),1,(mean(platelets$baseline[platelets$group=="Copperhead"])+sd(platelets$baseline[platelets$group=="Copperhead"])),col='red')
+# segments(0.95,(mean(platelets$baseline[platelets$group=="Copperhead"])+sd(platelets$baseline[platelets$group=="Copperhead"])),1.05,(mean(platelets$baseline[platelets$group=="Copperhead"])+sd(platelets$baseline[platelets$group=="Copperhead"])),col='red')
 
-segments(2,mean(platelets$T1[platelets$group=="Rattlesnake"]),2,(mean(platelets$T1[platelets$group=="Rattlesnake"])-sd(platelets$T1[platelets$group=="Rattlesnake"])),col='black')
-segments(1.95,(mean(platelets$T1[platelets$group=="Rattlesnake"])-sd(platelets$T1[platelets$group=="Rattlesnake"])),2.05,(mean(platelets$T1[platelets$group=="Rattlesnake"])-sd(platelets$T1[platelets$group=="Rattlesnake"])),col='black')
-segments(2,mean(platelets$T1[platelets$group=="Copperhead"]),2,(mean(platelets$T1[platelets$group=="Copperhead"])+sd(platelets$T1[platelets$group=="Copperhead"])),col='red')
-segments(1.95,(mean(platelets$T1[platelets$group=="Copperhead"])+sd(platelets$T1[platelets$group=="Copperhead"])),2.05,(mean(platelets$T1[platelets$group=="Copperhead"])+sd(platelets$T1[platelets$group=="Copperhead"])),col='red')
+# segments(2,mean(platelets$T1[platelets$group=="Rattlesnake"]),2,(mean(platelets$T1[platelets$group=="Rattlesnake"])-sd(platelets$T1[platelets$group=="Rattlesnake"])),col='black')
+# segments(1.95,(mean(platelets$T1[platelets$group=="Rattlesnake"])-sd(platelets$T1[platelets$group=="Rattlesnake"])),2.05,(mean(platelets$T1[platelets$group=="Rattlesnake"])-sd(platelets$T1[platelets$group=="Rattlesnake"])),col='black')
+# segments(2,mean(platelets$T1[platelets$group=="Copperhead"]),2,(mean(platelets$T1[platelets$group=="Copperhead"])+sd(platelets$T1[platelets$group=="Copperhead"])),col='red')
+# segments(1.95,(mean(platelets$T1[platelets$group=="Copperhead"])+sd(platelets$T1[platelets$group=="Copperhead"])),2.05,(mean(platelets$T1[platelets$group=="Copperhead"])+sd(platelets$T1[platelets$group=="Copperhead"])),col='red')
 
-segments(3,mean(platelets$T2[platelets$group=="Rattlesnake"]),3,(mean(platelets$T2[platelets$group=="Rattlesnake"])-sd(platelets$T2[platelets$group=="Rattlesnake"])),col='black')
-segments(2.95,(mean(platelets$T2[platelets$group=="Rattlesnake"])-sd(platelets$T2[platelets$group=="Rattlesnake"])),3.05,(mean(platelets$T2[platelets$group=="Rattlesnake"])-sd(platelets$T2[platelets$group=="Rattlesnake"])),col='black')
-segments(3,mean(platelets$T2[platelets$group=="Copperhead"]),3,(mean(platelets$T2[platelets$group=="Copperhead"])+sd(platelets$T2[platelets$group=="Copperhead"])),col='red')
-segments(2.95,(mean(platelets$T2[platelets$group=="Copperhead"])+sd(platelets$T2[platelets$group=="Copperhead"])),3.05,(mean(platelets$T2[platelets$group=="Copperhead"])+sd(platelets$T2[platelets$group=="Copperhead"])),col='red')
+# segments(3,mean(platelets$T2[platelets$group=="Rattlesnake"]),3,(mean(platelets$T2[platelets$group=="Rattlesnake"])-sd(platelets$T2[platelets$group=="Rattlesnake"])),col='black')
+# segments(2.95,(mean(platelets$T2[platelets$group=="Rattlesnake"])-sd(platelets$T2[platelets$group=="Rattlesnake"])),3.05,(mean(platelets$T2[platelets$group=="Rattlesnake"])-sd(platelets$T2[platelets$group=="Rattlesnake"])),col='black')
+# segments(3,mean(platelets$T2[platelets$group=="Copperhead"]),3,(mean(platelets$T2[platelets$group=="Copperhead"])+sd(platelets$T2[platelets$group=="Copperhead"])),col='red')
+# segments(2.95,(mean(platelets$T2[platelets$group=="Copperhead"])+sd(platelets$T2[platelets$group=="Copperhead"])),3.05,(mean(platelets$T2[platelets$group=="Copperhead"])+sd(platelets$T2[platelets$group=="Copperhead"])),col='red')
 
-segments(4,mean(platelets$T3[platelets$group=="Rattlesnake"]),4,(mean(platelets$T3[platelets$group=="Rattlesnake"])-sd(platelets$T3[platelets$group=="Rattlesnake"])),col='black')
-segments(3.95,(mean(platelets$T3[platelets$group=="Rattlesnake"])-sd(platelets$T3[platelets$group=="Rattlesnake"])),4.05,(mean(platelets$T3[platelets$group=="Rattlesnake"])-sd(platelets$T3[platelets$group=="Rattlesnake"])),col='black')
-segments(4,mean(platelets$T3[platelets$group=="Copperhead"]),4,(mean(platelets$T3[platelets$group=="Copperhead"])+sd(platelets$T3[platelets$group=="Copperhead"])),col='red')
-segments(3.95,(mean(platelets$T3[platelets$group=="Copperhead"])+sd(platelets$T3[platelets$group=="Copperhead"])),4.05,(mean(platelets$T3[platelets$group=="Copperhead"])+sd(platelets$T3[platelets$group=="Copperhead"])),col='red')
+# segments(4,mean(platelets$T3[platelets$group=="Rattlesnake"]),4,(mean(platelets$T3[platelets$group=="Rattlesnake"])-sd(platelets$T3[platelets$group=="Rattlesnake"])),col='black')
+# segments(3.95,(mean(platelets$T3[platelets$group=="Rattlesnake"])-sd(platelets$T3[platelets$group=="Rattlesnake"])),4.05,(mean(platelets$T3[platelets$group=="Rattlesnake"])-sd(platelets$T3[platelets$group=="Rattlesnake"])),col='black')
+# segments(4,mean(platelets$T3[platelets$group=="Copperhead"]),4,(mean(platelets$T3[platelets$group=="Copperhead"])+sd(platelets$T3[platelets$group=="Copperhead"])),col='red')
+# segments(3.95,(mean(platelets$T3[platelets$group=="Copperhead"])+sd(platelets$T3[platelets$group=="Copperhead"])),4.05,(mean(platelets$T3[platelets$group=="Copperhead"])+sd(platelets$T3[platelets$group=="Copperhead"])),col='red')
 
-segments(5,mean(platelets$T4[platelets$group=="Rattlesnake"]),5,(mean(platelets$T4[platelets$group=="Rattlesnake"])-sd(platelets$T4[platelets$group=="Rattlesnake"])),col='black')
-segments(4.95,(mean(platelets$T4[platelets$group=="Rattlesnake"])-sd(platelets$T4[platelets$group=="Rattlesnake"])),5.05,(mean(platelets$T4[platelets$group=="Rattlesnake"])-sd(platelets$T4[platelets$group=="Rattlesnake"])),col='black')
-segments(5,mean(platelets$T4[platelets$group=="Copperhead"]),5,(mean(platelets$T4[platelets$group=="Copperhead"])+sd(platelets$T4[platelets$group=="Copperhead"])),col='red')
-segments(4.95,(mean(platelets$T4[platelets$group=="Copperhead"])+sd(platelets$T4[platelets$group=="Copperhead"])),5.05,(mean(platelets$T4[platelets$group=="Copperhead"])+sd(platelets$T4[platelets$group=="Copperhead"])),col='red')
+# segments(5,mean(platelets$T4[platelets$group=="Rattlesnake"]),5,(mean(platelets$T4[platelets$group=="Rattlesnake"])-sd(platelets$T4[platelets$group=="Rattlesnake"])),col='black')
+# segments(4.95,(mean(platelets$T4[platelets$group=="Rattlesnake"])-sd(platelets$T4[platelets$group=="Rattlesnake"])),5.05,(mean(platelets$T4[platelets$group=="Rattlesnake"])-sd(platelets$T4[platelets$group=="Rattlesnake"])),col='black')
+# segments(5,mean(platelets$T4[platelets$group=="Copperhead"]),5,(mean(platelets$T4[platelets$group=="Copperhead"])+sd(platelets$T4[platelets$group=="Copperhead"])),col='red')
+# segments(4.95,(mean(platelets$T4[platelets$group=="Copperhead"])+sd(platelets$T4[platelets$group=="Copperhead"])),5.05,(mean(platelets$T4[platelets$group=="Copperhead"])+sd(platelets$T4[platelets$group=="Copperhead"])),col='red')
 
 ######### GRAPH WITH SD VALUES
 plot(fibrinogen_rs, type="o", col="black", ylim=c(100,500),axes=FALSE, ann=FALSE)
