@@ -154,6 +154,9 @@ fibrinogen$group<-c(data_rs$group,data_cp$group)
 ######################################################
 #POWER AND SAMPLE SIZE
 ######################################################
+library(pwr)
+pwr.t.test(n=22,sig.level=0.05,d=0.60,type=c("paired"))
+
 #https://cran.r-project.org/web/packages/longpower/longpower.pdf
 #Liu, G., & Liang, K. Y. (1997). Sample size calculations for studies with correlated observations. Biometrics, 53(3), 937-47.
 #Diggle PJ, Heagerty PJ, Liang K, Zeger SL. Analysis of longitudinal data. Second Edition. Oxford. Statistical Science Serires. 2002
@@ -662,6 +665,7 @@ coefs
 difflsmeans(m1.lme4)
 plot(difflsmeans(m1.lme4, test.effs="groups:moments"))
 lsmeans(m1.lme4)
+lmmpower(m1.lme4, pct.change = 0.30, t = seq(0,5,1), power = 0.80)
 
 
 ######################################################
@@ -694,50 +698,52 @@ platelets_cp<- c(
 	with(subset(platelets,platelets$group=="Copperhead"),
 		mean(na.omit(T4))))
 
-	plot(platelets_cp, type="o", col="red", ylim=c(120,400),
-		axes=FALSE, ann=FALSE)
+tiff("/Users/jnv4/Desktop/platelets.tiff", width = 700,
+ height = 500,compression = 'lzw')
+	plot(platelets_cp, type="o", col="grey50", ylim=c(80,400),
+		xlim=c(0.7,5.5),axes=FALSE, ann=FALSE)
 	# Make x axis using tests labels
 	axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,
 		"8 days","15 days"))
-	axis(2, at=seq(from = 150, to = 400, by = 30))
+	axis(2, at=seq(from = 100, to = 400, by = 30))
 	# Create box around plot
 	#box()
 	title(xlab="Follow Up")
-	title(ylab="Platelets 10ˆ9/L") #, col.lab=rgb(0,0.5,0)
+	title(ylab=expression("Platelets" ~ 10^{9} ~ "/L")) #, col.lab=rgb(0,0.5,0)
 	points(c(rep(seq(0.8,1.2,0.05),10),0.8,1.0,1.2),
 		subset(platelets$baseline,platelets$group=="Rattlesnake"),
 		col='grey50')
 	points(c(rep(seq(0.8,1.2,0.05),2),0.8,1.0,1.2,1.0),
 		subset(platelets$baseline,platelets$group=="Copperhead"),
-		col='red')
+		col='black')
 	points(c(rep(seq(1.8,2.2,0.05),10),1.8,2.2,2.0),
 		subset(platelets$T1,platelets$group=="Rattlesnake"),
 		col='grey50')
 	points(c(rep(seq(1.8,2.2,0.05),2),1.8,2.2,2.0,1.8),
 		subset(platelets$T1,platelets$group=="Copperhead"),
-		col='red')
+		col='black')
 	points(c(rep(seq(2.8,3.2,0.05),10),2.8,3.2,3.0),
 		subset(platelets$T2,platelets$group=="Rattlesnake"),
 		col='grey50')
 	points(c(rep(seq(2.8,3.2,0.05),2),2.8,3.2,3.0,2.8),
 		subset(platelets$T2,platelets$group=="Copperhead"),
-		col='red')
+		col='black')
 	points(c(rep(seq(3.8,4.2,0.05),10),3.8,4.2,4.0),
 		subset(platelets$T3,platelets$group=="Rattlesnake"),
 		col='grey50')
 	points(c(rep(seq(3.8,4.2,0.05),2),3.8,4.2,4.0,3.8),
 		subset(platelets$T3,platelets$group=="Copperhead"),
-		col='red')
+		col='black')
 	points(c(rep(seq(4.8,5.2,0.05),10),4.8,5.2,5.0),
 		subset(platelets$T4,platelets$group=="Rattlesnake"),
 		col='grey50')
 	points(c(rep(seq(4.8,5.2,0.05),2),4.8,5.2,5.0,4.8),
 		subset(platelets$T4,platelets$group=="Copperhead"),
-		col='red')
-	lines(platelets_rs, type="o", pch=22, col="black")
-	legend(4, 180, c("Other Crotaline","Copperhead"), cex=0.8,
-		col=c("black","red"), pch=21:24, lty=1:4,bg="white")
-
+		col='black')
+	lines(platelets_rs, type="o", pch=22, lty=4,col="black")
+	legend(4.5, 120,c("Other Crotaline","Copperhead"), cex=0.8,
+		col=c("grey50","black"), pch=21:24, lty=1:4,bg="white")
+dev.off()
 
 #FIBRINOGEN
 fibrinogen<-as.data.frame(fibrinogen)
@@ -766,11 +772,13 @@ fibrinogen_cp<- c(
 	with(subset(fibrinogen,fibrinogen$group=="Copperhead"),
 		mean(na.omit(T4))))
 
-plot(fibrinogen_rs, type="o", col="black", ylim=c(150,450),axes=FALSE, 
-	ann=FALSE)
+tiff("/Users/jnv4/Desktop/fibrinogen.tiff", width = 700,
+ height = 500,compression = 'lzw')
+plot(fibrinogen_rs, type="o", col="grey50", ylim=c(100,600),
+	xlim=c(0.8,5.3),axes=FALSE, ann=FALSE)
 # Make x axis using tests labels
 axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,"8 days","15 days"))
-axis(2, at=seq(from = 200, to = 400, by = 20))
+axis(2, at=seq(from = 150, to = 570, by = 20))
 # Create box around plot
 #box()
 title(xlab="Follow Up")
@@ -780,35 +788,35 @@ points(c(rep(seq(0.8,1.2,0.05),10),0.8,1.0,1.2),
 	col='grey50')
 points(c(rep(seq(0.8,1.2,0.05),2),0.8,1.0,1.2,1.0),
 	subset(fibrinogen$baseline,fibrinogen$group=="Copperhead"),
-	col='red')
+	col='black')
 points(c(rep(seq(1.8,2.2,0.05),10),1.8,2.2,2.0),
 	subset(fibrinogen$T1,fibrinogen$group=="Rattlesnake"),
-	ol='grey50')
+	col='grey50')
 points(c(rep(seq(1.8,2.2,0.05),2),1.8,2.2,2.0,1.8),
 	subset(fibrinogen$T1,fibrinogen$group=="Copperhead"),
-	col='red')
+	col='black')
 points(c(rep(seq(2.8,3.2,0.05),10),2.8,3.2,3.0),
 	subset(fibrinogen$T2,fibrinogen$group=="Rattlesnake"),
 	col='grey50')
 points(c(rep(seq(2.8,3.2,0.05),2),2.8,3.2,3.0,2.8),
 	subset(fibrinogen$T2,fibrinogen$group=="Copperhead"),
-	col='red')
+	col='black')
 points(c(rep(seq(3.8,4.2,0.05),10),3.8,4.2,4.0),
 	subset(fibrinogen$T3,fibrinogen$group=="Rattlesnake"),
 	col='grey50')
 points(c(rep(seq(3.8,4.2,0.05),2),3.8,4.2,4.0,3.8),
 	subset(fibrinogen$T3,fibrinogen$group=="Copperhead"),
-	col='red')
+	col='black')
 points(c(rep(seq(4.8,5.2,0.05),10),4.8,5.2,5.0),
 	subset(fibrinogen$T4,fibrinogen$group=="Rattlesnake"),
 	col='grey50')
 points(c(rep(seq(4.8,5.2,0.05),2),4.8,5.2,5.0,4.8),
 	subset(fibrinogen$T4,fibrinogen$group=="Copperhead"),
-	col='red')
-lines(fibrinogen_cp, type="o", pch=22, col="red")
+	col='black')
+lines(fibrinogen_cp, type="o", pch=22, col="black",lty=4)
 legend(4, 180, c("Other Crotaline","Copperhead"), cex=0.8,
-	col=c("black","red"), pch=21:24, lty=1:4,bg="white")
-
+	col=c("grey50","black"), pch=21:24, lty=1:4,bg="white")
+dev.off()
 
 ###### DID NOT USE FOR THE PAPER ##################
 ######### GRAPH WITH SD VALUES
