@@ -52,10 +52,10 @@ lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest",
 #data_rs  <- get_via_lf(sheet_rs, ws = "Coagulation Data")
 #demographics_rs<-get_via_lf(sheet_rs, ws = "Demographics") 
 
-data_rs <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_rs.csv")
-demographics_rs <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_rs.csv")
-data_cp <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_cp.csv")
-demographics_cp <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_cp.csv")
+data_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_rs.csv")
+demographics_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_rs.csv")
+data_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_cp.csv")
+demographics_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_cp.csv")
 
 #sheet_cp <- register_ss("Copy of Copperhead data")#
 #data_cp <- get_via_lf(sheet_cp, ws = "Coagulation Data") 
@@ -699,8 +699,8 @@ platelets_cp<- c(
 		mean(na.omit(T4))))
 
 tiff("/Users/jnv4/Desktop/platelets.tiff", width = 700,
- height = 500,compression = 'lzw')
-	plot(platelets_cp, type="o", col="grey50", ylim=c(80,400),
+ height = 550,compression = 'lzw')
+	plot(platelets_cp, type="o", col="black", ylim=c(80,400),
 		xlim=c(0.7,5.5),axes=FALSE, ann=FALSE)
 	# Make x axis using tests labels
 	axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,
@@ -708,7 +708,7 @@ tiff("/Users/jnv4/Desktop/platelets.tiff", width = 700,
 	axis(2, at=seq(from = 100, to = 400, by = 30))
 	# Create box around plot
 	#box()
-	title(xlab="Follow Up")
+	title(xlab="Follow Up",line=2)
 	title(ylab=expression("Platelets" ~ 10^{9} ~ "/L")) #, col.lab=rgb(0,0.5,0)
 	points(c(rep(seq(0.8,1.2,0.05),10),0.8,1.0,1.2),
 		subset(platelets$baseline,platelets$group=="Rattlesnake"),
@@ -740,12 +740,15 @@ tiff("/Users/jnv4/Desktop/platelets.tiff", width = 700,
 	points(c(rep(seq(4.8,5.2,0.05),2),4.8,5.2,5.0,4.8),
 		subset(platelets$T4,platelets$group=="Copperhead"),
 		col='black')
-	lines(platelets_rs, type="o", pch=22, lty=4,col="black")
-	legend(4.5, 120,c("Other Crotaline","Copperhead"), cex=0.8,
-		col=c("grey50","black"), pch=21:24, lty=1:4,bg="white")
+	lines(platelets_rs, type="o", pch=22, lty=4,col="grey50")
+	legend(4.5, 120,c("Copperhead","Other Crotaline"), cex=0.8,
+		col=c("black","grey50"), pch=21:24, lty=1:4,bg="white")
+	par(adj=0)
+	title(expression("Figure 1. Platelets" ~ 10^{9} ~ "/L count over time."),
+		line=-33)
 dev.off()
 
-#FIBRINOGEN
+#Fibrinogen
 fibrinogen<-as.data.frame(fibrinogen)
 #fibrinogen<-na.omit(fibrinogen)
 fibrinogen_rs<- c(
@@ -774,7 +777,7 @@ fibrinogen_cp<- c(
 
 tiff("/Users/jnv4/Desktop/fibrinogen.tiff", width = 700,
  height = 500,compression = 'lzw')
-plot(fibrinogen_rs, type="o", col="grey50", ylim=c(100,600),
+plot(fibrinogen_rs, type="o", col="	", ylim=c(100,600),
 	xlim=c(0.8,5.3),axes=FALSE, ann=FALSE)
 # Make x axis using tests labels
 axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,"8 days","15 days"))
@@ -816,6 +819,9 @@ points(c(rep(seq(4.8,5.2,0.05),2),4.8,5.2,5.0,4.8),
 lines(fibrinogen_cp, type="o", pch=22, col="black",lty=4)
 legend(4, 180, c("Other Crotaline","Copperhead"), cex=0.8,
 	col=c("grey50","black"), pch=21:24, lty=1:4,bg="white")
+par(adj=0)
+	title(sub=expression("Figure 2. Fibrogen mg/dL count over time."))#,
+		#line=-23)
 dev.off()
 
 ###### DID NOT USE FOR THE PAPER ##################
