@@ -52,10 +52,10 @@ lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest",
 #data_rs  <- get_via_lf(sheet_rs, ws = "Coagulation Data")
 #demographics_rs<-get_via_lf(sheet_rs, ws = "Demographics") 
 
-data_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_rs.csv")
-demographics_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_rs.csv")
-data_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_cp.csv")
-demographics_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_cp.csv")
+data_rs <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_rs.csv")
+demographics_rs <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_rs.csv")
+data_cp <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_cp.csv")
+demographics_cp <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_cp.csv")
 
 #sheet_cp <- register_ss("Copy of Copperhead data")#
 #data_cp <- get_via_lf(sheet_cp, ws = "Coagulation Data") 
@@ -698,7 +698,7 @@ platelets_cp<- c(
 	with(subset(platelets,platelets$group=="Copperhead"),
 		mean(na.omit(T4))))
 
-tiff("/Users/jnv4/Desktop/platelets.tiff", width = 700,
+tiff("/Users/joaovissoci/Desktop/platelets.tiff", width = 700,
  height = 550,compression = 'lzw')
 	plot(platelets_cp, type="o", col="black", ylim=c(80,400),
 		xlim=c(0.7,5.5),axes=FALSE, ann=FALSE)
@@ -775,10 +775,10 @@ fibrinogen_cp<- c(
 	with(subset(fibrinogen,fibrinogen$group=="Copperhead"),
 		mean(na.omit(T4))))
 
-tiff("/Users/jnv4/Desktop/fibrinogen.tiff", width = 700,
+tiff("/Users/joaovissoci/Desktop/fibrinogen.tiff", width = 700,
  height = 500,compression = 'lzw')
-plot(fibrinogen_rs, type="o", col="	", ylim=c(100,600),
-	xlim=c(0.8,5.3),axes=FALSE, ann=FALSE)
+plot(fibrinogen_rs, type="o", col="grey50", ylim=c(100,600),
+	xlim=c(0.8,5.3),axes=FALSE, ann=FALSE,lty=4, pch=22)
 # Make x axis using tests labels
 axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,"8 days","15 days"))
 axis(2, at=seq(from = 150, to = 570, by = 20))
@@ -816,9 +816,9 @@ points(c(rep(seq(4.8,5.2,0.05),10),4.8,5.2,5.0),
 points(c(rep(seq(4.8,5.2,0.05),2),4.8,5.2,5.0,4.8),
 	subset(fibrinogen$T4,fibrinogen$group=="Copperhead"),
 	col='black')
-lines(fibrinogen_cp, type="o", pch=22, col="black",lty=4)
-legend(4, 180, c("Other Crotaline","Copperhead"), cex=0.8,
-	col=c("grey50","black"), pch=21:24, lty=1:4,bg="white")
+lines(fibrinogen_cp, type="o", col="black")
+legend(4, 180, c("Copperhead","Other Crotaline"), cex=0.8,
+	col=c("black","grey50"), pch=21:24, lty=1:4,bg="white")
 par(adj=0)
 	title(sub=expression("Figure 2. Fibrogen mg/dL count over time."))#,
 		#line=-23)
