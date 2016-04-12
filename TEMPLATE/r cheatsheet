@@ -1,0 +1,8 @@
+
+
+# round digits
+format(round(data,Nofdecimalcases),nsmall=2)
+
+
+
+https://www.datacamp.com/community/tutorials/r-data-import-tutorial

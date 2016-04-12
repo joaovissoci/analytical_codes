@@ -1,6 +1,10 @@
 
 library(qgraph)
 
+
+###########################
+# CONSUMABLES
+###########################
 data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_consumable.csv")
 
 data_naomit<-data
@@ -18,7 +22,7 @@ vsize=c(10,7,2,5,2,6,2,2,4,2,2,
 
 network_meta <- qgraph(data_naomit[-1],layout = "spring",
 	labels=c("Needs","Supplies","Delays in report","Drugs",
-		"Esquipment","Low budget","Basic supplies","Budget limitation",
+		"Equipment","Low budget","Basic supplies","Budget limitation",
 		"Rationing","RRH limitations","Stock out",
 		"Assets","Supplies","Program related","Collaboration",
 		"Improvisation",
@@ -39,7 +43,9 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 	#greyscale=T)
 	#,minimum=0.5,cut=10
 
-##############
+###########################
+# EQUIPMENT
+###########################
 
 data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_equipament.csv")
 
@@ -70,7 +76,7 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 			 "Missing parts",
 			 "Monitors",
 			 "Night and weekends",
-			 "Over use or machinery",
+			 "Overuse of machinery",
 			 "Power damage",
 			 "Service contracts",
 			 "Software updates",
@@ -79,17 +85,18 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 			 "Uniformed purchases",
 			 "Ventilator",
 			 "Assets",
+			 "Improvisation",
 			 "Adequate equipments",
 			 "Personnel",
 			 "Rationing",
-			 "Improvisation",
 			 "Back up machines",
 			 "Biomed technicians",
 			 "Donation",
 			 "Hospital purchased",
 			 "Personal equipment",
 			 "Preventive maintenance",
-			 "Non-protocol equipment"),
+			 "Non-protocol 
+equipment"),
 	label.scale=FALSE,label.cex = c(
 		2,rep(1,5),rep(0.8,15),
 		2,rep(1,4),rep(0.8,7)),
@@ -102,7 +109,9 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 	#greyscale=T)
 	#,minimum=0.5,cut=10
 
-###################
+###########################
+# INFRASTRUCTURE
+###########################
 
 data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_infrastructure.csv")
 
@@ -139,7 +148,7 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 			 "Physical space",
 			 "Procurement system",
 			 "RRH limitation",
-			 "Sterelization department",
+			 "Sterilization department",
 			 "Transportation",
 			 "Trauma department",
 			 "Unstable 
@@ -154,28 +163,30 @@ capacity",
 			 "Blood bank",
 			 "CT
 scanner",
-			 "Neurology space",
+			 "Neurosurgery space",
 			 "New constructions",
 			 "Oxygen supply",
-			 "Physial 
+			 "Physical 
 space",
 			 "Power protection",
 			 "Private facilities",
-			 "Sterelization department",
+			 "Sterilization department",
 			 "Water sewage"),
 	label.scale=FALSE,label.cex = c(
 		2,rep(1,5),rep(0.8,18),
 		2,rep(1,4),rep(0.8,10)),
 	vsize=vsize,
 	color=c("grey",rep("brown3",5),rep("darksalmon",18),
-			"grey",rep("darkolivegreen3",4),rep("khaki1",9)),
+			"grey",rep("darkolivegreen3",4),rep("khaki1",10)),
 	shape=c(rep("circle",6),rep("square",18),
 			rep("circle",5),rep("square",10)),
 	borders = FALSE,posCol="grey")
 	#greyscale=T)
 	#,minimum=0.5,cut=10
 
-###################
+###########################
+# PERSONNEL
+###########################
 
 data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/surgical_capacity/network_personnel.csv")
 
@@ -201,15 +212,15 @@ network_meta <- qgraph(data_naomit[-1],layout = "spring",
 			 "Low budget",
 			 "Anesthesia",
 			 "Biomedical technician",
-			 "Medical doctors",
+			 "Nurses",
 			 "Motivation",
 			 "Neurosurgeons",
-			 "Nurses",
+			 "Medical doctors",
 			 "RRH limitations",
 			 "Staff training",
 			 "Surgeon",
 			 "Assets",
-			 "Equipament",
+			 "Equipment",
 			 "Program related",
 			 "Medical specialty",
 			 "Biomedical technician",

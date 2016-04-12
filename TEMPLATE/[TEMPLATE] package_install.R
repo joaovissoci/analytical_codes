@@ -42,6 +42,8 @@ install.packages("doBy")
 install.packages("geepack")
 install.packages("mada")
 install.packages("reshape")
+install.packages("mice")
+install.packages("MissMech")
 
 
 
