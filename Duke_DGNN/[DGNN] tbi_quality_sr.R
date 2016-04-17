@@ -18,22 +18,23 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments","GPArotation",
-  "nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc",
+lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments",
+  "GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
+  "mi","VIM","epicalc",
   "gdata","mclust","reshape","repmis","memisc"), 
 library, character.only=T)
 #############################################################################
 #IMPORTING DATA
 #############################################################################
-data <-read.csv("/home/joao/Dropbox/datasets/DGNN/TBI_quality_SR/agree_domain.csv",header=T)
+data <-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/TBI_quality_SR/agree_domain.csv",header=T)
 
-data_raters <-read.csv("/home/joao/Dropbox/datasets/DGNN/TBI_quality_SR/agree_domain_raters.csv",header=T)
+data_raters <-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/TBI_quality_SR/agree_domain_raters.csv",header=T)
 
 #####################################################################################
 #DATA MANAGEMENT
 #####################################################################################
 
-data_entry <-remove.vars(data,c("Name","Year"))
+data_entry <-remove.vars(data,c("Name","Year","location"))
 
 #####################################################################################
 #Descriptives
@@ -45,11 +46,12 @@ data_entry <-remove.vars(data,c("Name","Year"))
 
 
 data_entry$author<-NULL
-data_entry$author<-apply(cbind(as.character(data$Name), as.character(data$Year)), 1, paste, collapse=", ")
+data_entry$author<-apply(cbind(as.character(data$Name),
+  as.character(data$Year)), 1, paste, collapse=", ")
 data_plot<-melt(data_entry,id=c("author"))
 data_plot$value2<-round(data_plot$value,digits=2)
 
-levels<-as.factor(data_entry$author)
+levels<-as.factor(data_entry$author[order(-data$Overall)])
 
 data_plot$color<-NULL
 data_plot$color[data_plot$value >= 28.30 & data_plot$value < 55.88]="lightcyan4"
@@ -57,7 +59,8 @@ data_plot$color[data_plot$value >= 55.88 & data_plot$value < 69.75]="lightcyan3"
 data_plot$color[data_plot$value >= 69.75 & data_plot$value < 81.97]="lightcyan2"
 data_plot$color[data_plot$value >= 81.97]="lightcyan1"
 
-
+tiff("/Users/joaovissoci/Desktop/agree_domains_scores.tiff",
+  width = 800, height = 600,compression = 'lzw')
 avseq <- ggplot(data_plot, aes(y=author, x=variable)) + 
   geom_tile(fill=data_plot$color) + 
   geom_text(aes(y=author, x=variable, label=value2)) + 
@@ -67,6 +70,7 @@ avseq <- ggplot(data_plot, aes(y=author, x=variable)) +
   theme(text = element_text(size=16))  + 
   scale_y_discrete(limits=rev(levels))
 avseq
+dev.off()
 
 ############################################################################
 #Table 3. Inter-rater reliability for each quality domain.
