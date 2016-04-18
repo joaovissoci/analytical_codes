@@ -20,7 +20,11 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf","reshape2","mclust","foreign","survival","memisc","lme4","lmerTest","dplyr","QCA","VennDiagram"),library, character.only=T)
+lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", 
+	"moments","GPArotation","nFactors","boot","psy", "car","vcd", 
+	"gridExtra","mi","VIM","epicalc","gdata","sqldf","reshape2",
+	"mclust","foreign","survival","memisc","lme4","lmerTest",
+	"dplyr","QCA","VennDiagram"),library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
 #devtools::install_github("jennybc/googlesheets")
@@ -31,7 +35,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArota
 #IMPORTING DATA
 ######################################################
 
-data_bea<-read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/Tz/bea_indicators.csv",sep=',')
+data_bea<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/Tz/bea_indicators.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -456,15 +460,15 @@ logistic.display(log_bea)
 
 # Organizing dataset
 #####################
-pca_data<-with(data_bea,data.frame(road_area,road_design,intersections,conflict_intersections___0,conflict_intersections___1,conflict_intersections___2,lane_type,pavement,road_narrow,roadside,roadside_danger,unevenness_roadside,bus_stop,bump,road_traffic_signs,speed_limit,curve_type,night_lights))#,outcome=bancocerto$Q13)
+#pca_data<-with(data_bea,data.frame(road_area,road_design,intersections,conflict_intersections___0,conflict_intersections___1,conflict_intersections___2,lane_type,pavement,road_narrow,roadside,roadside_danger,unevenness_roadside,bus_stop,bump,road_traffic_signs,speed_limit,curve_type,night_lights))#,outcome=bancocerto$Q13)
 
 # generating correlation matrix
-cor_data<-polychoric(pca_data)$rho
+#cor_data<-polychoric(pca_data)$rho
 
 #visualizing correlation matrix with a network
-qgraph(cor_data,layout="spring")
+#qgraph(cor_data,layout="spring")
 # Organize dataset with dichotomous respondes for cQCA or with proportions from 0 to 1 for fQCA
-qca_data<-with(data_bea,data.frame(road_area,road_design,pavement,road_narrow,unevenness_roadside,speed_limit,night_lights,outcome=risk_classification))#,outcome=bancocerto$Q13)
+qca_data<-with(data_bea,data.frame(road_area,road_design,pavement,road_narrow,unevenness_roadside,speed_limit,outcome=risk_classification))#,outcome=bancocerto$Q13)
 
 ### Calibration of numeric variables to crispy sets
 # Transform a set os thresholds to be calibrated from (cathegorized from)
@@ -511,16 +515,38 @@ dataIS$pims
 
 write.csv(dataIS$pims,"/home/joao/Desktop/bea_tz.csv")
 
+#Heatmap for the Thruth Table
+#############################
+
+heat_data<-TT$tt[TT$tt$OUT==1,]
+
+data_plot<-melt(heat_data)
+data_plot$value[43:49]<-0
+data_plot$value2<-c(rep(NA,42),
+	paste(round((heat_data$n/12)*100,0),"%"))
+
+avseq <- ggplot(data_plot, aes(y=cases, x=variable)) + 
+  geom_raster(aes(fill=as.factor(value))) + 
+  scale_fill_manual(values=c("white","steelblue"),
+  	guide = guide_legend(title = " "),labels=c("Abscence","Presence")) +
+  geom_text(aes(y=cases, x=variable, label=value2)) + 
+  xlab(label="BEA indicators") + 
+  ylab(label="Conditions") + 
+  scale_x_discrete(labels=c("Road area", "Road design", "Pavement",
+  	"Road narrow","Uneveness", "Speed limit", "Coverage")) +
+  scale_y_discrete(labels=c("Condition 1","Condition 2",
+  	"Condition 3","Condition 4","Condition 5","Condition 6",
+  	"Condition 7")) +
+    theme(axis.text.x = element_text(angle=60,vjust=0.5))
+avseq
+
 # Venn Diagrams
 #####################
 
 network_data<-data.frame(dataCS$pims,outcome=qca_data$outcome)
 colnames(network_data)<-c(1:8)
 
-
 dataMatrix <- t(as.matrix(network_data)) %*% as.matrix(network_data)
-
-
 
 qsgG3<-qgraph(dataMatrix,layout="spring",cut = 3, minimum = 0,nodeNames=rownames(dataMatrix))#,esize=20,graph="pcor",sampleSize=nrow(pca_data),legend.cex = 0.6,cut = 0.6, maximum = 1, minimum = 0.2, esize = 20,vsize = 5, repulsion = 0.8,nodeNames=colnames(pca_data),borders = FALSE)#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
 
