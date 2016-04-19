@@ -468,7 +468,7 @@ logistic.display(log_bea)
 #visualizing correlation matrix with a network
 #qgraph(cor_data,layout="spring")
 # Organize dataset with dichotomous respondes for cQCA or with proportions from 0 to 1 for fQCA
-qca_data<-with(data_bea,data.frame(road_area,road_design,pavement,road_narrow,unevenness_roadside,speed_limit,outcome=risk_classification))#,outcome=bancocerto$Q13)
+qca_data<-with(data_bea,data.frame(road_area,road_design,pavement,road_narrow,unevenness_roadside,speed_limit,test=risk_classification))#,outcome=bancocerto$Q13)
 
 ### Calibration of numeric variables to crispy sets
 # Transform a set os thresholds to be calibrated from (cathegorized from)
@@ -491,13 +491,16 @@ qca_data<-with(data_bea,data.frame(road_area,road_design,pavement,road_narrow,un
 #########################
 #outcome<-data_bea$risk_classification
 #qca_data<-data.frame(pred1,pred2,pred3,outcome)
+library(QCA)
+data(Krook)
+superSubset(Krook, outcome = "WNP", cov.cut = 0.52)
 
 # Evaluates necessity based on a set o conditions. Returns 3 values
-nec_test<-superSubset(qca_data, outcome = "outcome", cov.cut = 0.7)
+nec_test<-superSubset(qca_data, outcome = "test", cov.cut = 0.7)
 nec_test
 
 #Calculate Truth Table -A table with all variables coded and theis consequent outcome displaying which conditions are necessary and sufficient for the outcome to exist
-TT <- truthTable(qca_data, outcome = "outcome", incl.cut1 = 0.7,show.cases = TRUE, sort.by = c("incl", "n"), complete=FALSE) 
+TT <- truthTable(qca_data, outcome = "test", incl.cut1 = 0.7,show.cases = TRUE, sort.by = c("incl", "n"), complete=FALSE) 
 # neg.out=TRUE -- use outcome negative value
 TT
 
@@ -510,8 +513,11 @@ dataCS$pims
 dataPS<- eqmcc(TT,  include = "?", rowdom = FALSE, details = FALSE)
 dataPS$pims
 
-dataIS<-eqmcc(TT, include = "?", direxp = rep(1,7), details = TRUE)
+dataIS<-eqmcc(TT, include = "?", direxp = rep(1,6), details = TRUE)
 dataIS$pims
+factorize(dataIS)
+
+print(dataIS)
 
 write.csv(dataIS$pims,"/home/joao/Desktop/bea_tz.csv")
 
@@ -543,7 +549,7 @@ avseq
 # Venn Diagrams
 #####################
 
-network_data<-data.frame(dataCS$pims,outcome=qca_data$outcome)
+network_data<-data.frame(dataPS$pims,outcome=qca_data$test)
 colnames(network_data)<-c(1:8)
 
 dataMatrix <- t(as.matrix(network_data)) %*% as.matrix(network_data)
