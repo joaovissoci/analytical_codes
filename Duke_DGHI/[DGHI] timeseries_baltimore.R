@@ -4,6 +4,10 @@
 library(ggplot2)
 library(xts)
 library(dygraphs)
+library(forecast)
+library(lubridate)
+library(plyr)
+
  
 # Get IBM and Linkedin stock data from Yahoo Finance
 data2009<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2009_datecoded.csv")
@@ -184,7 +188,6 @@ ggplot(time_series_plot,aes(dates,crashes)) +
   theme(plot.title = element_text(lineheight=.7, face="bold"))
 
 #### ARIMA
-library(forecast)
 timeseries_data <- ts(time_series_plot$crashes, 
 	start=c(2009,1),frequency=365)
 fit <- auto.arima(timeseries_data)
@@ -193,12 +196,9 @@ forecast(fit,h=30)
 plot(forecast(fit,h=30))
 
 #BY Month
-library(lubridate)
-
 time_series_plot$date_month <- floor_date(time_series_plot$dates, 
 	"month")
 
-library(plyr)
 time_series_month<-ddply(time_series_plot, "date_month", summarise, 
 	crashes_month = sum(crashes))
 
@@ -213,11 +213,20 @@ ggplot(time_series_month,aes(date_month,crashes_month)) +
   theme(plot.title = element_text(lineheight=.7, face="bold"))
 
 #### ARIMA
-library(forecast)
 timeseries_data <- ts(time_series_month$crashes_month, 
 	start=c(2009,1),frequency=12)
+seasonplot(timeseries_data)
+monthplot(timeseries_data)
+
+fit <- stl(timeseries_data, s.window="period")
+plot(fit)
+
 fit <- auto.arima(timeseries_data)
+acf(timeseries_data, lag.max=20) 
 summary(fit)
+accuracy(fit)
+autoplot(fit)
+plot(fit)
 forecast(fit,h=20)
 plot(forecast(fit,h=20))
 

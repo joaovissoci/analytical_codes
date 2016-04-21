@@ -1,6 +1,9 @@
-### Plotting
+### References and Tutorials
 
 #http://www.r-bloggers.com/plotting-time-series-in-r-using-yahoo-finance-data/
+#http://stats.stackexchange.com/questions/40905/arima-model-interpretation
+
+###
 
 # Time Series Plotting
 library(ggplot2)
