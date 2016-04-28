@@ -54,7 +54,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArota
 
 #data_cp<-read.csv("/home/joao/Desktop/data_cp.csv",sep=',')
 #data_rs<-read.csv("/home/joao/Desktop/data_rs.csv",sep=',')
-mydata <- spss.get("/home/joao/Desktop/Tuk_Tuk_Set_Recodednominal_yesNO_PPE.sav", use.value.labels=TRUE)
+mydata <- spss.get("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/sri lanka/safe_habits_srilanka_tuk_tuk.sav", use.value.labels=TRUE)
 
 ######################################################
 #DATA MANAGEMENT

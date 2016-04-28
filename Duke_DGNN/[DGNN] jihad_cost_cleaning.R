@@ -1,5 +1,5 @@
 
-data1<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGNN/Ug_cost_ef/jihad_cost_basedata.csv")
+data1<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/Ug_cost_ef/jihad_cost_basedata.csv")
 
 colnames(data1)<-c("date","diagnosis","deleteme1","surgical_procedure",
 	"deleteme2","age","medications","mediations_price","deleteme3",
@@ -60,27 +60,27 @@ CIDdiagnosis[(ref_lines[1431]-(4*(1431-1))):(length(data1$diagnosis)-((4*1431)))
 	(length(data1$diagnosis)-((4*1431))-(ref_lines[1431]-(1+(4*(1431-1))))))
 
 #### SURGICAL PROCEDURE
-surgical_procedure<-NULL
+#surgical_procedure<-NULL
 
-surgical_procedure[ref_lines[1]:(ref_lines[1+1]-4)]<-rep(as.character(
-	data1$surgical_procedure[ref_lines[1]]),
-	ref_lines[1+1]-4)
+#surgical_procedure[ref_lines[1]:(ref_lines[1+1]-4)]<-rep(as.character(
+#	data1$surgical_procedure[ref_lines[1]]),
+#	ref_lines[1+1]-4)
 
-surgical_procedure[(ref_lines[2]-4):(ref_lines[2+1]-(1+(4*2)))]<-rep(as.character(
-	data1$surgical_procedure[ref_lines[2]]),
-	((ref_lines[2+1]-(1+(4*2)))-(ref_lines[2]-5)))
+#surgical_procedure[(ref_lines[2]-4):(ref_lines[2+1]-(1+(4*2)))]<-rep(as.character(
+#	data1$surgical_procedure[ref_lines[2]]),
+#	((ref_lines[2+1]-(1+(4*2)))-(ref_lines[2]-5)))
 
-for(i in 3:1430){
+#for(i in 3:1430){
 
-surgical_procedure[(ref_lines[i]-(4*(i-1))):(ref_lines[i+1]-(1+(4*i)))]<-rep(as.character(
-	data1$surgical_procedure[ref_lines[i]]),
-	(ref_lines[i+1]-(1+(4*i))-(ref_lines[i]-(1+(4*(i-1))))))
+#surgical_procedure[(ref_lines[i]-(4*(i-1))):(ref_lines[i+1]-(1+(4*i)))]<-rep(as.character(
+#	data1$surgical_procedure[ref_lines[i]]),
+#	(ref_lines[i+1]-(1+(4*i))-(ref_lines[i]-(1+(4*(i-1))))))
 
-}
+#}
 
-surgical_procedure[(ref_lines[1431]-(4*(1431-1))):(length(data1$surgical_procedure)-((4*1431)))]<-rep(as.character(
-	data1$surgical_procedure[ref_lines[1431]]),
-	(length(data1$surgical_procedure)-((4*1431))-(ref_lines[1431]-(1+(4*(1431-1))))))
+#surgical_procedure[(ref_lines[1431]-(4*(1431-1))):(length(data1$surgical_procedure)-((4*1431)))]<-rep(as.character(
+#	data1$surgical_procedure[ref_lines[1431]]),
+#	(length(data1$surgical_procedure)-((4*1431))-(ref_lines[1431]-(1+(4*(1431-1))))))
 
 #### Age
 new_age<-NULL
@@ -130,12 +130,12 @@ gender[(ref_lines[1431]-(4*(1431-1))):(length(data1$deleteme3)-((4*1431)))]<-rep
 
 
 new_data<-data.frame(names,gender,new_age,
-	surgical_procedure,CIDdiagnosis,
+	surgical_procedure=teste$surgical_procedure,CIDdiagnosis,
 	date=teste$date,medications=teste$medications,
 	investigations=teste$investigations,
 	bedside_procedures=teste$bedside)
 
-write.csv(new_data,"/Users/joaovissoci/Dropbox/datasets/DGNN/Ug_cost_ef/jihad_cost_newdata.csv")
+write.csv(new_data,"/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/Ug_cost_ef/jihad_cost_newdata.csv")
 
 
 

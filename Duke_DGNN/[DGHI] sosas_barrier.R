@@ -2,28 +2,17 @@
 data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_cleaned.csv")
 
 barrier_data<-with(data,data.frame(
+	Problem1_ReasonNoCare,
 	Female,
+	Gender,
 	Age,
 	Education,
 	Literacy,
 	Occupation,
 	Ethnicity,
 	Religion,
-	Health_status,
-	O27_no_money,
-	O27_no_transport,
-	O27_no_time,
-	O27_fear,
-	O27_socialsupport,
-	O27_no_need
+	Health_status
 	))
 
 ## Questions
-* Reasons for care? Which variable it is?
-* Q027 and Q020 ? What is the difference?
-* Other confounders:
-	* Traditional healer
-	* Timing onset
-	* Type of surgery capture.output
-	* Seeking care?
-	* which one is the weight to calculate proportions?
+http://rfunction.com/archives/1499
