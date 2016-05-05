@@ -44,8 +44,7 @@ install.packages("mada")
 install.packages("reshape")
 install.packages("mice")
 install.packages("MissMech")
-
-
+install.packages("mlmRev")
 
 devtools::install_github("jennybc/googlesheets")
 devtools::install_github("cran/epicalc")

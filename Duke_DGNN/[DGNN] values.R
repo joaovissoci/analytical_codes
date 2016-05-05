@@ -1,4 +1,4 @@
-data<-read.csv("/home/joao/Desktop/network_dgnn.csv")
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/network_dgnn.csv")
 
 library(qgraph)
 str(data)
@@ -20,7 +20,7 @@ qgraph(values,borders=TRUE,
 	border.color=c("darkblue",rep("steelblue",6)),border.width=15,esize=20)
 
 numeric<-rep(10,6)
-names<-c("Integraty","Collaborative", 
+names<-c("Integrity","Collaborative", 
 	"Passion","Research","Diversity","Education")
 
 pie(numeric,names, col=c("darkblue","dodgerblue4","dodgerblue3",
@@ -37,7 +37,7 @@ library(wordcloud)
 wordcloud(jeopCorpus, max.words = 100, random.order = FALSE)
 
 
-words<-as.factor(c("Duke","Global","Neuroscience","Neurosurgery","DGNN","Integraty",
+words<-as.factor(c("Duke","Global","Neuroscience","Neurosurgery","DGNN","Integrity",
 	"Collaborative","Passion","Research","Diversity","Education","Vision"))
 freq <- as.numeric(c(2,2,2,2,4,7,7,7,7,7,7,10))
 color<-c("steelblue","steelblue","steelblue","steelblue","steelblue",
