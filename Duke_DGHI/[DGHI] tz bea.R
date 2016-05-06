@@ -412,7 +412,7 @@ fa.parallel(cor_data,n.obs=36)
 # Pricipal Components Analysis
 # entering raw data and extracting PCs 
 # from the correlation matrix 
-fit <- principal(cor_data,3,rotate="varimax",scores=TRUE)
+fit <- principal(cor_data,6,rotate="varimax",scores=TRUE)
 summary(fit) # print variance accounted for 
 loadings(fit) # pc loadings 
 fit$scores
@@ -426,47 +426,36 @@ wilcox.test(scores$scores[,3]~data_bea$risk_classification)
 #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
 
 ######################################################
-#CLUSTER ANALYSIS - From http://twt.lk/bdAP
+#QUALITATIVE COMPARATIVE ANALYSIS
 ######################################################
-library(mclust)
-
-test<-t(scores$scores)
-x<-cor(test)
-
-qsgG3<-qgraph(x,layout="spring")#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
-
-
-d <- dist(scores$scores, method = "euclidean") # distance matrix
-fit <- hclust(d, method="ward") 
-plot(fit) # display dendogram
-cluster_groups <- cutree(fit, k=4) # cut tree into 5 clusters
-# draw dendogram with red borders around the 5 clusters 
-rect.hclust(fit, k=4, border="red")
-cluster_groups_cat<-car::recode(cluster_groups, "1='Pattern4';2='Pattern2';3='Pattern3';4='Pattern1'")
-by(scores$scores,cluster_groups_cat,summary)
-boxplot_data<-melt(data.frame(scores$scores,cluster_groups_cat),by=c("cluster_groups_cat"))
-boxplot(value~cluster_groups_cat*variable,data=boxplot_data,col=c("gold","darkgreen","red"))
-
-log_bea<-glm(data_bea$risk_classification ~ cluster_groups_cat,family=binomial)
-summary(log_bea)
-logistic.display(log_bea)
-
-######################################################
-#QUALITATIVE COMPARATIVE ANALYSIS - From http://twt.lk/bdAP
-######################################################
-#Pacckages Needed
-#library(QCA)
-#library(VennDiagram)
 
 # Organizing dataset
 #####################
-#pca_data<-with(data_bea,data.frame(road_area,road_design,intersections,conflict_intersections___0,conflict_intersections___1,conflict_intersections___2,lane_type,pavement,road_narrow,roadside,roadside_danger,unevenness_roadside,bus_stop,bump,road_traffic_signs,speed_limit,curve_type,night_lights))#,outcome=bancocerto$Q13)
+
+#Excluding variables
+#night_lights - no variance
+#walkways - no variance
+# 
+
+pca_data<-with(data_bea,data.frame(road_area,road_design,
+	intersections,conflict_intersections___0,
+	conflict_intersections___1,conflict_intersections___2,
+	lane_type,pavement,road_narrow,roadside,roadside_danger,
+	unevenness_roadside,bus_stop,bump,road_traffic_signs,
+	speed_limit,curve_type,visibility,ddensity_level,
+	ddensity_motos,ddensity_cars,
+	ddensity_bikes,ddensity_daladala,ddensity_peda_crossing,
+	ddensity_peds_road,ndensity_motos_lights,
+	outcome=risk_classification))
+
+summary(pca_data)
 
 # generating correlation matrix
-#cor_data<-polychoric(pca_data)$rho
+cor_data<-cor_auto(pca_data)
 
 #visualizing correlation matrix with a network
-#qgraph(cor_data,layout="spring")
+qgraph(cor_data,layout="spring")
+
 # Organize dataset with dichotomous respondes for cQCA or with proportions from 0 to 1 for fQCA
 qca_data<-with(data_bea,data.frame(road_area,road_design,
 	pavement,road_narrow,unevenness_roadside,
@@ -474,7 +463,7 @@ qca_data<-with(data_bea,data.frame(road_area,road_design,
 
 summary(qca_data)
 
-write.csv(qca_data,"/Users/jnv4/Desktop/qca_data.csv")
+#write.csv(qca_data,"/Users/jnv4/Desktop/qca_data.csv")
 
 ### Calibration of numeric variables to crispy sets
 # Transform a set os thresholds to be calibrated from (cathegorized from)
