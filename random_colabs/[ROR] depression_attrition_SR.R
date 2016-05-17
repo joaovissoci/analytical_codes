@@ -22,7 +22,7 @@ lapply(c("metafor","ggplot2","gridExtra" ,"psych",
 ##############################################################
 #IMPORTING DATA AND RECODING
 ##############################################################
-data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/RoR/depression_attrition_SR.csv",
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/RoR/depression_attrition_SR.csv",
 	header=T)
 #data<-read.csv("/Users/rpietro/Desktop/depressao_teens.csv",header=T)er
 
@@ -75,11 +75,25 @@ dev.off()
 funnel(m3)
 #metainf(m3)
 #metainf(m3, pooled="random")
-metareg(m3, ~ data_model1$age_mean_total + 
-	data_model1$depression_score_b_ig + 
+data_model1<-with(data,data.frame(general_attrition,total_sample,
+	author_year,age_mean_total,depression_score_b_ig,
+	follow_up,outcome_method,depression_diag_criteria))
+data_model1<-na.omit(data_model1[order(data_model1$author_year),])
+
+#gender
+#age - potentially cathegorize
+#depression score - more then one scale
+#depression diag - método diagnóstico de depressoin
+#followup in months
+#
+
+m3<-metaprop(general_attrition,total_sample,
+	sm="PLN",data=data_model1,studlab=author_year)
+metareg(m3, ~ data_model1$age_mean_total+ 
+	data_model1$depression_score_b_ig)
+	 + 
 	data_model1$follow_up +
-	data_model1$outcome_method +
-	data_model1$depression_diag_criteria)
+	data_model1$outcome_method)
 
 ### BY AGE SUBGROUP ANALYSIS
 data_model2<-with(data,data.frame(attrition,total_sample,autor_ano,age))

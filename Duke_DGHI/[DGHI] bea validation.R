@@ -35,18 +35,25 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 #IMPORTING DATA
 ######################################################
 
-data_bea<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/Tz/bea_indicators.csv",sep=',')
+data_tz<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_tz.csv",sep=',')
+data_sl<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_sl.csv",sep=',')
+data_rw<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_rw.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
 ######################################################
+#clean data from Sri Lanka
+data_sl2<-subset(data_sl,data_sl$rater=="e")
 
-summary(data_bea)
 
-#Excluding zero-variation variables
-data_bea<-remove.vars(data_bea,c("auxiliary_lane","rd_condition___0","rd_condition___1","rd_condition___2","rd_condition___3"))
+#Recode variables
 
-#Recoding
+#ROAD DESIGN
+
+data_tz$road_area<-car::recode(data_tz$road_area,"
+	")
+
+
 
 data_bea$road_design<-car::recode(data_bea$road_design,"0:1=1;2:3=0;else=NA")
 data_bea$intersections<-car::recode(data_bea$intersections,"0=0;1:2=1;else=NA")
