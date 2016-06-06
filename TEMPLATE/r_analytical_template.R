@@ -10,7 +10,11 @@
 #SETTING ENVIRONMENT
 #################################################################
 #All packages must be installes with install.packages() function
-lapply(c(""), 
+lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest", 
+	"moments","GPArotation","nFactors","boot","psy", "car",
+	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
+	"reshape2","mclust","foreign","survival","memisc","lme4",
+	"lmerTest","dplyr","meta","metafor"), 
 library, character.only=T)
 #################################################################
 #IMPORTING DATA

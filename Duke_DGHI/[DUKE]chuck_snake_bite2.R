@@ -52,10 +52,10 @@ lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest",
 #data_rs  <- get_via_lf(sheet_rs, ws = "Coagulation Data")
 #demographics_rs<-get_via_lf(sheet_rs, ws = "Demographics") 
 
-data_rs <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_rs.csv")
-demographics_rs <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_rs.csv")
-data_cp <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_cp.csv")
-demographics_cp <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_cp.csv")
+data_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_rs.csv")
+demographics_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_rs.csv")
+data_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/data_cp.csv")
+demographics_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebite_longitudinal/demographics_cp.csv")
 
 #sheet_cp <- register_ss("Copy of Copperhead data")#
 #data_cp <- get_via_lf(sheet_cp, ws = "Coagulation Data") 
