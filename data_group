@@ -1,0 +1,65 @@
+Redesenhando a saúde pública através de  Big Data, pesquisa e inovação
+======================================================================
+
+# Panorama
+
+### Cenário - SUS
+
+* Alta capacidade de gerar dados na saúde pública 
+* Avanços na capacidade computacional de analisar dados - Big Data
+* Maior poder analítico com ferramentas avançadas de estatística e inovação
+
+### Ciência de dados aplicada ao SUS
+
+* Profissionais com conhecimento em 3 áreas:
+1. Saúde Pública e Sistemas de saúde;
+2. Estatística e metodologia de pesquisa;
+3. Ciência da computação
+
+
+# Desafios para o SUS
+
+* Continuar o avanço do sus com gestão e políticas públicas baseadas em evidências
+* Manutenção da capacidade de geração de dados e conectar sistemas de gestão atuais
+* Necessidade de analisar os dados atualmente disponíveis nos sistemas de informação em saúde e outras fontes relacionadas
+* Necessidade de traduzir os dados em informação e conhecimento para os envolvidos no SUS nas diferentes esferas (local, municipal, estadual e nacional)
+
+# Soluções propostas para o SUS
+
+### Governança de dados
+
+* Conectar bancos existentes
+* Avaliação de qualidade de coleta de dados
+* Auditoria e gestão de desempenho
+* Utilização de ferramentas de acesso livre
+
+### Visualização de dados
+
+* Plataforma online e de livre acesso
+* Diversidade de visualizações com gráficos, figuras, mapas e modelos
+* Visualziações interativas e dinâmicas
+* Atualizadas em tempo real de forma automatizada
+
+<!-- fig -->
+
+### Data analytics
+
+* Ferramentas estatísticas de análise de dados avançadas como aprendizagem de máquina, mineração de texto e análise geoespacial
+* Capacidade analítica para auxiliar tomada de decisão e políticas públicas
+* Partir de dados para informações como risco clínico, distribuição geoespacial, avaliações de desempenho, capacidades diagnósticas entre outras.
+
+### Inovações com base em evidências
+
+* Plataformas automatizadas e em tempo real
+* Acesso livre
+* Ferramentas de suporte a tomada de decisão como:
+1. Calculadoras de risco
+2. Aplicação de tecnologia móvel para saúde
+3. Monitoramento e vigilância epidemiológicas em tempo real
+4. Relatórios de qualidade e desempenho
+
+### Exemplos de apliação de ciência de dados sistemas de saúde
+
+<!-- figura do gapminder -->
+
+<!-- figura do health analytics -->
