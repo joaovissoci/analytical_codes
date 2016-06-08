@@ -35,9 +35,9 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 #IMPORTING DATA
 ######################################################
 
-data_tz<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_tz.csv",sep=',')
-data_sl<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_sl.csv",sep=',')
-data_rw<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_rw.csv",sep=',')
+data_tz<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_tz.csv",sep=',')
+data_sl<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_sl.csv",sep=',')
+data_rw<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_rw.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -49,9 +49,14 @@ data_sl2<-subset(data_sl,data_sl$rater=="e")
 #Recode variables
 
 #ROAD DESIGN
+data_tz$road_area
+data_rw$road_area
+data_sl2$road_area
 
-data_tz$road_area<-car::recode(data_tz$road_area,"
-	")
+#ROAD DESIGN
+data_tz$road_area
+data_rw$road_area
+data_sl2$road_area
 
 
 
