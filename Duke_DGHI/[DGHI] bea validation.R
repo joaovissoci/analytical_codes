@@ -20,11 +20,44 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", 
-	"moments","GPArotation","nFactors","boot","psy", "car","vcd", 
-	"gridExtra","mi","VIM","epicalc","gdata","sqldf","reshape2",
-	"mclust","foreign","survival","memisc","lme4","lmerTest",
-	"dplyr","QCA","VennDiagram","qgraph"),library, character.only=T)
+lapply(c("sem",
+		 "ggplot2", 
+		 "psych", 
+		 "RCurl", 
+		 "irr", 
+		 "nortest", 
+	     "moments",
+	     "GPArotation",
+	     "nFactors",
+	     "boot",
+	     "psy", 
+	     "car",
+	     "vcd", 
+	     "gridExtra",
+	     "mi",
+	     "VIM",
+	     "epicalc",
+	     "gdata",
+	     "sqldf",
+	     "reshape2",
+	     "mclust",
+	     "foreign",
+	     "survival",
+	     "memisc",
+	     "lme4",
+	     "lmerTest",
+	     "dplyr",
+	     "QCA",
+	     "VennDiagram",
+	     "qgraph",
+	     "igraph",
+	     "ltm",
+	      "gmodels",
+	      "eRm",
+	      "mirt",
+	      "dplyr",
+	      "devtools"),
+library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
 #devtools::install_github("jennybc/googlesheets")
@@ -35,9 +68,9 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 #IMPORTING DATA
 ######################################################
 
-data_tz<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_tz.csv",sep=',')
-data_sl<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_sl.csv",sep=',')
-data_rw<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_rw.csv",sep=',')
+data_tz<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_tz.csv",sep=',')
+data_sl<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_sl.csv",sep=',')
+data_rw<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_rw.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -244,19 +277,6 @@ bea_data$pedestrians_center<-c(data_tz$pedestrians___2,
 					      		 data_rw$apedestrians___2,
 					       		 data_sl2$pedestrians___2)
 
-#pedestrian_walkways
-data_tz$pedestrians___3
-data_rw$pedestrians___3<-data_rw$apedestrians___3+
-						 data_rw$apedestrians___4+
-						 data_rw$apedestrians___5
-data_rw$pedestrians___3<-car::recode(data_rw$pedestrians___3,"
-	0=0;else=1")
-data_sl2$pedestrians___3
-
-bea_data$pedestrians_walkways<-c(data_tz$pedestrians___3,
-					      		 data_rw$pedestrians___3,
-					       		 data_sl2$pedestrians___3)
-
 #car_density
 data_tz$ddensity_cars
 data_rw$density_cars
@@ -287,20 +307,22 @@ bea_data$density_bike<-c(data_tz$ddensity_bikes,
 #pedestrian_density
 data_tz$ddensity_peda_crossing
 data_rw$density_peda_crossing
-data_sl2$ddensity_peda_crossing
-
-bea_data$density_pedestrian<-c(data_tz$ddensity_peda_crossing,
-					      		 data_rw$density_peda_crossing,
-					       		 data_sl2$ddensity_peda_crossing)
-
-#bus_truck_density
-data_tz$ddensity_peda_crossing
-data_rw$density_peda_crossing
 data_sl2$pedestrian_density
 
 bea_data$density_pedestrian<-c(data_tz$ddensity_peda_crossing,
 					      		 data_rw$density_peda_crossing,
 					       		 data_sl2$pedestrian_density)
+
+#bus_truck_density
+data_tz$density_bus_truck<-with(data_tz,ddensity_big_bus+
+	ddensity_trucks+ddensity_daladala)
+data_rw$density_bus_truck<-with(data_rw,density_big_bus+
+	density_taxi_bus+density_trucks)
+data_sl2$bus_truck_density
+
+bea_data$density_bus_truck<-c(data_tz$density_bus_truck,
+					      		 data_rw$density_bus_truck,
+					       		 data_sl2$bus_truck_density)
 
 # Organizing data set
 
@@ -323,10 +345,22 @@ bea_data$speed_limit<-car::recode(bea_data$speed_limit,"
 ##############################################################
 #PCA Score comparisons
 #############################################################
-# # Define the amout of factor to retain
-#Group of functinos to determine the number os items to be extracted
-cor_data<-cor_auto(bea_data[,-1])
+#MODEL 1 - Risk due to road deisgn
+model1_bea<-with(bea_data,data.frame(
+			road_area,
+			road_design,
+			intersections,
+			lane_type,
+			auxiliary_lane,
+			bridges,
+			road_visibility,
+			curves_type,
+			road_condition,
+			roadside))
 
+cor_data<-cor_auto(model1_bea)
+
+#Community analysis
 comprehension_network_glasso<-qgraph(cor_data,
 	layout="spring",
 	vsize=6,esize=20,graph="glasso",
@@ -334,43 +368,411 @@ comprehension_network_glasso<-qgraph(cor_data,
 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
 #Calculating Community measures
 g<-as.igraph(comprehension_network_glasso) #creating igraph object
-#h<-walktrap.community(g) #creatin community object
+h<-walktrap.community(g) #creatin community object
 h<-spinglass.community(g, weights=NA)
 plot(h,g) #plotting community network
 h$membership #extracting community membership for each node on the network
+community<-data.frame(h$membership,rownames(cor_data))
 
-#
-
-par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
-ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
-ev # Show eigend values
-ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
-summary(ap)
-nS <- nScree(ev$values) #Set up the Scree Plot 
-plotnScree(nS) # Plot the ScreePlot Graph
+# par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
+# ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
+# ev # Show eigend values
+# ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
+# summary(ap)
+# nS <- nScree(ev$values) #Set up the Scree Plot 
+# plotnScree(nS) # Plot the ScreePlot Graph
 my.vss <- VSS(cor_data,title="VSS of BEA data")
-print(my.vss[,1:12],digits =2)
+#print(my.vss[,1:12],digits =2)
 VSS.plot(my.vss, title="VSS of 24 mental tests")
 scree(cor_data)
 VSS.scree(cor_data)
-fa.parallel(cor_data,n.obs=36)
+fa.parallel(cor_data,n.obs=229)
 
 # Pricipal Components Analysis
 # entering raw data and extracting PCs 
 # from the correlation matrix 
-fit <- principal(cor_data,4,rotate="varimax",scores=TRUE)
+fit <- psych::principal(cor_data,nfactors=3,rotate="none",scores=TRUE)
+fit
 summary(fit) # print variance accounted for 
 loadings(fit) # pc loadings 
 fit$scores
-predict(fit,cor_data)
-scores<-scoreItems(fit$weights,pca_data)
+predict(fit,bea_data[,-1])
+scores<-scoreItems(fit$weights,bea_data[,-1],totals=TRUE)
+summary(scores)
 describe(scores$scores)
-by(scores$scores,data_bea$risk_classification,summary)
-wilcox.test(scores$scores[,1]~data_bea$risk_classification)
-wilcox.test(scores$scores[,2]~data_bea$risk_classification)
-wilcox.test(scores$scores[,3]~data_bea$risk_classification)
-#wilcox.test(scores$scores[,4]~data_bea$risk_classification)
+# by(scores$scores,data_bea$risk_classification,summary)
+# wilcox.test(scores$scores[,1]~data_bea$risk_classification)
+# wilcox.test(scores$scores[,2]~data_bea$risk_classification)
+# wilcox.test(scores$scores[,3]~data_bea$risk_classification)
+# #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
+
+# model <- principal(cor_data ,nfactors=4, rotate='none', scores=T, cov=T)
+# L <- model$loadings            # Just get the loadings matrix
+# S <- model$scores              # This gives an incorrect answer in the current version
+
+# d <- bea_data[,-1]              # get your data
+# dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+# sc <- dc %*% L                 # scores are the centered data times the loadings
+# lowerCor(sc)                   #These scores, being principal components
+#                                # should be orthogonal 
+
+# plot(model)
+
+#MODEL 2 - Built driving safety
+model2_bea<-with(bea_data,data.frame(
+			traffic_light,
+			road_traffic_signs,
+			speed_limit,
+			bump))
+
+cor_data<-cor_auto(model2_bea)
+
+#Community analysis
+comprehension_network_glasso<-qgraph(cor_data,
+	layout="spring",
+	vsize=6,esize=20,graph="glasso",
+	sampleSize=nrow(bea_data),
+	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+#Calculating Community measures
+g<-as.igraph(comprehension_network_glasso) #creating igraph object
+h<-walktrap.community(g) #creatin community object
+h<-spinglass.community(g, weights=NA)
+plot(h,g) #plotting community network
+h$membership #extracting community membership for each node on the network
+community<-data.frame(h$membership,rownames(cor_data))
+
+# par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
+# ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
+# ev # Show eigend values
+# ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
+# summary(ap)
+# nS <- nScree(ev$values) #Set up the Scree Plot 
+# plotnScree(nS) # Plot the ScreePlot Graph
+my.vss <- VSS(cor_data,title="VSS of BEA data")
+#print(my.vss[,1:12],digits =2)
+VSS.plot(my.vss, title="VSS of 24 mental tests")
+scree(cor_data)
+VSS.scree(cor_data)
+fa.parallel(cor_data,n.obs=229)
+
+# Pricipal Components Analysis
+# entering raw data and extracting PCs 
+# from the correlation matrix 
+fit <- psych::principal(cor_data,nfactors=1,rotate="none",scores=TRUE)
+fit
+summary(fit) # print variance accounted for 
+loadings(fit) # pc loadings 
+fit$scores
+predict(fit,bea_data[,-1])
+scores<-scoreItems(fit$weights,bea_data[,-1],totals=TRUE)
+summary(scores)
+describe(scores$scores)
+# by(scores$scores,data_bea$risk_classification,summary)
+# wilcox.test(scores$scores[,1]~data_bea$risk_classification)
+# wilcox.test(scores$scores[,2]~data_bea$risk_classification)
+# wilcox.test(scores$scores[,3]~data_bea$risk_classification)
+# #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
+
+# model <- principal(cor_data ,nfactors=4, rotate='none', scores=T, cov=T)
+# L <- model$loadings            # Just get the loadings matrix
+# S <- model$scores              # This gives an incorrect answer in the current version
+
+# d <- bea_data[,-1]              # get your data
+# dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+# sc <- dc %*% L                 # scores are the centered data times the loadings
+# lowerCor(sc)                   #These scores, being principal components
+#                                # should be orthogonal 
+
+# plot(model)
 
 
+#MODEL 3 - Vehicle density
+model3_bea<-with(bea_data,data.frame(
+			density_car,
+			density_moto,
+			density_bike,
+			density_pedestrian,
+			density_bus_truck))
+
+cor_data<-cor_auto(model3_bea)
+
+#Community analysis
+comprehension_network_glasso<-qgraph(cor_data,
+	layout="spring",
+	vsize=6,esize=20,graph="glasso",
+	sampleSize=nrow(bea_data),
+	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+#Calculating Community measures
+g<-as.igraph(comprehension_network_glasso) #creating igraph object
+h<-walktrap.community(g) #creatin community object
+h<-spinglass.community(g, weights=NA)
+plot(h,g) #plotting community network
+h$membership #extracting community membership for each node on the network
+community<-data.frame(h$membership,rownames(cor_data))
+
+# par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
+# ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
+# ev # Show eigend values
+# ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
+# summary(ap)
+# nS <- nScree(ev$values) #Set up the Scree Plot 
+# plotnScree(nS) # Plot the ScreePlot Graph
+my.vss <- VSS(cor_data,title="VSS of BEA data")
+#print(my.vss[,1:12],digits =2)
+VSS.plot(my.vss, title="VSS of 24 mental tests")
+scree(cor_data)
+VSS.scree(cor_data)
+fa.parallel(cor_data,n.obs=229)
+
+# Pricipal Components Analysis
+# entering raw data and extracting PCs 
+# from the correlation matrix 
+fit <- psych::principal(cor_data,nfactors=2,rotate="none",scores=TRUE)
+fit
+summary(fit) # print variance accounted for 
+loadings(fit) # pc loadings 
+fit$scores
+predict(fit,bea_data[,-1])
+scores<-scoreItems(fit$weights,bea_data[,-1],totals=TRUE)
+summary(scores)
+describe(scores$scores)
+# by(scores$scores,data_bea$risk_classification,summary)
+# wilcox.test(scores$scores[,1]~data_bea$risk_classification)
+# wilcox.test(scores$scores[,2]~data_bea$risk_classification)
+# wilcox.test(scores$scores[,3]~data_bea$risk_classification)
+# #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
+
+# model <- principal(cor_data ,nfactors=4, rotate='none', scores=T, cov=T)
+# L <- model$loadings            # Just get the loadings matrix
+# S <- model$scores              # This gives an incorrect answer in the current version
+
+# d <- bea_data[,-1]              # get your data
+# dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+# sc <- dc %*% L                 # scores are the centered data times the loadings
+# lowerCor(sc)                   #These scores, being principal components
+#                                # should be orthogonal 
+
+# plot(model)
+
+#MODEL 4 - Built pedestrian safety
+model4_bea<-with(bea_data,data.frame(
+			bus_stop,
+			pedestrians_crossing,
+			pedestrians_center,
+			density_pedestrian,
+			walkways))
+
+cor_data<-cor_auto(model4_bea)
+
+#Community analysis
+comprehension_network_glasso<-qgraph(cor_data,
+	layout="spring",
+	vsize=6,esize=20,graph="glasso",
+	sampleSize=nrow(bea_data),
+	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+#Calculating Community measures
+g<-as.igraph(comprehension_network_glasso) #creating igraph object
+h<-walktrap.community(g) #creatin community object
+h<-spinglass.community(g, weights=NA)
+plot(h,g) #plotting community network
+h$membership #extracting community membership for each node on the network
+community<-data.frame(h$membership,rownames(cor_data))
+
+# par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
+# ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
+# ev # Show eigend values
+# ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
+# summary(ap)
+# nS <- nScree(ev$values) #Set up the Scree Plot 
+# plotnScree(nS) # Plot the ScreePlot Graph
+my.vss <- VSS(cor_data,title="VSS of BEA data")
+#print(my.vss[,1:12],digits =2)
+VSS.plot(my.vss, title="VSS of 24 mental tests")
+scree(cor_data)
+VSS.scree(cor_data)
+fa.parallel(cor_data,n.obs=229)
+
+# Pricipal Components Analysis
+# entering raw data and extracting PCs 
+# from the correlation matrix 
+fit <- psych::principal(cor_data,nfactors=1,rotate="none",scores=TRUE)
+fit
+summary(fit) # print variance accounted for 
+loadings(fit) # pc loadings 
+fit$scores
+predict(fit,model4_bea)
+scores<-scoreItems(fit$weights,model4_bea,totals=TRUE)
+summary(scores)
+describe(scores$scores)
+# by(scores$scores,data_bea$risk_classification,summary)
+# wilcox.test(scores$scores[,1]~data_bea$risk_classification)
+# wilcox.test(scores$scores[,2]~data_bea$risk_classification)
+# wilcox.test(scores$scores[,3]~data_bea$risk_classification)
+# #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
+
+model <- principal(cor_data ,nfactors=1, rotate='none', scores=T, cov=T)
+ L <- model$loadings            # Just get the loadings matrix
+# S <- model$scores              # This gives an incorrect answer in the current version
+
+ d <- model4_bea              # get your data
+ dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+ sc <- dc %*% L                 # scores are the centered data times the loadings
+ lowerCor(sc)                   #These scores, being principal components
+#                                # should be orthogonal 
+
+ plot(model)
+
+score<-round(pnorm(sc)*100,2)
+
+##############################################################
+#NETWORK AND 
+##############################################################
+# # Define the amout of factor to retain
+#Group of functinos to determine the number os items to be extracted
+cor_data<-cor_auto(bea_data[,-1])
+
+#Community analysis
+comprehension_network_glasso<-qgraph(cor_data,
+	layout="spring",
+	vsize=6,esize=20,graph="glasso",
+	sampleSize=nrow(bea_data),
+	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+#Calculating Community measures
+g<-as.igraph(comprehension_network_glasso) #creating igraph object
+h<-walktrap.community(g) #creatin community object
+h<-spinglass.community(g, weights=NA)
+plot(h,g) #plotting community network
+h$membership #extracting community membership for each node on the network
+community<-data.frame(h$membership,rownames(cor_data))
+
+#listing grouping variables in the network resulting from the community analysis
+network_groups<-list(
+Component1=as.numeric(rownames(community)[community[,1]==1]),
+Component2=as.numeric(rownames(community)[community[,1]==2]),
+Component3=as.numeric(rownames(community)[community[,1]==3])
+)
+# creating vectors for labels
+node_labels<-c(
+"What is the area of the roadway?",
+"What type of roadway?",
+"Is this point at an intersection/junction?",
+"How many lanes in the roadway?",
+"Is there an auxiliary/other lane?",
+"Is there pavement on the roadway?",
+"How is the road surface conditions?",
+"Has the road been narrowed? And why?",
+"Is there space on the side of the road 
+for any reason or use?",
+"Are there pedestrian pathways?",
+"Is there a Bus Stop?",
+"Is there a Speed bump?",
+"Is there a traffic light at this location?",
+"Are there road traffic signs at this hotspot?",
+"Is there a sign for speed limit of road?",
+"Road visibility is influenced by curves?",
+"Is the visibility influenced by 
+environmental factors?",
+"Are there bridges on the road?",
+"Is there a safe area for pedestrians 
+to cross the road?",
+"Is there a safe area for pedestrians
+to in the center of the road?",
+"Count the number of cars",
+"Count the number of moto",
+"Count the number of bike",
+"Count the number of pedestrians",
+"Count the number of bus/trucks"
+)
+
+# creating nodes labels vector
+node_names<-c("RD","RT","INT","TLA","AR","PAV",
+	"RC","RN","RS",
+	"WALK","BS","SB","TLI","TS","SL","CUR",
+	"VIS","BRI","PED","PEDc","CARd","MOTOd","BIKEd","PEDd","TRUCKd")
+
+# creating vector with mean values for each node
+#mean_data<-sapply(network_data,mean)
+
+#creating vector with mean values adjusted to proportional sizes to be plotted
+#importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
+
+#building network figures 
+# 3 types are created to get an avarege position and layout
+#GLASSO NETWORK
+network_glasso<-qgraph(cor_data,layout="spring",
+	vsize=6,esize=20,graph="glasso",
+	sampleSize=nrow(bea_data),
+	legend.cex = 0.5,GLratio=1.5)
+
+#PARTIAL CORRELATION NETWORK
+network_pcor<-qgraph(cor_data,layout="spring",
+	vsize=6,esize=20,graph="pcor",threshold="holm",
+	sampleSize=nrow(bea_data),
+	legend.cex = 0.5,GLratio=1.5)
+
+#CORRELATION NETWORK
+network_cor<-qgraph(cor_data,layout="spring",
+	vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
+#layout1<-averageLayout(network_glasso,network_pcor,network_cor)
+
+# Organizing both figures to be with the same layout
+layout_final<-averageLayout(network_glasso,
+	network_pcor,
+	network_cor)
+
+#postscript("/home/joao/Desktop/info_consent_figure2.eps",
+#	width = 1500, height = 1200,horizontal = FALSE, 
+#	onefile = FALSE)
+#postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
+#	width = 1500, height = 1200,horizontal = FALSE, 
+#	onefile = FALSE)
+tiff("/Users/joaovissoci/Desktop/importance_network.tiff", width = 1200,
+ height = 700,compression = 'lzw')
+final_importance_network<-qgraph(cor_data,
+	esize=20,graph="glasso",
+	sampleSize=nrow(bea_data),
+	legend.cex = 0.6,cut = 0.3, maximum = 1, 
+	minimum = 0, esize = 20,vsize = 5, 
+	repulsion = 0.8,groups=network_groups,
+	nodeNames=node_labels,
+	color=c("gold","steelblue","red","grey80",
+	layoutScale=c(2,2)),borders = FALSE,
+	labels=node_names)#,gray=T,)#,nodeNames=nomesqsg
+dev.off()
+#legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
+
+##############################################################
+#RELIABILITY
+##############################################################
+
+#MODEL 1
+#Alpha de Cronbach by ltm package - GIves CI
+cronbach.alpha(na.omit(model1_bea), standardized = TRUE, CI = TRUE, 
+	probs = c(0.025, 0.975), B = 1000, na.rm = FALSE)
+
+psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
+psych::alpha(model1_bea,n.iter=1000,check.keys=TRUE)
+
+#MODEL 2
+
+#MODEL 3
+
+#MODEL 4
+
+agree_data_sl<-data.frame(data_cluster_police_sl$RISK,data_cluster_survey_sl$RISK)
+#agree_data_sl<-na.omit(agree_data_sl)
+#agree_data_sl$data_cluster_police_sl.RISK<-car::recode(agree_data_sl$data_cluster_police_sl.RISK,"1=0;2=1;3=1")
+#agree_data_sl$data_cluster_survey_sl.RISK<-car::recode(agree_data_sl$data_cluster_survey_sl.RISK,"1=0;2=1;3=1")
+#Executing agreement nalysis
+agree<-agree(agree_data_sl, tolerance=0) #% of Agreement
+kappa<-cohen.kappa(agree_data_sl) #Kappa-value
+AC1(kappa$agree)
+#cor<-cor(agree_data_sl,method=c("kendall"))
+#kendall<-Kendall(agree_data_sl$data_cluster_police_sl.RISK,agree_data_sl$data_cluster_survey_sl.RISK)
+#poly<-hetcor(agree_data_sl)
 
 
+agree_plot_rw<-agreementplot(model4_bea, main = "Rwanda",xlab_rot=0, ylab_rot=90,xlab_just="center", ylab_just="center", xlab="Survey",ylab="Police")
+
+agree_data_rw[,1]<-car::recode(agree_data_rw[,1],"0=0;else=1")
+agree_data_rw[,2]<-car::recode(agree_data_rw[,2],"0=0;else=1")
