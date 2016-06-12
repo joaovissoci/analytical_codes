@@ -20,43 +20,12 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem",
-		 "ggplot2", 
-		 "psych", 
-		 "RCurl", 
-		 "irr", 
-		 "nortest", 
-	     "moments",
-	     "GPArotation",
-	     "nFactors",
-	     "boot",
-	     "psy", 
-	     "car",
-	     "vcd", 
-	     "gridExtra",
-	     "mi",
-	     "VIM",
-	     "epicalc",
-	     "gdata",
-	     "sqldf",
-	     "reshape2",
-	     "mclust",
-	     "foreign",
-	     "survival",
-	     "memisc",
-	     "lme4",
-	     "lmerTest",
-	     "dplyr",
-	     "QCA",
-	     "VennDiagram",
-	     "qgraph",
-	     "igraph",
-	     "ltm",
-	      "gmodels",
-	      "eRm",
-	      "mirt",
-	      "dplyr",
-	      "devtools"),
+lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", 
+	"moments","GPArotation","nFactors","boot","psy", "car",
+	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
+	"reshape2","mclust","foreign","survival","memisc","lme4",
+	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
+	"ltm","gmodels","eRm","mirt","dplyr","devtools"),
 library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
@@ -341,6 +310,272 @@ bea_data$bus_stop<-car::recode(bea_data$bus_stop,"
 	99=NA")
 bea_data$speed_limit<-car::recode(bea_data$speed_limit,"
 	99=0")
+
+##############################################################
+#Descriptives
+#############################################################
+# Road Area
+table<-with(bea_data,table(road_area))
+table
+prop.table(table)
+table<-with(bea_data,table(road_area,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(road_design))
+table
+prop.table(table)
+table<-with(bea_data,table(road_design,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(intersections))
+table
+prop.table(table)
+table<-with(bea_data,table(intersections,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(lane_type))
+table
+prop.table(table)
+table<-with(bea_data,table(lane_type,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(auxiliary_lane))
+table
+prop.table(table)
+table<-with(bea_data,table(auxiliary_lane,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(pavement))
+table
+prop.table(table)
+table<-with(bea_data,table(pavement,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(road_condition))
+table
+prop.table(table)
+table<-with(bea_data,table(road_condition,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(road_narrow))
+table
+prop.table(table)
+table<-with(bea_data,table(road_narrow,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(roadside))
+table
+prop.table(table)
+table<-with(bea_data,table(roadside,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(walkways))
+table
+prop.table(table)
+table<-with(bea_data,table(walkways,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(bus_stop))
+table
+prop.table(table)
+table<-with(bea_data,table(bus_stop,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(bump))
+table
+prop.table(table)
+table<-with(bea_data,table(bump,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(traffic_light))
+table
+prop.table(table)
+table<-with(bea_data,table(traffic_light,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(road_traffic_signs))
+table
+prop.table(table)
+table<-with(bea_data,table(road_traffic_signs,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(speed_limit))
+table
+prop.table(table)
+table<-with(bea_data,table(speed_limit,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(curves_type))
+table
+prop.table(table)
+table<-with(bea_data,table(curves_type,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(road_visibility))
+table
+prop.table(table)
+table<-with(bea_data,table(road_visibility,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(bridges))
+table
+prop.table(table)
+table<-with(bea_data,table(bridges,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(pedestrians_crossing))
+table
+prop.table(table)
+table<-with(bea_data,table(pedestrians_crossing,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(pedestrians_center))
+table
+prop.table(table)
+table<-with(bea_data,table(pedestrians_center,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(bea_data,table(pedestrians_walkways))
+table
+prop.table(table)
+table<-with(bea_data,table(pedestrians_walkways,country))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Car density
+summary(bea_data$density_car)
+ad.test(bea_data$density_car)
+#hist(bea_data$density_car)
+#ci_func(bea_data$density_car,.95)
+by(bea_data$density_car,bea_data$country,summary)
+wilcox.test(bea_data$density_car~bea_data$country)
+
+# Moto density
+summary(bea_data$density_moto)
+ad.test(bea_data$density_moto)
+#hist(bea_data$density_moto)
+#ci_func(bea_data$density_moto,.95)
+by(bea_data$density_moto,bea_data$country,summary)
+wilcox.test(bea_data$density_moto~bea_data$country)
+
+# Bike density
+summary(bea_data$density_bike)
+ad.test(bea_data$density_bike)
+#hist(bea_data$density_bike)
+#ci_func(bea_data$density_bike,.95)
+by(bea_data$density_bike,bea_data$country,summary)
+wilcox.test(bea_data$density_bike~bea_data$country)
+
+# Bike density
+summary(bea_data$density_pedestrian)
+ad.test(bea_data$density_pedestrian)
+#hist(bea_data$density_pedestrian)
+#ci_func(bea_data$density_pedestrian,.95)
+by(bea_data$density_pedestrian,bea_data$country,summary)
+wilcox.test(bea_data$density_pedestrian~bea_data$country)
 
 ##############################################################
 #PCA Score comparisons
