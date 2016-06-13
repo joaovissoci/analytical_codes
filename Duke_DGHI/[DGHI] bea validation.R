@@ -25,7 +25,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
 	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
-	"ltm","gmodels","eRm","mirt","dplyr","devtools"),
+	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape"),
 library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
@@ -860,7 +860,7 @@ model <- principal(cor_data ,nfactors=1, rotate='none', scores=T, cov=T)
 score<-round(pnorm(sc)*100,2)
 
 ##############################################################
-#NETWORK AND 
+#NETWORK 
 ##############################################################
 # # Define the amout of factor to retain
 #Group of functinos to determine the number os items to be extracted
@@ -980,34 +980,95 @@ dev.off()
 #RELIABILITY
 ##############################################################
 
+### INTERNAL CONSISTENCY
 #MODEL 1
-#Alpha de Cronbach by ltm package - GIves CI
-cronbach.alpha(na.omit(model1_bea), standardized = TRUE, CI = TRUE, 
-	probs = c(0.025, 0.975), B = 1000, na.rm = FALSE)
-
-psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
+#psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
 psych::alpha(model1_bea,n.iter=1000,check.keys=TRUE)
 
 #MODEL 2
+#psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
+psych::alpha(model2_bea,n.iter=1000,check.keys=TRUE)
 
 #MODEL 3
+#psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
+psych::alpha(model3_bea,n.iter=1000,check.keys=TRUE)
 
 #MODEL 4
+#psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
+psych::alpha(model4_bea,n.iter=1000,check.keys=TRUE)
 
-agree_data_sl<-data.frame(data_cluster_police_sl$RISK,data_cluster_survey_sl$RISK)
+#### INTER-RATER Agreement
+#
+data_sl$id<-rep(1:127, each = 3)
+
+data_sl$lane_type_recoded<-car::recode(data_sl$lane_type,"
+	0=0; 1=1; 2=1; 3=0;4=0")
+data_sl$pavement_recoded<-car::recode(data_sl$pavement,"
+	0=0; 1=0; 2=1")
+data_sl$walkways<-car::recode(data_sl$walkways,"0=0;1=1;2=1")
+data_sl$speed_limit<-car::recode(data_sl$speed_limit,"
+	0=1")
+data_sl$road_design<-car::recode(data_sl$road_design,"
+	0=1;1=0;2=0;3=0;99=NA")
+data_sl$intersections<-car::recode(data_sl$intersections,"
+	0=0;1=1;2=1;99=NA")
+data_sl$auxiliary_lane<-car::recode(data_sl$auxiliary_lane,"
+	99=NA")
+data_sl$pavement<-car::recode(data_sl$pavement,"
+	99=NA")
+data_sl$bus_stop<-car::recode(data_sl$bus_stop,"
+	99=NA")
+data_sl$speed_limit<-car::recode(data_sl$speed_limit,"
+	99=0")
+
+data_sl_temp<-with(data_sl,data.frame(
+	road_area,
+	road_design,
+	intersections,
+	lane_type,
+	auxiliary_lane,
+	pavement,
+	rd_condition___0,
+	road_narrow___0,
+	roadside,
+	walkways,
+	bus_stop,
+	bump,
+	traffic_light,
+	road_traffic_signs___0,
+	speed_limit,
+	curves_type___0,
+	visibility___0,
+	bridges,
+	pedestrians___0,
+	pedestrians___2,
+	car_density,
+	motorcycle_density,
+	bike_density,
+	pedestrian_density,
+	bus_truck_density,
+	rater,
+	id))
+
+
+data_sl_agree<-melt(data_sl_temp,id=c("rater","id"))
+
+data_sl_agree2<-cast(data_sl_agree,id~rater+variable)
+
+data_sl_agree_e<-data_sl_agree2[,c(2:26)]
+data_sl_agree_s<-data_sl_agree2[,c(27:51)]
+data_sl_agree_t<-data_sl_agree2[,c(52:76)]
+
+agree_data_sl<-data.frame(
+	data_sl_agree_e,
+	data_sl_agree_s)
 #agree_data_sl<-na.omit(agree_data_sl)
 #agree_data_sl$data_cluster_police_sl.RISK<-car::recode(agree_data_sl$data_cluster_police_sl.RISK,"1=0;2=1;3=1")
 #agree_data_sl$data_cluster_survey_sl.RISK<-car::recode(agree_data_sl$data_cluster_survey_sl.RISK,"1=0;2=1;3=1")
 #Executing agreement nalysis
-agree<-agree(agree_data_sl, tolerance=0) #% of Agreement
-kappa<-cohen.kappa(agree_data_sl) #Kappa-value
-AC1(kappa$agree)
+agree<-agree(na.omit(agree_data_sl), tolerance=0) #% of Agreement
+kappa<-cohen.kappa(na.omit(agree_data_sl)) #Kappa-value
+#AC1(kappa$agree)
 #cor<-cor(agree_data_sl,method=c("kendall"))
 #kendall<-Kendall(agree_data_sl$data_cluster_police_sl.RISK,agree_data_sl$data_cluster_survey_sl.RISK)
 #poly<-hetcor(agree_data_sl)
-
-
-agree_plot_rw<-agreementplot(model4_bea, main = "Rwanda",xlab_rot=0, ylab_rot=90,xlab_just="center", ylab_just="center", xlab="Survey",ylab="Police")
-
-agree_data_rw[,1]<-car::recode(agree_data_rw[,1],"0=0;else=1")
-agree_data_rw[,2]<-car::recode(agree_data_rw[,2],"0=0;else=1")
