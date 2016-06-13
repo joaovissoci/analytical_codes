@@ -37,9 +37,9 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-data_tz<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_tz.csv",sep=',')
-data_sl<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_sl.csv",sep=',')
-data_rw<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_rw.csv",sep=',')
+data_tz<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_tz.csv",sep=',')
+data_sl<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_sl.csv",sep=',')
+data_rw<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_rw.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -293,6 +293,10 @@ bea_data$density_bus_truck<-c(data_tz$density_bus_truck,
 					      		 data_rw$density_bus_truck,
 					       		 data_sl2$bus_truck_density)
 
+data_tz$unevenness_roadside
+data_sl$unevenness_roadside
+data_rw$aunevenness_roadside
+
 # Organizing data set
 
 bea_data<-as.data.frame(bea_data)
@@ -309,6 +313,29 @@ bea_data$pavement<-car::recode(bea_data$pavement,"
 bea_data$bus_stop<-car::recode(bea_data$bus_stop,"
 	99=NA")
 bea_data$speed_limit<-car::recode(bea_data$speed_limit,"
+	99=0")
+
+## INTERRATER AGREEMENT dataset#
+data_sl$id<-rep(1:127, each = 3)
+
+data_sl$lane_type_recoded<-car::recode(data_sl$lane_type,"
+	0=0; 1=1; 2=1; 3=0;4=0")
+data_sl$pavement_recoded<-car::recode(data_sl$pavement,"
+	0=0; 1=0; 2=1")
+data_sl$walkways<-car::recode(data_sl$walkways,"0=0;1=1;2=1")
+data_sl$speed_limit<-car::recode(data_sl$speed_limit,"
+	0=1")
+data_sl$road_design<-car::recode(data_sl$road_design,"
+	0=1;1=0;2=0;3=0;99=NA")
+data_sl$intersections<-car::recode(data_sl$intersections,"
+	0=0;1=1;2=1;99=NA")
+data_sl$auxiliary_lane<-car::recode(data_sl$auxiliary_lane,"
+	99=NA")
+data_sl$pavement<-car::recode(data_sl$pavement,"
+	99=NA")
+data_sl$bus_stop<-car::recode(data_sl$bus_stop,"
+	99=NA")
+data_sl$speed_limit<-car::recode(data_sl$speed_limit,"
 	99=0")
 
 ##############################################################
@@ -626,7 +653,7 @@ fa.parallel(cor_data,n.obs=229)
 # Pricipal Components Analysis
 # entering raw data and extracting PCs 
 # from the correlation matrix 
-fit <- psych::principal(cor_data,nfactors=3,rotate="none",scores=TRUE)
+fit <- psych::principal(cor_data,nfactors=2,rotate="none",scores=TRUE)
 fit
 summary(fit) # print variance accounted for 
 loadings(fit) # pc loadings 
@@ -726,7 +753,6 @@ model3_bea<-with(bea_data,data.frame(
 			density_car,
 			density_moto,
 			density_bike,
-			density_pedestrian,
 			density_bus_truck))
 
 cor_data<-cor_auto(model3_bea)
@@ -762,7 +788,7 @@ fa.parallel(cor_data,n.obs=229)
 # Pricipal Components Analysis
 # entering raw data and extracting PCs 
 # from the correlation matrix 
-fit <- psych::principal(cor_data,nfactors=2,rotate="none",scores=TRUE)
+fit <- psych::principal(cor_data,nfactors=1,rotate="none",scores=TRUE)
 fit
 summary(fit) # print variance accounted for 
 loadings(fit) # pc loadings 
@@ -845,47 +871,56 @@ describe(scores$scores)
 # wilcox.test(scores$scores[,3]~data_bea$risk_classification)
 # #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
 
-model <- principal(cor_data ,nfactors=1, rotate='none', scores=T, cov=T)
- L <- model$loadings            # Just get the loadings matrix
-# S <- model$scores              # This gives an incorrect answer in the current version
+# model <- principal(cor_data ,nfactors=1, rotate='none', scores=T, cov=T)
+#  L <- model$loadings            # Just get the loadings matrix
+# # S <- model$scores              # This gives an incorrect answer in the current version
 
- d <- model4_bea              # get your data
- dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
- sc <- dc %*% L                 # scores are the centered data times the loadings
- lowerCor(sc)                   #These scores, being principal components
-#                                # should be orthogonal 
+#  d <- model4_bea              # get your data
+#  dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+#  sc <- dc %*% L                 # scores are the centered data times the loadings
+#  lowerCor(sc)                   #These scores, being principal components
+# #                                # should be orthogonal 
 
- plot(model)
+#  plot(model)
 
-score<-round(pnorm(sc)*100,2)
+# score<-round(pnorm(sc)*100,2)
 
 ##############################################################
 #NETWORK 
 ##############################################################
 # # Define the amout of factor to retain
 #Group of functinos to determine the number os items to be extracted
-cor_data<-cor_auto(bea_data[,-1])
+cor_data<-cor_auto(bea_data[,-c(1,7,9)])
 
-#Community analysis
-comprehension_network_glasso<-qgraph(cor_data,
-	layout="spring",
-	vsize=6,esize=20,graph="glasso",
-	sampleSize=nrow(bea_data),
-	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
-#Calculating Community measures
-g<-as.igraph(comprehension_network_glasso) #creating igraph object
-h<-walktrap.community(g) #creatin community object
-h<-spinglass.community(g, weights=NA)
-plot(h,g) #plotting community network
-h$membership #extracting community membership for each node on the network
-community<-data.frame(h$membership,rownames(cor_data))
+# #Community analysis
+# comprehension_network_glasso<-qgraph(cor_data,
+# 	layout="spring",
+# 	vsize=6,esize=20,graph="glasso",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+# #Calculating Community measures
+# g<-as.igraph(comprehension_network_glasso) #creating igraph object
+# h<-walktrap.community(g) #creatin community object
+# h<-spinglass.community(g, weights=NA)
+# plot(h,g) #plotting community network
+# h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,rownames(cor_data))
 
 #listing grouping variables in the network resulting from the community analysis
+# network_groups<-list(
+# Component1=as.numeric(rownames(community)[community[,1]==1]),
+# Component2=as.numeric(rownames(community)[community[,1]==2]),
+# Component3=as.numeric(rownames(community)[community[,1]==3])
+# )
+
 network_groups<-list(
-Component1=as.numeric(rownames(community)[community[,1]==1]),
-Component2=as.numeric(rownames(community)[community[,1]==2]),
-Component3=as.numeric(rownames(community)[community[,1]==3])
+Component1=c(1,3,4,5,15,14),
+Component2=c(2,16,6,7),
+Component3=c(11,12,13,10),
+Component4=c(19,20,21,23),
+Component5=c(9,17,18,22,8)
 )
+
 # creating vectors for labels
 node_labels<-c(
 "What is the area of the roadway?",
@@ -893,9 +928,7 @@ node_labels<-c(
 "Is this point at an intersection/junction?",
 "How many lanes in the roadway?",
 "Is there an auxiliary/other lane?",
-"Is there pavement on the roadway?",
 "How is the road surface conditions?",
-"Has the road been narrowed? And why?",
 "Is there space on the side of the road 
 for any reason or use?",
 "Are there pedestrian pathways?",
@@ -920,8 +953,8 @@ to in the center of the road?",
 )
 
 # creating nodes labels vector
-node_names<-c("RD","RT","INT","TLA","AR","PAV",
-	"RC","RN","RS",
+node_names<-c("RD","RT","INT","TLA","AR",
+	"RC","RS",
 	"WALK","BS","SB","TLI","TS","SL","CUR",
 	"VIS","BRI","PED","PEDc","CARd","MOTOd","BIKEd","PEDd","TRUCKd")
 
@@ -934,26 +967,26 @@ node_names<-c("RD","RT","INT","TLA","AR","PAV",
 #building network figures 
 # 3 types are created to get an avarege position and layout
 #GLASSO NETWORK
-network_glasso<-qgraph(cor_data,layout="spring",
-	vsize=6,esize=20,graph="glasso",
-	sampleSize=nrow(bea_data),
-	legend.cex = 0.5,GLratio=1.5)
+# network_glasso<-qgraph(cor_data,layout="spring",
+# 	vsize=6,esize=20,graph="glasso",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5)
 
-#PARTIAL CORRELATION NETWORK
-network_pcor<-qgraph(cor_data,layout="spring",
-	vsize=6,esize=20,graph="pcor",threshold="holm",
-	sampleSize=nrow(bea_data),
-	legend.cex = 0.5,GLratio=1.5)
+# #PARTIAL CORRELATION NETWORK
+# network_pcor<-qgraph(cor_data,layout="spring",
+# 	vsize=6,esize=20,graph="pcor",threshold="holm",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5)
 
-#CORRELATION NETWORK
-network_cor<-qgraph(cor_data,layout="spring",
-	vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
-#layout1<-averageLayout(network_glasso,network_pcor,network_cor)
+# #CORRELATION NETWORK
+# network_cor<-qgraph(cor_data,layout="spring",
+# 	vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
+# #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
 
-# Organizing both figures to be with the same layout
-layout_final<-averageLayout(network_glasso,
-	network_pcor,
-	network_cor)
+# # Organizing both figures to be with the same layout
+# layout_final<-averageLayout(network_glasso,
+# 	network_pcor,
+# 	network_cor)
 
 #postscript("/home/joao/Desktop/info_consent_figure2.eps",
 #	width = 1500, height = 1200,horizontal = FALSE, 
@@ -961,18 +994,17 @@ layout_final<-averageLayout(network_glasso,
 #postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
 #	width = 1500, height = 1200,horizontal = FALSE, 
 #	onefile = FALSE)
-tiff("/Users/joaovissoci/Desktop/importance_network.tiff", width = 1200,
+tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
  height = 700,compression = 'lzw')
 final_importance_network<-qgraph(cor_data,
 	esize=20,graph="glasso",
 	sampleSize=nrow(bea_data),
 	legend.cex = 0.6,cut = 0.3, maximum = 1, 
-	minimum = 0, esize = 20,vsize = 5, 
+	minimum = 0.1, esize = 20,vsize = 5, 
 	repulsion = 0.8,groups=network_groups,
 	nodeNames=node_labels,
-	color=c("gold","steelblue","red","grey80",
-	layoutScale=c(2,2)),borders = FALSE,
-	labels=node_names)#,gray=T,)#,nodeNames=nomesqsg
+	color=c("gold","steelblue","red","grey80","green"),borders = FALSE,
+	labels=node_names)#,gray=T,)#,nodeNames=nomesqsg,layoutScale=c(2,2)
 dev.off()
 #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
@@ -983,7 +1015,8 @@ dev.off()
 ### INTERNAL CONSISTENCY
 #MODEL 1
 #psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
-psych::alpha(model1_bea,n.iter=1000,check.keys=TRUE)
+psych::alpha(model1_bea[,c(1,3,4,5,7,8)],
+	n.iter=1000,check.keys=TRUE)
 
 #MODEL 2
 #psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
@@ -998,50 +1031,84 @@ psych::alpha(model3_bea,n.iter=1000,check.keys=TRUE)
 psych::alpha(model4_bea,n.iter=1000,check.keys=TRUE)
 
 #### INTER-RATER Agreement
-#
-data_sl$id<-rep(1:127, each = 3)
 
-data_sl$lane_type_recoded<-car::recode(data_sl$lane_type,"
-	0=0; 1=1; 2=1; 3=0;4=0")
-data_sl$pavement_recoded<-car::recode(data_sl$pavement,"
-	0=0; 1=0; 2=1")
-data_sl$walkways<-car::recode(data_sl$walkways,"0=0;1=1;2=1")
-data_sl$speed_limit<-car::recode(data_sl$speed_limit,"
-	0=1")
-data_sl$road_design<-car::recode(data_sl$road_design,"
-	0=1;1=0;2=0;3=0;99=NA")
-data_sl$intersections<-car::recode(data_sl$intersections,"
-	0=0;1=1;2=1;99=NA")
-data_sl$auxiliary_lane<-car::recode(data_sl$auxiliary_lane,"
-	99=NA")
-data_sl$pavement<-car::recode(data_sl$pavement,"
-	99=NA")
-data_sl$bus_stop<-car::recode(data_sl$bus_stop,"
-	99=NA")
-data_sl$speed_limit<-car::recode(data_sl$speed_limit,"
-	99=0")
-
-data_sl_temp<-with(data_sl,data.frame(
+#MODEL 1
+data_sl_temp_model1<-with(data_sl,data.frame(
 	road_area,
 	road_design,
 	intersections,
 	lane_type,
 	auxiliary_lane,
-	pavement,
 	rd_condition___0,
-	road_narrow___0,
 	roadside,
-	walkways,
-	bus_stop,
-	bump,
-	traffic_light,
-	road_traffic_signs___0,
-	speed_limit,
 	curves_type___0,
 	visibility___0,
 	bridges,
-	pedestrians___0,
-	pedestrians___2,
+	rater,
+	id))
+
+data_sl_agree_model1<-melt(data_sl_temp_model1,id=c("rater","id"))
+
+#data_sl_agree2<-cast(data_sl_agree_model1,id~rater+variable)
+
+data_sl_agree_model1_e<-subset(data_sl_agree_model1,
+	data_sl_agree_model1=='e')
+data_sl_agree_model1_s<-subset(data_sl_agree_model1,
+	data_sl_agree_model1=='s')
+data_sl_agree_model1_t<-subset(data_sl_agree_model1,
+	data_sl_agree_model1=='t')
+
+agree_data_sl_model1<-data.frame(
+	data_sl_agree_model1_e$value,
+	data_sl_agree_model1_t$value,
+	data_sl_agree_model1_s$value)
+#agree_data_sl<-na.omit(agree_data_sl)
+#agree_data_sl$data_cluster_police_sl.RISK<-car::recode(agree_data_sl$data_cluster_police_sl.RISK,"1=0;2=1;3=1")
+#agree_data_sl$data_cluster_survey_sl.RISK<-car::recode(agree_data_sl$data_cluster_survey_sl.RISK,"1=0;2=1;3=1")
+#Executing agreement nalysis
+agree<-agree(na.omit(agree_data_sl_model1), tolerance=0) #% of Agreement
+kappa<-cohen.kappa(na.omit(agree_data_sl_model1)) #Kappa-value
+#AC1(kappa$agree)
+#cor<-cor(agree_data_sl,method=c("kendall"))
+#kendall<-Kendall(agree_data_sl$data_cluster_police_sl.RISK,agree_data_sl$data_cluster_survey_sl.RISK)
+#poly<-hetcor(agree_data_sl)
+	
+#MODEL 2
+data_sl_temp_model2<-with(data_sl,data.frame(
+	traffic_light,
+	road_traffic_signs___0,
+	speed_limit,
+	bump,
+	rater,
+	id))
+
+data_sl_agree_model2<-melt(data_sl_temp_model2,id=c("rater","id"))
+
+#data_sl_agree2<-cast(data_sl_agree_model2,id~rater+variable)
+
+data_sl_agree_model2_e<-subset(data_sl_agree_model2,
+	data_sl_agree_model2=='e')
+data_sl_agree_model2_s<-subset(data_sl_agree_model2,
+	data_sl_agree_model2=='s')
+data_sl_agree_model2_t<-subset(data_sl_agree_model2,
+	data_sl_agree_model2=='t')
+
+agree_data_sl_model2<-data.frame(
+	data_sl_agree_model2_e$value,
+	data_sl_agree_model2_t$value)
+#agree_data_sl<-na.omit(agree_data_sl)
+#agree_data_sl$data_cluster_police_sl.RISK<-car::recode(agree_data_sl$data_cluster_police_sl.RISK,"1=0;2=1;3=1")
+#agree_data_sl$data_cluster_survey_sl.RISK<-car::recode(agree_data_sl$data_cluster_survey_sl.RISK,"1=0;2=1;3=1")
+#Executing agreement nalysis
+agree<-agree(na.omit(agree_data_sl_model2), tolerance=0) #% of Agreement
+kappa<-cohen.kappa(na.omit(agree_data_sl_model2)) #Kappa-value
+#AC1(kappa$agree)
+#cor<-cor(agree_data_sl,method=c("kendall"))
+#kendall<-Kendall(agree_data_sl$data_cluster_police_sl.RISK,agree_data_sl$data_cluster_survey_sl.RISK)
+#poly<-hetcor(agree_data_sl)
+
+#MODEL 3
+data_sl_temp_model3<-with(data_sl,data.frame(
 	car_density,
 	motorcycle_density,
 	bike_density,
@@ -1050,24 +1117,60 @@ data_sl_temp<-with(data_sl,data.frame(
 	rater,
 	id))
 
+data_sl_agree_model3<-melt(data_sl_temp_model3,id=c("rater","id"))
 
-data_sl_agree<-melt(data_sl_temp,id=c("rater","id"))
+#data_sl_agree2<-cast(data_sl_agree_model3,id~rater+variable)
 
-data_sl_agree2<-cast(data_sl_agree,id~rater+variable)
+data_sl_agree_model3_e<-subset(data_sl_agree_model3,
+	data_sl_agree_model3=='e')
+data_sl_agree_model3_s<-subset(data_sl_agree_model3,
+	data_sl_agree_model3=='s')
+data_sl_agree_model3_t<-subset(data_sl_agree_model3,
+	data_sl_agree_model3=='t')
 
-data_sl_agree_e<-data_sl_agree2[,c(2:26)]
-data_sl_agree_s<-data_sl_agree2[,c(27:51)]
-data_sl_agree_t<-data_sl_agree2[,c(52:76)]
-
-agree_data_sl<-data.frame(
-	data_sl_agree_e,
-	data_sl_agree_s)
+agree_data_sl_model3<-data.frame(
+	data_sl_agree_model3_t$value,
+	data_sl_agree_model3_e$value)
 #agree_data_sl<-na.omit(agree_data_sl)
 #agree_data_sl$data_cluster_police_sl.RISK<-car::recode(agree_data_sl$data_cluster_police_sl.RISK,"1=0;2=1;3=1")
 #agree_data_sl$data_cluster_survey_sl.RISK<-car::recode(agree_data_sl$data_cluster_survey_sl.RISK,"1=0;2=1;3=1")
 #Executing agreement nalysis
-agree<-agree(na.omit(agree_data_sl), tolerance=0) #% of Agreement
-kappa<-cohen.kappa(na.omit(agree_data_sl)) #Kappa-value
+agree<-agree(na.omit(agree_data_sl_model3), tolerance=0) #% of Agreement
+kappa<-cohen.kappa(na.omit(agree_data_sl_model3)) #Kappa-value
+#AC1(kappa$agree)
+#cor<-cor(agree_data_sl,method=c("kendall"))
+#kendall<-Kendall(agree_data_sl$data_cluster_police_sl.RISK,agree_data_sl$data_cluster_survey_sl.RISK)
+#poly<-hetcor(agree_data_sl)
+
+#MODEL 4
+data_sl_temp_model4<-with(data_sl,data.frame(
+	walkways,
+	bus_stop,
+	pedestrians___0,
+	pedestrians___2,
+	rater,
+	id))
+	
+data_sl_agree_model4<-melt(data_sl_temp_model4,id=c("rater","id"))
+
+#data_sl_agree2<-cast(data_sl_agree_model4,id~rater+variable)
+
+data_sl_agree_model4_e<-subset(data_sl_agree_model4,
+	data_sl_agree_model4=='e')
+data_sl_agree_model4_s<-subset(data_sl_agree_model4,
+	data_sl_agree_model4=='s')
+data_sl_agree_model4_t<-subset(data_sl_agree_model4,
+	data_sl_agree_model4=='t')
+
+agree_data_sl_model4<-data.frame(
+	data_sl_agree_model4_e$value,
+	data_sl_agree_model4_s$value)
+#agree_data_sl<-na.omit(agree_data_sl)
+#agree_data_sl$data_cluster_police_sl.RISK<-car::recode(agree_data_sl$data_cluster_police_sl.RISK,"1=0;2=1;3=1")
+#agree_data_sl$data_cluster_survey_sl.RISK<-car::recode(agree_data_sl$data_cluster_survey_sl.RISK,"1=0;2=1;3=1")
+#Executing agreement nalysis
+agree<-agree(na.omit(agree_data_sl_model4), tolerance=0) #% of Agreement
+kappa<-cohen.kappa(na.omit(agree_data_sl_model4)) #Kappa-value
 #AC1(kappa$agree)
 #cor<-cor(agree_data_sl,method=c("kendall"))
 #kendall<-Kendall(agree_data_sl$data_cluster_police_sl.RISK,agree_data_sl$data_cluster_survey_sl.RISK)
