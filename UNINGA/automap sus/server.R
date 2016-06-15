@@ -1,4 +1,5 @@
 library(dplyr)
+library(plotly)
 
 mandatoryFields <- c(#"nome", "cod_cnes_unidade", "numero_cartao_sus",
   "endereco_logradouro", "endereco_bairro", "endereco_municipio", "endereco_cep", "endereco_estado")
@@ -14,27 +15,27 @@ server <- function(input, output, session) {
 
   observeEvent(input$sexo, {
     if (input$sexo == "Feminino") {
-      shinyjs::show("gestante", anim = TRUE)
+      shinyjs::show(id="gestante", anim = TRUE)
     } else {
-      shinyjs::hide("gestante", anim = TRUE)
+      shinyjs::hide(id="gestante", anim = TRUE)
       shinyjs::reset("gestante")
     }
   })
 
   observeEvent(input$crianca_0_9, {
     if (input$crianca_0_9) {
-      shinyjs::show("crianca_0_9_cuidador", anim = TRUE)
+      shinyjs::show(id="crianca_0_9_cuidador", anim = TRUE)
     } else {
-      shinyjs::hide("crianca_0_9_cuidador", anim = TRUE)
+      shinyjs::hide(id="crianca_0_9_cuidador", anim = TRUE)
       shinyjs::reset("crianca_0_9_cuidador")
     }
   })
 
   observeEvent(input$informar_orientacao, {
     if (input$informar_orientacao) {
-      shinyjs::show("orientacao_sexual", anim = TRUE)
+      shinyjs::show(id="orientacao_sexual", anim = TRUE)
     } else {
-      shinyjs::hide("orientacao_sexual", anim = TRUE)
+      shinyjs::hide(id="orientacao_sexual", anim = TRUE)
       shinyjs::reset("orientacao_sexual")
     }
   })
