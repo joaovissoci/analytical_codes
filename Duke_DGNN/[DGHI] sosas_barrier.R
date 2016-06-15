@@ -1,5 +1,3 @@
-
-
 install.packages("readstata13")
 library(readstata13)
 dat <- read.dta13("/Users/jnv4/Desktop/SOSAS_Ug_IndividualData_20151020.dta")

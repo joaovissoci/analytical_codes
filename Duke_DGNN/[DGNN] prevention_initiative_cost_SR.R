@@ -1,6 +1,6 @@
 
 
-data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/prevention_initiatives_cost_SR/prevention_initiatives_cost_SR.csv")
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/prevention_initiatives_cost_SR/prevention_initiatives_cost_SR.csv")
 
 library(Hmisc)
 library(psych)
@@ -115,19 +115,30 @@ measure<-c(rep("DALY",13),rep("Death Averted",5),
   rep("Life Saved",4))
 
 plot<-data.frame(median,low_limit,upper_limit,intervention,measure)
+plot$upper_limit<-car::recode(plot$upper_limit,"2001:6000=2000")
 
 object1<- ggplot(plot[1:13,], aes(y= reorder(intervention,median), 
   x = round(median,2))) +
 facet_grid( measure ~ .,space="free") +
 geom_point() +
 geom_errorbarh(aes(xmin=low_limit, xmax=upper_limit), height=.2) +
-#scale_y_log10(breaks=ticks, labels = ticks) +
 geom_vline(xintercept = 1, linetype=2) +
 geom_text(aes(label=format(round(median,2),nsmall=2)), 
   vjust=-0.5, hjust=0, size=3) +
 #coord_flip() +
 #facet_grid(measure ~ ., scales="free_x", space="free") +
 labs(y = '', x = '') +
+scale_x_continuous(breaks=seq(0, 2000, 200)) +
+annotate("segment", x = 2000, xend=2020, y = 13, yend=13,
+  colour = "black",
+  arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+annotate("segment", x = 2000, xend=2020, y = 10, yend=10,
+  colour = "black",
+  arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+annotate("text", x = 1990, y = 12.7,
+  colour = "black",label="2940.52",size=3) +
+annotate("text", x = 1990, y = 9.7,
+  colour = "black",label="2014.76",size=3) +
 theme_bw()
 
 object1
@@ -144,6 +155,17 @@ geom_text(aes(label=format(round(median,2),nsmall=2)),
 #coord_flip() +
 #facet_grid(measure ~ ., scales="free_x", space="free") +
 labs(y = '', x = '') +
+scale_x_continuous(breaks=seq(0, 2000, 200)) +
+annotate("segment", x = 2000, xend=2020, y = 4, yend=4,
+  colour = "black",
+  arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+annotate("segment", x = 2000, xend=2020, y = 3, yend=3,
+  colour = "black",
+  arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+annotate("text", x = 1990, y = 3.7,
+  colour = "black",label="5560.00",size=3) +
+annotate("text", x = 1990, y = 2.7,
+  colour = "black",label="5171.00",size=3) +
 theme_bw()
 
 object2
@@ -159,16 +181,18 @@ geom_text(aes(label=format(round(median,2),nsmall=2)),
   vjust=-0.5, hjust=0, size=3) +
 #coord_flip() +
 #facet_grid(measure ~ ., scales="free_x", space="free") +
+scale_x_continuous(breaks=seq(0, 120, 20)) +
 labs(y = '', x = '') +
 theme_bw()
 
 object3
 
-tiff("/Users/jnv4/Desktop/figure1.tiff",
-  width = 500, height = 500,compression = 'lzw')
+tiff("/Users/joaovissoci/Desktop/figure1.tiff",
+  width = 600, height = 600,compression = 'lzw')
 grid.arrange(arrangeGrob(object1,object2,object3,
   left = textGrob("Interventions", rot = 90, vjust = 1),
-  bottom = textGrob("Cost-Effectiveness/US$"),heights=c(0.8,0.4,0.35)))
+  bottom = textGrob("Cost-Effectiveness/US$"),
+  heights=c(0.8,0.4,0.35)))
 dev.off()
 
 ##### Cmparison with Lancet
@@ -176,6 +200,19 @@ dev.off()
 low_limit_lancet<-c(500.41,453.74,51.86,12.96,6.48)
 upper_limit_lancet<-c(706.54,648.20,220.39,25.93,22.04)
 median_limit_lancet<-c(706.54,648.20,220.39,25.93,22.04)
+intervention_daly<-c("RBT with media",
+                     "SBT with media",
+                     "Bike helmet",
+                     "Drink driving",
+                     "Enforcement",
+                     "                                            Enforcement with media",
+                     "Helmet",
+                     "Media",
+                     "RBT",
+                     "Seat belt",
+                     "SBT",
+                     "Speed bump",
+                     "Speed limits")
 intervention_lancet<-c("Aspirin and Beta-Blockers for Ichemic heart disease",
                 "Antiretroviral therapy for HIV",
                 "BCG vaccine for tuberculosis prevention",
@@ -187,42 +224,72 @@ median<-c(median_daly,median_limit_lancet)
 low_limit<-c(low_limit_daly,low_limit_lancet)
 upper_limit<-c(upper_limit_daly,upper_limit_lancet)
 intervention<-c(intervention_daly,intervention_lancet)
-facet<-c(rep("ours",13),rep("theirs",5))
+facet<-c(rep("RTI Prevention Initiatives",13),
+  rep("Public Health Initiatives",5))
 #measure<-c(rep("Cost per DALY",13),rep("Cost per Death Averted",5),
 #  rep("Cost per Life Saved",4))
 color<-c(rep("black",13),rep("red",5))
 
-facet_names <- c(
-                    'ours' = "RTI Prevention Initiatives",
-                    'theirs' = "Public Health Initiatives"
-                    )
+# facet_names <- c(
+#                     'ours' = "RTI Prevention Initiatives",
+#                     'theirs' = "Public Health Initiatives"
+#                     )
 
 plot<-data.frame(median,low_limit,upper_limit,intervention,color,facet)
+plot$upper_limit<-car::recode(plot$upper_limit,"2001:6000=2000")
 
-tiff("/Users/jnv4/Desktop/figure2.tiff",
-  width = 650, height = 400,compression = 'lzw')
-ggplot(plot, aes(y= reorder(intervention,median), x = median)) +
-geom_point(color=color, size=c(rep(1,13),rep(0,5))) +
-facet_grid( facet ~ ., scales="free_y", space="free",
-  labeller=as_labeller(facet_names)) +
+object1<-ggplot(plot[1:13,], aes(y= reorder(intervention,median), x = median)) +
+geom_point(color="black") +
 geom_errorbarh(aes(xmin=low_limit, xmax=upper_limit), height=.2,
-  color=color, linetype=c(rep(1,13),rep(2,5))) +
-#scale_y_log10(breaks=ticks, labels = ticks) +
+  color="black") + 
+facet_grid(facet ~ .,space="free") + 
 geom_vline(xintercept = 1, linetype=2) +
 geom_text(aes(label=format(round(median,2),nsmall=2)), 
   vjust=-0.5, hjust=0, size=2.5) +
-geom_text(aes(label=c(rep(" ",13),format(round(low_limit[14:18],2),
-  nsmall=2))), 
-  vjust=-0.5, hjust=c(rep(1,13),2.3,2.3,2.2,1.1,1.2), size=2.5) +
-#coord_flip() +
-#facet_grid(measure ~ ., scales="free_x", space="free") +
-labs(y = 'Interventions', x = '$ per DALY averted (US$)') +
+scale_x_continuous(breaks=seq(0, 2000, 200)) +
+annotate("segment", x = 2000, xend=2020, y = 13, yend=13,
+  colour = "black",
+  arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+annotate("text", x = 1990, y = 12.7,
+  colour = "black",label="2940.52",size=3) +
+annotate("text", x = 1990, y = 9.7,
+  colour = "black",label="2014.76",size=3) +
+annotate("segment", x = 2000, xend=2020, y = 10, yend=10,
+  colour = "black",
+  arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+labs(y = '', x = '') +
 theme_bw()
+
+
+
+object2<-ggplot(plot[14:18,], aes(y= reorder(intervention,median), 
+  x = median)) +
+# geom_point(color="red") +
+geom_errorbarh(aes(xmin=low_limit, xmax=upper_limit), height=.2,
+  color="red",linetype=2) + 
+facet_grid(facet ~ .,space="free") + 
+geom_vline(xintercept = 1, linetype=2) +
+geom_text(aes(label=format(round(median,2),nsmall=2)), 
+  vjust=-0.5, hjust=0, size=2.5) +
+geom_text(aes(label=format(round(low_limit,2),nsmall=2)), 
+  vjust=-0.5, hjust=c(2.3,2.3,2.2,1.1,1.2), size=2.5) +
+annotate("point", x = 2000, y = 1,
+  colour = "white") +
+scale_x_continuous(breaks=seq(0, 2000, 200)) +
+labs(y = '', x = '') +
+theme_bw()
+
+tiff("/Users/joaovissoci/Desktop/figure2.tiff",
+  width = 600, height = 500,compression = 'lzw')
+grid.arrange(arrangeGrob(object1,object2,
+  left = textGrob("Interventions", rot = 90, vjust = 1),
+  bottom = textGrob("$ per DALY averted (US$)"),nrow=2,ncol=1,
+  heights=c(0.8,0.4)))
 dev.off()
 
 #### Quality assessment
 library(reshape)
-data_quality<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/prevention_initiatives_cost_SR/prevention_initiatives_cost_quality.csv")
+data_quality<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/prevention_initiatives_cost_SR/prevention_initiatives_cost_quality.csv")
 colnames(data_quality)<-c("Studies","V1","V2","V3","V4","V5","V6","V7","V8","V9",
   "V10","V11","V12","V13","V14","V15","V16")
 str(data_quality)
@@ -289,7 +356,7 @@ p<- p +  theme_bw() +
       label = rev(data_quality_prop))
 
 
-tiff("/Users/jnv4/Desktop/figure0.tiff",
+tiff("/Users/joaovissoci/Desktop/figure0.tiff",
   height=600, width=800)
 p
 dev.off()  
