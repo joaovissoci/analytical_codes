@@ -1,7 +1,7 @@
-CREATE DATABASE automapsus 
+CREATE DATABASE IF NOT EXISTS automapsus 
   CHARACTER SET = 'UTF8'
   COLLATE = 'utf8_general_ci';
-
+USE automapsus;
 CREATE TABLE observations
 (
     id int NOT NULL AUTO_INCREMENT,
