@@ -18,7 +18,7 @@ library, character.only=T)
 #IMPORTING DATA
 #################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/GIC 2016/suicide_SR.csv",sep=",")
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/GIC 2016/suicide_SR.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 #############################################################################
@@ -103,7 +103,7 @@ meta1 <- metacont(N_group_FUP1,
   studlab=study,comb.fixed=FALSE)
 summary(meta1)
 
-tiff("/Users/jnv4/Desktop/figure2.tiff",
+tiff("/Users/joaovissoci/Desktop/figure2.tiff",
   width = 800, height = 400,compression = 'lzw')
 forest(meta1)
 dev.off()
@@ -123,7 +123,11 @@ meta_rate<-remove.vars(meta_rate,
 	c("mean_FUP1_experimental_group",
 		"sd_FUP1_experimental_group",
 		"mean_FUP1_experimental_control",
-		"sd_FUP1_experimental_control"))
+		"sd_FUP1_experimental_control",
+		"meandDIFF_control",
+	"sdDIFF_control",
+	"meanDIFF_exerimental",
+	"sdDIFF_experiment"))
 
 #excluding missing information
 meta_rate<-na.omit(meta_rate)
@@ -165,7 +169,7 @@ meta1 <- metabin(proportion_FUP1_experimental_group,
 summary(meta1)
 funnel(meta1)
 
-tiff("/Users/jnv4/Desktop/figure3.tiff",
+tiff("/Users/joaovissoci/Desktop/figure3.tiff",
   width = 900, height = 500,compression = 'lzw')
 forest(meta1)
 dev.off()
@@ -229,7 +233,7 @@ meta1 <- metacont(N_group_FUP1,
   studlab=study,comb.fixed=FALSE)
 summary(meta1)
 
-tiff("/Users/jnv4/Desktop/figure4.tiff",
+tiff("/Users/joaovissoci/Desktop/figure4.tiff",
   width = 800, height = 400,compression = 'lzw')
 forest(meta1)
 dev.off()
@@ -297,7 +301,7 @@ meta1 <- metacont(N_group_FUP1,
   studlab=study,comb.fixed=FALSE)
 summary(meta1)
 
-tiff("/Users/jnv4/Desktop/figure5.tiff",
+tiff("/Users/joaovissoci/Desktop/figure5.tiff",
   width = 800, height = 400,compression = 'lzw')
 forest(meta1)
 dev.off()
