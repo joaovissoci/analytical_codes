@@ -7,7 +7,13 @@
 #SETTING ENVIRONMENT
 ###################################################
 #Load packages (after installed) with the library function
-lapply(c("metafor","ggplot2","gridExtra" ,"psych", "irr", "nortest", "moments","GPArotation","nFactors","gdata","meta"), library, character.only=T)
+lapply(c("metafor","ggplot2","gridExtra" ,"psych", 
+	"irr", "nortest", "moments","GPArotation",
+	"nFactors","gdata","meta",
+	"ggmap","gridExtra",
+	"RColorBrewer","maptools","grid",
+	"reshape"),
+library, character.only=T)
 
 ###################################################
 #IMPORTING DATA AND RECODING
@@ -15,7 +21,15 @@ lapply(c("metafor","ggplot2","gridExtra" ,"psych", "irr", "nortest", "moments","
 #Instructions here http://goo.gl/Ofa7gQ
 #data <- repmis::source_DropboxData("rti_sr_data.csv","yr0yf1szzyqji35",sep = ",",header = TRUE)
 
-data<-read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/RTI SSA SR/rti_sr_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
+
+data_country<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
+
+wmap   <- readShapePoly("/Users/joaovissoci/Gits/analytical_codes/shapefiles/africaR/africa_R.shp")
+
+wdata <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/RTI SSA SR/africa.csv", header=TRUE)
+
+wdata$ID_AFR<-c(0:50)
 
 ###################################################
 #OVERALL ANALYSIS
@@ -23,13 +37,17 @@ data<-read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/RTI SSA SR/rti_sr_d
 
 #TOTAL RTI Vs. TOTAL RTI DEATHS
 #Aggregating data
-meta_rti<-with(data,data.frame(total_rti,total_rti_death,Author))
+meta_rti<-with(data,data.frame(total_rti,
+	total_rti_death,Author))
 meta_rti<-na.omit(meta_rti)
 
 #Calculating metanalysis
-m3<-metaprop(total_rti_death,total_rti,sm="PLN",data=meta_rti,studlab=Author,comb.fixed=FALSE)
+m3<-metaprop(total_rti_death,total_rti,sm="PLN",
+	data=meta_rti,studlab=Author,
+	comb.fixed=FALSE)
  
-tiff("/home/joao/Desktop/rti_deaths_overall.tiff", width = 700, height = 800,compression = 'lzw')
+tiff("/home/joao/Desktop/rti_deaths_overall.tiff", 
+	width = 700, height = 800,compression = 'lzw')
 meta::forest(m3)
 dev.off()
 metainf(m3)
@@ -42,9 +60,11 @@ meta_trauma<-with(data,data.frame(total_traume,total_rti,Author))
 meta_trauma<-na.omit(meta_trauma)
 
 #Calculating metanalysis
-m3<-metaprop(total_rti,total_traume,sm="PLN",data=meta_trauma,studlab=Author,comb.fixed=FALSE)
+m3<-metaprop(total_rti,total_traume,sm="PLN",data=meta_trauma,
+	studlab=Author,comb.fixed=FALSE)
  
-tiff("/home/joao/Desktop/rti_trauma_overall.tiff", width = 700, height = 1200,compression = 'lzw')
+tiff("/home/joao/Desktop/rti_trauma_overall.tiff", 
+	width = 700, height = 1200,compression = 'lzw')
 meta::forest(m3)
 dev.off()
 metainf(m3)
@@ -198,7 +218,7 @@ by(meta_bypopulation$proportion_rti,meta_bypopulation$type_population,summary)
 #meta1<-meta1[-4,]
 #m3<-metaprop(total_rti_death,total_rti,sm="PLN",data=meta1,studlab=Author)
 
-data$year_cat<-car::recode(data$year,"1990:1995='1990-1995';1996:2000='1996-2000';2001:2005='2001-2005';2006:2010='2006-2010';2011:2015='2011-2015';else='< 1990'")
+data$year_cat<-car::recode(data$year,"1990:1995='1990-1995';1996:2000='1996-2000';2001:2005='2001-2005';2006:2010='2006-2010';2011:2015='2011-2015';else='1990 or less'")
 
 #TOTAL RTI Vs. TOTAL RTI DEATHS
 meta_byyear<-with(data,data.frame(total_rti,total_rti_death,Author,year_cat))
@@ -251,8 +271,8 @@ m_year<-as.factor(m_year)
 m_prev<-c(m4_prev,m3_prev)
 m_data<-data.frame(m_model,m_year,m_prev)
 
-
-value<-c(by(m4_prev,m4_year,median),by(m3_prev,m3_year,median))
+value<-c(by(m4_prev,m4_year,stats::median),
+	by(m3_prev,m3_year,stats::median))
 npapers<-c(m4$k.w,m3$k.w)
 dates<-c(m4$bylevs,m3$bylevs)
 model<-c(rep("RTI",6),rep("Death",5))
@@ -261,43 +281,33 @@ model<-c(rep("RTI",6),rep("Death",5))
 
 graph_data<-data.frame(value,npapers,dates,model)
 
-tiff("/home/joao/Desktop/rti_trauma_byyear.tiff", width = 500, height = 700,compression = 'lzw')
-ggplot(data=graph_data, aes(x=dates, y=value, group=model,color=model)) + geom_line(size=1.5) + geom_point(size=5,fill="white") + ylab("Prevalence (%)") + xlab("Dates") + scale_colour_manual(values=c("black", "#E69F00"), name="")+ theme_bw() + geom_bar(aes(x=dates,y=npapers/100),stat="identity", alpha=0.5, fill="white") + 
-annotate("text", x = 1, y = 0.02, label = "2",size=5)+
-annotate("text", x = 2, y = 0.17, label = "16",size=5)+
-annotate("text", x = 3, y = 0.11, label = "10",size=5)+
-annotate("text", x = 4, y = 0.22, label = "21",size=5)+
-annotate("text", x = 5, y = 0.29, label = "28",size=5)+
-annotate("text", x = 6, y = 0.37, label = "36",size=5) + 
-geom_jitter(data=m_data, aes(x=m_year,y=m_prev,group=m_model,color=m_model),size=3,fill="black")
+tiff("/home/joao/Desktop/rti_trauma_byyear.tiff", width = 500, 
+	height = 700,compression = 'lzw')
+ggplot(data=graph_data, aes(x=dates, y=value, group=model,
+	color=model)) + geom_line(size=1.5) + 
+	geom_point(size=5,fill="white") + 
+	ylab("Prevalence (%)") + 
+	xlab("Dates") + 
+	scale_colour_manual(values=c("black", "#E69F00"),name="")+ 
+	theme_bw() + 
+	geom_bar(aes(x=dates,y=npapers/100),
+		stat="identity", alpha=0.5, fill="white") + 
+	annotate("text", x = 1, y = 0.02, label = "2",size=5)+
+	annotate("text", x = 2, y = 0.17, label = "16",size=5)+
+	annotate("text", x = 3, y = 0.11, label = "10",size=5)+
+	annotate("text", x = 4, y = 0.22, label = "21",size=5)+
+	annotate("text", x = 5, y = 0.29, label = "28",size=5)+
+	annotate("text", x = 6, y = 0.37, label = "36",size=5) + 
+	geom_jitter(data=m_data, aes(x=m_year,y=m_prev,
+		group=m_model,color=m_model),size=3,fill="black")
 dev.off()
-
-
-
-
-year_cat
-
 
 ###################################################
 #MAPS
 ###################################################
 
-#library(rgdal)
-library(ggplot2)
-library(RColorBrewer)
-library(reshape)
-library(gridExtra)
-library(ggmap)
-library(maptools) 
-library(grid)
-
-wmap   <- readShapePoly("/home/joao/Desktop/africaR/africa_R.shp")
-wdata <- read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/RTI SSA SR/africa.csv", header=TRUE)
-wdata$ID_AFR<-c(0:50)
-
-###################################################
 #MAP 1
-###################################################
+##################
 #get.centroids = function(x){   # extract centroids from polygon with given ID
 #  poly = wmap@polygons[[x]]
 #  ID   = poly@ID
@@ -343,20 +353,26 @@ for (x in 1:247031)
 	}
 }
 
-
-
+# Building the map
 
 palette <- brewer.pal(11,"Spectral")    # ColorBrewewr.org spectral palette, 11 colors
 ggmap   <- ggplot(wmap.df, aes(x=long, y=lat, group=group))
 ggmap   <- ggmap + geom_polygon(aes(fill=n_studies))
 ggmap   <- ggmap + geom_path(colour="black", size=.2)
 #ggmap   <- ggmap + scale_fill_gradient(name="N of studies",low = "#6E8B3D", high = "#006400",na.value = "#BCEE68")
-ggmap   <- ggmap + scale_fill_gradient(name="N of studies")
+ggmap   <- ggmap + scale_fill_gradient(name="N of studies",
+	limits=c(1,29))
 ggmap   <- ggmap + coord_fixed()  + theme_bw()
-#ggmap   <- ggmap + labs(x="",y="",title="")
-ggmap	<- ggmap + theme_update(panel.background=element_rect(colour="white"))
-ggmap   <- ggmap + theme(plot.margin=unit(c(0,0.05,-0.05,0),units="npc"),legend.position=c(0.2,0.3))
-ggmap   <- ggmap + geom_text(aes(x=XCNTRD, y=YCNTRD, label=name),gsize=5,  color="brown2")
+ggmap   <- ggmap + labs(x="Longitude",y="Latitude",title="")
+ggmap	<- ggmap + theme_update(
+	panel.background=element_rect(colour="white"))
+ggmap   <- ggmap + theme(plot.margin=unit(c(0,0.05,-0.05,0),
+	units="npc"),
+	legend.position=c(0.2,0.3))
+# ggmap   <- ggmap + geom_text(aes(x=XCNTRD, y=YCNTRD,
+#  label=name),size=5,  color="brown2")
+ggmap   <- ggmap + annotate("text", x = , y = 14.45, 
+	label = "Senegal",size=5,color="red")
 ggmap 
 
 
@@ -364,8 +380,6 @@ ggmap
 #box.df$label <- with(box.df, paste0(name_long," [",COUNTRY,"]")) # create labels for boxplot
 #box.df       <- melt(box.df,id.vars="label",measure.vars=c("A1B","A1BLow","A1F","A1T","A2","B1","B1Low","B2"))
 #box.df$label <- factor(box.df$label,levels=unique(box.df$label)) # need this so orderin is maintained in ggplot
-
-data_country<-read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/RTI SSA SR/rti_sr_data.csv",sep=',')
 
 ggbox   <- ggplot(data_country,aes(x=country, y=proportion_rti))
 ggbox   <- ggbox + geom_boxplot(fill="grey")#, outlier.colour = "blue", outlier.shape = 16, outlier.size = 4)
@@ -391,9 +405,12 @@ ggbox2   <- ggbox2 + geom_jitter(aes(colour=data_country$proportion_death*20),si
 ggbox2   <- ggbox2 + theme(plot.margin=unit(c(0.05,0.05,0.05,0),units="npc"),legend.position="none")
 ggbox2
 
-
+tiff("/Users/joaovissoci/Desktop/rti_deaths_bycountry.tiff", 
+	width = 1500, height = 490,compression = 'lzw')
 grid.newpage()
 pushViewport(viewport(layout=grid.layout(1,3)))#,heights=c(0.40,0.60))
 print(ggmap, vp=viewport(layout.pos.row=1,layout.pos.col=1))
 print(ggbox, vp=viewport(layout.pos.row=1,layout.pos.col=2))
 print(ggbox2, vp=viewport(layout.pos.row=1,layout.pos.col=3))
+dev.off()
+
