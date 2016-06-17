@@ -10,6 +10,14 @@
 # install.packages("readstata13")
 library(readstata13)
 library(poLCA)
+#All packages must be installes with install.packages() function
+lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", 
+	"moments","GPArotation","nFactors","boot","psy", "car",
+	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
+	"reshape2","mclust","foreign","survival","memisc","lme4",
+	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
+	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape"),
+library, character.only=T)
 
 ###################################################
 #IMPORTING DATA AND RECODING
@@ -21,54 +29,54 @@ data_barries<-subset(data,data$Untreated==1)
 barrier_data<-with(data_barries,data.frame(
 	Prob1Reason_no_money,
 	Prob1Reason_no_transport,
-	Prob1Reason_no_time,
+	# Prob1Reason_no_time,
 	Prob1Reason_fear,
 	Prob1Reason_socialsupport,
 	Prob1Reason_notavailable1,
 	Prob1Reason_notavailable2,
 	Prob1Reason_notavailable3,
-	Prob1Reason_no_need,
-	Prob1Long12,
-	Prob2Reason_no_money,
-	Prob2Reason_no_transport,
-	Prob2Reason_no_time,
-	Prob2Reason_fear,
-	Prob2Reason_socialsupport,
-	Prob2Reason_notavailable1,
-	Prob2Reason_notavailable2,
-	Prob2Reason_notavailable3,
-	Prob2Reason_no_need,
-	Prob2Long12,
-	Prob3Reason_no_money,
-	Prob3Reason_no_transport,
-	Prob3Reason_no_time,
-	Prob3Reason_fear,
-	Prob3Reason_socialsupport,
-	Prob3Reason_notavailable1,
-	Prob3Reason_notavailable2,
-	Prob3Reason_notavailable3,
-	Prob3Reason_no_need,
-	Prob3Long12,
-	Prob4Reason_no_money,
-	Prob4Reason_no_transport,
-	Prob4Reason_no_time,
-	Prob4Reason_fear,
-	Prob4Reason_socialsupport,
-	Prob4Reason_notavailable1,
-	Prob4Reason_notavailable2,
-	Prob4Reason_notavailable3,
-	Prob4Reason_no_need,
-	Prob4Long12,
-	Prob5Reason_no_money,
-	Prob5Reason_no_transport,
-	Prob5Reason_no_time,
-	Prob5Reason_fear,
-	Prob5Reason_socialsupport,
-	Prob5Reason_notavailable1,
-	Prob5Reason_notavailable2,
-	Prob5Reason_notavailable3,
-	Prob5Reason_no_need,
-	Prob5Long12
+	Prob1Reason_no_need
+	# Prob1Long12,
+	# Prob2Reason_no_money,
+	# Prob2Reason_no_transport,
+	# Prob2Reason_no_time,
+	# Prob2Reason_fear,
+	# Prob2Reason_socialsupport,
+	# Prob2Reason_notavailable1,
+	# Prob2Reason_notavailable2,
+	# Prob2Reason_notavailable3,
+	# Prob2Reason_no_need,
+	# Prob2Long12,
+	# Prob3Reason_no_money,
+	# Prob3Reason_no_transport,
+	# Prob3Reason_no_time,
+	# Prob3Reason_fear,
+	# Prob3Reason_socialsupport,
+	# Prob3Reason_notavailable1,
+	# Prob3Reason_notavailable2,
+	# Prob3Reason_notavailable3,
+	# Prob3Reason_no_need,
+	# Prob3Long12,
+	# Prob4Reason_no_money,
+	# Prob4Reason_no_transport,
+	# Prob4Reason_no_time,
+	# Prob4Reason_fear,
+	# Prob4Reason_socialsupport,
+	# Prob4Reason_notavailable1,
+	# Prob4Reason_notavailable2,
+	# Prob4Reason_notavailable3,
+	# Prob4Reason_no_need,
+	# Prob4Long12,
+	# Prob5Reason_no_money,
+	# Prob5Reason_no_transport,
+	# Prob5Reason_no_time,
+	# Prob5Reason_fear,
+	# Prob5Reason_socialsupport,
+	# Prob5Reason_notavailable1,
+	# Prob5Reason_notavailable2,
+	# Prob5Reason_notavailable3,
+	# Prob5Reason_no_need,
+	# Prob5Long12
 	))
 
 ses_data<-with(data_barries,data.frame(
@@ -86,28 +94,28 @@ ses_data<-with(data_barries,data.frame(
 
 #recode missing and other random problems
 ses_data$Education<-car::recode(
-	ses_data$Education,"'edu_none'='no education';
-						'primary_school'='primary';
-						'secondary_school1'='secondary';
-						'secondary_school2'='secondary';
-						'tertiary_school'='tertiary or more';
-						'university'='tertiary or more';
+	ses_data$Education,"'edu_none'=0;
+						'primary_school'=1;
+						'secondary_school1'=3;
+						'secondary_school2'=3;
+						'tertiary_school'=4;
+						'university'=4;
 						else=NA")
 
 ses_data$Literacy<-car::recode(
-	ses_data$Literacy,"'no'='no';
-					   'yes'='yes';
+	ses_data$Literacy,"'no'=0;
+					   'yes'=1;
 					   else=NA")
 
 ses_data$Occupation<-car::recode(
-	ses_data$Occupation,"'domestic_helpers'='homeworkers';
-						'farmer'='farmer';
-						'government_employees'='employees';
-						'homemaker'='homeworkers';
-						'nongov_employees'='employees';
-						'self_employed'='self_employed';
-						'student'='unemployed';
-						'unemployed'='unemployed';
+	ses_data$Occupation,"'domestic_helpers'=1;
+						'farmer'=1;
+						'government_employees'=1;
+						'homemaker'=1;
+						'nongov_employees'=1;
+						'self_employed'=1;
+						'student'=0;
+						'unemployed'=0;
 						else=NA")
 
 # ses_data$Ethnicity<-car::recode(
@@ -128,13 +136,13 @@ ses_data$Time_ill<-car::recode(
 	'-77'=NA;
 	'-99'=NA")
 
-ses_data$Age<-car::recode(
-	ses_data$Age,"
-	0:15='children';
-	16:34='young adults';
-	35:64='adults';
-	65:102='elderly'")
-ses_data$Age<-as.factor(ses_data$Age)
+# ses_data$Age<-car::recode(
+# 	ses_data$Age,"
+# 	0:15='children';
+# 	16:34='young adults';
+# 	35:64='adults';
+# 	65:102='elderly'")
+# ses_data$Age<-as.factor(ses_data$Age)
 
 
 analytical_data<-data.frame(ses_data,barrier_data)
@@ -396,7 +404,134 @@ poLCA.table(formula = COOPERAT ~ 1,
 
 
 
+analytical_data$Gender<-as.numeric(analytical_data$Gender)
+analytical_data$Education<-as.numeric(analytical_data$Education)
+analytical_data$Literacy<-as.numeric(analytical_data$Literacy)
+analytical_data$Occupation<-as.numeric(analytical_data$Occupation)
+analytical_data$Household_stay_length<-as.numeric(analytical_data$Household_stay_length)
+analytical_data$Time_ill<-as.numeric(analytical_data$Time_ill)
+analytical_data$Health_status<-as.numeric(analytical_data$Health_status)
 
+# # Define the amout of factor to retain
+#Group of functinos to determine the number os items to be extracted
+cor_data<-cor_auto(analytical_data)
+
+# #Community analysis
+# comprehension_network_glasso<-qgraph(cor_data,
+# 	layout="spring",
+# 	vsize=6,esize=20,graph="glasso",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+# #Calculating Community measures
+# g<-as.igraph(comprehension_network_glasso) #creating igraph object
+# h<-walktrap.community(g) #creatin community object
+# h<-spinglass.community(g, weights=NA)
+# plot(h,g) #plotting community network
+# h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,rownames(cor_data))
+
+#listing grouping variables in the network resulting from the community analysis
+# network_groups<-list(
+# Component1=as.numeric(rownames(community)[community[,1]==1]),
+# Component2=as.numeric(rownames(community)[community[,1]==2]),
+# Component3=as.numeric(rownames(community)[community[,1]==3])
+# )
+
+network_groups<-list(
+Component1=c(1,3,4,5,15,14),
+Component2=c(2,16,6,7),
+Component3=c(11,12,13,10),
+Component4=c(19,20,21,23),
+Component5=c(9,17,18,22,8)
+)
+
+# creating vectors for labels
+node_labels<-c(
+"What is the area of the roadway?",
+"What type of roadway?",
+"Is this point at an intersection/junction?",
+"How many lanes in the roadway?",
+"Is there an auxiliary/other lane?",
+"How is the road surface conditions?",
+"Is there space on the side of the road 
+for any reason or use?",
+"Are there pedestrian pathways?",
+"Is there a Bus Stop?",
+"Is there a Speed bump?",
+"Is there a traffic light at this location?",
+"Are there road traffic signs at this hotspot?",
+"Is there a sign for speed limit of road?",
+"Road visibility is influenced by curves?",
+"Is the visibility influenced by 
+environmental factors?",
+"Are there bridges on the road?",
+"Is there a safe area for pedestrians 
+to cross the road?",
+"Is there a safe area for pedestrians
+to in the center of the road?",
+"Count the number of cars",
+"Count the number of moto",
+"Count the number of bike",
+"Count the number of pedestrians",
+"Count the number of bus/trucks"
+)
+
+# creating nodes labels vector
+node_names<-c("RD","RT","INT","TLA","AR",
+	"RC","RS",
+	"WALK","BS","SB","TLI","TS","SL","CUR",
+	"VIS","BRI","PED","PEDc","CARd","MOTOd","BIKEd","PEDd","TRUCKd")
+
+# creating vector with mean values for each node
+#mean_data<-sapply(network_data,mean)
+
+#creating vector with mean values adjusted to proportional sizes to be plotted
+#importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
+
+#building network figures 
+# 3 types are created to get an avarege position and layout
+#GLASSO NETWORK
+# network_glasso<-qgraph(cor_data,layout="spring",
+# 	vsize=6,esize=20,graph="glasso",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5)
+
+# #PARTIAL CORRELATION NETWORK
+# network_pcor<-qgraph(cor_data,layout="spring",
+# 	vsize=6,esize=20,graph="pcor",threshold="holm",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5)
+
+# #CORRELATION NETWORK
+# network_cor<-qgraph(cor_data,layout="spring",
+# 	vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
+# #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
+
+# # Organizing both figures to be with the same layout
+# layout_final<-averageLayout(network_glasso,
+# 	network_pcor,
+# 	network_cor)
+
+#postscript("/home/joao/Desktop/info_consent_figure2.eps",
+#	width = 1500, height = 1200,horizontal = FALSE, 
+#	onefile = FALSE)
+#postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
+#	width = 1500, height = 1200,horizontal = FALSE, 
+#	onefile = FALSE)
+tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
+ height = 700,compression = 'lzw')
+final_importance_network<-qgraph(cor_data,
+	esize=20,layout="spring",graph="glasso",
+	sampleSize=nrow(analytical_data),
+	legend.cex = 0.6,cut = 0.3, maximum = 1, 
+	minimum = 0.1, esize = 20,vsize = 5, 
+	repulsion = 0.8,nodeNames=rownames(cor_data),
+	borders = TRUE)#,groups=network_groups,
+	#labels=node_labels,
+	#color=c("gold","steelblue","red","grey80","green"),borders = FALSE,
+	#)#,gray=T,)#,nodeNames=nomesqsg,layoutScale=c(2,2)
+dev.off()
+#legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
 
 
