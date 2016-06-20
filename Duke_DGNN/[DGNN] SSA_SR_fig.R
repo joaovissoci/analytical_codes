@@ -23,6 +23,8 @@ library, character.only=T)
 
 data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
 
+data$study<-with(data,paste(Author,year, sep=", "))
+
 data_country<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
 
 wmap   <- readShapePoly("/Users/joaovissoci/Gits/analytical_codes/shapefiles/africaR/africa_R.shp")
@@ -30,6 +32,8 @@ wmap   <- readShapePoly("/Users/joaovissoci/Gits/analytical_codes/shapefiles/afr
 wdata <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/RTI SSA SR/africa.csv", header=TRUE)
 
 wdata$ID_AFR<-c(0:50)
+
+
 
 ###################################################
 #OVERALL ANALYSIS
@@ -127,7 +131,9 @@ meta_byinjury$total_rti<-as.numeric(as.character(meta_byinjury$total_rti))
 meta_byinjury$total_rti_death<-as.numeric(as.character(meta_byinjury$total_rti_death))
 
 tiff("/home/joao/Desktop/rti_deaths_by_injury.tiff", width = 700, height = 1500,compression = 'lzw')
-m3<-metaprop(total_rti_death,total_rti,sm="PLN",byvar=type_injury,data=meta_byinjury,studlab=Author,comb.fixed=FALSE)
+m3<-metaprop(total_rti_death,total_rti,sm="PLN",
+	byvar=type_injury,data=meta_byinjury,
+	studlab=Author,comb.fixed=FALSE)
 meta::forest(m3)
 dev.off()
 
@@ -149,62 +155,99 @@ dev.off()
 #BY AGE GROUPS
 ####################################################
 #TOTAL RTI Vs. TOTAL RTI DEATHS
-meta_byage_groups<-with(data,data.frame(total_rti,total_rti_death,Author,age_groups))
+meta_byage_groups<-with(data,data.frame(total_rti,
+	total_rti_death,Author,age_groups,study))
 meta_byage_groups<-na.omit(meta_byage_groups)
 meta_byage_groups<-as.matrix(meta_byage_groups)
 meta_byage_groups<-as.data.frame(meta_byage_groups)
 meta_byage_groups$total_rti<-as.numeric(as.character(meta_byage_groups$total_rti))
 meta_byage_groups$total_rti_death<-as.numeric(as.character(meta_byage_groups$total_rti_death))
-tiff("/home/joao/Desktop/rti_deaths_by_age_groups.tiff", width = 800, height = 1500,compression = 'lzw')
-m3<-metaprop(total_rti_death,total_rti,sm="PLN",byvar=age_groups,data=meta_byage_groups,studlab=Author,comb.fixed=FALSE,comb.random=FALSE,print.byvar=FALSE)
+order<-meta_byage_groups$total_rti_death/meta_byage_groups$total_rti
+meta_byage_groups<-meta_byage_groups[order(order),] 
+tiff("/Users/joaovissoci/Desktop/rti_deaths_by_age_groups.tiff",
+ width = 800, height = 1000,compression = 'lzw')
+m3<-metaprop(total_rti_death,total_rti,sm="PLN",
+	byvar=age_groups,data=meta_byage_groups,
+	studlab=study,comb.fixed=FALSE,
+	print.byvar=FALSE)
 meta::forest(m3)
 dev.off()
 
 #TOTAL TRAUMA Vs. TOTAL RTI
-
 meta_byage_groups<-with(data,data.frame(total_traume,total_rti,Author,age_groups))
 meta_byage_groups<-na.omit(meta_byage_groups)
 meta_byage_groups<-as.matrix(meta_byage_groups)
 meta_byage_groups<-as.data.frame(meta_byage_groups)
 meta_byage_groups$total_rti<-as.numeric(as.character(meta_byage_groups$total_rti))
 meta_byage_groups$total_traume<-as.numeric(as.character(meta_byage_groups$total_traume))
-tiff("/home/joao/Desktop/rti_trauma_by_age_groups.tiff", width = 800, height = 1500,compression = 'lzw')
-m3<-metaprop(total_rti,total_traume,sm="PLN",byvar=age_groups,data=meta_byage_groups,studlab=Author,comb.fixed=FALSE,comb.random=FALSE,print.byvar=FALSE)
-meta::forest(m3)
+order<-meta_byage_groups$total_rti/meta_byage_groups$total_traume
+meta_byage_groups<-meta_byage_groups[order(order),] 
+tiff("/Users/joaovissoci/Desktop/rti_trauma_by_age_groups.tiff", 
+	width = 800, height = 1300,compression = 'lzw')
+m3<-metaprop(total_rti,total_traume,sm="PLN",
+	byvar=age_groups,data=meta_byage_groups,
+	studlab=Author,comb.fixed=FALSE,
+	print.byvar=FALSE)
+meta::forest(m3,hetstat=FALSE)
 dev.off()
 
 ###################################################
 #BY TYPE OF POPULATION (
 ####################################################
 #TOTAL RTI Vs. TOTAL RTI DEATHS
-meta_bypopulation<-with(data,data.frame(total_rti,total_rti_death,Author,type_population,proportion_death))
-meta_bypopulation$type_population<-car::recode(meta_bypopulation$type_population,"'' =NA")
+meta_bypopulation<-with(data,data.frame(total_rti,
+	total_rti_death,Author,type_population,
+	proportion_death,study))
+meta_bypopulation$type_population<-car::recode(
+	meta_bypopulation$type_population,"'' =NA")
 meta_bypopulation<-na.omit(meta_bypopulation)
 meta_bypopulation<-as.matrix(meta_bypopulation)
 meta_bypopulation<-as.data.frame(meta_bypopulation)
-meta_bypopulation$total_rti<-as.numeric(as.character(meta_bypopulation$total_rti))
-meta_bypopulation$total_rti_death<-as.numeric(as.character(meta_bypopulation$total_rti_death))
-meta_bypopulation$proportion_death<-as.numeric(as.character(meta_bypopulation$proportion_death))
-tiff("/home/joao/Desktop/rti_deaths_by_population.tiff", width = 700, height = 1500,compression = 'lzw')
-m3<-metaprop(total_rti_death,total_rti,sm="PLN",byvar=type_population,data=meta_bypopulation,studlab=Author,comb.fixed=FALSE,comb.random=FALSE,print.byvar=FALSE)
-meta::forest(m3)
+meta_bypopulation$total_rti<-as.numeric(as.character(
+	meta_bypopulation$total_rti))
+meta_bypopulation$total_rti_death<-as.numeric(as.character(
+	meta_bypopulation$total_rti_death))
+meta_bypopulation$proportion_death<-as.numeric(as.character(
+	meta_bypopulation$proportion_death))
+order<-meta_bypopulation$total_rti_death/meta_bypopulation$total_rti
+meta_bypopulation<-meta_bypopulation[order(order),] 
+
+tiff("/Users/joaovissoci/Desktop/rti_deaths_by_population.tiff", 
+	width = 700, height = 800,compression = 'lzw')
+m3<-metaprop(total_rti_death,total_rti,sm="PLN",
+	byvar=type_population,data=meta_bypopulation,
+	studlab=study,comb.fixed=FALSE,
+	print.byvar=FALSE)
+meta::forest(m3,hetstat=FALSE)
 dev.off()
 
 by(meta_bypopulation$proportion_death,meta_bypopulation$type_population,summary)
 
 #TOTAL TRAUMA Vs. TOTAL RTI
 
-meta_bypopulation<-with(data,data.frame(total_traume,total_rti,Author,type_population,proportion_rti))
-meta_bypopulation$type_population<-car::recode(meta_bypopulation$type_population,"'' =NA")
+meta_bypopulation<-with(data,data.frame(total_traume,
+	total_rti,Author,type_population,proportion_rti,study))
+meta_bypopulation$type_population<-car::recode(
+	meta_bypopulation$type_population,"'' =NA")
 meta_bypopulation<-na.omit(meta_bypopulation)
 meta_bypopulation<-as.matrix(meta_bypopulation)
 meta_bypopulation<-as.data.frame(meta_bypopulation)
-meta_bypopulation$total_rti<-as.numeric(as.character(meta_bypopulation$total_rti))
-meta_bypopulation$total_traume<-as.numeric(as.character(meta_bypopulation$total_traume))
-meta_bypopulation$proportion_rti<-as.numeric(as.character(meta_bypopulation$proportion_rti))
-tiff("/home/joao/Desktop/rti_trauma_by_population.tiff", width = 700, height = 1500,compression = 'lzw')
-m3<-metaprop(total_rti,total_traume,sm="PLN",byvar=type_population,data=meta_bypopulation,studlab=Author,comb.fixed=FALSE,comb.random=FALSE,print.byvar=FALSE)
-meta::forest(m3)
+meta_bypopulation$total_rti<-as.numeric(as.character(
+	meta_bypopulation$total_rti))
+meta_bypopulation$total_traume<-as.numeric(as.character(
+	meta_bypopulation$total_traume))
+meta_bypopulation$proportion_rti<-as.numeric(as.character(
+	meta_bypopulation$proportion_rti))
+order<-meta_bypopulation$total_rti/meta_bypopulation$total_traume
+meta_bypopulation<-meta_bypopulation[order(order),] 
+
+tiff("/Users/joaovissoci/Desktop/rti_trauma_by_population.tiff",
+	width = 700, height = 1000,compression = 'lzw')
+m3<-metaprop(total_rti,total_traume,sm="PLN",
+	byvar=type_population,data=meta_bypopulation,
+	studlab=study,comb.fixed=FALSE,
+	print.byvar=FALSE)
+meta::forest(m3,hetstat=FALSE)
 dev.off()	
 
 by(meta_bypopulation$proportion_rti,meta_bypopulation$type_population,summary)
@@ -371,8 +414,32 @@ ggmap   <- ggmap + theme(plot.margin=unit(c(0,0.05,-0.05,0),
 	legend.position=c(0.2,0.3))
 # ggmap   <- ggmap + geom_text(aes(x=XCNTRD, y=YCNTRD,
 #  label=name),size=5,  color="brown2")
-ggmap   <- ggmap + annotate("text", x = , y = 14.45, 
+ggmap   <- ggmap + annotate("text", x = -15, y = 14.45, 
 	label = "Senegal",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = 11, y = 4, 
+	label = "Cameroon",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = 8, y = 9, 
+	label = "Nigeria",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = 40, y = 8, 
+	label = "Ethiopia",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = -2, y = 7, 
+	label = "Ghana",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = 39, y = 0, 
+	label = "Kenya",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = 35, y = -14, 
+	label = "Malawi",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = 17, y = -22, 
+	label = "Namibia",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = 30, y = -2, 
+	label = "Rwanda",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = 25, y = -30, 
+	label = "South Africa",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = 35, y = -8, 
+	label = "Tanzania",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = 32, y = 2, 
+	label = "Uganda",size=5,color="red")
+ggmap   <- ggmap + annotate("text", x = 35, y = -18, 
+	label = "Mozambique",size=5,color="red")
 ggmap 
 
 

@@ -12,11 +12,11 @@ library(reshape2)
 
  
 # Get data
-data2009<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2009_datecoded.csv")
-data2010<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2010_datecoded.csv")
-data2011<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2011_datecoded.csv")
-data2012<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2012_datecoded.csv")
-data2013<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2013_datecoded.csv")
+data2009<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2009_datecoded.csv")
+data2010<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2010_datecoded.csv")
+data2011<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2011_datecoded.csv")
+data2012<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2012_datecoded.csv")
+data2013<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2013_datecoded.csv")
 
 #Data on points vs. polygons by category
 all_data<-rbind(
@@ -210,10 +210,6 @@ sum(extremeage)*100/sum(crashes)
 sum(speeding)*100/sum(crashes)
 sum(impaired)*100/sum(crashes)
 sum(severity)*100/sum(crashes)
-
-
-
-
 
 ########################################################
 #DECOMPOSITION
@@ -447,6 +443,8 @@ graph_data<-rbind(byyear_data,data2)
 # colnames(byyear_data2)<-c("months","Year1","Year2","Year3",
 # 	"Year4","Year5")
 
+tiff("/Users/joaovissoci/Desktop/figure2.tiff", 
+	width = 500, height = 300,compression = 'lzw')
 ggplot(graph_data,aes(x=months,y=prev_crashes_month)) + 
   geom_line(aes(group=years,colour=years)) +
   geom_point(aes(colour=years),size=1.3) + 
@@ -459,7 +457,7 @@ ggplot(graph_data,aes(x=months,y=prev_crashes_month)) +
   	labels = c("2009", "2010","2011","2012","2013","Average"),
   	values = c("red","gold","grey","green","blue","black")) +
   theme_bw()
-   
+dev.off()
 
 
 ggplot(data2,aes(y=mean,x=months)) + geom_path()+ 
@@ -507,58 +505,9 @@ plot(forecast(fit,h=5))
 # Time trend by category
 ####################################
 
-time_series_plot<-data.frame(vru,distracteddriving,
-	extremeage,speeding,impaired,severity,crashes,dates=as.Date(dates))
-
-#ggplot(time_series_plot,aes(dates,vru)) + 
-#  geom_line() +
-#  geom_line(data=data2,aes(color="Speeding")) +
-#  labs(color="Legend") +
-#  scale_colour_manual("", breaks = c("Distracted Driving", "Speeding"),
-#                          values = c("blue", "brown")) +
-  #ggtitle("Closing Stock Prices: IBM & Linkedin") + 
-  #scale_x_date(format = "%b-%Y") +
-#  theme(plot.title = element_text(lineheight=.7, face="bold"))
-
-#### ARIMA
-#library(forecast)
-#timeseries_data <- ts(time_series_plot$crashes, 
-#	start=c(2009,1),frequency=365)
-#fit <- auto.arima(timeseries_data)
-#summary(fit)
-#forecast(fit,h=30)
-#plot(forecast(fit,h=30))
-
-#BY Month
-library(lubridate)
-
-time_series_plot$date_month <- floor_date(time_series_plot$dates, 
-	"month")
-
-library(plyr)
-time_series_month<-ddply(time_series_plot, "date_month", summarise, 
-	vru_month = sum(vru),
-	speed_month = sum(speeding),
-	distracted_month=sum(distracteddriving),
-	extremeage_month=sum(extremeage),
-	impaired_month=sum(impaired),
-	all_crash_month=sum(crashes),
-	severity_month=sum(severity))
-
-# GRAPH - All and severity
-ggplot(time_series_month,aes(date_month,all_crash_month)) + 
-  geom_line() +
-  xlab("Time") +
-  ylab("Crashes") +
-#  scale_colour_manual("", breaks = c("Distracted Driving", "Speeding"),
-#                          values = c("blue", "brown")) +
-  #ggtitle("Closing Stock Prices: IBM & Linkedin") + 
-  #scale_x_date(format = "%b-%Y") +
-  theme(plot.title = element_text(lineheight=.7, face="bold")) +
-  theme_bw()
-
-
 # GRAPH 2 - Types
+tiff("/Users/joaovissoci/Desktop/figure3.tiff", 
+	width = 500, height = 300,compression = 'lzw')
 ggplot(time_series_month,aes(date_month,prev_vru)) + 
   geom_line(aes(colour="VRU")) +
   geom_line(data=time_series_month,
@@ -580,115 +529,7 @@ ggplot(time_series_month,aes(date_month,prev_vru)) +
   #scale_x_date(format = "%b-%Y") +
   theme(plot.title = element_text(lineheight=.7, face="bold")) +
   theme_bw()
+dev.off()
 
+####################################
 
-#### ARIMA
-library(forecast)
-timeseries_data <- ts(time_series_month$crashes_month, 
-	start=c(2009,1),frequency=12)
-fit <- auto.arima(timeseries_data)
-summary(fit)
-x<-forecast(fit,h=20)
-plot(forecast(fit,h=20))
-
-mean(x$mean)
-
-
-
-
-
-
-
-
-
-# Plot with the htmlwidget dygraphs
-# dygraph() needs xts time series objects
-ibm_xts <- xts(data1$outcome,order.by=data1$date,frequency=365)
-lnkd_xts <- xts(data2$outcome,order.by=data2$date,frequency=365)
- 
-stocks <- cbind(ibm_xts,lnkd_xts)
- 
-dygraph(stocks,ylab="$ crashes", 
-        main="Crashes in Baltimore from 2009") %>%
-  dySeries("..1",label="Distracted driving") %>%
-  dySeries("..2",label="Speeding") %>%
-  dyOptions(colors = c("blue","brown")) %>%
-  dyRangeSelector()
-
-
-
-outcomedata2009<-prop.table(table(data$date,data$INATT),1)[,2]
-outcome2<-prop.table(table(data$date,data$SPEED),1)[,2]
-date1<-as.Date(names(outcome1))
-date2<-as.Date(names(outcome2))
-
-data1<-data.frame(outcome=outcome1,date=date1)
-data2<-data.frame(outcome=outcome2,date=date2)
-
-#ibm  <- yahoo.read(ibm_url)
-#lnkd2 <- yahoo.read(lnkd_url)
-
-
-ggplot(data1,aes(date,outcome)) + 
-  geom_line(aes(color="Distracted driving")) +
-  geom_line(data=data2,aes(color="Speeding")) +
-  labs(color="Legend") +
-  scale_colour_manual("", breaks = c("Distracted Driving", "Speeding"),
-                          values = c("blue", "brown")) +
-  #ggtitle("Closing Stock Prices: IBM & Linkedin") + 
-  #scale_x_date(format = "%b-%Y") +
-  theme(plot.title = element_text(lineheight=.7, face="bold"))
-
-# Plot with the htmlwidget dygraphs
-# dygraph() needs xts time series objects
-ibm_xts <- xts(data1$outcome,order.by=data1$date,frequency=365)
-lnkd_xts <- xts(data2$outcome,order.by=data2$date,frequency=365)
- 
-stocks <- cbind(ibm_xts,lnkd_xts)
- 
-dygraph(stocks,ylab="$ crashes", 
-        main="Crashes in Baltimore from 2009") %>%
-  dySeries("..1",label="Distracted driving") %>%
-  dySeries("..2",label="Speeding") %>%
-  dyOptions(colors = c("blue","brown")) %>%
-  dyRangeSelector()
-
-#### TRYOUT 2
-
-
-#### WAVELET TRYOUT #####
-
-data<-read.csv("/Users/joaovissoci/Desktop/Vulnerabilidade_pointsbypolygons.csv")
-
-data<-read.csv("/home/joao/Desktop/Vulnerabilidade_pointsbypolygons.csv")
-
-temp_data<-with(data,c(1000*(vuln2013/POP2010),
-	1000*(vulner2012/POP2010),
-	1000*(vulner2011/POP2010),
-	1000*(vulner2010/POP2010),
-	1000*(vulner2009/POP2010)))
-year<-c(rep(200))
-
-#temp_data<-t(temp_data)
-#colnames(temp_data)<-c(1:200)
-time_series_data<-as.ts(t(temp_data))
-
-timeseries_data <- ts(temp_data, start=c(2009,1),frequency=199)
-birthstimeseriescomponents <- decompose(timeseries_data)
-plot(birthstimeseriescomponents)
-
-# Seasonal decomposition
-fit <- stl(timeseries_data, s.window="period")
-plot(fit)
-
-# additional plots
-monthplot(timeseries_data)
-library(forecast)
-seasonplot(timeseries_data,col=rainbow(12),year.labels=TRUE)
-
-
-
-
-plot(timeseries_data, type="b")
-diff12 = diff(time_series_data)
-x<-acf(timeseries_data,type="partial",lag.max=199)
