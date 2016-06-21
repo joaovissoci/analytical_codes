@@ -37,9 +37,9 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-data_tz<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_tz.csv",sep=',')
-data_sl<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_sl.csv",sep=',')
-data_rw<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_rw.csv",sep=',')
+data_tz<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_tz.csv",sep=',')
+data_sl<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_sl.csv",sep=',')
+data_rw<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_rw.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -622,19 +622,19 @@ model1_bea<-with(bea_data,data.frame(
 
 cor_data<-cor_auto(model1_bea)
 
-#Community analysis
-comprehension_network_glasso<-qgraph(cor_data,
-	layout="spring",
-	vsize=6,esize=20,graph="glasso",
-	sampleSize=nrow(bea_data),
-	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
-#Calculating Community measures
-g<-as.igraph(comprehension_network_glasso) #creating igraph object
-h<-walktrap.community(g) #creatin community object
-h<-spinglass.community(g, weights=NA)
-plot(h,g) #plotting community network
-h$membership #extracting community membership for each node on the network
-community<-data.frame(h$membership,rownames(cor_data))
+# #Community analysis
+# comprehension_network_glasso<-qgraph(cor_data,
+# 	layout="spring",
+# 	vsize=6,esize=20,graph="glasso",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+# #Calculating Community measures
+# g<-as.igraph(comprehension_network_glasso) #creating igraph object
+# h<-walktrap.community(g) #creatin community object
+# h<-spinglass.community(g, weights=NA)
+# plot(h,g) #plotting community network
+# h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,rownames(cor_data))
 
 # par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
 # ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
@@ -657,25 +657,25 @@ fit <- psych::principal(cor_data,nfactors=2,rotate="none",scores=TRUE)
 fit
 summary(fit) # print variance accounted for 
 loadings(fit) # pc loadings 
-fit$scores
-predict(fit,bea_data[,-1])
-scores<-scoreItems(fit$weights,bea_data[,-1],totals=TRUE)
-summary(scores)
-describe(scores$scores)
+# fit$scores
+pca1<-predict(fit,model1_bea)
+# scores<-scoreItems(fit$weights,bea_data[,-1],totals=TRUE)
+# summary(scores)
+# describe(scores$scores)
 # by(scores$scores,data_bea$risk_classification,summary)
 # wilcox.test(scores$scores[,1]~data_bea$risk_classification)
 # wilcox.test(scores$scores[,2]~data_bea$risk_classification)
 # wilcox.test(scores$scores[,3]~data_bea$risk_classification)
 # #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
 
-# model <- principal(cor_data ,nfactors=4, rotate='none', scores=T, cov=T)
-# L <- model$loadings            # Just get the loadings matrix
-# S <- model$scores              # This gives an incorrect answer in the current version
+ model <- principal(cor_data ,nfactors=2, rotate='none', scores=T, cov=T)
+ L <- model$loadings            # Just get the loadings matrix
+ S <- model$scores              # This gives an incorrect answer in the current version
 
-# d <- bea_data[,-1]              # get your data
-# dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
-# sc <- dc %*% L                 # scores are the centered data times the loadings
-# lowerCor(sc)                   #These scores, being principal components
+ d <- model1_bea              # get your data
+ dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+ pca1 <- dc %*% L                 # scores are the centered data times the loadings
+ # lowerCor(sc)                   #These scores, being principal components
 #                                # should be orthogonal 
 
 # plot(model)
@@ -689,19 +689,19 @@ model2_bea<-with(bea_data,data.frame(
 
 cor_data<-cor_auto(model2_bea)
 
-#Community analysis
-comprehension_network_glasso<-qgraph(cor_data,
-	layout="spring",
-	vsize=6,esize=20,graph="glasso",
-	sampleSize=nrow(bea_data),
-	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
-#Calculating Community measures
-g<-as.igraph(comprehension_network_glasso) #creating igraph object
-h<-walktrap.community(g) #creatin community object
-h<-spinglass.community(g, weights=NA)
-plot(h,g) #plotting community network
-h$membership #extracting community membership for each node on the network
-community<-data.frame(h$membership,rownames(cor_data))
+# #Community analysis
+# comprehension_network_glasso<-qgraph(cor_data,
+# 	layout="spring",
+# 	vsize=6,esize=20,graph="glasso",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+# #Calculating Community measures
+# g<-as.igraph(comprehension_network_glasso) #creating igraph object
+# h<-walktrap.community(g) #creatin community object
+# h<-spinglass.community(g, weights=NA)
+# plot(h,g) #plotting community network
+# h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,rownames(cor_data))
 
 # par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
 # ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
@@ -735,13 +735,13 @@ describe(scores$scores)
 # wilcox.test(scores$scores[,3]~data_bea$risk_classification)
 # #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
 
-# model <- principal(cor_data ,nfactors=4, rotate='none', scores=T, cov=T)
-# L <- model$loadings            # Just get the loadings matrix
-# S <- model$scores              # This gives an incorrect answer in the current version
+model <- principal(cor_data ,nfactors=1, rotate='none', scores=T, cov=T)
+L <- model$loadings            # Just get the loadings matrix
+S <- model$scores              # This gives an incorrect answer in the current version
 
-# d <- bea_data[,-1]              # get your data
-# dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
-# sc <- dc %*% L                 # scores are the centered data times the loadings
+d <- model2_bea             # get your data
+dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+pca2 <- dc %*% L                 # scores are the centered data times the loadings
 # lowerCor(sc)                   #These scores, being principal components
 #                                # should be orthogonal 
 
@@ -757,19 +757,19 @@ model3_bea<-with(bea_data,data.frame(
 
 cor_data<-cor_auto(model3_bea)
 
-#Community analysis
-comprehension_network_glasso<-qgraph(cor_data,
-	layout="spring",
-	vsize=6,esize=20,graph="glasso",
-	sampleSize=nrow(bea_data),
-	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
-#Calculating Community measures
-g<-as.igraph(comprehension_network_glasso) #creating igraph object
-h<-walktrap.community(g) #creatin community object
-h<-spinglass.community(g, weights=NA)
-plot(h,g) #plotting community network
-h$membership #extracting community membership for each node on the network
-community<-data.frame(h$membership,rownames(cor_data))
+# #Community analysis
+# comprehension_network_glasso<-qgraph(cor_data,
+# 	layout="spring",
+# 	vsize=6,esize=20,graph="glasso",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+# #Calculating Community measures
+# g<-as.igraph(comprehension_network_glasso) #creating igraph object
+# h<-walktrap.community(g) #creatin community object
+# h<-spinglass.community(g, weights=NA)
+# plot(h,g) #plotting community network
+# h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,rownames(cor_data))
 
 # par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
 # ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
@@ -803,13 +803,13 @@ describe(scores$scores)
 # wilcox.test(scores$scores[,3]~data_bea$risk_classification)
 # #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
 
-# model <- principal(cor_data ,nfactors=4, rotate='none', scores=T, cov=T)
-# L <- model$loadings            # Just get the loadings matrix
-# S <- model$scores              # This gives an incorrect answer in the current version
+ model <- principal(cor_data ,nfactors=1, rotate='none', scores=T, cov=T)
+ L <- model$loadings            # Just get the loadings matrix
+ S <- model$scores              # This gives an incorrect answer in the current version
 
-# d <- bea_data[,-1]              # get your data
-# dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
-# sc <- dc %*% L                 # scores are the centered data times the loadings
+ d <- model3_bea            # get your data
+ dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+ pca3 <- dc %*% L                 # scores are the centered data times the loadings
 # lowerCor(sc)                   #These scores, being principal components
 #                                # should be orthogonal 
 
@@ -825,19 +825,19 @@ model4_bea<-with(bea_data,data.frame(
 
 cor_data<-cor_auto(model4_bea)
 
-#Community analysis
-comprehension_network_glasso<-qgraph(cor_data,
-	layout="spring",
-	vsize=6,esize=20,graph="glasso",
-	sampleSize=nrow(bea_data),
-	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
-#Calculating Community measures
-g<-as.igraph(comprehension_network_glasso) #creating igraph object
-h<-walktrap.community(g) #creatin community object
-h<-spinglass.community(g, weights=NA)
-plot(h,g) #plotting community network
-h$membership #extracting community membership for each node on the network
-community<-data.frame(h$membership,rownames(cor_data))
+# #Community analysis
+# comprehension_network_glasso<-qgraph(cor_data,
+# 	layout="spring",
+# 	vsize=6,esize=20,graph="glasso",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+# #Calculating Community measures
+# g<-as.igraph(comprehension_network_glasso) #creating igraph object
+# h<-walktrap.community(g) #creatin community object
+# h<-spinglass.community(g, weights=NA)
+# plot(h,g) #plotting community network
+# h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,rownames(cor_data))
 
 # par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
 # ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
@@ -871,13 +871,13 @@ describe(scores$scores)
 # wilcox.test(scores$scores[,3]~data_bea$risk_classification)
 # #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
 
-# model <- principal(cor_data ,nfactors=1, rotate='none', scores=T, cov=T)
-#  L <- model$loadings            # Just get the loadings matrix
-# # S <- model$scores              # This gives an incorrect answer in the current version
+ model <- principal(cor_data ,nfactors=1, rotate='none', scores=T, cov=T)
+  L <- model$loadings            # Just get the loadings matrix
+ # S <- model$scores              # This gives an incorrect answer in the current version
 
-#  d <- model4_bea              # get your data
-#  dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
-#  sc <- dc %*% L                 # scores are the centered data times the loadings
+  d <- model4_bea              # get your data
+  dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+  pca4 <- dc %*% L                 # scores are the centered data times the loadings
 #  lowerCor(sc)                   #These scores, being principal components
 # #                                # should be orthogonal 
 
@@ -885,6 +885,12 @@ describe(scores$scores)
 
 # score<-round(pnorm(sc)*100,2)
 
+#Extracting normalized data
+
+pca_scores_data<-data.frame(PCA1=pca1,PCA2=pca2,
+	PCA3=pca3,PCA4=pca4,country=bea_data[,1])
+
+write.csv(pca_scores_data,"/Users/joaovissoci/Desktop/bea_PCAscores.csv")
 ##############################################################
 #NETWORK 
 ##############################################################

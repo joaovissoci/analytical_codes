@@ -37,6 +37,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 
 data_bea<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/Tz/bea_indicators.csv",sep=',')
 
+data_bea_pcascores<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/Tz/bea_indicators.csv",sep=',')
 ######################################################
 #DATA MANAGEMENT
 ######################################################
@@ -431,7 +432,7 @@ wilcox.test(scores$scores[,3]~data_bea$risk_classification)
 
 # Organizing dataset
 #####################
-
+beaPCAscores <- read.csv("/Users/joaovissoci//Desktop/bea_PCAscores.csv")
 #Excluding variables
 #night_lights - no variance
 #walkways - no variance
