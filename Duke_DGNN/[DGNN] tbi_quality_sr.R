@@ -61,8 +61,8 @@ data_plot$color[data_plot$value >= 81.97]="lightcyan1"
 
 tiff("/Users/joaovissoci/Desktop/agree_domains_scores.tiff",
   width = 800, height = 600,compression = 'lzw')
-avseq <- ggplot(data_plot, aes(y=author, x=variable)) + 
-  geom_tile(fill=data_plot$color) + 
+avseq <- ggplot(data_plot[1:144,], aes(y=author, x=variable)) + 
+  geom_tile(fill=data_plot[1:144,]$color) + 
   geom_text(aes(y=author, x=variable, label=value2)) + 
   theme_minimal() + 
   xlab(label="Domains") + 
