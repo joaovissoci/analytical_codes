@@ -26,9 +26,9 @@ library, character.only=T)
 #ORGANIZANDO O BANCO DE DADOS
 #####################################################################################
 #Exemplo de como inserir o banco de dados direto de um arquivo físico do computador
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/valoresdimensoes.csv",sep=",")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/valoresdimensoes.csv",sep=",")
 
-graph<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/graph.csv",sep=",")
+graph<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/graph.csv",sep=",")
 
 #####################################################################################
 #ANALISES DESCRITIVAS
@@ -138,7 +138,7 @@ kmo(sf36)
 # eficacia = Nome do banco de dados
 # fm = metodo de estimação, aqui usando 'pa' que é principal axis
 # rotate = metodo de rotação, aqui usando varimax
-fa(sf36,2,fm="wls",rotate="oblimin")
+fa(sf36,3,fm="wls",rotate="oblimin")
 fa(sf36,1,fm="wls",rotate="oblimin")
 
 #CALCULANDO OS PRESSUPOSTOS PARA A ANALISE FATORIAL CONFIRMATORIA
@@ -305,144 +305,40 @@ cor(modeloSem)
 modeloSem<-remove.vars(modeloSem,c("Estado_Geral_de_Saude","Dor"))
 
 #MODELO 1
-# Função para especificar o modelo que vai ser analisar
-modefic <- specifyModel() # Após rodar a função, inserir linha após linha do modelo 
 
-#Latent Variables
-ME->Regulacao_externa,NA,1
-ME->Introjecao,var1,NA
-ME->Identificacao,var2,NA
-MI->Atingir_objetivos,NA,1
-MI->Experiencias_estimulantes,var3,NA
-MI->Para_conhecer,var4,NA
-F1->Capacidade_Funcional,NA,1
-F1->Limitacao_por_Aspectos_Fisicos,var5,NA
-F1->Aspectos_Emocionais,var7,NA
-F2->Saude_Mental,NA,1
-F2->Aspectos_Sociais,var9,NA
-F2->Vitalidade,var10,NA
-MI->F1,pred1,NA
-ME->F1,pred2,NA
-MI->F2,pred3,NA
-#ME->F2,pred4,NA
-#data.TempPratica->data.Amotivacao,pred7,NA
-data.TempPratica->MI,pred8,NA
-#data.TempPratica->ME,pred9,NA
-data.TempPratica->F1,pred10,NA
-#data.TempPratica->F2,pred11,NA
+#identifying the model
+#MEASUREMENT MODELO
+model<-'
+ME =~ Regulacao_externa + Introjecao + Identificacao
+MI =~ Atingir_objetivos + Experiencias_estimulantes + 
+      Para_conhecer
+PCS =~ Capacidade_Funcional + Limitacao_por_Aspectos_Fisicos + 
+       Aspectos_Emocionais
+MCS =~ Saude_Mental + Aspectos_Sociais + Vitalidade 
 
-
-#Erros and COv
-ME<->ME,erro1,NA
-MI<->MI,erro2,NA
-ME<->MI,coverro1,NA
-F1<->F1,erro3,NA
-F2<->F2,erro4,NA
-data.TempPratica<->data.TempPratica,erro5,NA
-#data.Amotivacao<->data.Amotivacao,erro6,NA
-data.Amotivacao<->Regulacao_externa,coverro1,NA
-
-Aspectos_Emocionais<->Limitacao_por_Aspectos_Fisicos,coverros1,NA
-Identificacao<->Introjecao,coverros2,NA
-Para_conhecer<->Introjecao,coverros3,NA
-Saude_Mental<->Vitalidade,coverro1,NA
-Aspectos_Emocionais<->Limitacao_por_Aspectos_Fisicos,coverro2,NA
-
-#EndofMODEL
-
-# Criando matriz de covariância para analise do modelo
-cov <- cov(modeloSem, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
-
-# Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
-# Argumentos são: modefic = modelo especificado na linha 141
-# cov = matriz de covariancia criada na linha 154
-# N = numero de observações (amostra)
-sem <- sem(modefic, cov, N=81)
-
-# Reporta o resumo das analises do modelo de equações estruturais
-summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
-                          "NNFI", "CFI", "RNI", "IFI", 
-                          "SRMR", "AIC", "AICc","BIC"))
-
-# Reporta os efeitos das trjetórias do modelo
-effects(sem)
-
-# Reporta os coeficientes estandardizados das trajetórias (linhas)
-standardizedCoefficients(sem)
-
-# Reporta os indices de modificação para melhorar o ajustamento do modelo
-modIndices(sem)
-
-#MODELO 2 - QV 1 dominio apenas
-# Função para especificar o modelo que vai ser analisar
-modefic <- specifyModel() # Após rodar a função, inserir linha após linha do modelo 
-
-#Latent Variables
-ME->Regulacao_externa,NA,1
-ME->Introjecao,var1,NA
-ME->Identificacao,var2,NA
-MI->Atingir_objetivos,NA,1
-MI->Experiencias_estimulantes,var3,NA
-MI->Para_conhecer,var4,NA
-QV->Capacidade_Funcional,NA,1
-QV->Limitacao_por_Aspectos_Fisicos,var5,NA
-QV->Aspectos_Emocionais,var7,NA
-QV->Saude_Mental,NA,1
-QV->Aspectos_Sociais,var9,NA
-QV->Vitalidade,var10,NA
-MI->QV,pred1,NA
-ME->QV,pred2,NA
-
-#data.TempPratica->data.Amotivacao,pred7,NA
-data.TempPratica->MI,pred8,NA
-data.TempPratica->ME,pred9,NA
-data.TempPratica->QV,pred10,NA
-
-#Erros and COv
-ME<->ME,erro1,NA
-MI<->MI,erro2,NA
-QV<->QV,erro3,NA
-data.TempPratica<->data.TempPratica,erro5,NA
-#data.Amotivacao<->data.Amotivacao,erro6,NA
-data.Amotivacao<->Regulacao_externa,coverro1,NA
-
-Aspectos_Emocionais<->Limitacao_por_Aspectos_Fisicos,coverros1,NA
-Identificacao<->Introjecao,coverros2,NA
-Para_conhecer<->Introjecao,coverros3,NA
-Saude_Mental<->Vitalidade,coverro1,NA
-Aspectos_Emocionais<->Limitacao_por_Aspectos_Fisicos,coverro2,NA
-
-#EndofMODEL
-
-# Criando matriz de covariância para analise do modelo
-cov <- cov(modeloSem, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
-
-# Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
-# Argumentos são: modefic = modelo especificado na linha 141
-# cov = matriz de covariancia criada na linha 154
-# N = numero de observações (amostra)
-sem <- sem(modefic, cov, N=81)
-
-# Reporta o resumo das analises do modelo de equações estruturais
-summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
-                          "NNFI", "CFI", "RNI", "IFI", 
-                          "SRMR", "AIC", "AICc","BIC"))
-
-# Reporta os efeitos das trjetórias do modelo
-effects(sem)
-
-# Reporta os coeficientes estandardizados das trajetórias (linhas)
-standardizedCoefficients(sem)
-
-# Reporta os indices de modificação para melhorar o ajustamento do modelo
-modIndices(sem)
+#regressios - before the ~ comes the outcome of the regression
+PCS ~ MI + ME + data.TempPratica
+MCS ~ MI
+'
+ 
+fit <- sem(model, data=modeloSem) #fitting the model
+summary(fit, standardized=TRUE) #getting a summary of the model stats
+# parameterEstimates(fit) #extracting parameters
+standardizedSolution(fit) #standardized parameters
+fitMeasures(fit,c("cfi","tli","rmsea","rmsea.ci.upper",
+  "rmsea.ci.lower","srmr")) #fit indices
+# mi <- modindices(fit) #modification index
+# mi[mi$op == "=~",] #extract modificartion index to latent models
+semPaths(fit,"std",layout="spring",residuals=FALSE,
+  edge.color="black")
+text(0.9,0.9,
+  labels="Fit Indices \nCFI=0.98 \nTLI=0.97 \nRMSEA (95%CI)=0.05(0.00;0.08")
 
 ###########################################################################################
 #MODELO GRAFOS
 ###########################################################################################
-str(graph)
 #attach(table2)
-data<-t(graph)
+# data<-t(graph)
 data<-as.matrix(data)
 names<-c("Iniciação com Amigos",
                    "Iniciação Reabilitação", "Benefícios Sociais",
@@ -453,82 +349,13 @@ names<-c("Iniciação com Amigos",
                    "Mudanças contextuais",
                    "Prática Lazer","Formação Humana","Mot.Intrínseca",
                    "Mot.Extrínseca","QV Funcional","QV Subjetiva")
-#rownames(data)<-table2$X
-#data[data>=1] <- 1
-# transform into a term-term adjacency matrix
-dataMatrix <- data %*% t(data)
-# inspect terms numbered 5 to 10
-#termMatrix[5:10,5:10]
 
-library(igraph)
-# build a graph from the above matrix
-g <- graph.adjacency(dataMatrix, weighted=T, mode = "undirected")
-# remove loops
-g <- simplify(g)
-# set labels and degrees of vertices
-V(g)$label <- V(g)$name
-V(g)$degree <- degree(g)
-# set seed to make the layout reproducible
-set.seed(3952)
-layout1 <- layout.fruchterman.reingold(g)
-#plot(g, layout=layout1)
-#plot(g, layout=layout.kamada.kawai)
-#tkplot(g, layout=layout.kamada.kawai)
+cor_data<-cor_auto(graph)
 
-V(g)$label.cex <- 0.3 * V(g)$degree / max(V(g)$degree)+0.5
-V(g)$label.color <- rgb(0, 0, .2, .8)
-V(g)$frame.color <- c("black")
-#V(g)$color<-ifelse(V(g)$name==c('Parental Motivation'), 'steelblue',
-#            ifelse(V(g)$name==c('Patient`s Age'), 'steelblue',
-#            ifelse(V(g)$name==c('Fear'), 'red',
-#            ifelse(V(g)$name==c('Treatment Cost'), 'red',
-#            ifelse(V(g)$name==c('Lack of Motivation'), 'red',
-#            ifelse(V(g)$name==c('Lack of understanding of benefits'), 'red',
-#            ifelse(V(g)$name==c('Embarrassment'), 'red',
-#            ifelse(V(g)$name==c('Age - Small Children'), 'red',
-#                   'white'))))))))
-V(g)$color<-c("red")
-#V(g)$shape<-ifelse(V(g)$name==c('Parental Motivation'), 'sphere',
-#            ifelse(V(g)$name==c('Patient`s Age'), 'sphere',
-#            ifelse(V(g)$name==c('Fear'), 'sphere',
-#            ifelse(V(g)$name==c('Treatment Cost'), 'sphere',
-#            ifelse(V(g)$name==c('Lack of Motivation'), 'sphere',
-#            ifelse(V(g)$name==c('Lack of understanding of benefits'), 'sphere',
-#            ifelse(V(g)$name==c('Embarrassment'), 'sphere',
-#            ifelse(V(g)$name==c('Age - Small Children'), 'sphere',
-#              'csquare'))))))))
-V(g)$shape<-c("sphere")
-V(g)$size<-degree(g)/5
-egam <- (log(E(g)$weight)+0.5) / max(log(E(g)$weight)+0.5)
-E(g)$color <- rgb(.5, .5, 0, egam)
-E(g)$width <- egam
-# plot the graph in layout1
-#plot(g, layout=layout1,vertex.label.dist=0.5)
-tiff("Figure2.tiff", width = 1500, height = 1500,compression = 'lzw')
-plot(g, layout=layout.kamada.kawai,vertex.label.dist=0.2,margin=c(0,0,0,0),asp=0.8,
-     vertex.label.degree=pi/2)
-#plot(g, layout=layout.fruchterman.reingold,vertex.label.dist=0.1,margin=c(-0.1,-0.5,-0.1,-0.5),asp=0.6,
-#    vertex.label.degree=pi/2)
-legend("bottomright", pch=16, bty="n",c("Adherence", "Non-Adherence"),
-       col = c("steelblue", "red"), cex=1.5)
-legend("bottomleft", pch=c(1,0), bty="n",c("Frequency", "Intensity"),
-       cex=1.5)
-dev.off()
-
-
-rownames(graph)<-names
-
-
-
-library(qgraph)
-datacor<-t(graph)
-
-##Neighborhood matrix
-dataMatrix <- datacor %*% t(datacor)
 #layout = spring
-Q1 <- qgraph(dataMatrix, borders = TRUE, cut=10, 
-  minimum = 5, labels=names,label.cex = 0.5, 
-  layout = "spring",directed=FALSE,label.scale=FALSE,
+Q1 <- qgraph(cor_data, borders = TRUE, cut=10, 
+  minimum = 5, 
+  layout = "spring",directed=FALSE,
   gray=TRUE)
 
 #layout = circular
@@ -575,221 +402,360 @@ Q1 <- qgraph(datacor, borders = TRUE, cut=0.40,
 
 
 
+# # # Função para especificar o modelo que vai ser analisar
+# # modefic <- specifyModel()
 
-#MODELO 2
-# Função para especificar o modelo que vai ser analisar
-modefic <- specifyModel() # Após rodar a função, inserir linha após linha do modelo 
-
-#Latent Variables
-ME->Regulacao_externa,NA,1
-ME->Introjecao,var1,NA
-ME->Identificacao,var2,NA
-MI->Atingir_objetivos,NA,1
-MI->Experiencias_estimulantes,var3,NA
-MI->Para_conhecer,var4,NA
-ME<->ME,erro1,NA
-MI<->MI,erro2,NA
-MI->Capacidade_Funcional_RAW,mipred01,NA
-MI->Limitacao_por_Aspectos_Fisicos_RAW,mipred02,NA
-MI->Dor_RAW,mipred03,NA
-MI->Estado_Geral_de_Saude_RAW,mipred04,NA
-MI->Aspectos_Emocionais_RAW,mipred05,NA
-MI->Saude_Mental_RAW,mipred06,NA
-MI->Aspectos_Sociais_RAW,mipred07,NA
-MI->Vitalidade_RAW,mipred08,NA
-ME->Capacidade_Funcional_RAW,mepred11,NA
-ME->Limitacao_por_Aspectos_Fisicos_RAW,mepred12,NA
-ME->Dor_RAW,mepred13,NA
-ME->Estado_Geral_de_Saude_RAW,mepred14,NA
-ME->Aspectos_Emocionais_RAW,mepred15,NA
-ME->Saude_Mental_RAW,mepred16,NA
-ME->Aspectos_Sociais_RAW,mepred17,NA
-ME->Vitalidade_RAW,mepred18,NA
-
-#EndofMODEL
-
-# Criando matriz de covariância para analise do modelo
-cov <- cov(modeloSem, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
-
-# Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
-# Argumentos são: modefic = modelo especificado na linha 141
-# cov = matriz de covariancia criada na linha 154
-# N = numero de observações (amostra)
-sem <- sem(modefic, cov, N=184)
-
-# Reporta o resumo das analises do modelo de equações estruturais
-summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
-                          "NNFI", "CFI", "RNI", "IFI", "SRMR", "AIC", "AICc"))
-
-# Reporta os efeitos das trjetórias do modelo
-effects(sem)
-
-# Reporta os coeficientes estandardizados das trajetórias (linhas)
-standardizedCoefficients(sem)
-
-# Reporta os indices de modificação para melhorar o ajustamento do modelo
-modIndices(sem)
-
-#ISSO NAO FUI EU QUEM COLOCOU AQUI, NAO SEI O QUE ACHO. ACHO QUE VOCE QUE INSERIU :)
-library(pastecs)
-stat.desc(data) 
-
-#MODELO 2 - Excluindo os paths:
-#EC <--- Ego  
-#Ego <--- Comple
-# Função para especificar o modelo que vai ser analisar
-modefic <- specifyModel() # Após rodar a função, inserir linha após linha do modelo 
-
-#Latent Variables
-EC->Persis,NA,1
-EC->Uniao,var4,NA
-EC->Prep,var5,NA
-EC->Habil,var6,NA
-EC->Esfo,var7,NA
-Taref->EC,pred1,NA
-Compro->Taref,cartq1,NA
-Compro->Ego,cartq2,NA
-Comple->Taref,cartq3,NA
-Prox->Taref,cartq5,NA
-Prox->Ego,cartq6,NA
-
-#Erros and COv
-EC<->EC,erro1,NA
-Habil<->Prep,cov1,NA
-Comple<->Comple,error2,NA
-Compro<->Compro,error3,NA
-Prox<->Prox,error4,NA
-Comple<->Compro,cov2,NA
-
-# Criando matriz de covariância para analise do modelo
-cov <- cov(data, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
-
-# Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
-# Argumentos são: modefic = modelo especificado na linha 141
-# cov = matriz de covariancia criada na linha 154
-# N = numero de observações (amostra)
-sem <- sem(modefic, cov, N=184)
-
-# Reporta o resumo das analises do modelo de equações estruturais
-summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
-                          "NNFI", "CFI", "RNI", "IFI", "SRMR", "AIC", "AICc"))
-
-# Reporta os efeitos das trjetórias do modelo
-effects(sem)
-
-# Reporta os coeficientes estandardizados das trajetórias (linhas)
-standardizedCoefficients(sem)
-
-# Reporta os indices de modificação para melhorar o ajustamento do modelo
-modIndices(sem)
-
-#ISSO NAO FUI EU QUEM COLOCOU AQUI, NAO SEI O QUE ACHO. ACHO QUE VOCE QUE INSERIU :)
-library(pastecs)
-stat.desc(data) 
-
-#MODELO 3 - Excluindo Prox do modelo
-# Função para especificar o modelo que vai ser analisar
-modefic <- specifyModel() # Após rodar a função, inserir linha após linha do modelo 
-
-#Latent Variables
-EC->Persis,NA,1
-EC->Uniao,var4,NA
-EC->Prep,var5,NA
-EC->Habil,var6,NA
-EC->Esfo,var7,NA
-Taref->EC,pred1,NA
-Compro->Taref,cartq1,NA
-Compro->Ego,cartq2,NA
-Comple->Taref,cartq3,NA
-
-#Erros and COv
-EC<->EC,erro1,NA
-Habil<->Prep,cov1,NA
-Comple<->Comple,error2,NA
-Compro<->Compro,error3,NA
-Comple<->Compro,cov2,NA
-
-# Criando matriz de covariância para analise do modelo
-data<-remove.vars(data,c("Prox"))
-cov <- cov(data, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
-
-# Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
-# Argumentos são: modefic = modelo especificado na linha 141
-# cov = matriz de covariancia criada na linha 154
-# N = numero de observações (amostra)
-sem <- sem(modefic, cov, N=184)
-
-# Reporta o resumo das analises do modelo de equações estruturais
-summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
-                          "NNFI", "CFI", "RNI", "IFI", "SRMR", "AIC", "AICc"))
-
-# Reporta os efeitos das trjetórias do modelo
-effects(sem)
-
-# Reporta os coeficientes estandardizados das trajetórias (linhas)
-standardizedCoefficients(sem)
-
-# Reporta os indices de modificação para melhorar o ajustamento do modelo
-modIndices(sem)
-
-#MODELO 4 - Variante com o Relação treinados altet como latente
-# Função para especificar o modelo que vai ser analisar
-modefic <- specifyModel() # Após rodar a função, inserir linha após linha do modelo 
-
-#Latent Variables
-EC->Persis,NA,1
-EC->Uniao,var4,NA
-EC->Prep,var5,NA
-EC->Habil,var6,NA
-EC->Esfo,var7,NA
-Compro->RTA,NA,1
-Comple->RTA,rta3,NA
-Prox->RTA,cartq5,NA
-Taref->EC,pred1,NA
-Ego->EC,pred2,NA
-RTA->Taref,pred3,NA
-RTA->Ego,pred4,NA
-
-#Erros and COv
-EC<->EC,erro1,NA
-RTA<->RTA,erro2,NA
-Habil<->Prep,cov1,NA
-Comple<->Comple,error2,NA
-Compro<->Compro,error3,NA
-Prox<->Prox,error4,NA
-Comple<->Prox,erro5,NA
-Compro<->Prox,erro6,NA
-#Comple<->Compro,cov2,NA
-
-# Criando matriz de covariância para analise do modelo
-cov <- cov(data, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
-
-# Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
-# Argumentos são: modefic = modelo especificado na linha 141
-# cov = matriz de covariancia criada na linha 154
-# N = numero de observações (amostra)
-sem <- sem(modefic, cov, N=184)
-
-# Reporta o resumo das analises do modelo de equações estruturais
-summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
-                          "NNFI", "CFI", "RNI", "IFI", "SRMR", "AIC", "AICc"))
-
-# Reporta os efeitos das trjetórias do modelo
-effects(sem)
-
-# Reporta os coeficientes estandardizados das trajetórias (linhas)
-standardizedCoefficients(sem)
-
-# Reporta os indices de modificação para melhorar o ajustamento do modelo
-modIndices(sem)
-
-#ISSO NAO FUI EU QUEM COLOCOU AQUI, NAO SEI O QUE ACHO. ACHO QUE VOCE QUE INSERIU :)
-library(pastecs)
-stat.desc(data) 
-
-###########################################################################################
-#NETWORK ANALYSIS
-###########################################################################################
+# #Latent Variables
+# # ME->Regulacao_externa,NA,1
+# # ME->Introjecao,var1,NA
+# # MI->Identificacao,var2,NA
+# # MI->Atingir_objetivos,NA,1
+# # MI->Experiencias_estimulantes,var3,NA
+# # MI->Para_conhecer,var4,NA
+# # F1->Capacidade_Funcional,NA,1
+# # F1->Limitacao_por_Aspectos_Fisicos,var5,NA
+# # F1->Aspectos_Emocionais,var7,NA
+# # F2->Saude_Mental,NA,1
+# # F2->Aspectos_Sociais,var9,NA
+# # F2->Vitalidade,var10,NA
+# MI->F1,pred1,NA
+# # ME->F1,pred2,NA
+# MI->F2,pred3,NA
+# ME->F2,pred4,NA
+# #data.TempPratica->data.Amotivacao,pred7,NA
+# # data.TempPratica->MI,pred8,NA
+# # data.TempPratica->ME,pred9,NA
+# data.TempPratica->F1,pred10,NA
+# data.TempPratica->F2,pred11,NA
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# #Erros and COv
+# ME<->ME,erro1,NA
+# MI<->MI,erro2,NA
+# # ME<->MI,coverro1,NA
+# F1<->F1,erro3,NA
+# F2<->F2,erro4,NA
+# data.TempPratica<->data.TempPratica,erro5,NA
+# #data.Amotivacao<->data.Amotivacao,erro6,NA
+# # data.Amotivacao<->Regulacao_externa,coverro1,NA
+
+# Aspectos_Emocionais<->Limitacao_por_Aspectos_Fisicos,coverros1,NA
+# Identificacao<->Introjecao,coverros2,NA
+# Para_conhecer<->Introjecao,coverros3,NA
+# Saude_Mental<->Vitalidade,coverro1,NA
+# Aspectos_Emocionais<->Limitacao_por_Aspectos_Fisicos,coverro2,NA
+
+# #EndofMODEL
+
+# # Criando matriz de covariância para analise do modelo
+# cov <- cov(modeloSem, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
+
+# # Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
+# # Argumentos são: modefic = modelo especificado na linha 141
+# # cov = matriz de covariancia criada na linha 154
+# # N = numero de observações (amostra)
+# sem <- sem(modefic, cov, N=81)
+
+# # Reporta o resumo das analises do modelo de equações estruturais
+# summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
+#                           "NNFI", "CFI", "RNI", "IFI", 
+#                           "SRMR", "AIC", "AICc","BIC"))
+
+# # Reporta os efeitos das trjetórias do modelo
+# effects(sem)
+
+# # Reporta os coeficientes estandardizados das trajetórias (linhas)
+# standardizedCoefficients(sem)
+
+# # Reporta os indices de modificação para melhorar o ajustamento do modelo
+# modIndices(sem)
+
+# #Bootstrap SEM model
+# bootSem(sem,R=100,Cov=cov,data=modeloSem,max.failures=1000000)
+
+# #MODELO 2 - QV 1 dominio apenas
+# # Funco para especificar o modelo que vai ser analisar
+# modefic <- specifyModel() 
+# # Apos rodar a funcao, inserir linha após linha do modelo 
+
+# #Latent Variables
+# ME->Regulacao_externa,NA,1
+# ME->Introjecao,var1,NA
+# ME->Identificacao,var2,NA
+# MI->Atingir_objetivos,NA,1
+# MI->Experiencias_estimulantes,var3,NA
+# MI->Para_conhecer,var4,NA
+# QV->Capacidade_Funcional,NA,1
+# QV->Limitacao_por_Aspectos_Fisicos,var5,NA
+# QV->Aspectos_Emocionais,var7,NA
+# QV->Saude_Mental,NA,1
+# QV->Aspectos_Sociais,var9,NA
+# QV->Vitalidade,var10,NA
+# MI->QV,pred1,NA
+# ME->QV,pred2,NA
+
+# #data.TempPratica->data.Amotivacao,pred7,NA
+# data.TempPratica->MI,pred8,NA
+# data.TempPratica->ME,pred9,NA
+# data.TempPratica->QV,pred10,NA
+
+# #Erros and COv
+# ME<->ME,erro1,NA
+# MI<->MI,erro2,NA
+# QV<->QV,erro3,NA
+# data.TempPratica<->data.TempPratica,erro5,NA
+# #data.Amotivacao<->data.Amotivacao,erro6,NA
+# # data.Amotivacao<->Regulacao_externa,coverro1,NA
+
+# # Aspectos_Emocionais<->Limitacao_por_Aspectos_Fisicos,coverros1,NA
+# # Identificacao<->Introjecao,coverros2,NA
+# # Para_conhecer<->Introjecao,coverros3,NA
+# # Saude_Mental<->Vitalidade,coverro1,NA
+# # Aspectos_Emocionais<->Limitacao_por_Aspectos_Fisicos,coverro2,NA
+
+# #EndofMODEL
+
+# # Criando matriz de covariância para analise do modelo
+# cov <- cov(modeloSem, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
+
+# # Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
+# # Argumentos são: modefic = modelo especificado na linha 141
+# # cov = matriz de covariancia criada na linha 154
+# # N = numero de observações (amostra)
+# sem <- sem(modefic, cov, N=81)
+
+# # Reporta o resumo das analises do modelo de equações estruturais
+# summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
+#                           "NNFI", "CFI", "RNI", "IFI", 
+#                           "SRMR", "AIC", "AICc","BIC"))
+
+# # Reporta os efeitos das trjetórias do modelo
+# effects(sem)
+
+# # Reporta os coeficientes estandardizados das trajetórias (linhas)
+# standardizedCoefficients(sem)
+
+# # Reporta os indices de modificação para melhorar o ajustamento do modelo
+# modIndices(sem)
+
+
+
+
+
+# #MODELO 2
+# # Função para especificar o modelo que vai ser analisar
+# modefic <- specifyModel() # Após rodar a função, inserir linha após linha do modelo 
+
+# #Latent Variables
+# ME->Regulacao_externa,NA,1
+# ME->Introjecao,var1,NA
+# ME->Identificacao,var2,NA
+# MI->Atingir_objetivos,NA,1
+# MI->Experiencias_estimulantes,var3,NA
+# MI->Para_conhecer,var4,NA
+# ME<->ME,erro1,NA
+# MI<->MI,erro2,NA
+# MI->Capacidade_Funcional_RAW,mipred01,NA
+# MI->Limitacao_por_Aspectos_Fisicos_RAW,mipred02,NA
+# MI->Dor_RAW,mipred03,NA
+# MI->Estado_Geral_de_Saude_RAW,mipred04,NA
+# MI->Aspectos_Emocionais_RAW,mipred05,NA
+# MI->Saude_Mental_RAW,mipred06,NA
+# MI->Aspectos_Sociais_RAW,mipred07,NA
+# MI->Vitalidade_RAW,mipred08,NA
+# ME->Capacidade_Funcional_RAW,mepred11,NA
+# ME->Limitacao_por_Aspectos_Fisicos_RAW,mepred12,NA
+# ME->Dor_RAW,mepred13,NA
+# ME->Estado_Geral_de_Saude_RAW,mepred14,NA
+# ME->Aspectos_Emocionais_RAW,mepred15,NA
+# ME->Saude_Mental_RAW,mepred16,NA
+# ME->Aspectos_Sociais_RAW,mepred17,NA
+# ME->Vitalidade_RAW,mepred18,NA
+
+# #EndofMODEL
+
+# # Criando matriz de covariância para analise do modelo
+# cov <- cov(modeloSem, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
+
+# # Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
+# # Argumentos são: modefic = modelo especificado na linha 141
+# # cov = matriz de covariancia criada na linha 154
+# # N = numero de observações (amostra)
+# sem <- sem(modefic, cov, N=184)
+
+# # Reporta o resumo das analises do modelo de equações estruturais
+# summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
+#                           "NNFI", "CFI", "RNI", "IFI", "SRMR", "AIC", "AICc"))
+
+# # Reporta os efeitos das trjetórias do modelo
+# effects(sem)
+
+# # Reporta os coeficientes estandardizados das trajetórias (linhas)
+# standardizedCoefficients(sem)
+
+# # Reporta os indices de modificação para melhorar o ajustamento do modelo
+# modIndices(sem)
+
+# #ISSO NAO FUI EU QUEM COLOCOU AQUI, NAO SEI O QUE ACHO. ACHO QUE VOCE QUE INSERIU :)
+# library(pastecs)
+# stat.desc(data) 
+
+# #MODELO 2 - Excluindo os paths:
+# #EC <--- Ego  
+# #Ego <--- Comple
+# # Função para especificar o modelo que vai ser analisar
+# modefic <- specifyModel() # Após rodar a função, inserir linha após linha do modelo 
+
+# #Latent Variables
+# EC->Persis,NA,1
+# EC->Uniao,var4,NA
+# EC->Prep,var5,NA
+# EC->Habil,var6,NA
+# EC->Esfo,var7,NA
+# Taref->EC,pred1,NA
+# Compro->Taref,cartq1,NA
+# Compro->Ego,cartq2,NA
+# Comple->Taref,cartq3,NA
+# Prox->Taref,cartq5,NA
+# Prox->Ego,cartq6,NA
+
+# #Erros and COv
+# EC<->EC,erro1,NA
+# Habil<->Prep,cov1,NA
+# Comple<->Comple,error2,NA
+# Compro<->Compro,error3,NA
+# Prox<->Prox,error4,NA
+# Comple<->Compro,cov2,NA
+
+# # Criando matriz de covariância para analise do modelo
+# cov <- cov(data, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
+
+# # Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
+# # Argumentos são: modefic = modelo especificado na linha 141
+# # cov = matriz de covariancia criada na linha 154
+# # N = numero de observações (amostra)
+# sem <- sem(modefic, cov, N=184)
+
+# # Reporta o resumo das analises do modelo de equações estruturais
+# summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
+#                           "NNFI", "CFI", "RNI", "IFI", "SRMR", "AIC", "AICc"))
+
+# # Reporta os efeitos das trjetórias do modelo
+# effects(sem)
+
+# # Reporta os coeficientes estandardizados das trajetórias (linhas)
+# standardizedCoefficients(sem)
+
+# # Reporta os indices de modificação para melhorar o ajustamento do modelo
+# modIndices(sem)
+
+# #ISSO NAO FUI EU QUEM COLOCOU AQUI, NAO SEI O QUE ACHO. ACHO QUE VOCE QUE INSERIU :)
+# library(pastecs)
+# stat.desc(data) 
+
+# #MODELO 3 - Excluindo Prox do modelo
+# # Função para especificar o modelo que vai ser analisar
+# modefic <- specifyModel() # Após rodar a função, inserir linha após linha do modelo 
+
+# #Latent Variables
+# EC->Persis,NA,1
+# EC->Uniao,var4,NA
+# EC->Prep,var5,NA
+# EC->Habil,var6,NA
+# EC->Esfo,var7,NA
+# Taref->EC,pred1,NA
+# Compro->Taref,cartq1,NA
+# Compro->Ego,cartq2,NA
+# Comple->Taref,cartq3,NA
+
+# #Erros and COv
+# EC<->EC,erro1,NA
+# Habil<->Prep,cov1,NA
+# Comple<->Comple,error2,NA
+# Compro<->Compro,error3,NA
+# Comple<->Compro,cov2,NA
+
+# # Criando matriz de covariância para analise do modelo
+# data<-remove.vars(data,c("Prox"))
+# cov <- cov(data, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
+
+# # Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
+# # Argumentos são: modefic = modelo especificado na linha 141
+# # cov = matriz de covariancia criada na linha 154
+# # N = numero de observações (amostra)
+# sem <- sem(modefic, cov, N=184)
+
+# # Reporta o resumo das analises do modelo de equações estruturais
+# summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
+#                           "NNFI", "CFI", "RNI", "IFI", "SRMR", "AIC", "AICc"))
+
+# # Reporta os efeitos das trjetórias do modelo
+# effects(sem)
+
+# # Reporta os coeficientes estandardizados das trajetórias (linhas)
+# standardizedCoefficients(sem)
+
+# # Reporta os indices de modificação para melhorar o ajustamento do modelo
+# modIndices(sem)
+
+# #MODELO 4 - Variante com o Relação treinados altet como latente
+# # Função para especificar o modelo que vai ser analisar
+# modefic <- specifyModel() # Após rodar a função, inserir linha após linha do modelo 
+
+# #Latent Variables
+# EC->Persis,NA,1
+# EC->Uniao,var4,NA
+# EC->Prep,var5,NA
+# EC->Habil,var6,NA
+# EC->Esfo,var7,NA
+# Compro->RTA,NA,1
+# Comple->RTA,rta3,NA
+# Prox->RTA,cartq5,NA
+# Taref->EC,pred1,NA
+# Ego->EC,pred2,NA
+# RTA->Taref,pred3,NA
+# RTA->Ego,pred4,NA
+
+# #Erros and COv
+# EC<->EC,erro1,NA
+# RTA<->RTA,erro2,NA
+# Habil<->Prep,cov1,NA
+# Comple<->Comple,error2,NA
+# Compro<->Compro,error3,NA
+# Prox<->Prox,error4,NA
+# Comple<->Prox,erro5,NA
+# Compro<->Prox,erro6,NA
+# #Comple<->Compro,cov2,NA
+
+# # Criando matriz de covariância para analise do modelo
+# cov <- cov(data, y = NULL, use = "everything", method = c("pearson", "kendall", "spearman"))
+
+# # Rodando o modelo de equações estruturais aqui no caso uma Analise Fatorial Confirmatória
+# # Argumentos são: modefic = modelo especificado na linha 141
+# # cov = matriz de covariancia criada na linha 154
+# # N = numero de observações (amostra)
+# sem <- sem(modefic, cov, N=184)
+
+# # Reporta o resumo das analises do modelo de equações estruturais
+# summary(sem,fit.indices=c("GFI", "AGFI", "RMSEA", "NFI", 
+#                           "NNFI", "CFI", "RNI", "IFI", "SRMR", "AIC", "AICc"))
+
+# # Reporta os efeitos das trjetórias do modelo
+# effects(sem)
+
+# # Reporta os coeficientes estandardizados das trajetórias (linhas)
+# standardizedCoefficients(sem)
+
+# # Reporta os indices de modificação para melhorar o ajustamento do modelo
+# modIndices(sem)
+
+# #ISSO NAO FUI EU QUEM COLOCOU AQUI, NAO SEI O QUE ACHO. ACHO QUE VOCE QUE INSERIU :)
+# library(pastecs)
+# stat.desc(data) 
+
+# ###########################################################################################
+# #NETWORK ANALYSIS
+# ###########################################################################################
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
