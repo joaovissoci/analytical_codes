@@ -26,9 +26,9 @@ library, character.only=T)
 #ORGANIZANDO O BANCO DE DADOS
 #####################################################################################
 #Exemplo de como inserir o banco de dados direto de um arquivo físico do computador
-data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/valoresdimensoes.csv",sep=",")
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/valoresdimensoes.csv",sep=",")
 
-graph<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/graph.csv",sep=",")
+graph<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/graph.csv",sep=",")
 
 #####################################################################################
 #ANALISES DESCRITIVAS
@@ -339,7 +339,7 @@ text(0.9,0.9,
 ###########################################################################################
 #attach(table2)
 # data<-t(graph)
-data<-as.matrix(data)
+# data<-as.matrix(data)
 names<-c("Iniciação com Amigos",
                    "Iniciação Reabilitação", "Benefícios Sociais",
                    "Beneíficos Físicos","Beneficios Psicológicos",
@@ -353,28 +353,17 @@ names<-c("Iniciação com Amigos",
 cor_data<-cor_auto(graph)
 
 #layout = spring
-Q1 <- qgraph(cor_data, borders = TRUE, cut=10, 
-  minimum = 5, 
-  layout = "spring",directed=FALSE,
-  gray=TRUE)
+Q1 <- qgraph(cor_data,
+  borders = TRUE,
+  cut=0.6, 
+  minimum = 0.2, 
+  layout = "spring",
+  directed=FALSE,
+  gray=FALSE)
 
 #layout = circular
 Q1 <- qgraph(dataMatrix, borders = TRUE, cut=10, 
   minimum = 5, labels=names,label.cex = 0.5, 
-  layout = "circular",label.scale=FALSE,
-  gray=TRUE)
-
-##Plycloric correlations
-datacor<-hetcor(graph)
-#layout = spring
-Q1 <- qgraph(datacor, borders = TRUE, cut=0.40, 
-  minimum = 0.20, labels=names,label.cex = 0.5, 
-  layout = "spring",directed=FALSE,label.scale=FALSE,
-  gray=TRUE)
-
-#layout = circular
-Q1 <- qgraph(datacor, borders = TRUE, cut=0.40, 
-  minimum = 0.20, labels=names,label.cex = 0.5, 
   layout = "circular",label.scale=FALSE,
   gray=TRUE)
 
