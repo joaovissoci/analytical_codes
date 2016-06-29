@@ -26,9 +26,9 @@ library, character.only=T)
 #ORGANIZANDO O BANCO DE DADOS
 #####################################################################################
 #Exemplo de como inserir o banco de dados direto de um arquivo físico do computador
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/valoresdimensoes.csv",sep=",")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/valoresdimensoes.csv",sep=",")
 
-graph<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/graph.csv",sep=",")
+graph<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/graph.csv",sep=",")
 
 #####################################################################################
 #ANALISES DESCRITIVAS

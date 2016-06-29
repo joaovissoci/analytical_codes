@@ -8,25 +8,81 @@
 ###################################################
 
 # install.packages("readstata13")
-library(readstata13)
-library(poLCA)
 #All packages must be installes with install.packages() function
 lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", 
 	"moments","GPArotation","nFactors","boot","psy", "car",
 	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
 	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
-	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape"),
+	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
+	"poLCA","readstata13"),
 library, character.only=T)
 
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
-data <- read.dta13("/Users/joaovissoci/Desktop/sosas_data.dta")
+data <- read.dta13("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
 
-data_barries<-subset(data,data$Untreated==1)
 
-barrier_data<-with(data_barries,data.frame(
+#recode missing and other random problems
+data$Education<-car::recode(
+	data$Education,"'edu_none'=0;
+						'primary_school'=1;
+						'secondary_school1'=3;
+						'secondary_school2'=3;
+						'tertiary_school'=4;
+						'university'=4;
+						else=NA")
+
+data$Literacy<-car::recode(
+	data$Literacy,"'no'=0;
+					   'yes'=1;
+					   else=NA")
+
+data$Occupation<-car::recode(
+	data$Occupation,"'domestic_helpers'=1;
+						'farmer'=1;
+						'government_employees'=1;
+						'homemaker'=1;
+						'nongov_employees'=1;
+						'self_employed'=1;
+						'student'=0;
+						'unemployed'=0;
+						else=NA")
+
+# data$Ethnicity<-car::recode(
+# 	data$Ethnicity,"''
+# 	")
+
+# data$Religion<-car::recode(
+# 	data$Religion,"''
+# 	")
+
+data$Household_stay_length<-car::recode(
+	data$Household_stay_length,"
+	'days'='daysweeks';
+	'weeks'='daysweeks';
+	'-77'=NA;
+	'-99'=NA")
+
+data$Time_ill<-car::recode(
+	data$Time_ill,"
+	'-77'=NA;
+	'-99'=NA")
+
+# data$Age<-car::recode(
+# 	data$Age,"
+# 	0:15='children';
+# 	16:34='young adults';
+# 	35:64='adults';
+# 	65:102='elderly'")
+# data$Age<-as.factor(data$Age)
+
+data_barriers_temp<-subset(data,data$Untreated==1)
+data_barriers<-subset(data_barriers_temp,
+	data_barriers_temp$Age>=18)
+
+barrier_data<-with(data_barriers,data.frame(
 	Prob1Reason_no_money,
 	Prob1Reason_no_transport,
 	# Prob1Reason_no_time,
@@ -79,7 +135,7 @@ barrier_data<-with(data_barries,data.frame(
 	# Prob5Long12
 	))
 
-ses_data<-with(data_barries,data.frame(
+ses_data<-with(data_barriers,data.frame(
 	Gender,
 	Age,
 	Education,
@@ -92,64 +148,88 @@ ses_data<-with(data_barries,data.frame(
 	Health_status
 	))
 
-#recode missing and other random problems
-ses_data$Education<-car::recode(
-	ses_data$Education,"'edu_none'=0;
-						'primary_school'=1;
-						'secondary_school1'=3;
-						'secondary_school2'=3;
-						'tertiary_school'=4;
-						'university'=4;
-						else=NA")
-
-ses_data$Literacy<-car::recode(
-	ses_data$Literacy,"'no'=0;
-					   'yes'=1;
-					   else=NA")
-
-ses_data$Occupation<-car::recode(
-	ses_data$Occupation,"'domestic_helpers'=1;
-						'farmer'=1;
-						'government_employees'=1;
-						'homemaker'=1;
-						'nongov_employees'=1;
-						'self_employed'=1;
-						'student'=0;
-						'unemployed'=0;
-						else=NA")
-
-# ses_data$Ethnicity<-car::recode(
-# 	ses_data$Ethnicity,"''
-# 	")
-
-# ses_data$Religion<-car::recode(
-# 	ses_data$Religion,"''
-# 	")
-
-ses_data$Household_stay_length<-car::recode(
-	ses_data$Household_stay_length,"
-	'-77'=NA;
-	'-99'=NA")
-
-ses_data$Time_ill<-car::recode(
-	ses_data$Time_ill,"
-	'-77'=NA;
-	'-99'=NA")
-
-# ses_data$Age<-car::recode(
-# 	ses_data$Age,"
-# 	0:15='children';
-# 	16:34='young adults';
-# 	35:64='adults';
-# 	65:102='elderly'")
-# ses_data$Age<-as.factor(ses_data$Age)
-
 
 analytical_data<-data.frame(ses_data,barrier_data)
 analytical_data<-na.omit(analytical_data)
+
 ###################################################
-#DESCRIPTIVES
+#Table 1. Socio-demographic characteristics of survey participants
 ###################################################
+str(data_barriers_temp)
+
+table(data$Untreated)
+
+
+logmodel<-glm(Prob1Reason_no_money ~ 
+				Age + 
+				Gender +
+				Education +
+				Literacy +
+				Occupation +
+				Household_stay_length +
+				Time_ill +
+				Health_status,
+			family=binomial, data=analytical_data)
+summary(logmodel)
+#anova(reglogGEU)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+#predict(model1_death, type="response") # predicted values
+#residuals(model1_death, type="deviance") # residuals
+logistic.display(logmodel)
+
+logmodel<-glm(Prob1Reason_no_transport ~ 
+				Age + 
+				Gender +
+				Education +
+				Literacy +
+				Occupation +
+				Household_stay_length +
+				Time_ill +
+				Health_status,
+			family=binomial, data=analytical_data)
+summary(logmodel)
+#anova(reglogGEU)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+#predict(model1_death, type="response") # predicted values
+#residuals(model1_death, type="deviance") # residuals
+logistic.display(logmodel)
+
+logmodel<-glm(Prob1Reason_fear ~ 
+				Age + 
+				Gender +
+				Education +
+				Literacy +
+				Occupation +
+				Time_ill +
+				Health_status,
+			family=binomial, data=analytical_data)
+summary(logmodel)
+#anova(reglogGEU)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+#predict(model1_death, type="response") # predicted values
+#residuals(model1_death, type="deviance") # residuals
+logistic.display(logmodel)
+
+logmodel<-glm(Prob1Reason_no_need ~ 
+				Age + 
+				Gender +
+				Education +
+				Literacy +
+				Occupation +
+				Time_ill +
+				Health_status,
+			family=binomial, data=analytical_data)
+summary(logmodel)
+#anova(reglogGEU)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+#predict(model1_death, type="response") # predicted values
+#residuals(model1_death, type="deviance") # residuals
+logistic.display(logmodel)
+
+###################################################
+#Latent class analysis
+###################################################
+
 ## Questions
 # http://rfunction.com/archives/1499
 # https://drive.google.com/open?id=0B4TReYGK49h_X09ZYno1OG5aUVk
@@ -158,7 +238,7 @@ analytical_data<-na.omit(analytical_data)
 
 # Building the formula
 # To specify a latent class model, poLCA uses the standard, symbolic R model formula expres- sion. The response variables are the manifest variables of the model. Because latent class models have multiple manifest variables, these variables must be “bound” as cbind(Y1, Y2, Y3, ...) in the model formula. For the basic latent class model with no covariates, the formula definition takes the form
-f <- cbind(Gender, Age, Education, Literacy,
+f <- cbind(Gender, Education, Literacy,
 		   Occupation, Household_stay_length,
 		   Time_ill, Health_status) ~ 1
 
@@ -170,7 +250,9 @@ f <- cbind(Gender, Age, Education, Literacy,
 #     tol = 1e-10, na.rm = TRUE, probs.start = NULL, nrep = 1,
 #     verbose = TRUE, calc.se = TRUE)
 
-# 2 classes
+#========================================================= 
+# Fit for 2 latent classes: 
+#========================================================= 
 lcamodel <- poLCA(f, ses_data, nclass = 2)
 
 # Entropy
@@ -180,22 +262,23 @@ error_post <- mean(apply(lcamodel$posterior, 1, entropy))
 R2_entropy <- (error_prior - error_post) / error_prior
 R2_entropy
 
-# ========================================================= 
-# Fit for 2 latent classes: 
-# ========================================================= 
-# number of observations: 332 
-# number of estimated parameters: 39 
-# residual degrees of freedom: 293 
-# maximum log-likelihood: -2426.673 
+### results
+# number of observations: 245 
+# number of estimated parameters: 27 
+# residual degrees of freedom: 218 
+# maximum log-likelihood: -1243.071 
  
-# AIC(2): 4931.346
-# BIC(2): 5079.746
-# G^2(2): 1283.111 (Likelihood ratio/deviance statistic) 
-# X^2(2): 7185.324 (Chi-square goodness of fit) 
+# AIC(2): 2540.142
+# BIC(2): 2634.676
+# G^2(2): 284.7812 (Likelihood ratio/deviance statistic) 
+# X^2(2): 908.1992 (Chi-square goodness of fit)  
 
-# Entropy = [1] 0.9024248
+# Entropy = [1] 0.7747763
 
-#3 classes
+# ========================================================= 
+# Fit for 3 latent classes: 
+# ========================================================= 
+
 lcamodel <- poLCA(f, ses_data, nclass = 3)
 
 # Entropy
@@ -205,22 +288,24 @@ error_post <- mean(apply(lcamodel$posterior, 1, entropy),na.rm=TRUE)
 R2_entropy <- (error_prior - error_post) / error_prior
 R2_entropy
 
-# ========================================================= 
-# Fit for 3 latent classes: 
-# ========================================================= 
-# number of observations: 332 
-# number of estimated parameters: 59 
-# residual degrees of freedom: 273 
-# maximum log-likelihood: -2329.039 
+#results
+
+# number of observations: 245 
+# number of estimated parameters: 41 
+# residual degrees of freedom: 204 
+# maximum log-likelihood: -1231.49 
  
-# AIC(3): 4776.077
-# BIC(3): 5000.58
-# G^2(3): 1087.842 (Likelihood ratio/deviance statistic) 
-# X^2(3): 5147.289 (Chi-square goodness of fit) 
+# AIC(3): 2544.98
+# BIC(3): 2688.532
+# G^2(3): 261.6194 (Likelihood ratio/deviance statistic) 
+# X^2(3): 761.6353 (Chi-square goodness of fit) 
 
-# Entropy = [1] 0.8971588
+# Entropy = [1] 0.7727836
 
-#4 classes
+# ========================================================= 
+# Fit for 4 latent classes: 
+# ========================================================= 
+
 lcamodel <- poLCA(f, ses_data, nclass = 4)
 
 # Entropy
@@ -230,22 +315,23 @@ error_post <- mean(apply(lcamodel$posterior, 1, entropy),na.rm=TRUE)
 R2_entropy <- (error_prior - error_post) / error_prior
 R2_entropy
 
-# ========================================================= 
-# Fit for 4 latent classes: 
-# ========================================================= 
-# number of observations: 332 
-# number of estimated parameters: 79 
-# residual degrees of freedom: 253 
-# maximum log-likelihood: -2302.42 
+# results
+# number of observations: 245 
+# number of estimated parameters: 55 
+# residual degrees of freedom: 190 
+# maximum log-likelihood: -1216.756 
  
-# AIC(4): 4762.839
-# BIC(4): 5063.445
-# G^2(4): 1034.604 (Likelihood ratio/deviance statistic) 
-# X^2(4): 4628.984 (Chi-square goodness of fit) 
+# AIC(4): 2543.513
+# BIC(4): 2736.082
+# G^2(4): 232.1518 (Likelihood ratio/deviance statistic) 
+# X^2(4): 443.2317 (Chi-square goodness of fit) 
 
-# Entropy = [1] 0.7920469
+# Entropy = [1] 0.6794298
 
-#5 classes
+# ========================================================= 
+# Fit for 5 latent classes: 
+# ========================================================= 
+
 lcamodel <- poLCA(f, ses_data, nclass = 5)
 
 # Entropy
@@ -255,20 +341,17 @@ error_post <- mean(apply(lcamodel$posterior, 1, entropy),na.rm=TRUE)
 R2_entropy <- (error_prior - error_post) / error_prior
 R2_entropy
 
-# ========================================================= 
-# Fit for 5 latent classes: 
-# ========================================================= 
-# number of observations: 332 
-# number of estimated parameters: 99 
-# residual degrees of freedom: 233 
-# maximum log-likelihood: -2282.563 
+# number of observations: 245 
+# number of estimated parameters: 69 
+# residual degrees of freedom: 176 
+# maximum log-likelihood: -1213.042 
  
-# AIC(5): 4763.126
-# BIC(5): 5139.835
-# G^2(5): 994.891 (Likelihood ratio/deviance statistic) 
-# X^2(5): 4367.721 (Chi-square goodness of fit) 
+# AIC(5): 2564.083
+# BIC(5): 2805.67
+# G^2(5): 224.7225 (Likelihood ratio/deviance statistic) 
+# X^2(5): 513.0323 (Chi-square goodness of fit) 
 
-# Entropy = [1] 0.7675588
+# Entropy = [1] 0.7103862
 
 #nclass = number of latent classes to assume
 #maxiter = maximum of iterations
