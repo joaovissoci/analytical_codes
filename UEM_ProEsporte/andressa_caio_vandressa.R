@@ -19,16 +19,18 @@
 #Substituir o termo em " " pelo nome do pacote que quer carregar
 #Por exemplo, se eu queri inserir o pacote SEM pra analise do 
 #Modelo de equaçoes estruturais, eu inclui na função "sem"
-lapply(c("Hmisc","car","GPArotation","psych","nortest","ggplot2","pastecs","repmis",
-  "mvnormtest","polycor","sem","nortest","ltm","gdata"), 
+lapply(c("Hmisc","car","GPArotation","psych","nortest",
+  "ggplot2","pastecs","repmis",
+  "mvnormtest","polycor","sem","nortest","ltm","gdata",
+  "lavaan","semPlot"), 
 library, character.only=T)
 #####################################################################################
 #ORGANIZANDO O BANCO DE DADOS
 #####################################################################################
 #Exemplo de como inserir o banco de dados direto de um arquivo físico do computador
-data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/valoresdimensoes.csv",sep=",")
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/valoresdimensoes.csv",sep=",")
 
-graph<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/graph.csv",sep=",")
+graph<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/graph.csv",sep=",")
 
 #####################################################################################
 #ANALISES DESCRITIVAS
@@ -319,20 +321,53 @@ MCS =~ Saude_Mental + Aspectos_Sociais + Vitalidade
 #regressios - before the ~ comes the outcome of the regression
 PCS ~ MI + ME + data.TempPratica
 MCS ~ MI
+
+#orthogonal factors
+# MI ~~ 0*ME
+# MCS ~~ 0*PCS
 '
  
 fit <- sem(model, data=modeloSem) #fitting the model
-summary(fit, standardized=TRUE) #getting a summary of the model stats
+summary(fit, standardized=TRUE,
+  fit.measures=TRUE,
+  rsquare=TRUE) #getting a summary of the model stats
 # parameterEstimates(fit) #extracting parameters
 standardizedSolution(fit) #standardized parameters
-fitMeasures(fit,c("cfi","tli","rmsea","rmsea.ci.upper",
-  "rmsea.ci.lower","srmr")) #fit indices
+fitMeasures(fit)#,c("cfi","tli","rmsea","rmsea.ci.upper",
+  # "rmsea.ci.lower","srmr")) #fit indices
 # mi <- modindices(fit) #modification index
 # mi[mi$op == "=~",] #extract modificartion index to latent models
+nodeLabels<-c("Regulação\n externa",
+             "Introjeção",
+             "Identificação",
+             "Atingir\n objetivos",
+             "Exp.\n estimulantes",
+             "Conhecimento",
+             "Capacidade\n funcional",
+             "Limit.\n física",
+             "Vitalidade",
+            "Tempo\n de prática", 
+             "Aspectos\n sociais",
+             "Limit.\n emocional",
+             "Saúde\n mental",
+             "ME",
+             "MI",
+             "FU",
+             "SP")
+color<-c(rep("grey",13),rep("white",4))
+borders<-c(rep("FALSE",13),rep("TRUE",4))
 semPaths(fit,"std",layout="spring",residuals=FALSE,
-  edge.color="black")
-text(0.9,0.9,
-  labels="Fit Indices \nCFI=0.98 \nTLI=0.97 \nRMSEA (95%CI)=0.05(0.00;0.08")
+  edge.color="black",
+  nodeLabels=nodeLabels,
+  exoCov=FALSE,
+  edge.label.cex=1.0,
+  equalizeManifests=TRUE,
+  label.scale=FALSE,
+  label.cex=1,
+  color=color,
+  borders=borders)
+# text(0.9,0.9,
+#   labels="Fit Indices \nCFI=0.98 \nTLI=0.97 \nRMSEA (95%CI)=0.05(0.00;0.08")
 
 ###########################################################################################
 #MODELO GRAFOS
@@ -340,33 +375,60 @@ text(0.9,0.9,
 #attach(table2)
 # data<-t(graph)
 # data<-as.matrix(data)
-names<-c("Iniciação com Amigos",
-                   "Iniciação Reabilitação", "Benefícios Sociais",
-                   "Beneíficos Físicos","Beneficios Psicológicos",
-                   "Suporte Parental","Suporte Familiar","Busca por Saúde",
-                   "Melhora da Competência","Reconhecimento","Novas Experiencias",
-                   "Ansiedade para aprender","Experiencias previas",
-                   "Mudanças contextuais",
-                   "Prática Lazer","Formação Humana","Mot.Intrínseca",
-                   "Mot.Extrínseca","QV Funcional","QV Subjetiva")
 
 cor_data<-cor_auto(graph)
 
+names<-c("Iniciação\n com amigos",
+                   "Iniciação\n reabilitação", 
+                   "Benefícios\n sociais",
+                   "Beneíficos\n físicos",
+                   "Beneficios\n psicológicos",
+                   "Suporte\n parental",
+                   "Suporte\n familiar",
+                   "Busca\n por saúde",
+                   "Melhora\n da competência",
+                   "Reconhecimento",
+                   "Novas\n experiencias",
+                   "Ansiedade\n para aprender",
+                   "Experiencias\n previas",
+                   "Mudanças\n contextuais",
+                   "Prática\n lazer",
+                   "Formação\n humana",
+                   "Motivação\n Itrínseca",
+                   "Mot.\n Extrínseca",
+                   "Funcionalidade",
+                    "Saúde\n psicossocial")
+
+# color<-c("gray87",
+#          "gray87",
+#          "gray68",
+#          "gray48",
+#          "gray68",
+#          "gray68",
+#          "gray48",
+#          "gray48",
+#          "gray87",
+#          "gray87",
+#          "white",
+#          "white",
+#          "white",
+#          "gray87",
+#          "white",
+#          "gray68")
+
 #layout = spring
 Q1 <- qgraph(cor_data,
-  borders = TRUE,
   cut=0.6, 
-  minimum = 0.2, 
+  minimum = 0.4, 
   layout = "spring",
   directed=FALSE,
-  gray=FALSE)
-
-#layout = circular
-Q1 <- qgraph(dataMatrix, borders = TRUE, cut=10, 
-  minimum = 5, labels=names,label.cex = 0.5, 
-  layout = "circular",label.scale=FALSE,
-  gray=TRUE)
-
+  gray=FALSE,
+  labels=names,
+  label.scale=FALSE,
+  label.cex=0.8,
+  # color=color,
+  borders = FALSE,
+  posCol = "black")
 
 
 
