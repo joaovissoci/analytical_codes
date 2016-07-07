@@ -25,7 +25,11 @@
 #library(Hmisc)
 
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments","GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf","reshape2","mclust","foreign","survival","memisc","lme4","lmerTest","dplyr","PMCMR"),library, character.only=T)
+lapply(c("sem","ggplot2", "psych", "irr", "nortest", 
+	"moments","GPArotation","nFactors","boot","psy", 
+	"car","vcd", "gridExtra","mi","VIM","epicalc","gdata",
+	"sqldf","reshape2","mclust","foreign","survival","memisc",
+	"lme4","lmerTest","dplyr","PMCMR"),library, character.only=T)
 
 #####################################################################################
 #IMPORTING DATA
@@ -41,7 +45,7 @@ lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments","GPArotation","nF
 #                                  sep = ",",
 #                                  header = TRUE)
 
-data<-read.csv("/home/joao/Dropbox/datasets/DGNN/SOSAS/SOSAS_gis/districts_gis_uganda.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/SOSAS_gis/districts_gis_uganda.csv",sep=',')
 
 #data_hub<-read.csv("/home/joao/Desktop/hubdistance_neuro.csv",sep=',')
 
@@ -49,35 +53,35 @@ data<-read.csv("/home/joao/Dropbox/datasets/DGNN/SOSAS/SOSAS_gis/districts_gis_u
 #DATA MANAGEMENT
 #############################################################################
 
-data <- na.omit(data)
+# data <- na.omit(data)
 
-data_merge<-melt(with(data_hub,data.frame(tot_prop,District),id="District"))
-data_cast<-dcast(data_merge,District~variable,mean)
-write.csv(data_cast,"/home/joao/Desktop/deleteme2.csv")
+# data_merge<-melt(with(data_hub,data.frame(tot_prop,District),id="District"))
+# data_cast<-dcast(data_merge,District~variable,mean)
+# write.csv(data_cast,"/home/joao/Desktop/deleteme2.csv")
 #####################################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
 #####################################################################################
 
 summary(data)
 
-with(data,by(POP_TOTAL,uganda_p_4,ad.test))
+with(data,by(POP_TOTAL,region,ad.test))
 
-with(data,by(POP_TOTAL,uganda_p_4,sum))/sum(data$POP_TOTAL)
+with(data,by(POP_TOTAL,region,sum))/sum(data$POP_TOTAL)
 
-with(data,by(URBAN_POP,uganda_p_4,ad.test))
-with(data,by(URBAN_POP,uganda_p_4,summary))
+with(data,by(URBAN_POP,region,ad.test))
+with(data,by(URBAN_POP,region,summary))
 
-with(data,by(RURAL_POP,uganda_p_4,ad.test))
-with(data,by(RURAL_POP,uganda_p_4,ad.test))
+with(data,by(RURAL_POP,region,ad.test))
+with(data,by(RURAL_POP,region,ad.test))
 
-with(data,by(USN_district,uganda_p_4,summary))
-with(data,by(area_district,uganda_p_4,summary))
-with(data,by(area_district,uganda_p_4,ad.test))
-with(data,by(area_district,uganda_p_4,sd))
+with(data,by(USN_district,region,summary))
+with(data,by(area_district,region,summary))
+with(data,by(area_district,region,ad.test))
+with(data,by(area_district,region,sd))
 
-with(data,by(distance_district,uganda_p_4,summary))
-with(data,by(distance_district,uganda_p_4,ad.test))
-with(data,by(distance_district,uganda_p_4,sd))
+with(data,by(distance_district/1000,region,summary))
+with(data,by(distance_district,region,ad.test))
+with(data,by(distance_district,region,sd))
 
 #####################################################################################
 #ANALYSIS OF VARIANCE
