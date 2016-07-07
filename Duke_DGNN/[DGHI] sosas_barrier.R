@@ -137,7 +137,7 @@ barrier_data<-with(data_barriers,data.frame(
 
 ses_data<-with(data_barriers,data.frame(
 	Gender,
-	Age,
+	# Age,
 	Education,
 	Literacy,
 	Occupation,
@@ -253,6 +253,7 @@ f <- cbind(Gender, Education, Literacy,
 #========================================================= 
 # Fit for 2 latent classes: 
 #========================================================= 
+ses_data<-na.omit(ses_data)
 lcamodel <- poLCA(f, ses_data, nclass = 2)
 
 # Entropy
@@ -333,6 +334,7 @@ R2_entropy
 # ========================================================= 
 
 lcamodel <- poLCA(f, ses_data, nclass = 5)
+summary(lcamodel)
 
 # Entropy
 entropy<-function (p) sum(-p*log(p))
