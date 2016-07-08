@@ -21,7 +21,7 @@ library, character.only=T)
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
-data <- read.dta13("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
+data <- read.dta13("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
 
 
 #recode missing and other random problems
@@ -192,7 +192,181 @@ analytical_data_dic<-data.frame(ses_data,barriers_dic)
 analytical_data<-data.frame(ses_data,barriers)
 
 ###################################################
-#Table 1. Socio-demographic characteristics of survey participants
+#Table 1
+###################################################
+data_ses<-subset(data,
+	data$Age>=18)
+
+# Age
+# describe(data_ses$Age)
+describeBy(data_ses$Age,data_ses$Untreated)
+# t-test: # independent 2-group, 2 level IV
+testName <- t.test(age_victims ~ victimis_outcome_all)
+
+# Gender
+# table<-table(victms_gender)
+# table
+# prop.table(table)
+table<-table(data_ses$Gender,data_ses$Untreated)
+table
+prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(victimis_outcome_driversonly ~   as.factor(victms_gender),family=binomial)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# #predict(model1_death, type="response") # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# logistic.display(logmodel)
+
+# location
+# table<-table(victms_gender)
+# table
+# prop.table(table)
+table<-table(data_ses$E15_rural,data_ses$Untreated)
+table
+prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(victimis_outcome_driversonly ~   as.factor(victms_gender),family=binomial)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# #predict(model1_death, type="response") # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# logistic.display(logmodel)
+
+# Household size
+# describe(data_ses$Age)
+describeBy(data_ses$Household,data_ses$Untreated)
+# t-test: # independent 2-group, 2 level IV
+testName <- t.test(age_victims ~ victimis_outcome_all)
+
+# Education
+# table<-table(victms_gender)
+# table
+# prop.table(table)
+table<-table(data_ses$Education,data_ses$Untreated)
+table
+prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(victimis_outcome_driversonly ~   as.factor(victms_gender),family=binomial)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# #predict(model1_death, type="response") # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# logistic.display(logmodel)
+
+# Literacy
+# table<-table(victms_gender)
+# table
+# prop.table(table)
+table<-table(data_ses$Literacy,data_ses$Untreated)
+table
+prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(victimis_outcome_driversonly ~   as.factor(victms_gender),family=binomial)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# #predict(model1_death, type="response") # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# logistic.display(logmodel)
+
+# Occupation
+# table<-table(victms_gender)
+# table
+# prop.table(table)
+table<-table(data_ses$Occupation,data_ses$Untreated)
+table
+prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(victimis_outcome_driversonly ~   as.factor(victms_gender),family=binomial)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# #predict(model1_death, type="response") # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# logistic.display(logmodel)
+
+# Time ill
+# table<-table(victms_gender)
+# table
+# prop.table(table)
+table<-table(data_ses$Time_ill,data_ses$Untreated)
+table
+prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(victimis_outcome_driversonly ~   as.factor(victms_gender),family=binomial)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# #predict(model1_death, type="response") # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# logistic.display(logmodel)
+
+# Health status
+# table<-table(victms_gender)
+# table
+# prop.table(table)
+table<-table(data_ses$Health_status,data_ses$Untreated)
+table
+prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(victimis_outcome_driversonly ~   as.factor(victms_gender),family=binomial)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# #predict(model1_death, type="response") # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# logistic.display(logmodel)
+
+## NO MONEY
+logmodel<-glm(Untreated ~ 
+				Age + 
+				as.factor(Gender) +
+				as.factor(Education) +
+				as.factor(Literacy) +
+				as.factor(Occupation) +
+				Household+
+				# Time_ill +
+				as.factor(E15_rural) +
+				Health_status,
+			family=binomial, data=data_ses)
+summary(logmodel)
+#anova(reglogGEU)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+#predict(model1_death, type="response") # predicted values
+#residuals(model1_death, type="deviance") # residuals
+logistic.display(logmodel)
+
+###################################################
+#Figure 1
+###################################################
+
+###################################################
+#Table 2
 ###################################################
 str(data_barriers_temp)
 
@@ -508,7 +682,7 @@ summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
+logistic.display(logmodel)
 
 logmodel<-glm(barrier_data_notransport ~ class
 			,family=binomial, data=analytical_data_dic)
@@ -517,53 +691,43 @@ summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
+logistic.display(logmodel)
 
-logmodel<-glm(Prob1Reason_no_time ~ class
-			,family=binomial, data=analytical_data)
+logmodel<-glm(barrier_data_fear ~ class
+			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
+logistic.display(logmodel)
 
-logmodel<-glm(Prob1Reason_fear ~ class
-			,family=binomial, data=analytical_data)
+logmodel<-glm(barrier_data_socialsupport ~ class
+			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
+logistic.display(logmodel)
 
-logmodel<-glm(Prob1Reason_socialsupport ~ class
-			,family=binomial, data=analytical_data)
+logmodel<-glm(barrier_data_notavailable1 ~ class
+			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
+logistic.display(logmodel)
 
-
-logmodel<-glm(Prob1Reason_notavailable1 ~ class
-			,family=binomial, data=analytical_data)
+logmodel<-glm(barrier_data_no_need ~ class
+			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
-
-logmodel<-glm(Prob1Reason_notavailable2 ~ class
-			,family=binomial, data=analytical_data)
-summary(logmodel)
-#anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
+logistic.display(logmodel)
 
 logmodel<-glm(Prob1Reason_notavailable3 ~ class
 			,family=binomial, data=analytical_data)
@@ -610,13 +774,18 @@ analytical_data$Health_status<-as.numeric(analytical_data$Health_status)
 
 # # Define the amout of factor to retain
 #Group of functinos to determine the number os items to be extracted
-cor_data<-cor_auto(analytical_data_dic[,-c(12)])
+analytical_data_dic$Time_ill<-car::recode(
+	analytical_data_dic$Time_ill,"'days'=1;
+	'weeks'=2;
+	'months'=3;
+	'years'=4")
+cor_data<-cor_auto(analytical_data_dic[,-c(12,17)])
 
 final_importance_network<-qgraph(cor_data,
-	esize=20,layout="spring",graph="pcor",
+	esize=20,layout="spring",graph="glasso",
 	sampleSize=nrow(analytical_data),
 	legend.cex = 0.6,cut = 0.3, maximum = 1, 
-	minimum = 0.3, esize = 20,vsize = 5, 
+	minimum = 0.1, esize = 20,vsize = 5, 
 	repulsion = 0.8,nodeNames=rownames(cor_data),
 	borders = TRUE)#,groups=network_groups,
 	#labels=node_labels,
