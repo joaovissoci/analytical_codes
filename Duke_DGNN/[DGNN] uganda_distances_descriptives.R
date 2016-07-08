@@ -45,7 +45,7 @@ lapply(c("sem","ggplot2", "psych", "irr", "nortest",
 #                                  sep = ",",
 #                                  header = TRUE)
 
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/SOSAS_gis/districts_gis_uganda.csv",sep=',')
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/SOSAS/SOSAS_gis/districts_gis_uganda.csv",sep=',')
 
 #data_hub<-read.csv("/home/joao/Desktop/hubdistance_neuro.csv",sep=',')
 
@@ -83,31 +83,41 @@ with(data,by(distance_district/1000,region,summary))
 with(data,by(distance_district,region,ad.test))
 with(data,by(distance_district,region,sd))
 
+with(data,by(access_district*100000,region,summary))
+with(data,by(access_district,region,ad.test))
+with(data,by(access_district,region,sd))
+
 #####################################################################################
 #ANALYSIS OF VARIANCE
 #####################################################################################
 # One Way Anova (Completely Randomized Design)
 # Kruskal Wallis Test One Way Anova by Ranks 
-kruskal.test(USN_district ~ uganda_p_4, data=data) # where y1 is numeric and A is a factor
+kruskal.test(USN_district ~ region, data=data) # where y1 is numeric and A is a factor
 #post hoc
-with(data,posthoc.kruskal.nemenyi.test(x=USN_district, g=uganda_p_4, method="Tukey"))
+with(data,posthoc.kruskal.nemenyi.test(x=USN_district, g=region, method="Tukey"))
 
 # Kruskal Wallis Test One Way Anova by Ranks 
-kruskal.test(distance_district ~ uganda_p_4, data=data) # where y1 is numeric and A is a factor
+kruskal.test(distance_district ~ region, data=data) # where y1 is numeric and A is a factor
 #post hoc
-with(data,posthoc.kruskal.nemenyi.test(x=distance_district, g=uganda_p_4, method="Tukey"))
-
-# One Way Anova (Completely Randomized Design)
-# Kruskal Wallis Test One Way Anova by Ranks 
-kruskal.test(area_district ~ uganda_p_4, data=data) # where y1 is numeric and A is a factor
-#post hoc
-with(data,posthoc.kruskal.nemenyi.test(x=area_district, g=uganda_p_4, method="Tukey"))
+with(data,posthoc.kruskal.nemenyi.test(x=distance_district, g=region, method="Tukey"))
 
 # One Way Anova (Completely Randomized Design)
 # Kruskal Wallis Test One Way Anova by Ranks 
-kruskal.test(time_district ~ uganda_p_4, data=data) # where y1 is numeric and A is a factor
+kruskal.test(area_district ~ region, data=data) # where y1 is numeric and A is a factor
 #post hoc
-with(data,posthoc.kruskal.nemenyi.test(x=time_district, g=uganda_p_4, method="Tukey"))
+with(data,posthoc.kruskal.nemenyi.test(x=area_district, g=region, method="Tukey"))
+
+# One Way Anova (Completely Randomized Design)
+# Kruskal Wallis Test One Way Anova by Ranks 
+kruskal.test(time_district ~ region, data=data) # where y1 is numeric and A is a factor
+#post hoc
+with(data,posthoc.kruskal.nemenyi.test(x=time_district, g=region, method="Tukey"))
+
+# One Way Anova (Completely Randomized Design)
+# Kruskal Wallis Test One Way Anova by Ranks 
+kruskal.test(access_district ~ region, data=data) # where y1 is numeric and A is a factor
+#post hoc
+with(data,posthoc.kruskal.nemenyi.test(x=access_district, g=region, method="Tukey"))
 
 #####################################################################################
 #CORRELATIONS
