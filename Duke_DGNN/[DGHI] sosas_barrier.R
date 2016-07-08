@@ -51,6 +51,8 @@ data$Occupation<-car::recode(
 						'unemployed'=0;
 						else=NA")
 
+#paind and unpaid
+
 # data$Ethnicity<-car::recode(
 # 	data$Ethnicity,"''
 # 	")
