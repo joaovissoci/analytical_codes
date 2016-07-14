@@ -15,13 +15,13 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
 	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
 	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
-	"poLCA","readstata13"),
+	"poLCA","readstata13","venneuler"),
 library, character.only=T)
 
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
-data <- read.dta13("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
+data <- read.dta13("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
 
 
 #recode missing and other random problems
@@ -197,12 +197,12 @@ ses_data<-with(data_barriers,data.frame(
 
 analytical_data_dic<-data.frame(ses_data,barriers_dic)
 analytical_data<-data.frame(ses_data,barriers)
+data_ses<-subset(data,
+	data$Age>=18)
 
 ###################################################
 #Table 1
 ###################################################
-data_ses<-subset(data,
-	data$Age>=18)
 
 # Age
 # describe(data_ses$Age)
@@ -351,13 +351,13 @@ prop.table(table,2)
 
 ## NO MONEY
 logmodel<-glm(Untreated ~ 
-				Age + 
+				# Age + 
 				as.factor(Gender) +
 				as.factor(Education) +
 				as.factor(Literacy) +
 				as.factor(Occupation) +
 				Household+
-				Time_ill +
+				as.factor(Time_ill) +
 				as.factor(E15_rural) +
 				Health_status,
 			family=binomial, data=data_ses)
@@ -371,6 +371,38 @@ logistic.display(logmodel)
 ###################################################
 #Figure 1
 ###################################################
+
+vd <- venneuler(c(A=0.3, B=0.3, C=1.1, "A&B"=0.1, 
+	"A&C"=0.2, "B&C"=0.1 ,"A&B&C"=0.1))
+plot(vd)
+# same as c(A=1, `A&B&C`=1, C=1)
+m <- data.frame(elements=c("1","2","2","2","3"), 
+	sets=c("A","A","B","C","C"))
+v <- venneuler(m)
+plot(v)
+m <- as.matrix(data.frame(A=c(1.5, 0.2, 0.4, 0, 0),B=c(0 , 0.2, 0 , 1, 0),
+C=c(0 , 0 , 0.3, 0, 1)))
+# without weights
+v <- venneuler(m > 0)
+plot(v)
+# with weights
+v <- venneuler(m)
+plot(v)
+
+
+barriers_matrix<-as.matrix(barriers_dic)
+colnames(barriers_matrix)<-c("No money",
+						  "No transport",
+						  "No time",
+						  "Fear",
+						  "Lack of social support",
+						  "Not available",
+						  "No need")
+v <- venneuler(barriers_matrix)
+plot(v)
+
+cor<-cor_auto(barriers_matrix)
+qgraph(cor,layout="spring",vsize=log(colSums(barriers_matrix))*10)
 
 ###################################################
 #Table 2
@@ -532,7 +564,7 @@ ses_data_cat$Household_cat<-car::recode(ses_data_cat$Household,"0:6='average';el
 
 f <- cbind(Gender, Education, Literacy,
 		   Occupation, Household_cat,
-		   Time_ill, Health_status) ~ 1
+		   Time_ill, Health_status,E15_rural) ~ 1
 
 # The ~ 1 instructs poLCA to estimate the basic latent class model. For the latent class regres- sion model, replace the ~ 1 with the desired function of covariates, as, for example:
 # f <- cbind(Y1, Y2, Y3) ~ X1 + X2 * X3
@@ -572,7 +604,7 @@ R2_entropy
 # Fit for 3 latent classes: 
 # ========================================================= 
 
-lcamodel <- poLCA(f, ses_data, nclass = 3)
+lcamodel <- poLCA(f, ses_data_cat, nclass = 3)
 
 # Entropy
 entropy<-function (p) sum(-p*log(p))
@@ -735,35 +767,6 @@ exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90)))
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
-
-logmodel<-glm(Prob1Reason_notavailable3 ~ class
-			,family=binomial, data=analytical_data)
-summary(logmodel)
-#anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
-
-logmodel<-glm(Prob1Reason_no_need ~ class
-			,family=binomial, data=analytical_data)
-summary(logmodel)
-#anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
-
-logmodel<-glm(Prob1Long12 ~ class
-			,family=binomial, data=analytical_data)
-summary(logmodel)
-#anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
-
-
 
 poLCA.table(formula = COOPERAT ~ 1,
     condition = list(PURPOSE = 3, ACCURACY = 1, UNDERSTA = 2),
