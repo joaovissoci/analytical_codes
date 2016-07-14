@@ -21,7 +21,7 @@ library, character.only=T)
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
-data <- read.dta13("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
+data <- read.dta13("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
 
 
 #recode missing and other random problems
@@ -29,10 +29,10 @@ data$Gender<-car::recode(data$Gender,"'male'=0;'female'=1")
 data$Education<-car::recode(
 	data$Education,"'edu_none'=0;
 						'primary_school'=1;
-						'secondary_school1'=3;
-						'secondary_school2'=3;
-						'tertiary_school'=4;
-						'university'=4;
+						'secondary_school1'=1;
+						'secondary_school2'=1;
+						'tertiary_school'=1;
+						'university'=1;
 						else=NA")
 
 data$Literacy<-car::recode(
@@ -41,7 +41,7 @@ data$Literacy<-car::recode(
 					   else=NA")
 
 data$Occupation<-car::recode(
-	data$Occupation,"'domestic_helpers'=1;
+	data$Occupation,"'domestic_helpers'=0;
 						'farmer'=1;
 						'government_employees'=1;
 						'homemaker'=1;
@@ -71,7 +71,12 @@ data$Household_stay_length<-car::recode(
 data$Time_ill<-car::recode(
 	data$Time_ill,"
 	'-77'=NA;
-	'-99'=NA")
+	'-99'=NA;
+	'days'=0;
+	'weeks'=0;
+	'months'=1;
+	'years'=1;
+	else=NA")
 
 # data$Age<-car::recode(
 # 	data$Age,"
@@ -201,9 +206,9 @@ data_ses<-subset(data,
 
 # Age
 # describe(data_ses$Age)
-describeBy(data_ses$Age,data_ses$Untreated)
+by(data_ses$Age,data_ses$Untreated,summary)
 # t-test: # independent 2-group, 2 level IV
-testName <- t.test(age_victims ~ victimis_outcome_all)
+wilcox.test(data_ses$Age ~ data_ses$Untreated)
 
 # Gender
 # table<-table(victms_gender)
@@ -245,7 +250,7 @@ prop.table(table,2)
 
 # Household size
 # describe(data_ses$Age)
-describeBy(data_ses$Household,data_ses$Untreated)
+by(data_ses$Household,data_ses$Untreated,summary)
 # t-test: # independent 2-group, 2 level IV
 testName <- t.test(age_victims ~ victimis_outcome_all)
 
@@ -352,7 +357,7 @@ logmodel<-glm(Untreated ~
 				as.factor(Literacy) +
 				as.factor(Occupation) +
 				Household+
-				# Time_ill +
+				Time_ill +
 				as.factor(E15_rural) +
 				Health_status,
 			family=binomial, data=data_ses)
@@ -594,7 +599,7 @@ R2_entropy
 # Fit for 4 latent classes: 
 # ========================================================= 
 
-lcamodel <- poLCA(f, ses_data, nclass = 4)
+lcamodel <- poLCA(f, ses_data_cat, nclass = 4)
 
 # Entropy
 entropy<-function (p) sum(-p*log(p))
