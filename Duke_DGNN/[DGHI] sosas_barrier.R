@@ -15,13 +15,13 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
 	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
 	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
-	"poLCA","readstata13","venneuler"),
+	"poLCA","readstata13"),#,"venneuler"),
 library, character.only=T)
 
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
-data <- read.dta13("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
+data <- read.dta13("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
 
 
 #recode missing and other random problems
@@ -30,7 +30,7 @@ data$Education<-car::recode(
 	data$Education,"'edu_none'=0;
 						'primary_school'=1;
 						'secondary_school1'=1;
-						'secondary_school2'=1;
+						'secondary_school2'=1;x
 						'tertiary_school'=1;
 						'university'=1;
 						else=NA")
@@ -525,24 +525,17 @@ exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90)))
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-# NO NEED
-logmodel<-glm(barrier_data_no_need ~ 
-				Age + 
-				Gender +
-				Education +
-				Literacy +
-				Occupation +
-				Household+
-				Time_ill +
-				E15_rural +
-				Health_status,
-			family=binomial, data=analytical_data_dic)
-summary(logmodel)
-#anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
+###################################################
+#Network approach
+###################################################
+
+
+#network
+dassIsing<-IsingFit(dass3,plot=TRUE,
+	labels=namesdass,
+	groups=dassgr,
+	color=c("gray90","gray70","gray50"),
+	edge.color="black")
 
 ###################################################
 #Latent class analysis
@@ -560,11 +553,13 @@ logistic.display(logmodel)
 ses_data_cat<-sapply(ses_data,function(x) as.factor(x))
 ses_data_cat<-as.data.frame(ses_data_cat)
 
-ses_data_cat$Household_cat<-car::recode(ses_data_cat$Household,"0:6='average';else='high'")
+ses_data_cat$Household_cat<-car::recode(ses_data_cat$Household,"0:5='average';else='high'")
+ses_data_cat$age_cat<-car::recode(ses_data_cat$Age,"
+	18:50='adult';else='elderly'")
 
 f <- cbind(Gender, Education, Literacy,
-		   Occupation, Household_cat,
-		   Time_ill, Health_status,E15_rural) ~ 1
+		   Occupation,Household_cat,
+		   Time_ill, Health_status) ~ 1
 
 # The ~ 1 instructs poLCA to estimate the basic latent class model. For the latent class regres- sion model, replace the ~ 1 with the desired function of covariates, as, for example:
 # f <- cbind(Y1, Y2, Y3) ~ X1 + X2 * X3
@@ -603,7 +598,7 @@ R2_entropy
 # ========================================================= 
 # Fit for 3 latent classes: 
 # ========================================================= 
-
+set.seed(1988)
 lcamodel <- poLCA(f, ses_data_cat, nclass = 3)
 
 # Entropy
@@ -630,6 +625,7 @@ R2_entropy
 # ========================================================= 
 # Fit for 4 latent classes: 
 # ========================================================= 
+set.seed(1988)
 
 lcamodel <- poLCA(f, ses_data_cat, nclass = 4)
 
@@ -656,6 +652,7 @@ R2_entropy
 # ========================================================= 
 # Fit for 5 latent classes: 
 # ========================================================= 
+set.seed(1988)
 
 lcamodel <- poLCA(f, ses_data_cat, nclass = 5)
 summary(lcamodel)
@@ -688,235 +685,158 @@ R2_entropy
 #verbose = display the results
 #calc.se=calculate standard errors
 
-
 #### GRAPHING SOLUTION
+#Isolating classes to be plotted
+classes_prob<-as.data.frame(lcamodel$probs)[,c(1,4,6,8,9,12,13)]
+classes_prob$class<-c("class1","class2","class3","class4")
+class_prob_melt<-melt(classes_prob)
 
-lcmodel <- reshape2::melt(lcamodel$probs)
-zp1 <- ggplot(lcmodel,aes(x = X1, y = value, fill = X2))
-zp1 <- zp1 + geom_bar(stat = "identity", position = "stack")
-zp1 <- zp1 + facet_grid(L1 ~ .) 
-zp1 <- zp1 + scale_fill_brewer(type="seq", palette="Greys") +theme_bw()
-zp1 <- zp1 + labs(x = "Fragebogenitems",
-	y="Anteil der Item-\nAntwortkategorien", 
-	fill ="Antwortkategorien")
-zp1 <- zp1 + theme( axis.text.y=element_blank(),
-                    axis.ticks.y=element_blank(),                    
-                    panel.grid.major.y=element_blank())
-zp1 <- zp1 + guides(fill = guide_legend(reverse=TRUE))
-zp1
+p <- ggplot(data = class_prob_melt, aes(class, variable, fill = value))+
+ 	 geom_tile(color = "white")+
+     scale_fill_gradient2(low = "white", high = "steelblue", 
+     	 mid = "lightblue",
+   midpoint = 0.5, limit = c(0,1), space = "Lab", 
+   name="% of Sample") + #
+     geom_label(aes(y=variable, x=class, 
+     	label=round(class_prob_melt$value,digits=2)*100),
+     fill="white",alpha=0.70) +
+     xlab(label="Latent class") +
+     ylab(label="Variables") +
+     scale_y_discrete(
+     	labels=c("Female",
+  "Educated","Literate",
+  "Paid employment","Large household",
+  "Long term illness","Positive health")) +
+     scale_x_discrete(
+     	labels=c("Class 1","Class 2","Class 3","Class 4"))
 
 
+     # labels=c("No","Yes"),name="Evaluation")
+p
 
 
-#MODEL 1 - Adding every variable
-#traffic control was not added because had cases with 0 observations
-# age and gender becaise the missing rate wsa to high
+#LOGICTI REGRESSION MODELS
+
 analytical_data_dic<-na.omit(analytical_data_dic)
 analytical_data_dic$class<-as.factor(lcamodel$predclass)
+analytical_data_dic$class_recoded<-car::recode(
+	analytical_data_dic$class,"1='class2';
+							   2='class3';
+							   3='class1'#;
+							   #4='class4'")#;5='class1'")
 
-logmodel<-glm(barrier_data_nomoney ~ class
+logmodel<-glm(barrier_data_nomoney ~ class_recoded
 			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+odds_model_1<-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-logmodel<-glm(barrier_data_notransport ~ class
+logmodel<-glm(barrier_data_notransport ~ class_recoded
 			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+odds_model_2<-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-logmodel<-glm(barrier_data_fear ~ class
+logmodel<-glm(barrier_data_fear ~ class_recoded
 			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+odds_model_3<-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-logmodel<-glm(barrier_data_socialsupport ~ class
+logmodel<-glm(barrier_data_socialsupport ~ class_recoded
 			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+odds_model_4<-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-logmodel<-glm(barrier_data_notavailable1 ~ class
+logmodel<-glm(barrier_data_notavailable1 ~ class_recoded
 			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+odds_model_5<-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-logmodel<-glm(barrier_data_no_need ~ class
+logmodel<-glm(barrier_data_no_need ~ class_recoded
 			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+odds_model_6<-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-poLCA.table(formula = COOPERAT ~ 1,
-    condition = list(PURPOSE = 3, ACCURACY = 1, UNDERSTA = 2),
-    lc = gss.lc2)
+#LOGISTIC REGRESSION MODELS
+colnames(odds_model_1)<-c("OR","LowCI","HighCI")
+colnames(odds_model_2)<-c("OR","LowCI","HighCI")
+colnames(odds_model_3)<-c("OR","LowCI","HighCI")
+colnames(odds_model_4)<-c("OR","LowCI","HighCI")
+colnames(odds_model_5)<-c("OR","LowCI","HighCI")
+colnames(odds_model_6)<-c("OR","LowCI","HighCI")
+
+odds_all<-rbind(odds_model_1,
+					 odds_model_2,
+					 odds_model_3,
+					 odds_model_4,
+					 odds_model_5,
+					 odds_model_6)
+odds_all_OR<-as.data.frame(odds_all[1:24])
+odds_all_LIC<-as.data.frame(odds_all[25:48])
+odds_all_HIC<-as.data.frame(odds_all[49:72])
+odds_data<-data.frame(OR=odds_all_OR,lowCI=odds_all_LIC,
+	highCI=odds_all_HIC)
+colnames(odds_data)<-c("OR","LowCI","HighCI")
+odds_data$barrier<-c(rep("No money",4),
+					rep("No transport",4),
+					rep("Fear",4),
+					rep("Lack of social support",4),
+					rep("Not available",4),
+					rep("No need",4)
+					)
+odds_data$class<-rep(c("class1","class2","class3","class4"),6)
+
+# odds_model_melt<-melt(odds_data)
+
+object1<- ggplot(odds_data, aes(y= reorder(class,OR), 
+  x = round(OR,2))) +
+facet_grid(barrier ~ .,space="free") +
+geom_point() +
+geom_errorbarh(aes(xmin=LowCI, xmax=HighCI), height=.2) +
+geom_vline(xintercept = 1, linetype=2) +
+geom_text(aes(label=format(round(OR,2),nsmall=2)), 
+  vjust=-0.5, hjust=0, size=3) +
+#coord_flip() +
+#facet_grid(measure ~ ., scales="free_x", space="free") +
+labs(y = '', x = '') +
+scale_x_continuous(breaks=seq(0, 2000, 200)) +
+annotate("segment", x = 2000, xend=2020, y = 13, yend=13,
+  colour = "black",
+  arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+annotate("segment", x = 2000, xend=2020, y = 10, yend=10,
+  colour = "black",
+  arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+annotate("text", x = 1990, y = 12.7,
+  colour = "black",label="2940.52",size=3) +
+annotate("text", x = 1990, y = 9.7,
+  colour = "black",label="2014.76",size=3) +
+theme_bw()
+
+object1
 
 
-
-analytical_data$Gender<-as.numeric(analytical_data$Gender)
-analytical_data$Education<-as.numeric(analytical_data$Education)
-analytical_data$Literacy<-as.numeric(analytical_data$Literacy)
-analytical_data$Occupation<-as.numeric(analytical_data$Occupation)
-analytical_data$Household_stay_length<-as.numeric(analytical_data$Household_stay_length)
-analytical_data$Time_ill<-as.numeric(analytical_data$Time_ill)
-analytical_data$Health_status<-as.numeric(analytical_data$Health_status)
-
-# # Define the amout of factor to retain
-#Group of functinos to determine the number os items to be extracted
-analytical_data_dic$Time_ill<-car::recode(
-	analytical_data_dic$Time_ill,"'days'=1;
-	'weeks'=2;
-	'months'=3;
-	'years'=4")
-cor_data<-cor_auto(analytical_data_dic[,-c(12,17)])
-
-final_importance_network<-qgraph(cor_data,
-	esize=20,layout="spring",graph="glasso",
-	sampleSize=nrow(analytical_data),
-	legend.cex = 0.6,cut = 0.3, maximum = 1, 
-	minimum = 0.1, esize = 20,vsize = 5, 
-	repulsion = 0.8,nodeNames=rownames(cor_data),
-	borders = TRUE)#,groups=network_groups,
-	#labels=node_labels,
-	#color=c("gold","steelblue","red","grey80","green"),borders = FALSE,
-	#)#,gray=T,)#,nodeNames=nomesqsg,layoutScale=c(2,2)
-# #Community analysis
-# comprehension_network_glasso<-qgraph(cor_data,
-# 	layout="spring",
-# 	vsize=6,esize=20,graph="glasso",
-# 	sampleSize=nrow(bea_data),
-# 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
-# #Calculating Community measures
-# g<-as.igraph(comprehension_network_glasso) #creating igraph object
-# h<-walktrap.community(g) #creatin community object
-# h<-spinglass.community(g, weights=NA)
-# plot(h,g) #plotting community network
-# h$membership #extracting community membership for each node on the network
-# community<-data.frame(h$membership,rownames(cor_data))
-
-#listing grouping variables in the network resulting from the community analysis
-# network_groups<-list(
-# Component1=as.numeric(rownames(community)[community[,1]==1]),
-# Component2=as.numeric(rownames(community)[community[,1]==2]),
-# Component3=as.numeric(rownames(community)[community[,1]==3])
-# )
-
-network_groups<-list(
-Component1=c(1,3,4,5,15,14),
-Component2=c(2,16,6,7),
-Component3=c(11,12,13,10),
-Component4=c(19,20,21,23),
-Component5=c(9,17,18,22,8)
-)
-
-# creating vectors for labels
-node_labels<-c(
-"What is the area of the roadway?",
-"What type of roadway?",
-"Is this point at an intersection/junction?",
-"How many lanes in the roadway?",
-"Is there an auxiliary/other lane?",
-"How is the road surface conditions?",
-"Is there space on the side of the road 
-for any reason or use?",
-"Are there pedestrian pathways?",
-"Is there a Bus Stop?",
-"Is there a Speed bump?",
-"Is there a traffic light at this location?",
-"Are there road traffic signs at this hotspot?",
-"Is there a sign for speed limit of road?",
-"Road visibility is influenced by curves?",
-"Is the visibility influenced by 
-environmental factors?",
-"Are there bridges on the road?",
-"Is there a safe area for pedestrians 
-to cross the road?",
-"Is there a safe area for pedestrians
-to in the center of the road?",
-"Count the number of cars",
-"Count the number of moto",
-"Count the number of bike",
-"Count the number of pedestrians",
-"Count the number of bus/trucks"
-)
-
-# creating nodes labels vector
-node_names<-c("RD","RT","INT","TLA","AR",
-	"RC","RS",
-	"WALK","BS","SB","TLI","TS","SL","CUR",
-	"VIS","BRI","PED","PEDc","CARd","MOTOd","BIKEd","PEDd","TRUCKd")
-
-# creating vector with mean values for each node
-#mean_data<-sapply(network_data,mean)
-
-#creating vector with mean values adjusted to proportional sizes to be plotted
-#importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
-
-#building network figures 
-# 3 types are created to get an avarege position and layout
-#GLASSO NETWORK
-# network_glasso<-qgraph(cor_data,layout="spring",
-# 	vsize=6,esize=20,graph="glasso",
-# 	sampleSize=nrow(bea_data),
-# 	legend.cex = 0.5,GLratio=1.5)
-
-# #PARTIAL CORRELATION NETWORK
-# network_pcor<-qgraph(cor_data,layout="spring",
-# 	vsize=6,esize=20,graph="pcor",threshold="holm",
-# 	sampleSize=nrow(bea_data),
-# 	legend.cex = 0.5,GLratio=1.5)
-
-# #CORRELATION NETWORK
-# network_cor<-qgraph(cor_data,layout="spring",
-# 	vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
-# #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
-
-# # Organizing both figures to be with the same layout
-# layout_final<-averageLayout(network_glasso,
-# 	network_pcor,
-# 	network_cor)
-
-#postscript("/home/joao/Desktop/info_consent_figure2.eps",
-#	width = 1500, height = 1200,horizontal = FALSE, 
-#	onefile = FALSE)
-#postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
-#	width = 1500, height = 1200,horizontal = FALSE, 
-#	onefile = FALSE)
-tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
- height = 700,compression = 'lzw')
-final_importance_network<-qgraph(cor_data,
-	esize=20,layout="spring",graph="glasso",
-	sampleSize=nrow(analytical_data),
-	legend.cex = 0.6,cut = 0.3, maximum = 1, 
-	minimum = 0.1, esize = 20,vsize = 5, 
-	repulsion = 0.8,nodeNames=rownames(cor_data),
-	borders = TRUE)#,groups=network_groups,
-	#labels=node_labels,
-	#color=c("gold","steelblue","red","grey80","green"),borders = FALSE,
-	#)#,gray=T,)#,nodeNames=nomesqsg,layoutScale=c(2,2)
-dev.off()
-#legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
 
 
