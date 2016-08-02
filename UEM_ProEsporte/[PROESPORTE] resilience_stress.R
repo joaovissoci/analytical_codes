@@ -25,7 +25,9 @@
 #library(Hmisc)
 
 #All packages must be installes with install.packages() function
-lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis","mvnormtest","polycor","lavaan","nFactors"), library, character.only=T)
+lapply(c("Hmisc","car","psych","nortest","ggplot2",
+	"pastecs","repmis","mvnormtest","polycor","lavaan",
+	"nFactors","qgraph"), library, character.only=T)
 #####################################################################################
 #IMPORTING DATA
 #####################################################################################
@@ -37,7 +39,7 @@ lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis","mvnormtes
 #Instructions here http://goo.gl/Ofa7gQ
 #data <- repmis::source_DropboxData("resilience_stress_data.csv","1ak5t8oramn8lu9",sep = ",", header = TRUE)
 
-data<-read.csv("/home/joao/Dropbox/datasets/pro esporte/resiliencia_stress/resilience_stress_data.csv")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/pro esporte/resiliencia_stress/resilience_stress_data.csv")
 ##############################################################
 #DATA MANAGEMENT
 ##############################################################
@@ -173,7 +175,8 @@ reco_stress_model <- 'Recovery =~  sucesso + recuperacaosocial + recuperacaofisi
 			 Stress =~ estressegeral + estresseemocional + estressesocial + fadiga + faltaenergia + queixasomaticas +   conflitospressao + pertubacoesintervalos + exaustaoemocional + lesoes
 			 '
 
-fit <- lavaan::cfa(reco_stress_model, data = data_stress_reco,estimator="ulsm")
+fit <- lavaan::cfa(reco_stress_model, data = data_stress_reco,
+	estimator="ulsm")
 summary(fit, fit.measures=TRUE)
 fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
 parameterEstimates(fit)
@@ -266,7 +269,41 @@ subset(Est, op == ":=")
 vcov(fit)
 
 library(semPlot)
-qgraph(fit,gray=FALSE,layout="spring")
+nodeLabels<-c("Sucesso",
+             "Rec. SCL",
+             "Rec. Fisica",
+             "Bem estar",
+             "Qualidade de sono",
+             "Estar em forma",
+             "Aceitacao pessoal",
+             "Autorregulacao",
+             "Estresse geral",
+             "Estresse emocional", 
+             "Estresse social",
+             "Fadiga",
+             "Falta de energia",
+             "Queixas somáticas",
+             "Conflitos e pressao",
+             "Perturbacao",
+             "Exaustao emocional",
+             "Lesoes",
+             "Resiliencia",
+             "Recuperacao",
+             "Estresse",
+             "Idade")
+color<-c(rep("grey",18),rep("white",4))
+borders<-c(rep("FALSE",18),rep("TRUE",4))
+semPaths(fit,"std",layout="spring",residuals=FALSE,
+  # edge.color="black",
+  # nodeLabels=nodeLabels,
+  exoCov=FALSE,
+  edge.label.cex=1.0,
+  equalizeManifests=TRUE,
+  label.scale=FALSE,
+  label.cex=1)
+  # color=color,
+  # borders=borders)
+
 
 ### Modification Indexes
 Mod <- modificationIndices(fit)

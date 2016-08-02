@@ -58,50 +58,13 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 
 #data_cp<-read.csv("/home/joao/Desktop/data_cp.csv",sep=',')
 #data_rs<-read.csv("/home/joao/Desktop/data_rs.csv",sep=',')
-data <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/sri lanka/safe_habits_srilanka_data.csv")
+data <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/Rwanda/kuth_tbi_rwanda_data.csv")
 
 ######################################################
 #DATA MANAGEMENT
 ######################################################
-numeric <- with(data, data.frame(age, hours_wkvehicle, day_wkvehicle, 
-                                 time_start_wk, time_stop_wk, time_motodr, vehicle_home, 
-                                 hours_hmvehicle, crash_lifetime, injured_crash , 
-                                 near_miss_month, 
-                                 helmet_mc, helmet_bike, belt_driver, belt_passenger, 
-                                 belt_back, road_wrongside, stop_fast, lat_1, long_1, 
-                                 danger1, lat_2, long_2, danger2, lat_3, long_3, danger3,
-                                 lat_4, long_4, danger4, lat_5, long_5, danger5, 
-                                 lat_6, long_6, danger6, lat_7, long_7, danger7, 
-                                 lat_8, long_8, danger8, lat_9, long_9, danger9, 
-                                 lat_10, long_10, danger10, rem_date_crash, date_crash,
-                                 day_crash, month_crash, year_crash, crash_in_last_year,
-                                 time_crash, type_crash, work_crash, injuries_crash___0,
-                                 injuries_crash___1, injuries_crash___2, injuries_crash___3,
-                                 injuries_crash___4, injuries_crash___5, injuries_crash___6,
-                                 injuries_crash___7, injuries_crash___8, injuries_crash___9,
-                                 injuries_crash___10, injuries_crash___90, injuries_crash___99,
-                                 injuries_crash_other, hosp_crash, day_hosp_crash, disability_crash,
-                                 type_disability_crash, missed_work_crash, rehabrec_crash, rehab_crash, 
-                                 crash_year))
 
-#sub-sets for numeric
-numeric
-numericRTC <- subset(numeric,numeric$crash_lifetime=="1")
-summary(numericRTC)
-numericNRTC <- subset(numeric, numeric$crash_lifetime=="0")
-summary(numericNRTC)
 
-#recoding safe hab to N/A NR and A
-numeric$helmet_mc<-car::recode(numeric$helmet_mc, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$helmet_bike<-car::recode(numeric$helmet_bike, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$belt_driver<-car::recode(numeric$belt_driver, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$belt_back<-car::recode(numeric$belt_back, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$belt_passenger<-car::recode(numeric$belt_passenger, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$stop_fast<-car::recode(numeric$stop_fast, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$road_wrongside<-car::recode(numeric$road_wrongside, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-
-#recoding outcomes
-numeric$crash_lifetime<-as.factor(numeric$crash_lifetime)
 ######################################################
 #DESCRIPTIVE ANALYSIS
 ######################################################
@@ -190,6 +153,12 @@ fisher.test(stop_fasttable)
 road_wrongsidetable <- table(numeric$road_wrongside ,numeric$crash_lifetime)
 fisher.test(road_wrongsidetable)
 
+######################################################
+# EXPLORATORY DATA ANALYSIS
+######################################################
+plot(data)
+
+hist(data)
 
 ######################################################
 #TABLE 3.
