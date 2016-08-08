@@ -698,9 +698,12 @@ platelets_cp<- c(
 	with(subset(platelets,platelets$group=="Copperhead"),
 		mean(na.omit(T4))))
 
-tiff("/Users/joaovissoci/Desktop/platelets.tiff", width = 700,
- height = 550,compression = 'lzw')
-	plot(platelets_cp, type="o", col="black", ylim=c(80,400),
+tiff("/Users/jnv4/Desktop/platelets.tiff", units='in', width = 8,
+ height = 6,compression = 'lzw',res=1200,bg = "white")
+postscript("/Users/jnv4/Desktop/platelets.eps",width = 1200, 
+	height = 1000)
+
+	plot(platelets_cp, type="o", col="grey50", ylim=c(80,400),
 		xlim=c(0.7,5.5),axes=FALSE, ann=FALSE)
 	# Make x axis using tests labels
 	axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,
@@ -712,40 +715,39 @@ tiff("/Users/joaovissoci/Desktop/platelets.tiff", width = 700,
 	title(ylab=expression("Platelets" ~ 10^{9} ~ "/L")) #, col.lab=rgb(0,0.5,0)
 	points(c(rep(seq(0.8,1.2,0.05),10),0.8,1.0,1.2),
 		subset(platelets$baseline,platelets$group=="Rattlesnake"),
-		col='grey50')
+		col='black')
 	points(c(rep(seq(0.8,1.2,0.05),2),0.8,1.0,1.2,1.0),
 		subset(platelets$baseline,platelets$group=="Copperhead"),
-		col='black')
+		col='grey50')
 	points(c(rep(seq(1.8,2.2,0.05),10),1.8,2.2,2.0),
 		subset(platelets$T1,platelets$group=="Rattlesnake"),
-		col='grey50')
+		col='black')
 	points(c(rep(seq(1.8,2.2,0.05),2),1.8,2.2,2.0,1.8),
 		subset(platelets$T1,platelets$group=="Copperhead"),
-		col='black')
+		col='grey50')
 	points(c(rep(seq(2.8,3.2,0.05),10),2.8,3.2,3.0),
 		subset(platelets$T2,platelets$group=="Rattlesnake"),
-		col='grey50')
+		col='black')
 	points(c(rep(seq(2.8,3.2,0.05),2),2.8,3.2,3.0,2.8),
 		subset(platelets$T2,platelets$group=="Copperhead"),
-		col='black')
+		col='grey50')
 	points(c(rep(seq(3.8,4.2,0.05),10),3.8,4.2,4.0),
 		subset(platelets$T3,platelets$group=="Rattlesnake"),
-		col='grey50')
+		col='black')
 	points(c(rep(seq(3.8,4.2,0.05),2),3.8,4.2,4.0,3.8),
 		subset(platelets$T3,platelets$group=="Copperhead"),
-		col='black')
+		col='grey50')
 	points(c(rep(seq(4.8,5.2,0.05),10),4.8,5.2,5.0),
 		subset(platelets$T4,platelets$group=="Rattlesnake"),
-		col='grey50')
+		col='black')
 	points(c(rep(seq(4.8,5.2,0.05),2),4.8,5.2,5.0,4.8),
 		subset(platelets$T4,platelets$group=="Copperhead"),
-		col='black')
-	lines(platelets_rs, type="o", pch=22, lty=4,col="grey50")
+		col='grey50')
+	lines(platelets_rs, type="o", pch=22, lty=4,col="black")
 	legend(4.5, 120,c("Copperhead","Other Crotaline"), cex=0.8,
-		col=c("black","grey50"), pch=21:24, lty=1:4,bg="white")
+		col=c("grey50","black"), pch=21:24, lty=1:4,bg="white")
 	par(adj=0)
-	title(expression("Figure 1. Platelets" ~ 10^{9} ~ "/L count over time."),
-		line=-33)
+	title(expression("Figure 1. Platelets" ~ 10^{9} ~ "/L count over time."),line=-33)
 dev.off()
 
 #Fibrinogen
@@ -775,9 +777,12 @@ fibrinogen_cp<- c(
 	with(subset(fibrinogen,fibrinogen$group=="Copperhead"),
 		mean(na.omit(T4))))
 
-tiff("/Users/joaovissoci/Desktop/fibrinogen.tiff", width = 700,
- height = 500,compression = 'lzw')
-plot(fibrinogen_rs, type="o", col="grey50", ylim=c(100,600),
+tiff("/Users/jnv4/Desktop/fibrinogen_color.tiff", units='in', width = 8,
+ height = 6,compression = 'lzw',res=1200,bg = "white")
+postscript("/Users/jnv4/Desktop/fibrinogen_color.eps",width = 1200, 
+	height = 1000)
+
+plot(fibrinogen_rs, type="o", col="black", ylim=c(100,600),
 	xlim=c(0.8,5.3),axes=FALSE, ann=FALSE,lty=4, pch=22)
 # Make x axis using tests labels
 axis(1, at=1:5, lab=c("Baseline","Nadir","5 days" ,"8 days","15 days"))
@@ -788,37 +793,37 @@ title(xlab="Follow Up")
 title(ylab="Fibrinogen mg/dL") #, col.lab=rgb(0,0.5,0)
 points(c(rep(seq(0.8,1.2,0.05),10),0.8,1.0,1.2),
 	subset(fibrinogen$baseline,fibrinogen$group=="Rattlesnake"),
-	col='grey50')
+	col='black')
 points(c(rep(seq(0.8,1.2,0.05),2),0.8,1.0,1.2,1.0),
 	subset(fibrinogen$baseline,fibrinogen$group=="Copperhead"),
-	col='black')
+	col='red')
 points(c(rep(seq(1.8,2.2,0.05),10),1.8,2.2,2.0),
 	subset(fibrinogen$T1,fibrinogen$group=="Rattlesnake"),
-	col='grey50')
+	col='black')
 points(c(rep(seq(1.8,2.2,0.05),2),1.8,2.2,2.0,1.8),
 	subset(fibrinogen$T1,fibrinogen$group=="Copperhead"),
-	col='black')
+	col='red')
 points(c(rep(seq(2.8,3.2,0.05),10),2.8,3.2,3.0),
 	subset(fibrinogen$T2,fibrinogen$group=="Rattlesnake"),
-	col='grey50')
+	col='black')
 points(c(rep(seq(2.8,3.2,0.05),2),2.8,3.2,3.0,2.8),
 	subset(fibrinogen$T2,fibrinogen$group=="Copperhead"),
-	col='black')
+	col='red')
 points(c(rep(seq(3.8,4.2,0.05),10),3.8,4.2,4.0),
 	subset(fibrinogen$T3,fibrinogen$group=="Rattlesnake"),
-	col='grey50')
+	col='black')
 points(c(rep(seq(3.8,4.2,0.05),2),3.8,4.2,4.0,3.8),
 	subset(fibrinogen$T3,fibrinogen$group=="Copperhead"),
-	col='black')
+	col='red')
 points(c(rep(seq(4.8,5.2,0.05),10),4.8,5.2,5.0),
 	subset(fibrinogen$T4,fibrinogen$group=="Rattlesnake"),
-	col='grey50')
+	col='black')
 points(c(rep(seq(4.8,5.2,0.05),2),4.8,5.2,5.0,4.8),
 	subset(fibrinogen$T4,fibrinogen$group=="Copperhead"),
-	col='black')
-lines(fibrinogen_cp, type="o", col="black")
+	col='red')
+lines(fibrinogen_cp, type="o", col="red")
 legend(4, 180, c("Copperhead","Other Crotaline"), cex=0.8,
-	col=c("black","grey50"), pch=21:24, lty=1:4,bg="white")
+	col=c("red","black"), pch=21:24, lty=1:4,bg="white")
 par(adj=0)
 	title(sub=expression("Figure 2. Fibrogen mg/dL count over time."))#,
 		#line=-23)

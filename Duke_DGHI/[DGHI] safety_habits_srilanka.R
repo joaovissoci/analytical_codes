@@ -102,6 +102,9 @@ numeric$road_wrongside<-car::recode(numeric$road_wrongside, "c(0,1,2,3)='0'; 4='
 
 #recoding outcomes
 numeric$crash_lifetime<-as.factor(numeric$crash_lifetime)
+
+#recoding hours worked per week
+numeric$hour_week<-numeric$hours_wkvehicle*numeric$day_wkvehicle
 ######################################################
 #DESCRIPTIVE ANALYSIS
 ######################################################
@@ -118,6 +121,10 @@ describe(numericNRTC$hours_wkvehicle)
 describe(numeric$day_wkvehicle)
 describe(numericRTC$day_wkvehicle)
 describe(numericNRTC$day_wkvehicle)
+#hours per wk
+describe(numeric$hour_week)
+describe(numericRTC$hour_week)
+describe(numericNRTC$hour_week)
 #work start time - make 19:30 - 19,5...
 describe(numeric$time_start_wk)
 describe(numericRTC$time_start_wk)
@@ -173,6 +180,7 @@ t.test(numeric$day_wkvehicle~numeric$crash_lifetime,paired=FALSE)
 t.test(numeric$time_start_wk~numeric$crash_lifetime,paired=FALSE)
 t.test(numeric$time_stop_wk~numeric$crash_lifetime,paired=FALSE)
 t.test(numeric$time_motodr~numeric$crash_lifetime,paired=FALSE)
+t.test(numeric$hour_week~numeric$crash_lifetime,paired=FALSE)
 
 #safe habs
 helmet_mctable <- table(numeric$helmet_mc ,numeric$crash_lifetime)

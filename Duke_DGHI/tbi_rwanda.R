@@ -64,6 +64,66 @@ data <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/Rw
 #DATA MANAGEMENT
 ######################################################
 
+data$age_cat<-car::recode(data$age,"10:20='20 or less';
+                                     21:30='20 to 30';
+                                     31:40='30 to 40';
+                                     41:50='40 to 50';
+                                     51:89='50ormore'")
+
+data$outcome<-car::recode(data$gos,"5='death';
+                                    else='alive'")
+
+table(data$age_cat)
+prop.table(table(data$age_cat))
+table<-table(data$age_cat,data$outcome)
+prop.table(table(data$age_cat,data$outcome),1)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+describeBy(data$age,data$outcome)
+wilcox.test(data$age~data$outcome)
+
+
+or<-c(3.80,6.54,41.60,7.36,11.29,5.20)
+low_limit<-c(1.21,2.30,14.97,2.20,2.90,2.23)
+upper_limit<-c(11.80,18.60,115.59,24.57,43.96,12.12)
+variables<-c("Age >50","GCS 9-13","GCS 3-8", "Hypoxic (<90%)",
+  "Bradycardic (<60%)","Tachycardic (>100)")
+pvalues<-c(0.05,0.01,0.01,0.01,0.01,0.01)
+
+plot<-data.frame(or,low_limit,upper_limit,variables,pvalues)
+
+ggplot(plot, aes(y= reorder(variables,or), 
+  x=or)) + #use to round numbers - x = round(median,2)
+# facet_grid( measure ~ .,space="free") + #use in case you want to add facets (e.g. labels in columns or lines)
+geom_point() +
+geom_errorbarh(aes(xmin=low_limit, xmax=upper_limit), height=.2) +
+geom_vline(xintercept = 1, linetype=2) +
+geom_text(aes(label=format(round(or,2),nsmall=2)), 
+  vjust=-0.5, hjust=0, size=3) +
+#coord_flip() +
+#facet_grid(measure ~ ., scales="free_x", space="free") +
+labs(y = 'Predictos of TBI mortality', 
+  x = 'OR (CI 95%)') +
+# scale_x_continuous(breaks=seq(0, 2000, 200)) + #use in case you want to re-arrange the X axis limits
+#portion below is to add an arrow when you want to cut the plot area
+# annotate("segment", x = 2000, xend=2020, y = 13, yend=13,
+#   colour = "black",
+#   arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+# annotate("segment", x = 2000, xend=2020, y = 10, yend=10,
+#   colour = "black",
+#   arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+# annotate("text", x = 1990, y = 12.7,
+#   colour = "black",label="2940.52",size=3) +
+# annotate("text", x = 1990, y = 9.7,
+#   colour = "black",label="2014.76",size=3) +
+theme_bw()
+
+
+670*100/867
+
+
 
 ######################################################
 #DESCRIPTIVE ANALYSIS

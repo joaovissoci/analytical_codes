@@ -27,7 +27,8 @@
 #All packages must be installes with install.packages() function
 lapply(c("Hmisc","car","psych","nortest","ggplot2",
 	"pastecs","repmis","mvnormtest","polycor","lavaan",
-	"nFactors","qgraph"), library, character.only=T)
+	"nFactors","qgraph","gridExtra","gtable",
+  "grid"), library, character.only=T)
 #####################################################################################
 #IMPORTING DATA
 #####################################################################################
@@ -119,13 +120,40 @@ self_regulation<-with(data,data.frame(Q56,Q62,Q67,Q74))
 ####################################################################
 #Descritivos
 ####################################################################
-network_data<-cor(data,method="spearman")
+network_data<-cor(data[,-c(1,2,3)],method="spearman")
 #network_data<-Hmisc::rcorr(as.matrix(data),type=c("spearman"))
 
-qsggr<-list(Outcome=c(1),Predictors1=c(2,3,4,5,6,7,8,9,10),Predictors2=c(11,12,13,14,15,16,17,18,19,20))
-labels<-c("RES","REC1","REC2","REC3","REC4","REC5","REC6","REC7","REC8","REC9","STR1","STR2","STR3","STR4","STR5","STR6","STR7","STR8","STR9","STR10")
-nodeNames=c("Resilience","Success","Social Recovery","Physical Recovery","Well Being","Sleep Quality","Good Shape","Personal Acceptance","Self-Efficacy","Self-Regulation","General Stress","Emotional Stress","Social Stress","Conflicts and Pressure","Fatigue","Lack of Energy","Somatic Complaints","Interval perturbation","Emotional Exhaustion","Lesions")
+# qsggr<-list(Outcome=c(1),Predictors1=c(2,3,4,5,6,7,8,9,10),Predictors2=c(11,12,13,14,15,16,17,18,19,20))
+labels<-c("RES","REC1","REC2","REC3","REC4","REC5","REC6","REC7",
+          "STR1","STR2","STR3","STR4","STR5","REC8","REC9","REC10",
+          "STR6","STR7","STR8","STR9")
+nodeNames=c("Resilience",
+            "General stress",
+            "Emotional Stress",
+            "Social Stress",
+            "Conflicts and Pressure",
+            "Fatigue",
+            "Lack of Energy",
+            "Somatic Complaints",
+            "Success",
+            "Social Recovery",
+            "Physical Recovery",
+            "Well Being",
+            "Sleep Quality",
+            "Interval perturbation",
+            "Emotional Exhaustion",
+            "Lesions",
+            "Good Shape",
+            "Personal Acceptance",
+            "Self-Efficacy",
+            "Self-Regulation")
+
 nodeSizes=c()
+color<-c("white",
+         rep("grey50",7),
+         rep("grey90",5),
+         rep("grey50",3),
+         rep("grey90",4))
 
 
 qsgg3<-qgraph(network_data,layout="spring",vsize=6,esize=20,graph="glasso",sampleSize=nrow(data),legend.cex = 0.5,GLratio=1.5)
@@ -133,11 +161,21 @@ qsgg2<-qgraph(network_data,layout="spring",vsize=6,esize=20,graph="pcor",thresho
 qsgg1<-qgraph(network_data,layout="spring",vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
 Lqsg<-averageLayout(qsgg1,qsgg2,qsgg3)
 
-qsgG1<-qgraph(network_data,layout=Lqsg,nodeNames=nodeNames,vsize=6,esize=20,legend.cex = 0.3,cut = 0.3, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,gray=TRUE,color=c("gray80","gray50"),legend=T)#,groups=qsggr
-qsgG2<-qgraph(network_data,layout=Lqsg,nodeNames=nodeNames,vsize=6,esize=20,graph="pcor",legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,gray=TRUE,color=c("gray80","gray50"),legend=F)#,groups=qsggr
-qsgG3<-qgraph(network_data,layout=Lqsg,nodeNames=nodeNames,vsize=6,esize=20,graph="glasso",sampleSize=nrow(data),legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,gray=F,color=c("gray80","white"))#,groups=qsggr
+# qsgG1<-qgraph(network_data,layout=Lqsg,nodeNames=nodeNames,vsize=6,esize=20,legend.cex = 0.3,cut = 0.3, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,gray=TRUE,color=c("gray80","gray50"),legend=T)#,groups=qsggr
+# qsgG2<-qgraph(network_data,layout=Lqsg,nodeNames=nodeNames,vsize=6,esize=20,graph="pcor",legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,gray=TRUE,color=c("gray80","gray50"),legend=F)#,groups=qsggr
 
-x<-centrality(qsgG3)
+tiff("/Users/jnv4/Desktop/resilience_stress_fig1.tiff", units='in', 
+  width = 8,
+ height = 6,compression = 'lzw',res=1200,bg = "white")
+qsgG3<-qgraph(network_data,layout=Lqsg,nodeNames=nodeNames,
+  labels=labels,
+  vsize=6,esize=20,sampleSize=nrow(data),
+  legend.cex = 0.3,cut = 0.4, maximum = 1, minimum = 0.3, 
+  esize = 20,vsize = 5, repulsion = 0.8,gray=F,
+  color=color,posCol="grey90",negCol="black")#,groups=qsggr,graph="cor"
+dev.off()
+
+# x<-centrality(qsgG3)
 
 ####################################################################
 #EFA and CFA
@@ -221,8 +259,13 @@ data$esporte<-car::recode(data$genero,"1=1;2=0")
 #Modelo 1. Fully mediated
 model <- '
 # measurement model
-Recovery =~  sucesso + recuperacaosocial + recuperacaofisica + bemestar + qualidadesono + estarforma +  				 aceitacaopessoal + autorregulacao
-Stress =~ estressegeral + estresseemocional + estressesocial + fadiga + faltaenergia + queixasomaticas +   conflitospressao + pertubacoesintervalos + exaustaoemocional + lesoes
+Recovery =~  sucesso + recuperacaosocial + recuperacaofisica + 
+              bemestar + qualidadesono + estarforma +  
+              aceitacaopessoal + autoeficacia + autorregulacao
+Stress =~ estressegeral + estresseemocional + estressesocial + 
+          fadiga + faltaenergia + queixasomaticas +  
+          conflitospressao + pertubacoesintervalos + 
+          exaustaoemocional + lesoes
 #regressions
 resiliencia ~ idade
 Recovery ~ resiliencia
@@ -269,41 +312,43 @@ subset(Est, op == ":=")
 vcov(fit)
 
 library(semPlot)
-nodeLabels<-c("Sucesso",
-             "Rec. SCL",
-             "Rec. Fisica",
-             "Bem estar",
-             "Qualidade de sono",
-             "Estar em forma",
-             "Aceitacao pessoal",
-             "Autorregulacao",
-             "Estresse geral",
-             "Estresse emocional", 
-             "Estresse social",
-             "Fadiga",
-             "Falta de energia",
-             "Queixas somáticas",
-             "Conflitos e pressao",
-             "Perturbacao",
-             "Exaustao emocional",
-             "Lesoes",
-             "Resiliencia",
-             "Recuperacao",
-             "Estresse",
-             "Idade")
-color<-c(rep("grey",18),rep("white",4))
-borders<-c(rep("FALSE",18),rep("TRUE",4))
-semPaths(fit,"std",layout="spring",residuals=FALSE,
-  # edge.color="black",
-  # nodeLabels=nodeLabels,
-  exoCov=FALSE,
-  edge.label.cex=1.0,
-  equalizeManifests=TRUE,
-  label.scale=FALSE,
-  label.cex=1)
-  # color=color,
-  # borders=borders)
 
+nodeLabels<-c("Success",
+              "Social\n Recovery",
+              "Physical\n Recovery",
+              "Well\n Being",
+              "Sleep\n Quality",
+              "Good\n Shape",
+              "Personal\n Acceptance",
+              "Self-Efficacy",
+              "Self-Regulation",
+              "General\n stress",
+              "Emotional\n Stress",
+              "Social\n Stress",
+              "Fatigue",
+              "Lack of\n Energy",
+              "Somatic\n Complaints",
+              "Conflicts and\n Pressure",
+              "Interval\n perturbation",
+              "Emotional\n Exhaustion",
+              "Lesions",
+              "Resilience",
+              "Age",
+              "Stress",
+              "Recovery")
+
+color<-c(rep("grey",19),rep("white",4))
+borders<-c(rep("FALSE",19),rep("TRUE",4))
+labelcex<-c(rep(0.7,19),rep(1,4))
+
+tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
+  width = 15,
+ height = 10,compression = 'lzw',res=1200,bg = "white")
+semPaths(fit,"std",layout="spring",residuals=FALSE,
+  equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
+  intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
+  edge.label.cex=0.7, label.cex=labelcex, color=color,borders=borders)
+dev.off()
 
 ### Modification Indexes
 Mod <- modificationIndices(fit)
