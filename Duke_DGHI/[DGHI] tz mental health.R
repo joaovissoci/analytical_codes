@@ -42,10 +42,9 @@ library, character.only=T)
 #                                  sep = ",",
 #                                  header = TRUE)
 
-data <- read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/Tz/tz_baseline_mental_health.csv", header = TRUE)
+data <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv", header = TRUE)
 
-data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/tz_baseline_mental_health.csv", header = TRUE)
-
+# data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/tz_baseline_mental_health.csv", header = TRUE)
 
 #############################################################################
 #DATA MANAGEMENT
@@ -63,11 +62,20 @@ phq9<-with(data,data.frame(phq9_b11,phq9_b12,phq9_b13,phq9_b14,
 data$phq9score<-rowSums(phq9)
 audit<-with(data,data.frame(h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
 data$auditscore<-rowSums(audit)
+fim_physical<-with(data,data.frame(g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
+	g11,g12,g13,g14,g15,g16))
+data$fim_physical<-rowSums(fim_physical)/16
+fim_mental<-with(data,data.frame(g17,g18,g19,g20,g21,g22,g23,g24,g25,g26,
+	g27,g28,g29,g30))
+data$fim_mental<-rowSums(fim_mental)/14
+
 
 phq9_cat<-car::recode(data$phq9score,"0:4.9='no';5:19='yes'")
 ces_score_cat<-car::recode(data$ces_score,"6:15.9='no';16:30='yes'")
 kes_score_cat<-car::recode(data$kes_score,"0:19.9='no';20:50='yes'")
 auditscore_cat<-car::recode(data$auditscore,"0:7.9='no';8:26='yes'")
+fimphysical_cat<-car::recode(data$fim_physical,"0:5.99='yes';else='no'")
+fim_mental_cat<-car::recode(data$fim_mental,"0:5.99='yes';else='no'")
 
 #############################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -119,9 +127,9 @@ prop.table(table)
 #assocstats(table) #vcd package
 
 # Ocupation
-table<-with(data,table(occupation))
+table<-with(data,table(redcap_event_name,occupation))
 table
-prop.table(table)
+prop.table(table,1)
 #table<-with(data,table(female,))
 #table
 #prop.table(table,2)
@@ -311,6 +319,10 @@ t(y)
 z<-with(data,prop.table(table(kes_score_cat,redcap_event_name),2))
 t(z)
 a<-with(data,prop.table(table(auditscore_cat,redcap_event_name),2))
+t(a)
+a<-with(data,prop.table(table(fimphysical_cat,redcap_event_name),2))
+t(a)
+a<-with(data,prop.table(table(fim_mental_cat,redcap_event_name),2))
 t(a)
 
 
