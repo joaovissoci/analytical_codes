@@ -1,7 +1,9 @@
+
+
 lapply(c("Hmisc","car","psych","nortest","ggplot2",
 	"pastecs","repmis","mvnormtest","polycor","lavaan",
 	"nFactors","qgraph","gridExtra","gtable",
-  "grid"), library, character.only=T)
+  "grid","metafor","meta"), library, character.only=T)
 
 # data_table2<-c(-4,16.7,13,10.6,36.5,0,13.2,26,22,
 # 	    0,14.1,10,4.2,7.5,6,19.65,14,6,
@@ -39,14 +41,155 @@ lapply(c("Hmisc","car","psych","nortest","ggplot2",
 
 bnp_sr_data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/BNP SR/bnp_SR_data.csv")
 
+bnp_sr_metadata<-read.csv("/Users/joaovissoci/Desktop/US_bnpmeta_data.csv")
 
+
+#############################################################################
+#Figure. 2
+#############################################################################
+## Suicide ideation metanalysis model
+#extracting studies with for the BNP
+meta_bnp<-subset(bnp_sr_metadata,
+	bnp_sr_metadata$group=="BNP")
+
+#extracting studies with only Normal patients
+meta_bnp_normal<-subset(meta_bnp,
+	meta_bnp$type=="Normal")
+
+#run metanalysis model for continuous data
+meta1 <- metacont(N, 
+				  mean_baseline,
+				  sd_baseline,
+				  N,
+				  mean_poststress,
+				  sd_poststress, 
+  			data=meta_bnp_normal, sm="MD")
+
+
+mean_control <- meta1$TE
+sd_control <- meta1$seTE*sqrt(meta_bnp_normal$N)
+
+#extracting studies with only Ischemic patients
+meta_bnp_ischemic<-subset(meta_bnp,
+	meta_bnp$type=="Ischemic Patients ")
+
+#run metanalysis model for continuous data
+meta1 <- metacont(N, 
+				  mean_baseline,
+				  sd_baseline,
+				  N,
+				  mean_poststress,
+				  sd_poststress, 
+  			data=meta_bnp_ischemic, sm="MD")
+
+
+mean_exp <- meta1$TE
+sd_exp <- meta1$seTE*sqrt(meta_bnp_ischemic$N)
+
+#organizing dataset for metanalysis model
+delat_data_bnp<-data.frame(mean_exp,sd_exp,
+	sample_exp=meta_bnp_ischemic$N,mean_control,sd_control,
+	sample_control=meta_bnp_normal$N)
+
+#run metanalysis model for continuous data
+meta1 <- metacont(	
+					sample_exp, 
+					mean_exp,
+					sd_exp,
+					sample_control,
+					mean_control,
+					sd_control, 
+  data=delat_data_bnp, sm="MD",
+  # byvar=intervention,print.byvar=FALSE,
+  studlab=meta_bnp_ischemic$study,comb.fixed=TRUE)
+summary(meta1)
+
+tiff("/Users/joaovissoci/Desktop/figure2.tiff",
+  width = 800, height = 400,compression = 'lzw')
+forest(meta1)
+dev.off()
+
+funnel(meta1)
+metainf(meta1)
+metainf(meta1, pooled="random")
+
+#############################################################################
+#Figure. 2
+#############################################################################
+## Suicide ideation metanalysis model
+#extracting studies with for the BNP
+meta_probnp<-subset(bnp_sr_metadata,
+	bnp_sr_metadata$group=="ProBNP")
+
+#extracting studies with only Normal patients
+meta_bnp_normal<-subset(meta_probnp,
+	meta_probnp$type=="Normal")
+
+#run metanalysis model for continuous data
+meta1 <- metacont(N, 
+				  mean_baseline,
+				  sd_baseline,
+				  N,
+				  mean_poststress,
+				  sd_poststress, 
+  			data=meta_bnp_normal, sm="MD")
+
+
+mean_control <- meta1$TE
+sd_control <- meta1$seTE*sqrt(meta_bnp_normal$N)
+
+#extracting studies with only Ischemic patients
+meta_bnp_ischemic<-subset(meta_bnp,
+	meta_bnp$type=="Ischemic Patients ")
+
+#run metanalysis model for continuous data
+meta1 <- metacont(N, 
+				  mean_baseline,
+				  sd_baseline,
+				  N,
+				  mean_poststress,
+				  sd_poststress, 
+  			data=meta_bnp_ischemic, sm="MD")
+
+
+mean_exp <- meta1$TE
+sd_exp <- meta1$seTE*sqrt(meta_bnp_ischemic$N)
+
+#organizing dataset for metanalysis model
+delat_data_bnp<-data.frame(mean_exp,sd_exp,
+	sample_exp=meta_bnp_ischemic$N,mean_control,sd_control,
+	sample_control=meta_bnp_normal$N)
+
+#run metanalysis model for continuous data
+meta1 <- metacont(	
+					sample_exp, 
+					mean_exp,
+					sd_exp,
+					sample_control,
+					mean_control,
+					sd_control, 
+  data=delat_data_bnp, sm="MD",
+  # byvar=intervention,print.byvar=FALSE,
+  studlab=meta_bnp_ischemic$study,comb.fixed=TRUE)
+summary(meta1)
+
+tiff("/Users/joaovissoci/Desktop/figure2.tiff",
+  width = 800, height = 400,compression = 'lzw')
+forest(meta1)
+dev.off()
+
+funnel(meta1)
+metainf(meta1)
+metainf(meta1, pooled="random")
+
+
+######
 # data<-c(data_table2,data_table3,data_table4,data_table5)
 # name<-c(name_table2,name_table3,name_table4,name_table5)
 # group<-c(group_table2,group_table3,group_table4,group_table5)
 
 # plot_data<-data.frame(data,name,group)
 
-bnp_sr_data_bnp<-subset(bnp_sr_data,bnp_sr_data$name=="BNP")
 
 ggbox2   <- ggplot(bnp_sr_data_bnp,aes(x=group, 
 	y=data))
