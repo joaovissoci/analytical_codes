@@ -37,32 +37,63 @@ character.only=T)
 #Pulling data from dropbox
 #data_hamilton <- repmis::source_DropboxData("lena_hamilton.csv","r31zt5zeiygsc23",sep = ",",header = TRUE)
 
-data<-read.csv("/home/joao/Dropbox/datasets/DGHI/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
-
-data<-read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
 ######################################################
 safe_habits<-with(data,data.frame(safety_helmet_use,safety_helmet_use_colleague,safety_risk_driving,safety_headlight_use_day,safety_headlight_use_night,safety_purchase_helmet_after_use,safety_buckle_helmet,safety_belief_helmet_reduce_risk,safety_belief_helmetstraps_reduce_risk,helmet_cracks,helmet_scratch,helmet_broken_chin,helmet_face_shield,helmet_obscure_face_shield,helmet_fit))
-safe_habits$safety_helmet_use<-car::recode(safe_habits$safety_helmet_use,"'Always'=1;else=0")
+
+# P1. How often do you wear a helmet when you are on a boda-boda?
+safe_habits$safety_helmet_use<-car::recode(
+	safe_habits$safety_helmet_use,"'Always'=1;else=0")
+
+#P2. How often do you think your boda-boda driver colleagues wear helmets?
 safe_habits$safety_helmet_use_colleague<-car::recode(safe_habits$safety_helmet_use_colleague,"'Always'=1;'Sometimes'=1;'Often'=1;else=0")
+
+#P3. How often do you think your boda-boda driver colleagues take risks while driving?
 safe_habits$safety_risk_driving<-car::recode(data$safety_risk_driving,"'Always'=0;'Sometimes'=0;'Often'=0;else=1")
+
+#P6. Do you run your headlight at all times when using your boda-boda?
 safe_habits$safety_headlight_use_day<-car::recode(safe_habits$safety_headlight_use_day,"'Always'=1;else=0")
+
+#P7. Do you run your headlight on your boda-boda after dark?
 safe_habits$safety_headlight_use_night<-car::recode(safe_habits$safety_headlight_use_night,"'Always'=1;else=0")
+
+#P8. Do boda-boda drivers purchase a new helmet after a crash or if it has been damaged?
 safe_habits$safety_purchase_helmet_after_use<-car::recode(safe_habits$safety_purchase_helmet_after_use,"'Always'=1;else=0")
+
+#P9. Do you buckle the helmet strap when you use your helmet?
 safe_habits$safety_buckle_helmet<-car::recode(safe_habits$safety_buckle_helmet,"'Always'=1;else=0")
+
+#P10. Do you believe helmets reduce injuries from crashes?	
 safe_habits$safety_belief_helmet_reduce_risk<-car::recode(safe_habits$safety_belief_helmet_reduce_risk,"'Agree'=1;'Strongly Agree'=1;else=0")
+
+#P11. Do you believe helmet straps are important to reduce injuries from crashes?
 safe_habits$safety_belief_helmetstraps_reduce_risk<-car::recode(safe_habits$safety_belief_helmetstraps_reduce_risk,"'Agree'=1;'Strongly Agree'=1;else=0")
-safe_habits$helmet_cracks<-car::recode(safe_habits$helmet_cracks,"'Yes'=0;'No'=1;else=NA")
+
+#P17. Does the drivers helmet have cracks or dents in the shell of the helmet? 
+safe_habits$helmet_cracks<-car::recode(safe_habits$helmet_cracks,"'Yes'=1;'No'=0;else=NA")
+
+#P18. Does the drivers helmet have scratches in the paint?
 safe_habits$helmet_scratch<-car::recode(safe_habits$helmet_scratch,"'Yes'=0;'No'=1;else=NA")
+
+#P19. Does the drivers helmet have a broken chin strap?
 safe_habits$helmet_broken_chin<-car::recode(safe_habits$helmet_broken_chin,"'Yes'=0;'No'=1;else=NA")
+
+#p20. Is there a face shield? 
 safe_habits$helmet_face_shield<-car::recode(safe_habits$helmet_face_shield,"'Yes'=1;'No'=0;else=NA")
+
+#P20a. Is the face shield of the drivers helmet obscured by scratches, paint, or a graphic?
 safe_habits$helmet_obscure_face_shield<-car::recode(safe_habits$helmet_obscure_face_shield,"'Yes'=0;'No'=1;else=NA")
+
+#P21. Does the drivers helmet fit the driver well?
 safe_habits$helmet_fit<-car::recode(safe_habits$helmet_fit,"'Yes'=1;'No'=0;else=NA")
 
+#turning data back to numeric
 safe_habits_numeric <-lapply(safe_habits,function(x) as.numeric(as.character(x)))
 
+#creating datasets
 reasons_danger<-with(data,data.frame(reason_trafficlane,reason_roadcond,reason_less_density,reason_regulation,reason_others_awareness,reason_walkways,reason_trainning,reason_lighting,reason_reflectorvests,reason_helmet,reason_education,reason_roadrules,reason_carefulness,reason_alcoholuse,reason_respectforBB,reason_reducespeed,	reason_roadsigns,	reason_widerroads,	reason_confidentdriving,	reason_inspectlicenses,	reason_properuseindicators,	reason_agelimit,	reason_policeaccountability,	reason_distraction,	reason_headlights,	reason_punishment,	reason_riskbehavior,	reason_vehiclecondition))
 
 demographics<-with(data,data.frame(age,gender,alternative_transportation,hours_alternative_transportation))
@@ -71,16 +102,15 @@ work_experience<-with(data,data.frame(hours_work_onbodaboda,days_work_bodaboda,y
 
 work_experience$hours_work_week<-work_experience$days_work_bodaboda*work_experience$hours_work_onbodabod
 
+#recoding outcome variable
 outcomes<-with(data,data.frame(rtc_involvement,injury,hospitalization,los,disability,out_of_work,nearmissmonth))
 outcomes$nearmissmonth<-car::recode(outcomes$nearmissmonth,"0=0;1:4=1;else=1")
 outcomes$rtc_involvement<-car::recode(outcomes$rtc_involvement,"'No'=0;'Yes'=1;else=0")
 outcomes$rtc_involvement<-as.numeric(as.character(outcomes$rtc_involvement))
 outcomes$hospitalization<-car::recode(data$hospitalization,"'No'='No';'Yes'='Yes';else=NA")
 ######################################################
-#DESCRIPTIVE ANALYSIS
+#TABLE 1.
 ######################################################
-
-##### DEMOGRAPHICS ###########
 
 # Age
 summary(demographics$age)
@@ -123,7 +153,9 @@ ad.test(work_experience$hours_work_week)
 by(work_experience$hours_work_week,outcomes$rtc_involvement,describe)
 wilcox.test(work_experience$hours_work_week~outcomes$rtc_involvement)
 
-##### OUTCOME MEASURES ###########
+######################################################
+# Figure 1. 
+######################################################
 
 # Injury
 table<-with(outcomes,table(injury))
@@ -187,15 +219,30 @@ ad.test(outcomes$los)
 #by(work_experience$hospitalization,outcomes$rtc_involvement,describe)
 #wilcox.test(work_experience$hospitalization~outcomes$rtc_involvement)
 
-##### OUTCOME MEASURES ###########
+#### LOGISTIC REGRESSION MODELS ######################################
 
-######################################################
-# Logistic Regression
-######################################################
+logistic_data<-data.frame(safe_habits,outcomes,
+	age=data$age,hours=data$hours_work_onbodaboda,
+	years=data$years_work_onbodaboda)
 
-logistic_data<-data.frame(safe_habits,outcomes,age=data$age,hours=data$hours_work_onbodaboda,years=data$years_work_onbodaboda)
-
-logmodel<-glm(rtc_involvement ~ safety_helmet_use + safety_helmet_use_colleague + safety_risk_driving + safety_headlight_use_day + safety_headlight_use_night + safety_headlight_use_night + safety_purchase_helmet_after_use + safety_buckle_helmet + safety_belief_helmet_reduce_risk + safety_belief_helmetstraps_reduce_risk + helmet_cracks + helmet_scratch + helmet_broken_chin + helmet_face_shield + helmet_obscure_face_shield + helmet_fit + age +hours + years,family=binomial, data=logistic_data)
+logmodel<-glm(rtc_involvement ~ 
+								safety_helmet_use + 
+								safety_risk_driving + 
+								safety_headlight_use_day + 
+								safety_headlight_use_night + 
+								safety_headlight_use_night + 
+								safety_purchase_helmet_after_use + 
+								safety_buckle_helmet + 
+								helmet_cracks + 
+								helmet_scratch + 
+								helmet_broken_chin + 
+								helmet_face_shield + 
+								helmet_obscure_face_shield + 
+								helmet_fit + 
+								age +
+								hours + 
+								years,
+	family=binomial, data=logistic_data)
 summary(logmodel)
 #anova(reglogGEU)
 exp(coef(logmodel)) # exponentiated coefficients
@@ -230,6 +277,18 @@ exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
+
+#### GRAPHS #########################################################
+
+fig1_outcome<-c(77.0,82.3,7.4,23.4,5.3,4,7)
+fig1_variables<-c("RTI","Near miss","Multipe injuries",
+	"Hospitlized","Disability","LOS (Median)",
+	"Days or work lost (Median)")
+fig1_group<-rep("Descriptives")
+
+
+
+
 
 ######################################################
 #PRINCIPAL COMPONENT ANALYSIS - From psych package - http://twt.lk/bdAQ or http://twt.lk/bdAR or http://twt.lk/bdAS

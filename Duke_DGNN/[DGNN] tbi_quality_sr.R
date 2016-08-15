@@ -26,9 +26,9 @@ library, character.only=T)
 #############################################################################
 #IMPORTING DATA
 #############################################################################
-data <-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/TBI_quality_SR/agree_domain.csv",header=T)
+data <-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/TBI_quality_SR/agree_domain.csv",header=T)
 
-data_raters <-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/TBI_quality_SR/agree_domain_raters.csv",header=T)
+data_raters <-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/TBI_quality_SR/agree_domain_raters.csv",header=T)
 
 #####################################################################################
 #DATA MANAGEMENT
@@ -59,15 +59,15 @@ data_plot$color[data_plot$value >= 55.88 & data_plot$value < 69.75]="lightcyan3"
 data_plot$color[data_plot$value >= 69.75 & data_plot$value < 81.97]="lightcyan2"
 data_plot$color[data_plot$value >= 81.97]="lightcyan1"
 
-tiff("/Users/joaovissoci/Desktop/agree_domains_scores.tiff",
-  width = 800, height = 600,compression = 'lzw')
+tiff("/Users/jnv4/Desktop/agree_domains_scores.tiff",
+  width = 1700, height = 1300,compression = 'lzw')
 avseq <- ggplot(data_plot[1:144,], aes(y=author, x=variable)) + 
   geom_tile(fill=data_plot[1:144,]$color) + 
-  geom_text(aes(y=author, x=variable, label=value2)) + 
+  geom_text(aes(y=author, x=variable, label=value2),size=10) + 
   theme_minimal() + 
   xlab(label="Domains") + 
   ylab(label="CPG") + 
-  theme(text = element_text(size=16))  + 
+  theme(text = element_text(size=35))  + 
   scale_y_discrete(limits=rev(levels))
 avseq
 dev.off()
