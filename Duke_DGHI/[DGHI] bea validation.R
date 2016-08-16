@@ -37,9 +37,9 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-data_tz<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_tz.csv",sep=',')
-data_sl<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_sl.csv",sep=',')
-data_rw<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/bea validation/bea_rw.csv",sep=',')
+data_tz<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_tz.csv",sep=',')
+data_sl<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_sl.csv",sep=',')
+data_rw<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_rw.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -657,7 +657,7 @@ fit <- psych::principal(cor_data,nfactors=2,rotate="none",scores=TRUE)
 fit
 summary(fit) # print variance accounted for 
 loadings(fit) # pc loadings 
-# fit$scores
+#fit$scores
 pca1<-predict(fit,model1_bea)
 # scores<-scoreItems(fit$weights,bea_data[,-1],totals=TRUE)
 # summary(scores)
@@ -886,9 +886,17 @@ describe(scores$scores)
 # score<-round(pnorm(sc)*100,2)
 
 #Extracting normalized data
+bea_data$ID<-c(1:227)
+pca_scores_data<-data.frame(PCA1a=pca1[,1],PCA1b=pca1[,2],
+							PCA2=pca2[,1],PCA3=pca3[,1],
+							PCA4=pca4[,1],id=bea_data$ID,
+							country=bea_data[,1])
+pca_scores_data<-na.omit(pca_scores_data)
 
-pca_scores_data<-data.frame(PCA1=pca1,PCA2=pca2,
-	PCA3=pca3,PCA4=pca4,country=bea_data[,1])
+rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+pca_score_data_rescaled<-lapply(pca_scores_data[,1:5],rescale)
+pca_score_data_rescaled<-data.frame(pca_score_data_rescaled,
+	pca_scores_data$id,pca_scores_data$country)
 
 write.csv(pca_scores_data,"/Users/joaovissoci/Desktop/bea_PCAscores.csv")
 ##############################################################
