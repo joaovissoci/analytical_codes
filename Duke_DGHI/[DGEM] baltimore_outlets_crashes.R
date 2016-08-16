@@ -26,14 +26,14 @@
 
 #All packages must be installes with install.packages() function
 lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis",
-	"mvnormtest","polycor"), 
+	"mvnormtest","polycor","MASS"), 
 library, character.only=T)
 
 ######################################################################
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 2/balticsv.csv",sep=",")
+data<-read.csv("/Users/joaovissoci/Desktop/balticsv.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -42,48 +42,130 @@ data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltim
 #Creating a data frame (group of variables)
 #numeric<-with(data, data.frame(Peso,Altura,IMC,
 #                          Idade))
-#
-##Change variables properties
-##Change variable to factor
-#data$Classificacao<-as.factor(data$Classificacao)
-#
-##Change variable to character
-#data$Classificacao<-as.character(data$Classificacao)
-#
-##Change variable to numeric
-#data$Classificacao<-as.numeric(data$Classificacao)
-#
-##Recoding variables
-#data$Classificacao<-car::recode(data$Classificacao,"#1='baixo';2='medio';
-#	3='alto'")
+data$outlet_density<-data$outlet/data$Area_km
 
-data <- base::merge(data1,data2,by=c("nome"))
+data$crash_density<-data$crash_imp/data$Area_km
 
+data$agglomeration<-car::recode(data$LISA_CL,"0=3;
+	1=2; 2=1; 3=1;4=2")
+data$agglomeration<-as.factor(data$agglomeration)
+######################################################################
+#DESCRIPTIVES
+######################################################################
+
+sum(data$crash_imp)
+sum(data$outlet)/238.5
+
+describe(data$outlet_density)
+describe(data$outlet)
+
+with(data,by(outlet,agglomeration,describe))
+with(data,by(outlet_density,agglomeration,describe))
+with(data,by(crash_imp,agglomeration,describe))
 
 ######################################################################
-#BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
+#EXPLORATORY ANALYSIS
 ######################################################################
-###Section wih several exploratory data analysis functions
-#Exploratory Data Anlysis
-#dim(data)
-#str (data)
-#head(data)
-#names(data)
-#summary(data)#This comand will provide a whole set of descriptive #results for each variables
-describe(data)
-with(data,by(data,outcome,describe))
-with(data,by(data,outcome,summary))
-#stat.desc(data)
-with(data,by(data,outcome,ad.test)) # Anderson-Darling test for normality
-#skewness(data$Idade) #Will provide skweness analysis
-#kurtosis(data$Idade) - 3 #Will provide kurtosis analysis
-#qplot(data$Idade) # histogram plot
-#boxplot(data$Idade~data$Classificacao) #will provide a boxplot for the #variables to analysis potential outliers
-## Bartlett Test of Homogeneity of Variances
-#bartlett.test(data$Idade~data$Classificacao, data=data)
-## Figner-Killeen Test of Homogeneity of Variances
-#fligner.test(data$Idade~data$Classificacao, data=data)
-#leveneTest(data$Idade~data$Classificacao, data=data)
+ggplot(data, aes(outlet,crash_imp)) +
+  geom_point() + geom_smooth(se = TRUE)
+#,color=agglomeration
+
+#See
+# http://stats.stackexchange.com/questions/17006/interpretation-of-incidence-rate-ratios
+# http://stats.stackexchange.com/questions/11096/how-to-interpret-coefficients-in-a-poisson-regression
+#http://datavoreconsulting.com/programming-tips/count-data-glms-choosing-poisson-negative-binomial-zero-inflated-poisson/
+
+fm_nbin <- glm.nb(crash_imp ~ outlet,
+	data = data)
+summary(fm_nbin)
+exp(coef(fm_nbin))
+exp(confint(fm_nbin,level=0.95))
+
+1 - pchisq(summary(fm_nbin)$deviance,
+           summary(fm_nbin)$df.residual
+           )
+
+
+fm_nbin <- glm.nb(crash_imp ~ outlet + agglomeration + 
+		lenght_km + population, 
+	data = data)
+summary(fm_nbin)
+exp(coef(fm_nbin))
+exp(confint(fm_nbin,level=0.95))
+
+1 - pchisq(summary(fm_nbin)$deviance,
+           summary(fm_nbin)$df.residual
+           )
+
+
+# Regression Tree Example
+library(rpart)
+
+# grow tree 
+fit <- rpart(crash_imp ~ outlet, 
+   method="poisson", data=data)
+
+printcp(fit) # display the results 
+plotcp(fit) # visualize cross-validation results 
+summary(fit) # detailed summary of splits
+
+# create additional plots 
+par(mfrow=c(1,2)) # two plots on one page 
+rsq.rpart(fit) # visualize cross-validation results  	
+
+# plot tree 
+plot(fit, uniform=TRUE, 
+  	main="Regression Tree for Mileage ")
+text(fit, use.n=TRUE, all=TRUE, cex=.8)
+
+# create attractive postcript plot of tree 
+post(fit, file = "c:/tree2.ps", 
+  	title = "Regression Tree for Mileage ")
+
+# prune the tree 
+pfit<- prune(fit, cp=0.01160389) # from cptable   
+
+# plot the pruned tree 
+plot(pfit, uniform=TRUE, 
+  	main="Pruned Regression Tree for Mileage")
+text(pfit, use.n=TRUE, all=TRUE, cex=.8)
+post(pfit, file = "c:/ptree2.ps", 
+  	title = "Pruned Regression Tree for Mileage")
+
+
+# Conditional Inference Tree for Kyphosis
+tree_data<-subset(data,data$agglomeration!="Low")
+
+library(party)
+fit <- ctree(crash_imp ~ outlet + as.factor(agglomeration) + 
+	population, 
+   data=data)
+plot(fit, main="Conditional Inference Tree for Kyphosis")
+
+
+
+# cbind(nd, 
+#       Mean = predict(fm_nbin, newdata=nd, type="response"), 
+#       SE = predict(fm_nbin, newdata=nd, type="response", se.fit=T)$se.fit
+#       )
+
+# Multiple Linear Regression Example 
+fit <- lm(crash_density ~ outlet_density + agglomeration, 
+	data=data)
+summary(fit) # show results
+# Other useful functions 
+coefficients(fit) # model coefficients
+confint(fit, level=0.95) # CIs for model parameters 
+fitted(fit) # predicted values
+residuals(fit) # residuals
+anova(fit) # anova table 
+vcov(fit) # covariance matrix for model parameters 
+influence(fit) # regression diagnostics
+plot(fit)
+
+
+
+
 
 ######################################################################
 #TABLE 1

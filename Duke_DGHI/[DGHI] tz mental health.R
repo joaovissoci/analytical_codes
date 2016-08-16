@@ -42,7 +42,7 @@ library, character.only=T)
 #                                  sep = ",",
 #                                  header = TRUE)
 
-data <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv", header = TRUE)
+data <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv", header = TRUE)
 
 # data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/tz_baseline_mental_health.csv", header = TRUE)
 
