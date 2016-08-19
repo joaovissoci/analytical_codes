@@ -37,9 +37,9 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-data_tz<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_tz.csv",sep=',')
-data_sl<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_sl.csv",sep=',')
-data_rw<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_rw.csv",sep=',')
+data_tz<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_tz.csv",sep=',')
+data_sl<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_sl.csv",sep=',')
+data_rw<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_rw.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -898,7 +898,7 @@ pca_score_data_rescaled<-lapply(pca_scores_data[,1:5],rescale)
 pca_score_data_rescaled<-data.frame(pca_score_data_rescaled,
 	pca_scores_data$id,pca_scores_data$country)
 
-write.csv(pca_scores_data,"/Users/joaovissoci/Desktop/bea_PCAscores.csv")
+write.csv(pca_score_data_rescaled,"/Users/joaovissoci/Desktop/bea_PCAscores.csv")
 ##############################################################
 #NETWORK 
 ##############################################################
