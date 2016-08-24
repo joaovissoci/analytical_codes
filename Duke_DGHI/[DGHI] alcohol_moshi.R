@@ -22,6 +22,33 @@ lapply(c("metafor","ggplot2","gridExtra" ,"psych",
 	"moments","GPArotation","nFactors","gdata",
 	"repmis","sqldf","VIM","survival",
 	"sas7bdat","epicalc","vcd"), library, character.only=T)
+
+#Dosage specific ODSS function
+#source: http://goo.gl/ETWdZd
+doseSpecificOddsRatios <- function(mymatrix,referencerow=1)
+{
+   numstrata <- nrow(mymatrix)
+   # calculate the stratum-specific odds ratios, and odds of disease:
+   doses <- as.numeric(rownames(mymatrix))
+   for (i in 1:numstrata)
+   {
+      dose <- doses[i]
+      # calculate the odds ratio:
+      DiseaseExposed <- mymatrix[i,1]
+      DiseaseUnexposed <- mymatrix[i,2]
+      ControlExposed <- mymatrix[referencerow,1]
+      ControlUnexposed <- mymatrix[referencerow,2]
+      totExposed <- DiseaseExposed + ControlExposed
+      totUnexposed <- DiseaseUnexposed + ControlUnexposed
+      probDiseaseGivenExposed <- DiseaseExposed/totExposed
+      probDiseaseGivenUnexposed <- DiseaseUnexposed/totUnexposed
+      probControlGivenExposed <- ControlExposed/totExposed
+      probControlGivenUnexposed <- ControlUnexposed/totUnexposed
+      oddsRatio <- (probDiseaseGivenExposed*probControlGivenUnexposed)/
+                   (probControlGivenExposed*probDiseaseGivenUnexposed)
+      print(paste("dose =", dose, ", odds ratio = ",oddsRatio))
+   }
+}
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
@@ -30,7 +57,7 @@ lapply(c("metafor","ggplot2","gridExtra" ,"psych",
 #data<-
 #data<-read.sas7bdat("C:\\Users\\Joao\\Desktop\\tanzclean.sas7bdat")
 #data<-read.sas7bdat("/Users/rpietro/Dropbox/datasets/Africa_DGHI/tanzclean.sas7bdat")
-data<-read.sas7bdat("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/tanzclean.sas7bdat")
+data<-read.sas7bdat("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/tanzclean.sas7bdat")
 data<-as.data.frame(data)
 ###################################################
 #DATA MANAGEMENT
@@ -699,7 +726,7 @@ prop.table(mytable,1)
 assocstats(mytable)
 
 ###########################################################
-##CLOGIT Model 1
+##TABLE 4
 ###########################################################
 #CLOGIT MODEL 1:1 -Control 24 hours
 id_1<-c(1)
@@ -753,12 +780,6 @@ x_2<-clogit(outcome ~ predictor + strata(strata),clogit_data, method="exact")
 summary(x_2) 
 clogistic.display(x_2)
 
-#Bottles
-x_22<-clogit(outcome ~ bottle + strata(strata),clogit_data, method="exact")
-summary(x_22) 
-clogistic.display(x_22)
-
-
 #CLOGIT MODEL 2:1
 id_1<-c(1)
 id_2<-c(2)
@@ -767,9 +788,12 @@ strata<-c(1:484)
 outcome1<-c(1)
 outcome2<-c(0)
 outcome3<-c(0)
-fup1<-with(cleaned_data,data.frame(predictor=breath_level,strata,id=id_1,outcome=outcome1,bottle=bottles_drank_1))
-fup2<-with(cleaned_data,data.frame(predictor=predictor_FUP1,strata,id=id_2,outcome=outcome2,bottle=bottles_drank_2))
-fup3<-with(cleaned_data,data.frame(predictor=predictor_FUP2,strata,id=id_3,outcome=outcome3,bottle=bottles_drank_3))
+fup1<-with(cleaned_data,data.frame(predictor=breath_level,
+	strata,id=id_1,outcome=outcome1,confouder=bottle))
+fup2<-with(cleaned_data,data.frame(predictor=predictor_FUP1,
+	strata,id=id_2,outcome=outcome2,confouder=bottle24))
+fup3<-with(cleaned_data,data.frame(predictor=predictor_FUP2,
+	strata,id=id_3,outcome=outcome3,confouder=bottle1week))
 #matched_data<-with(cleaned_data,data.frame(breath_level,id))
 #fup1$predictor<-car::recode(fup1$predictor,"'yes'=1;'no'=2")
 #fup1$predictor<-as.numeric(as.character(fup1$predictor))
@@ -782,6 +806,10 @@ x_3<-clogit(outcome ~ predictor + strata(strata),clogit_data, method="exact")
 summary(x_3) 
 clogistic.display(x_3)
 
+#DOSAGE LEVEL
+mytable<-with(clogit_data,table(confouder,outcome))
+dose_matrix<-as.matrix(mytable)
+doseSpecificOddsRatios(dose_matrix)
 
 #############################################################
 #CLOGIT MODEL - RTI outcome
