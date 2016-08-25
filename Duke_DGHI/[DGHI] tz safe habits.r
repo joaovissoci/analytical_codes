@@ -424,7 +424,7 @@ exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-logmodel<-glm(injury ~ safety_helmet_use + safety_helmet_use_colleague + safety_risk_driving + safety_headlight_use_day + safety_headlight_use_night + safety_headlight_use_night + safety_purchase_helmet_after_use + safety_buckle_helmet + safety_belief_helmet_reduce_risk + helmet_cracks + helmet_scratch + helmet_face_shield + helmet_obscure_face_shield + age +hours + years,family=binomial, data=logistic_data)
+logmodel<-glm(injury ~ safety_helmet_use ,family=binomial, data=logistic_data)
 summary(logmodel)
 #anova(reglogGEU)
 exp(coef(logmodel)) # exponentiated coefficients
