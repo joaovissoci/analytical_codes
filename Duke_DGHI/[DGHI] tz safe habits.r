@@ -37,7 +37,7 @@ character.only=T)
 #Pulling data from dropbox
 #data_hamilton <- repmis::source_DropboxData("lena_hamilton.csv","r31zt5zeiygsc23",sep = ",",header = TRUE)
 
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -402,24 +402,19 @@ assocstats(table) #vcd package
 #### LOGISTIC REGRESSION MODELS ######################################
 
 logmodel<-glm(rtc_involvement ~ 
+								age +
+								years_work_onbodaboda +
+								hours_work_week + 
+								helmet_cracks + 
 								safety_helmet_use +
-								safety_buckle_helmet +
-								safety_risk_driving + 
+								safety_buckle_helmet + 
+								helmet_obscure_face_shield + 
+								helmet_face_shield + 
+								helmet_fit +
 								safety_headlight_use_day + 
 								safety_headlight_use_night + 
 								safety_purchase_helmet_after_use +
-								safety_belief_helmet_reduce_risk +
-								safety_belief_helmetstraps_reduce_risk +
-								safety_buckle_helmet + 
-								helmet_cracks + 
-								helmet_scratch + 
-								helmet_broken_chin + 
-								helmet_face_shield + 
-								helmet_obscure_face_shield + 
-								helmet_fit + 
-								age +
-								hours_work_week + 
-								years_work_onbodaboda,
+								safety_belief_helmet_reduce_risk,
 	family=binomial, data=data_all)
 summary(logmodel)
 #anova(reglogGEU)
