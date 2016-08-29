@@ -103,7 +103,7 @@ work_experience<-with(data,data.frame(hours_work_onbodaboda,days_work_bodaboda,y
 work_experience$hours_work_week<-work_experience$days_work_bodaboda*work_experience$hours_work_onbodabod
 
 #recoding outcome variable
-outcomes<-with(data,data.frame(rtc_involvement,injury,hospitalization,los,disability,out_of_work,nearmissmonth))
+outcomes<-with(data,data.frame(rtc_involvement,injury,hospitalization,los,nearmissmonth,out_of_work,nearmissmonth))
 outcomes$nearmissmonth<-car::recode(outcomes$nearmissmonth,"0=0;1:4=1;else=1")
 outcomes$rtc_involvement<-car::recode(outcomes$rtc_involvement,"'No'=0;'Yes'=1;else=0")
 outcomes$rtc_involvement<-as.numeric(as.character(outcomes$rtc_involvement))
@@ -275,14 +275,14 @@ chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
 
-#helmet_scratch
-table<-with(data_all,table(helmet_scratch,
-	rtc_involvement))
-table
-prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
+# #helmet_scratch
+# table<-with(data_all,table(helmet_scratch,
+# 	rtc_involvement))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
 
 #helmet_broken_chin
 table<-with(data_all,table(helmet_broken_chin,
@@ -330,15 +330,6 @@ fisher.test(table)
 assocstats(table) #vcd package
 
 #helmet_broken_chin
-table<-with(data_all,table(helmet_broken_chin,
-	rtc_involvement))
-table
-prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
-
-#helmet_broken_chin
 table<-with(data_all,table(safety_risk_driving,
 	rtc_involvement))
 table
@@ -374,14 +365,14 @@ chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
 
-#safety_purchase_helmet_after_use
-table<-with(data_all,table(safety_purchase_helmet_after_use,
-	rtc_involvement))
-table
-prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
+# #safety_purchase_helmet_after_use
+# table<-with(data_all,table(safety_purchase_helmet_after_use,
+# 	rtc_involvement))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
 
 #safety_belief_helmet_reduce_risk
 table<-with(data_all,table(safety_belief_helmet_reduce_risk,
@@ -500,7 +491,7 @@ exp(coef(logmodel)) # exponentiated coefficients
 exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
 logmodel<-glm(rtc_involvement ~ 
-								safety_buckle_helmet,
+								safety_belief_helmetstraps_reduce_risk,
 	family=binomial, data=data_all)
 summary(logmodel)
 #anova(reglogGEU)
@@ -516,12 +507,13 @@ logmodel<-glm(rtc_involvement ~
 								safety_buckle_helmet + 
 								helmet_obscure_face_shield + 
 								helmet_face_shield + 
-								# helmet_fit +
+								helmet_fit +
 								safety_headlight_use_day + 
 								safety_headlight_use_night + 
 								safety_purchase_helmet_after_use +
 								safety_belief_helmet_reduce_risk +
-								safety_buckle_helmet,
+								safety_buckle_helmet +
+								safety_belief_helmetstraps_reduce_risk,
 	family=binomial, data=data_all)
 summary(logmodel)
 #anova(reglogGEU)
@@ -793,7 +785,8 @@ logmodel<-glm(injury ~
 								safety_headlight_use_night + 
 								safety_purchase_helmet_after_use +
 								safety_belief_helmet_reduce_risk +
-								safety_buckle_helmet,
+								safety_buckle_helmet +
+								safety_belief_helmetstraps_reduce_risk,
 	family=binomial, data=data_all)
 summary(logmodel)
 #anova(reglogGEU)
@@ -804,78 +797,59 @@ exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 logistic.display(logmodel)
 
 ######################################################
-#TABLE 2.
+#TABLE 4.
 ######################################################
 
 # Age
-by(demographics$age,outcomes$rtc_involvement,describe)
-wilcox.test(demographics$age~outcomes$rtc_involvement)
+# by(demographics$age,outcomes$injury,describe)
+# wilcox.test(demographics$age~outcomes$injury)
 
-# Experience (Years)
-by(work_experience$years_work_onbodaboda,outcomes$rtc_involvement,describe)
-wilcox.test(work_experience$years_work_onbodaboda~outcomes$rtc_involvement)
+# # Experience (Years)
+# by(work_experience$years_work_onbodaboda,outcomes$injury,describe)
+# wilcox.test(work_experience$years_work_onbodaboda~outcomes$injury)
 
-# Hours of Work
-by(work_experience$hours_work_onbodaboda,outcomes$rtc_involvement,describe)
-wilcox.test(work_experience$hours_work_onbodaboda~outcomes$rtc_involvement)
+# # Hours of Work
+# by(work_experience$hours_work_onbodaboda,outcomes$injury,describe)
+# wilcox.test(work_experience$hours_work_onbodaboda~outcomes$injury)
 
-# Days of Work
-by(work_experience$days_work_bodaboda,outcomes$rtc_involvement,describe)
-wilcox.test(work_experience$days_work_bodaboda~outcomes$rtc_involvement)
+# # Days of Work
+# by(work_experience$days_work_bodaboda,outcomes$injury,describe)
+# wilcox.test(work_experience$days_work_bodaboda~outcomes$injury)
 
-# Hours of Work per Week
-by(work_experience$hours_work_week,outcomes$rtc_involvement,describe)
-wilcox.test(work_experience$hours_work_week~outcomes$rtc_involvement)
+# # Hours of Work per Week
+# by(work_experience$hours_work_week,outcomes$injury,describe)
+# wilcox.test(work_experience$hours_work_week~outcomes$injury)
 
 #Helmet use
 table<-with(data_all,table(safety_helmet_use,
-	rtc_involvement))
+	nearmissmonth))
 table
 prop.table(table,2)
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
-logmodel<-glm(rtc_involvement ~ 
-								safety_helmet_use,
-	family=binomial, data=data_all)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
 
 #Cracks
 table<-with(data_all,table(helmet_cracks,
-	rtc_involvement))
+	nearmissmonth))
 table
 prop.table(table,2)
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
 
-#helmet_scratch
-table<-with(data_all,table(helmet_scratch,
-	rtc_involvement))
-table
-prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
-
-#helmet_broken_chin
-table<-with(data_all,table(helmet_broken_chin,
-	rtc_involvement))
-table
-prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
+# #helmet_scratch
+# table<-with(data_all,table(helmet_scratch,
+# 	nearmissmonth))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
 
 #helmet_broken_chin
 table<-with(data_all,table(helmet_broken_chin,
-	rtc_involvement))
+	nearmissmonth))
 table
 prop.table(table,2)
 chisq.test(table)
@@ -884,7 +858,7 @@ assocstats(table) #vcd package
 
 #helmet_obscure_face_shield
 table<-with(data_all,table(helmet_obscure_face_shield,
-	rtc_involvement))
+	nearmissmonth))
 table
 prop.table(table,2)
 chisq.test(table)
@@ -893,7 +867,7 @@ assocstats(table) #vcd package
 
 #helmet_face_shield
 table<-with(data_all,table(helmet_face_shield,
-	rtc_involvement))
+	nearmissmonth))
 table
 prop.table(table,2)
 chisq.test(table)
@@ -902,34 +876,34 @@ assocstats(table) #vcd package
 
 #helmet_fit
 table<-with(data_all,table(helmet_fit,
-	rtc_involvement))
+	nearmissmonth))
 table
 prop.table(table,2)
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
 
-#helmet_broken_chin
-table<-with(data_all,table(helmet_broken_chin,
-	rtc_involvement))
-table
-prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
+# #helmet_broken_chin
+# table<-with(data_all,table(helmet_broken_chin,
+# 	nearmissmonth))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
 
-#helmet_broken_chin
-table<-with(data_all,table(safety_risk_driving,
-	rtc_involvement))
-table
-prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
+# #safety_risk_driving
+# table<-with(data_all,table(safety_risk_driving,
+# 	nearmissmonth))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
 
 #safety_headlight_use_day
 table<-with(data_all,table(safety_headlight_use_day,
-	rtc_involvement))
+	nearmissmonth))
 table
 prop.table(table,2)
 chisq.test(table)
@@ -938,34 +912,34 @@ assocstats(table) #vcd package
 
 #safety_headlight_use_night
 table<-with(data_all,table(safety_headlight_use_night,
-	rtc_involvement))
+	nearmissmonth))
 table
 prop.table(table,2)
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
 
-#safety_purchase_helmet_after_use
+#purchase_helmet_after_use
 table<-with(data_all,table(safety_purchase_helmet_after_use,
-	rtc_involvement))
+	nearmissmonth))
 table
 prop.table(table,2)
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
 
-#safety_purchase_helmet_after_use
-table<-with(data_all,table(safety_purchase_helmet_after_use,
-	rtc_involvement))
-table
-prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
+# #safety_purchase_helmet_after_use
+# table<-with(data_all,table(safety_purchase_helmet_after_use,
+# 	nearmissmonth))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
 
 #safety_belief_helmet_reduce_risk
 table<-with(data_all,table(safety_belief_helmet_reduce_risk,
-	rtc_involvement))
+	nearmissmonth))
 table
 prop.table(table,2)
 chisq.test(table)
@@ -974,7 +948,7 @@ assocstats(table) #vcd package
 
 #safety_belief_helmetstraps_reduce_risk
 table<-with(data_all,table(safety_belief_helmetstraps_reduce_risk,
-	rtc_involvement))
+	nearmissmonth))
 table
 prop.table(table,2)
 chisq.test(table)
@@ -983,7 +957,7 @@ assocstats(table) #vcd package
 
 #### LOGISTIC REGRESSION MODELS ######################################
 
-logmodel<-glm(rtc_involvement ~ 
+logmodel<-glm(nearmissmonth ~ 
 								safety_helmet_use,
 	family=binomial, data=data_all)
 summary(logmodel)
@@ -991,7 +965,7 @@ summary(logmodel)
 exp(coef(logmodel)) # exponentiated coefficients
 exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
-logmodel<-glm(rtc_involvement ~ 
+logmodel<-glm(nearmissmonth ~ 
 								helmet_cracks,
 	family=binomial, data=data_all)
 summary(logmodel)
@@ -999,15 +973,15 @@ summary(logmodel)
 exp(coef(logmodel)) # exponentiated coefficients
 exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
-logmodel<-glm(rtc_involvement ~ 
-								safety_buckle_helmet,
-	family=binomial, data=data_all)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# logmodel<-glm(nearmissmonth ~ 
+# 								safety_buckle_helmet,
+# 	family=binomial, data=data_all)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
-logmodel<-glm(rtc_involvement ~ 
+logmodel<-glm(nearmissmonth ~ 
 								helmet_obscure_face_shield,
 	family=binomial, data=data_all)
 summary(logmodel)
@@ -1015,15 +989,7 @@ summary(logmodel)
 exp(coef(logmodel)) # exponentiated coefficients
 exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
-logmodel<-glm(rtc_involvement ~ 
-								helmet_obscure_face_shield,
-	family=binomial, data=data_all)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-
-logmodel<-glm(rtc_involvement ~ 
+logmodel<-glm(nearmissmonth ~ 
 								helmet_face_shield,
 	family=binomial, data=data_all)
 summary(logmodel)
@@ -1031,15 +997,15 @@ summary(logmodel)
 exp(coef(logmodel)) # exponentiated coefficients
 exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
-logmodel<-glm(rtc_involvement ~ 
-								helmet_fit,
-	family=binomial, data=data_all)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# logmodel<-glm(nearmissmonth ~ 
+# 								helmet_fit,
+# 	family=binomial, data=data_all)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
-logmodel<-glm(rtc_involvement ~ 
+logmodel<-glm(nearmissmonth ~ 
 								safety_headlight_use_day,
 	family=binomial, data=data_all)
 summary(logmodel)
@@ -1047,7 +1013,7 @@ summary(logmodel)
 exp(coef(logmodel)) # exponentiated coefficients
 exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
-logmodel<-glm(rtc_involvement ~ 
+logmodel<-glm(nearmissmonth ~ 
 								safety_headlight_use_night,
 	family=binomial, data=data_all)
 summary(logmodel)
@@ -1055,7 +1021,7 @@ summary(logmodel)
 exp(coef(logmodel)) # exponentiated coefficients
 exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
-logmodel<-glm(rtc_involvement ~ 
+logmodel<-glm(nearmissmonth ~ 
 								safety_purchase_helmet_after_use,
 	family=binomial, data=data_all)
 summary(logmodel)
@@ -1063,23 +1029,15 @@ summary(logmodel)
 exp(coef(logmodel)) # exponentiated coefficients
 exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
-logmodel<-glm(rtc_involvement ~ 
-								safety_belief_helmet_reduce_risk,
-	family=binomial, data=data_all)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# logmodel<-glm(nearmissmonth ~ 
+# 								safety_belief_helmet_reduce_risk,
+# 	family=binomial, data=data_all)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
-logmodel<-glm(rtc_involvement ~ 
-								safety_belief_helmet_reduce_risk,
-	family=binomial, data=data_all)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-
-logmodel<-glm(rtc_involvement ~ 
+logmodel<-glm(nearmissmonth ~ 
 								safety_buckle_helmet,
 	family=binomial, data=data_all)
 summary(logmodel)
@@ -1087,21 +1045,21 @@ summary(logmodel)
 exp(coef(logmodel)) # exponentiated coefficients
 exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 
-logmodel<-glm(rtc_involvement ~ 
+logmodel<-glm(nearmissmonth ~ 
 								age +
 								years_work_onbodaboda +
 								hours_work_week + 
+								# safety_helmet_use +
 								helmet_cracks + 
-								safety_helmet_use +
-								safety_buckle_helmet + 
+								# safety_buckle_helmet + 
 								helmet_obscure_face_shield + 
 								helmet_face_shield + 
 								# helmet_fit +
-								safety_headlight_use_day + 
-								safety_headlight_use_night + 
-								safety_purchase_helmet_after_use +
-								safety_belief_helmet_reduce_risk +
-								safety_buckle_helmet,
+								# safety_headlight_use_day + 
+								safety_headlight_use_night,
+								# safety_purchase_helmet_after_use +
+								# safety_belief_helmet_reduce_risk,
+								# safety_belief_helmetstraps_reduce_risk,
 	family=binomial, data=data_all)
 summary(logmodel)
 #anova(reglogGEU)
@@ -1110,46 +1068,6 @@ exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
-
-
-logmodel<-glm(injury ~ safety_helmet_use ,family=binomial, data=logistic_data)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
-
-logmodel<-glm(hospitalization ~  safety_helmet_use + safety_helmet_use_colleague + safety_risk_driving + safety_headlight_use_day + safety_headlight_use_night + safety_headlight_use_night + safety_purchase_helmet_after_use + safety_buckle_helmet + safety_belief_helmet_reduce_risk + helmet_cracks + helmet_scratch + helmet_face_shield + helmet_obscure_face_shield + age +hours + years,family=binomial, data=logistic_data)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
-
-logmodel<-glm(nearmissmonth ~  safety_helmet_use + safety_helmet_use_colleague + safety_risk_driving + safety_headlight_use_day + safety_headlight_use_night + safety_headlight_use_night + safety_purchase_helmet_after_use + safety_buckle_helmet + safety_belief_helmet_reduce_risk + helmet_cracks + helmet_scratch + helmet_face_shield + helmet_obscure_face_shield + age +hours + years,family=binomial, data=logistic_data)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
-
-#### GRAPHS #########################################################
-
-fig1_outcome<-c(77.0,82.3,7.4,23.4,5.3,4,7)
-fig1_variables<-c("RTI","Near miss","Multipe injuries",
-	"Hospitlized","Disability","LOS (Median)",
-	"Days or work lost (Median)")
-fig1_group<-rep("Descriptives")
-
-
-
-
 
 ######################################################
 #PRINCIPAL COMPONENT ANALYSIS - From psych package - http://twt.lk/bdAQ or http://twt.lk/bdAR or http://twt.lk/bdAS
