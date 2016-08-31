@@ -31,8 +31,8 @@ setup_twitter_oauth("",
 #5. geocode gives a radius area given by lat and long
 # given a radius size in miles or km Ex. geocode='37.781157,-122.39720,1mi'
 #
-tw = searchTwitter("#UFC202",n=1e6, since="2016-08-22",
-	until="2016-08-22")
+tw = searchTwitter("#UFC202",n=1e5, since="2016-08-22",
+	until="2016-08-23")
 length(tw)
 # saveRDS(tw, '../../R/MSST_Tweets.RDS')
 # tw = readRDS('../../R/MSST_Tweets.RDS')
@@ -63,7 +63,7 @@ timeDist = ggplot(d, aes(created)) +
     xlab('All tweets')
 
 # Zoom in on conference day
-dayOf = filter(d, mday(d$created) == 20)
+dayOf = filter(d, mday(d$created) == 22)
 timeDistDayOf = ggplot(dayOf, aes(created)) + 
     geom_density(aes(fill = isRetweet), adjust = .25, alpha = .5) +
     theme(legend.justification = c(1, 1), legend.position = c(1, 1)) +
@@ -121,7 +121,7 @@ orig$text[which.max(orig$emotionalValence)]
 orig$text[which.min(orig$emotionalValence)]
 ## [1] "1 Replications are boring 2 replications are attack 3 reputations will suffer 4 only easy ones will be done 5 bad studies are bad #MSST2016"
 # How does emotionalValence change over the day?
-filter(orig, mday(created) == 26) %>%
+filter(orig, mday(created) == 22) %>%
     ggplot(aes(created, emotionalValence)) +
     geom_point() + 
     geom_smooth(span = .5)

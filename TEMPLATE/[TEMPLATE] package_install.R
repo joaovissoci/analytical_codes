@@ -41,7 +41,6 @@ install.packages("lmerTest")
 install.packages("doBy")
 install.packages("geepack")
 install.packages("mada")
-install.packages("reshape")
 install.packages("mice")
 install.packages("MissMech")
 install.packages("mlmRev")
@@ -51,6 +50,9 @@ install.packages("qdap")
 install.packages("tm")
 install.packages("lubridate")
 install.packages("network")
+install.packages("rJava",type='source') #run sudo R CMD javareconf in terminal before
+install.packages("cowplot")
+
 
 devtools::install_github("jennybc/googlesheets")
 devtools::install_github("cran/epicalc")
