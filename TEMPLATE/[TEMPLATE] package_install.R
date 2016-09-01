@@ -52,7 +52,9 @@ install.packages("lubridate")
 install.packages("network")
 install.packages("rJava",type='source') #run sudo R CMD javareconf in terminal before
 install.packages("cowplot")
-
+install.packages("stringr")
+install.packages("SnowballC")
+# install.packages("sentiment")
 
 devtools::install_github("jennybc/googlesheets")
 devtools::install_github("cran/epicalc")

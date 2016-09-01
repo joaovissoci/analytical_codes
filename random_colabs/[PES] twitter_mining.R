@@ -1,21 +1,26 @@
 
 # source https://www.r-bloggers.com/playing-with-twitter-data/
 
-lapply(c('twitteR', 'dplyr', 'ggplot2', 'lubridate', 
+lapply(c('twitteR','stringr' ,'dplyr', 'ggplot2', 'lubridate', 
 	'network', 'qgraph', 'qdap', 'tm','cowplot'),
        library, character.only = TRUE)
 # theme_set(new = theme_bw())
 # source('../../R/twitterAuth.R')
 set.seed(95616)
+library(SnowballC)
+library(qgraph)
+library(polycor)
 
+# library("stringr")
 
-#set authentication: Get ID and TOKEN information after registering your 
-#application.
-# https://apps.twitter.com/
+set authentication: Get ID and TOKEN information after registering your 
+application.
+https://apps.twitter.com/
 setup_twitter_oauth("", 
 					"", 
 					"", 
 					"")
+
 
 #extract tweets bases on:
 #1. A string with searches. you can search more then one 
@@ -33,29 +38,109 @@ setup_twitter_oauth("",
 #
 tw = searchTwitter("#UFC202",n=1e5, since="2016-08-22",
 	until="2016-08-23")
-length(tw)
+# length(tw)
 # saveRDS(tw, '../../R/MSST_Tweets.RDS')
 # tw = readRDS('../../R/MSST_Tweets.RDS')
-# tw_text = sapply(tw, function(x) x$getText())
 d = twListToDF(tw)
-# d$get_text<-tw_text
+
+tw_text = sapply(tw, function(x) x$getText())
+
+d$get_text<-tw_text
+
+# write.csv(d,"/Users/joaovissoci/Desktop/twitter.csv")
+# d<-read.csv("/Users/joaovissoci/Desktop/twitter.csv")
+
+length(d$get_text)
+
+#############################################################
+#cleaning tweets
+#############################################################
+
+# http://stackoverflow.com/questions/31348453/how-do-i-clean-twitter-data-in-r
+
+## something to remove stopwords
+
+# paste(mytweets, collapse=" ")
+
+ clean_tweet = gsub("&amp", "", d$get_text)
+  clean_tweet = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", clean_tweet)
+  clean_tweet = gsub("@\\w+", "", clean_tweet)
+  clean_tweet = gsub("[[:punct:]]", "", clean_tweet)
+  clean_tweet = gsub("[[:digit:]]", "", clean_tweet)
+  clean_tweet = gsub("http\\w+", "", clean_tweet)
+  clean_tweet = gsub("[ \t]{2,}", "", clean_tweet)
+  clean_tweet = gsub("^\\s+|\\s+$", "", clean_tweet) 
+  clean_tweet = gsub('[^[:graph:]]', ' ',clean_tweet)
+
+#get rid of unnecessary spaces
+clean_tweet <- str_replace_all(clean_tweet," "," ")
+# Get rid of URLs
+clean_tweet <- str_replace_all(clean_tweet, "http://t.co/[a-z,A-Z,0-9]*{8}","")
+# Take out retweet header, there is only one
+clean_tweet <- str_replace(clean_tweet,"RT @[a-z,A-Z]*: ","")
+# Get rid of hashtags
+clean_tweet <- str_replace_all(clean_tweet,"#[a-z,A-Z]*","")
+# Get rid of references to other screennames
+clean_tweet <- str_replace_all(clean_tweet,"@[a-z,A-Z]*","") 
+
+d$clean_tweet<-clean_tweet
 
 
-# tw_corpus = Corpus(VectorSource(d$get_text))
+# Split into retweets and original tweets
+sp = split(d, d$isRetweet)
+orig = sp[['FALSE']]
 
-# tdm = TermDocumentMatrix(tw_corpus)
-#   control = list(
-#     removePunctuation = TRUE
-#     ),
-#     stopwords = c("UFC202", stopwords("english")),
-#     removeNumbers = TRUE, tolower = TRUE)
-#     )
+# Extract the retweets and pull the original author's screenname
+rt = mutate(sp[['TRUE']], sender = substr(text, 5, 
+    regexpr(':', text) - 1))
+
+length(rt$clean_tweet)
+# text1<-gsub(txt,"[^[:graph:]]", " ") %>%
+#         gsub('(\\.|!|\\?)\\s+|(\\++)', ' ', .) %>%
+
+
+
+
+# pol = 
+#     lapply(orig$text, function(txt) {
+#         # strip sentence enders so each tweet is analyzed as a sentence,
+#         # and +'s which muck up regex
+#         gsub('[^[:graph:]]', ' ',txt) %>%
+#         gsub('(\\.|!|\\?)\\s+|(\\++)', ' ', .) %>%
+#             # strip URLs
+#         gsub(' http[^[:blank:]]+', '', .) %>%
+#             # calculate polarity
+#     }
+# )
+
+
+#fazendo a mineração de texto:
+corpus = VCorpus(VectorSource(orig$clean_tweet))
+# corpus<- tm_map(corpus, function(x) iconv(enc2utf8(x), sub = "byte"))
+# corpus <- tm_map(corpus, tolower)
+# corpus <- tm_map(corpus, removePunctuation)
+# corpus <- tm_map(corpus, removeWords("UFC201", stopwords("english")))
+corpus <- tm_map(corpus, stemDocument)
+
+# olhando o primeiro conteudo das entrevistas
+corpus[[1]]
+
+#transformando em matriz
+dtm <- DocumentTermMatrix(corpus)
+dtm
+
+# removendo "sparse terms": vai fazer cair de 3 mil e cacetada termos para menos termos
+dtm2 <- removeSparseTerms(dtm, 0.93)
+dtm2
+
+# findFreqTerms(dtm, 5)
+# findAssocs(dtm, "vencer", 0.5)
 
 #############################################################
 #Identify descriptives of tweets
 #############################################################
 # Put in local time
-d$created = with_tz(d$created, 'America/Los_Angeles')
+d$created = lubridate::with_tz(d$created, 'America/Los_Angeles')
 
 timeDist = ggplot(d, aes(created)) + 
     geom_density(aes(fill = isRetweet), alpha = .5) +
@@ -85,20 +170,33 @@ mtext('Number of tweets posted by platform')
 #Emotional valence of tweets
 #############################################################
 
-# Split into retweets and original tweets
-sp = split(d, d$isRetweet)
-orig = sp[['FALSE']]
+pol = polarity(orig$clean_tweet)
 
-# Extract the retweets and pull the original author's screenname
-rt = mutate(sp[['TRUE']], sender = substr(text, 5, 
-	regexpr(':', text) - 1))
+orig$emotionalValence <- pol$all$polarity
+
+# As reality check, what are the most and least positive tweets
+orig$text[which.max(orig$emotionalValence)]
+## [1] "Hey, this Open Science Framework sounds like a great way to  collaborate openly! Where do I sign up? Here: https://t.co/9oAClb0hCP #MSST2016"
+orig$text[which(orig$emotionalValence==0)]
+## [1] "1 Replications are boring 2 replications are attack 3 reputations will suffer 4 only easy ones will be done 5 bad studies are bad #MSST2016"
+# How does emotionalValence change over the day?
+# filter(orig, mday(created) == 22) %>%
+
+pol_data<-subset(orig,orig$emotionalValence!=0)
 
 
-# text1<-gsub(txt,"[^[:graph:]]", " ") %>%
-#         gsub('(\\.|!|\\?)\\s+|(\\++)', ' ', .) %>%
+    ggplot(orig, aes(created, emotionalValence)) +
+    geom_point() + 
+    geom_smooth(span = .5)
 
+# Happiest tweets are mostly retweeted?
+ggplot(orig, aes(x = emotionalValence, y = retweetCount)) +
+    geom_point(position = 'jitter') +
+    geom_smooth()
 
-
+#############################################################
+#Emotional content of tweets
+#############################################################
 
 pol = 
     lapply(orig$text, function(txt) {
@@ -112,28 +210,6 @@ pol =
         polarity()
     }
 )
-
-orig$emotionalValence = sapply(pol, function(x) x$all$polarity)
-
-# As reality check, what are the most and least positive tweets
-orig$text[which.max(orig$emotionalValence)]
-## [1] "Hey, this Open Science Framework sounds like a great way to  collaborate openly! Where do I sign up? Here: https://t.co/9oAClb0hCP #MSST2016"
-orig$text[which.min(orig$emotionalValence)]
-## [1] "1 Replications are boring 2 replications are attack 3 reputations will suffer 4 only easy ones will be done 5 bad studies are bad #MSST2016"
-# How does emotionalValence change over the day?
-filter(orig, mday(created) == 22) %>%
-    ggplot(aes(created, emotionalValence)) +
-    geom_point() + 
-    geom_smooth(span = .5)
-
-# Happiest tweets are mostly retweeted?
-ggplot(orig, aes(x = emotionalValence, y = retweetCount)) +
-    geom_point(position = 'jitter') +
-    geom_smooth()
-
-#############################################################
-#Emotional content of tweets
-#############################################################
 
 polWordTables = 
     sapply(pol, function(p) {
@@ -149,8 +225,8 @@ polWordTables =
 par(mfrow = c(1, 2))
 invisible(
     lapply(1:2, function(i) {
-    dotchart(sort(polWordTables[[i]]), cex = .8)
-    mtext(names(polWordTables)[i])
+    dotchart(sort(polWordTables[[i]],decreasing=TRUE)[20:1], cex = .8)
+    mtext(names(polWordTables[i]))
     }))
 
 #############################################################
@@ -174,10 +250,11 @@ polText['positive'] = removeWords(polText['positive'],
 
 # Make a corpus by valence and a wordcloud from it
 corp =  VCorpus(VectorSource(polText))
-col3 = RColorBrewer::brewer.pal(3, 'Paired') # Define some pretty colors, mostly for later
+# col3 = RColorBrewer::brewer.pal(3, 'Paired') # Define some pretty colors, mostly for later
 wordcloud::comparison.cloud(as.matrix(TermDocumentMatrix(corp)), 
            max.words = 100, min.freq = 2, random.order=FALSE, 
-       rot.per = 0, colors = col3, vfont = c("sans serif", "plain"))
+       rot.per = 0, colors = c("red","blue","green"), 
+       vfont = c("sans serif", "plain"))
 
 #############################################################
 #Social network of tweets and re-tweets and mentions
@@ -240,3 +317,67 @@ plot(mentionNet, displaylabels = TRUE, label.pos = 5, label.cex = .8,
      edge.lwd = 'num', edge.col = 'gray70', main = '#MSST2016 Mention Network')
 legend(x = 'bottomleft', legend = c('Speaker', 'Host', 'Other'), 
        pt.bg = col3, pch = 21, pt.cex = 1.5, bty = 'n')
+
+#############################################################
+#Network of words
+#############################################################
+network_data<-subset(orig,orig$emotionalValence!=0)
+
+network_data$clean_tweet <- removeWords(network_data$clean_tweet,c("ufc"))
+
+network_data$clean_tweet <- removeWords(network_data$clean_tweet,
+    findFreqTerms(dtm, 1))
+
+network_data$clean_tweet <- removeWords(network_data$clean_tweet,
+    findFreqTerms(dtm, 2))
+
+#fazendo a mineração de texto:
+corpus = VCorpus(VectorSource(network_data$clean_tweet))
+# corpus<- tm_map(corpus, function(x) iconv(enc2utf8(x), sub = "byte"))
+# corpus <- tm_map(corpus, tolower)
+# corpus <- tm_map(corpus, removePunctuation)
+# corpus <- tm_map(corpus, removeWords("UFC201", stopwords("english")))
+
+
+corpus <- tm_map(corpus, stemDocument)
+
+#transformando em matriz
+dtm <- DocumentTermMatrix(corpus,control=list(stopwords=TRUE))
+dtm
+
+findFreqTerms(dtm, c(5))
+
+# removendo "sparse terms": vai fazer cair de 3 mil e cacetada termos para menos termos
+dtm2 <- removeSparseTerms(dtm, 0.7)
+dtm2
+
+# Put in local time
+data<-as.matrix(dtm2)
+#data[data>=1] <- 1
+dataMatrix <- t(data) %*% data
+
+cor <- cor(data,method="spearman")
+names<-rownames(cor)
+
+
+Q1_atleta1 <- qgraph(dataMatrix, borders = FALSE, cut=10, 
+  minimum = 5, labels=names,label.cex = 0.60, label.color="black",
+  layout = "spring",directed=FALSE,label.scale=FALSE,
+  # posCol=c("#BF0000","red"),
+  gray=FALSE)
+
+Q2_atleta2 <- qgraph(cor$correlations, borders = FALSE, cut=1, 
+  minimum = 0.5, labels=names,label.cex = 0.60, label.color="black",
+  layout = "spring",directed=FALSE,label.scale=FALSE,
+  posCol=c("steelblue","steelblue"),
+  gray=FALSE)
+
+Q3_atleta3 <- qgraph(cor$correlations, borders = FALSE, cut=1, 
+  minimum = 0.5, labels=names,label.cex = 0.60, label.color="black",
+  layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE)
+
+
+col=brewer.pal(6,"Dark2")
+wordcloud(corpus, min.freq=25, scale=c(5,2),rot.per = 0.25,
+          random.color=T, max.word=45, random.order=F,colors=col)
+
