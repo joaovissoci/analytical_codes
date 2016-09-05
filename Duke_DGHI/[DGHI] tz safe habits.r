@@ -1070,151 +1070,168 @@ exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 logistic.display(logmodel)
 
 ######################################################
-#PRINCIPAL COMPONENT ANALYSIS - From psych package - http://twt.lk/bdAQ or http://twt.lk/bdAR or http://twt.lk/bdAS
-######################################################
-# Define the amout of factor to retain
-#Group of functinos to determine the number os items to be extracted
-par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
-ev <- eigen(cor_auto(safe_habits_numeric)) # get eigenvalues - insert the data you want to calculate the scree plot for
-ev # Show eigend values
-ap <- parallel(subject=nrow(safe_habits_numeric),var=ncol(safe_habits_numeric),rep=100,cent=.05) #Calculate the acceleration factor
-summary(ap)
-nS <- nScree(ev$values) #Set up the Scree Plot 
-plotnScree(nS) # Plot the ScreePlot Graph
-my.vss <- VSS(cor_auto(safe_habits_numeric),title="VSS of BEA data")
-print(my.vss[,1:12],digits =2)
-VSS.plot(my.vss, title="VSS of 24 mental tests")
-scree(safe_habits_numeric)
-VSS.scree(cor_auto(safe_habits_numeric))
-fa.parallel(cor_auto(safe_habits_numeric),n.obs=36)
-
-# Pricipal Components Analysis
-# entering raw data and extracting PCs 
-# from the correlation matrix 
-fit <- principal(as.data.frame(safe_habits_numeric),4,rotate="varimax",scores=TRUE)
-summary(fit) # print variance accounted for 
-loadings(fit) # pc loadings 
-safety_scores<-fit$scores
-#predict(fit,safe_habits_numeric)
-#safety_scores<-scoreItems(fit$weights,as.data.frame(safe_habits_numeric))$scores
-describe(safety_scores)
-#by(scores$scores,data_bea$risk_classification,summary)
-#wilcox.test(scores$scores[,1]~data_bea$risk_classification)
-
-# Pricipal Components Analysis
-# entering raw data and extracting PCs 
-# from the correlation matrix work
-fit <- principal(as.data.frame(work_experience),1,rotate="varimax",scores=TRUE)
-summary(fit) # print variance accounted for 
-loadings(fit) # pc loadings 
-experience_scores<-fit$scores
-#predict(fit,safe_habits_numeric)
-#experience_scores<-scoreItems(fit$weights,as.data.frame(work_experience))$scores
-describe(experience_scores)
-#by(scores$scores,data_bea$risk_classification,summary)
-#wilcox.test(scores$scores[,1]~data_bea$risk_classification)
-
-######################################################
-#PATH ANALYSIS - From lavaan package - https://gist.github.com/joaovissoci/7838f4808885e506527e
-######################################################
-logistic_data<-data.frame(outcome=outcomes$injury,rtc=outcomes$rtc_involvement,nm=outcomes$nearmissmonth,safety_use,helmet_condition,peer_safety,safety_belief,age=demographics$age,hours=work_experience$hours,years=work_experience$years,hosp=outcomes$hospitalization)
-
-logmodel<-glm(outcome ~ safety_use + helmet_condition + peer_safety + safety_belief + age + hours + years,family=binomial, data=logistic_data)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
-
-logmodel<-glm(nm ~ safety_use + helmet_condition + peer_safety + safety_belief + age + hours + years,family=binomial, data=logistic_data)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
-
-logmodel<-glm(outcome ~ safety_use + helmet_condition + peer_safety + safety_belief + age + hours + years,family=binomial, data=logistic_data)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
-
-logmodel<-glm(hosp ~ safety_use + helmet_condition + peer_safety + safety_belief + age + hours + years,family=binomial, data=logistic_data)
-summary(logmodel)
-#anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
+#Latence class analysis
+#######################################################
 
 
-######################################################
-#NETWORK ANALYSIS
-####################################################
+# ######################################################
+# #PRINCIPAL COMPONENT ANALYSIS - From psych package - http://twt.lk/bdAQ or http://twt.lk/bdAR or http://twt.lk/bdAS
+# ######################################################
+# # # Define the amout of factor to retain
+# # #Group of functinos to determine the number os items to be extracted
+# # par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
+# # ev <- eigen(cor_auto(safe_habits_numeric)) # get eigenvalues - insert the data you want to calculate the scree plot for
+# # ev # Show eigend values
+# # ap <- parallel(subject=nrow(safe_habits_numeric),var=ncol(safe_habits_numeric),rep=100,cent=.05) #Calculate the acceleration factor
+# # summary(ap)
+# # nS <- nScree(ev$values) #Set up the Scree Plot 
+# # plotnScree(nS) # Plot the ScreePlot Graph
+# # my.vss <- VSS(cor_auto(safe_habits_numeric),title="VSS of BEA data")
+# # print(my.vss[,1:12],digits =2)
+# # VSS.plot(my.vss, title="VSS of 24 mental tests")
+# # scree(safe_habits_numeric)
+# # VSS.scree(cor_auto(safe_habits_numeric))
+# # fa.parallel(cor_auto(safe_habits_numeric),n.obs=36)
 
-safety_use<-safety_scores[,1]
-helmet_condition<-safety_scores[,2]
-peer_safety<-safety_scores[,3]
-safety_belief<-safety_scores[,4]
-outcome1<-outcomes$rtc_involvement
-outcome2<-outcomes$nearmissmonth
-exp<-experience_scores[,1]#work_experience$years_work_onbodaboda#car::recode(work_experience$years_work_onbodaboda,"0:3=0;else=1")
-#hours<-work_experience$hours_work_onbodaboda#car::recode(work_experience$hours_work_onbodaboda,"0:8=0;else=1")
+# # Pricipal Components Analysis
+# model <- principal(pca_data,
+# 	nfactors=4, rotate='varimx', scores=T)
+# summary(model) # print variance accounted for 
+# loadings(model) # pc loadings 
+
+#  L <- model$loadings            # Just get the loadings matrix
+#  S <- model$scores              # This gives an incorrect answer in the current version
+
+#  d <- pca_data              # get your data
+#  dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+#  pca1 <- dc %*% L                 # scores are the centered data times the loadings
+#  # lowerCor(sc)                   #These scores, being principal components
+# #                                # should be orthogonal 
+# colnames(pca1)<-c("PCA1","PCA2","PCA3","PCA4")
+
+# # Pricipal Components Analysis
+# # entering raw data and extracting PCs 
+# # from the correlation matrix work
+# fit <- principal(as.data.frame(work_experience),1,rotate="varimax",scores=TRUE)
+# summary(fit) # print variance accounted for 
+# loadings(fit) # pc loadings 
+# experience_scores<-fit$scores
+# #predict(fit,safe_habits_numeric)
+# #experience_scores<-scoreItems(fit$weights,as.data.frame(work_experience))$scores
+# describe(experience_scores)
+# #by(scores$scores,data_bea$risk_classification,summary)
+# #wilcox.test(scores$scores[,1]~data_bea$risk_classification)
+
+# ######################################################
+# #PATH ANALYSIS - From lavaan package - https://gist.github.com/joaovissoci/7838f4808885e506527e
+# ######################################################
+# logistic_data<-data.frame(outcome=outcomes$injury,
+# 	rtc=outcomes$rtc_involvement,
+# 	nm=outcomes$nearmissmonth,
+# 	pca1,
+# 	# age=demographics$age,
+# 	# hours=work_experience$hours,
+# 	# years=work_experience$years,
+# 	hosp=outcomes$hospitalization)
+
+# logmodel<-glm(outcome ~ PCA1 +
+# 						PCA2 +
+# 						PCA3 +
+# 						PCA4,
+# 		family=binomial, data=logistic_data)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# #predict(model1_death, type="response") # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# logistic.display(logmodel)
+
+# logmodel<-glm(rtc ~ PCA1 +
+# 						PCA2 +
+# 						PCA3 +
+# 						PCA4,
+# 		family=binomial, data=logistic_data)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# #predict(model1_death, type="response") # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# logistic.display(logmodel)
+
+# logmodel<-glm(nm ~ PCA1 +
+# 						PCA2 +
+# 						PCA3 +
+# 						PCA4,
+# 		family=binomial, data=logistic_data)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(coef(logmodel)) # exponentiated coefficients
+# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+# #predict(model1_death, type="response") # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# logistic.display(logmodel)
+
+# ######################################################
+# #NETWORK ANALYSIS
+# ####################################################
+
+# safety_use<-safety_scores[,1]
+# helmet_condition<-safety_scores[,2]
+# peer_safety<-safety_scores[,3]
+# safety_belief<-safety_scores[,4]
+# outcome1<-outcomes$rtc_involvement
+# outcome2<-outcomes$nearmissmonth
+# exp<-experience_scores[,1]#work_experience$years_work_onbodaboda#car::recode(work_experience$years_work_onbodaboda,"0:3=0;else=1")
+# #hours<-work_experience$hours_work_onbodaboda#car::recode(work_experience$hours_work_onbodaboda,"0:8=0;else=1")
 
 
-network_data<-data.frame(safety_use,helmet_condition,
-	peer_safety,safety_belief,outcome1,outcome2,exp)#,hours)
+# network_data<-data.frame(safety_use,helmet_condition,
+# 	peer_safety,safety_belief,outcome1,outcome2,exp)#,hours)
 
-cor_data<-cor_auto(network_data)
+# cor_data<-cor_auto(network_data)
 
-groups<-list(Outcomes=c(5,6),Work_Hours=c(7),Safety_Behavior=c(1,2,3,4))
-varLabels<-c("Safety use","Helmet condition","Peer safety",
-	"Safety belief","Road Traffic Crash","Near miss","Work hours")
-#varNames<-c("SF1","SF2","SF3","SF4","OUT1","OUT2","EXP")
-#normalize<-function(x){(x-min(x))/(max(x)-min(x))}
-#mean_data<-sapply(as.data.frame(sapply(network_data,normalize)),mean)
-#vSize<-normalize(colSums(reasons_danger))*7
+# groups<-list(Outcomes=c(5,6),Work_Hours=c(7),Safety_Behavior=c(1,2,3,4))
+# varLabels<-c("Safety use","Helmet condition","Peer safety",
+# 	"Safety belief","Road Traffic Crash","Near miss","Work hours")
+# #varNames<-c("SF1","SF2","SF3","SF4","OUT1","OUT2","EXP")
+# #normalize<-function(x){(x-min(x))/(max(x)-min(x))}
+# #mean_data<-sapply(as.data.frame(sapply(network_data,normalize)),mean)
+# #vSize<-normalize(colSums(reasons_danger))*7
 
-tiff("/home/joao/Desktop/tz_safehabits_figure3.tiff", units='in', width = 11, height = 6,compression = 'lzw',res=1200,bg = "white")
-PcorGRAPH<-qgraph(cor_data,layout="spring",
-	graph="pcor",sampleSize=nrow(network_data),
-	legend.cex = 0.6,cut = 0.1, maximum = 0.4,
-	 minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8,
-	 labels=varLabels,borders = FALSE,legend=TRUE,
-	 groups=groups,color=c("brown1","gold3","royalblue"),
-	 label.scale=FALSE,label.cex=2,edge.labels=FALSE,
-	 posCol="black",negCol="gray50")#,gray=T,)
-	 #,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3
-     #,,color=c("gold","steelblue","red","grey80"),
-     #labels=rownames(pca_data)
-dev.off()
+# tiff("/home/joao/Desktop/tz_safehabits_figure3.tiff", units='in', width = 11, height = 6,compression = 'lzw',res=1200,bg = "white")
+# PcorGRAPH<-qgraph(cor_data,layout="spring",
+# 	graph="pcor",sampleSize=nrow(network_data),
+# 	legend.cex = 0.6,cut = 0.1, maximum = 0.4,
+# 	 minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8,
+# 	 labels=varLabels,borders = FALSE,legend=TRUE,
+# 	 groups=groups,color=c("brown1","gold3","royalblue"),
+# 	 label.scale=FALSE,label.cex=2,edge.labels=FALSE,
+# 	 posCol="black",negCol="gray50")#,gray=T,)
+# 	 #,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3
+#      #,,color=c("gold","steelblue","red","grey80"),
+#      #labels=rownames(pca_data)
+# dev.off()
 
-#not run
-#blabla<-function(x){
-#	as.numeric(as.character(x))
-#}
-#
-#blabla2<-lapply(safe_habits,blabla)
+# #not run
+# #blabla<-function(x){
+# #	as.numeric(as.character(x))
+# #}
+# #
+# #blabla2<-lapply(safe_habits,blabla)
 
-#network_data<-data.frame(work_experience,outcome1,outcome2,blabla2)#,hours)
+# #network_data<-data.frame(work_experience,outcome1,outcome2,blabla2)#,hours)
 
-#cor_data<-cor_auto(network_data)
+# #cor_data<-cor_auto(network_data)
 
-#PcorGRAPH<-qgraph(cor_data,layout="spring",graph="glasso",sampleSize=nrow(network_data),legend.cex = 0.6,cut = 0.1, maximum = 0.4, minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8)#,labels=varLabels,borders = FALSE,legend=TRUE,groups=groups,color=c("brown1","gold3","royalblue"),label.scale=FALSE,label.cex=2,edge.labels=TRUE,posCol="black",negCol="gray50")#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
+# #PcorGRAPH<-qgraph(cor_data,layout="spring",graph="glasso",sampleSize=nrow(network_data),legend.cex = 0.6,cut = 0.1, maximum = 0.4, minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8)#,labels=varLabels,borders = FALSE,legend=TRUE,groups=groups,color=c("brown1","gold3","royalblue"),label.scale=FALSE,label.cex=2,edge.labels=TRUE,posCol="black",negCol="gray50")#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
 
-# Para identificar no qgraph o resultado do algortimo de comunidade, criar objeto de "groups"
-# com o resultado de wcG1
-predictors<-centrality(PcorGRAPH)$ShortestPaths[,5]
-predictors
-#centralityPlot(qsgG3)
+# # Para identificar no qgraph o resultado do algortimo de comunidade, criar objeto de "groups"
+# # com o resultado de wcG1
+# predictors<-centrality(PcorGRAPH)$ShortestPaths[,5]
+# predictors
+# #centralityPlot(qsgG3)
 
-predictors<-centrality(PcorGRAPH)$ShortestPaths[,6]
-predictors
+# predictors<-centrality(PcorGRAPH)$ShortestPaths[,6]
+# predictors

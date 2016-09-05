@@ -15,13 +15,13 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
 	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
 	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
-	"poLCA","readstata13"),#,"venneuler"),
+	"poLCA","readstata13","venneuler"),
 library, character.only=T)
 
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
-data <- read.dta13("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
+data <- read.dta13("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
 
 
 #recode missing and other random problems
@@ -30,7 +30,7 @@ data$Education<-car::recode(
 	data$Education,"'edu_none'=0;
 						'primary_school'=1;
 						'secondary_school1'=1;
-						'secondary_school2'=1;x
+						'secondary_school2'=1;
 						'tertiary_school'=1;
 						'university'=1;
 						else=NA")
@@ -526,18 +526,6 @@ exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90)))
 logistic.display(logmodel)
 
 ###################################################
-#Network approach
-###################################################
-
-
-#network
-dassIsing<-IsingFit(dass3,plot=TRUE,
-	labels=namesdass,
-	groups=dassgr,
-	color=c("gray90","gray70","gray50"),
-	edge.color="black")
-
-###################################################
 #Latent class analysis
 ###################################################
 
@@ -557,7 +545,7 @@ ses_data_cat$Household_cat<-car::recode(ses_data_cat$Household,"0:5='average';el
 ses_data_cat$age_cat<-car::recode(ses_data_cat$Age,"
 	18:50='adult';else='elderly'")
 
-f <- cbind(Gender, Education, Literacy,
+f <- cbind(Education, Literacy,
 		   Occupation,Household_cat,
 		   Time_ill, Health_status) ~ 1
 
@@ -655,7 +643,7 @@ R2_entropy
 set.seed(1988)
 
 lcamodel <- poLCA(f, ses_data_cat, nclass = 5)
-summary(lcamodel)
+# summary(lcamodel)
 
 # Entropy
 entropy<-function (p) sum(-p*log(p))
@@ -687,8 +675,8 @@ R2_entropy
 
 #### GRAPHING SOLUTION
 #Isolating classes to be plotted
-classes_prob<-as.data.frame(lcamodel$probs)[,c(1,4,6,8,9,12,13)]
-classes_prob$class<-c("class1","class2","class3","class4")
+classes_prob<-as.data.frame(lcamodel$probs)[,c(2,4,6,8,10,12)]
+classes_prob$class<-c("class1","class2","class3","class4","class5")
 class_prob_melt<-melt(classes_prob)
 
 p <- ggplot(data = class_prob_melt, aes(class, variable, fill = value))+
@@ -703,7 +691,7 @@ p <- ggplot(data = class_prob_melt, aes(class, variable, fill = value))+
      xlab(label="Latent class") +
      ylab(label="Variables") +
      scale_y_discrete(
-     	labels=c("Female",
+     	labels=c(
   "Educated","Literate",
   "Paid employment","Large household",
   "Long term illness","Positive health")) +
@@ -720,10 +708,11 @@ p
 analytical_data_dic<-na.omit(analytical_data_dic)
 analytical_data_dic$class<-as.factor(lcamodel$predclass)
 analytical_data_dic$class_recoded<-car::recode(
-	analytical_data_dic$class,"1='class2';
-							   2='class3';
-							   3='class1'#;
-							   #4='class4'")#;5='class1'")
+	analytical_data_dic$class,"1='class1';
+							   2='class2';
+							   3='class3';
+							   4='class4';
+							   5='class5'")
 
 logmodel<-glm(barrier_data_nomoney ~ class_recoded
 			,family=binomial, data=analytical_data_dic)
