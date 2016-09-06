@@ -12,11 +12,11 @@ library(reshape2)
 
  
 # Get data
-data2009<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2009_datecoded.csv")
-data2010<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2010_datecoded.csv")
-data2011<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2011_datecoded.csv")
-data2012<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2012_datecoded.csv")
-data2013<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/baltimore_gis/crashdata2013_datecoded.csv")
+data2009<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2009_datecoded.csv")
+data2010<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2010_datecoded.csv")
+data2011<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2011_datecoded.csv")
+data2012<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2012_datecoded.csv")
+data2013<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2013_datecoded.csv")
 
 #Data on points vs. polygons by category
 all_data<-rbind(

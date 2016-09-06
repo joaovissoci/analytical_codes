@@ -33,7 +33,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/Desktop/balticsv.csv",sep=",")
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 2/balticsv.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -56,12 +56,15 @@ data$agglomeration<-as.factor(data$agglomeration)
 sum(data$crash_imp)
 sum(data$outlet)/238.5
 
-describe(data$outlet_density)
+table(data$agglomeration)
+
+psych::describe(data$outlet_density)
 describe(data$outlet)
 
 with(data,by(outlet,agglomeration,describe))
 with(data,by(outlet_density,agglomeration,describe))
 with(data,by(crash_imp,agglomeration,describe))
+with(data,by(off_premis,agglomeration,summary))
 
 ######################################################################
 #EXPLORATORY ANALYSIS
@@ -97,6 +100,27 @@ exp(confint(fm_nbin,level=0.95))
            summary(fm_nbin)$df.residual
            )
 
+fm_nbin <- glm.nb(crash_imp ~ off_premis + agglomeration + 
+    Area_km + population, 
+  data = data)
+summary(fm_nbin)
+exp(coef(fm_nbin))
+exp(confint(fm_nbin,level=0.95))
+
+1 - pchisq(summary(fm_nbin)$deviance,
+           summary(fm_nbin)$df.residual
+           )
+
+fm_nbin <- glm.nb(crash_imp ~ onboth + agglomeration + 
+    Area_km + population, 
+  data = data)
+summary(fm_nbin)
+exp(coef(fm_nbin))
+exp(confint(fm_nbin,level=0.95))
+
+1 - pchisq(summary(fm_nbin)$deviance,
+           summary(fm_nbin)$df.residual
+           )
 
 # Regression Tree Example
 library(rpart)
