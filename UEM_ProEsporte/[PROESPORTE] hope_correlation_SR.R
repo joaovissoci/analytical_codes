@@ -131,18 +131,3 @@ network_meta <- qgraph(network_data,layout = "spring",minimum=0,cut=1,labels=nam
 legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 #legend(-1.32,-0.5	, bty="n",c("EA: Efeitos Adversos","OT: Outro Tratamento","ECR: Questões com o ECR","FR: Falha no Retorno","MD: Problemas com medicamentos","ST: Melhora nos Sintomas","QF: Questões Familiares","OU: Outras Razões"),cex=1.2)
 dev.off()
-
-
-
-<-100*((RolandMorrisSUM - 0)/(24-0))
-
-
-### load BCG vaccine data
-mean_meta<-with(mean_data,data.frame(N,Esperança.M,Esperanca.SD))
-### calculate the pooled raw mean in a metanalysis model where mi = mean, sdi = sd and ni = sample size
-dat <- escalc(measure="MN", mi=Esperança.M, sdi=Esperanca.SD, ni=N, data=mean_meta)
-### random-effects model (method="REML" is default, so technically not needed)
-res<-rma(yi, vi, data=dat, method="REML")
-rma(yi, sei=sqrt(vi), data=dat, method="REML")
-
-forest.rma(res)

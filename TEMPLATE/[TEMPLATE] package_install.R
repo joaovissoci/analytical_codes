@@ -54,12 +54,17 @@ install.packages("rJava",type='source') #run sudo R CMD javareconf in terminal b
 install.packages("cowplot")
 install.packages("stringr")
 install.packages("SnowballC")
-# install.packages("sentiment")
+install.packages("poLCA")
+install.packages("QCA")
+install.packages("VennDiagram")
+install.packages("haven")
+
 
 devtools::install_github("jennybc/googlesheets")
 devtools::install_github("cran/epicalc")
 devtools::install_github("BioStatMatt/sas7bdat")
 devtools::install_github("rdpeng/gpclib")
+devtools::install_github("sjewo/readstata13")
 
 source("http://bioconductor.org/biocLite.R")
 biocLite("Rgraphviz")

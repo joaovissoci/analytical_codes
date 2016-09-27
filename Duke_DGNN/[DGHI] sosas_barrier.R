@@ -15,13 +15,13 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
 	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
 	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
-	"poLCA","readstata13","venneuler"),
+	"poLCA","venneuler","haven"),
 library, character.only=T)
-
+# library("haven")
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
-data <- read.dta13("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
+data <- read_dta("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
 
 
 #recode missing and other random problems
@@ -538,7 +538,7 @@ logistic.display(logmodel)
 # Building the formula
 # To specify a latent class model, poLCA uses the standard, symbolic R model formula expres- sion. The response variables are the manifest variables of the model. Because latent class models have multiple manifest variables, these variables must be “bound” as cbind(Y1, Y2, Y3, ...) in the model formula. For the basic latent class model with no covariates, the formula definition takes the form
 
-ses_data_cat<-sapply(ses_data,function(x) as.factor(x))
+ses_data_cat<-sapply(data_ses,function(x) as.factor(x))
 ses_data_cat<-as.data.frame(ses_data_cat)
 
 ses_data_cat$Household_cat<-car::recode(ses_data_cat$Household,"0:5='average';else='high'")

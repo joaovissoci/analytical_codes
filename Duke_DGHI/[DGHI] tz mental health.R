@@ -42,9 +42,9 @@ library, character.only=T)
 #                                  sep = ",",
 #                                  header = TRUE)
 
-data <- read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv", header = TRUE)
+data <- read.csv("/Users/jnv4/Desktop/tz_mentalhealthtbi_data.csv", header = TRUE)
 
-# data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/tz_baseline_mental_health.csv", header = TRUE)
+data_tbi <- read.csv("/Users/jnv4/Desktop/tz_tbiregistry_data.csv", header = TRUE)
 
 #############################################################################
 #DATA MANAGEMENT
@@ -55,27 +55,42 @@ data$occupation<-car::recode(data$occupation,"89='Other'")
 data$education<-car::recode(data$education,"
 	1:7='Primary';8:13='Form';14:16='University';")
 
-sf8<-with(data,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5,sf8_b6,
-	sf8_b7,sf8_b8))
+sf8_PCS<-with(data,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5))
+data$sf8_mcs<-rowSums(sf8_PCS)
+sf8_MCS<-with(data,data.frame(sf8_b6,sf8_b7,sf8_b8))
+data$sf8_pcs<-rowSums(sf8_MCS)
 phq9<-with(data,data.frame(phq9_b11,phq9_b12,phq9_b13,phq9_b14,
 	phq9_b15,phq9_b16,phq9_b17,phq9_b17,phq9_b18,phq9_b19))
 data$phq9score<-rowSums(phq9)
 audit<-with(data,data.frame(h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
 data$auditscore<-rowSums(audit)
+cage<-with(data,data.frame(h11,h12,h13,h14))
+data$cagescore<-rowSums(cage)
 fim_physical<-with(data,data.frame(g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
 	g11,g12,g13,g14,g15,g16))
 data$fim_physical<-rowSums(fim_physical)/16
 fim_mental<-with(data,data.frame(g17,g18,g19,g20,g21,g22,g23,g24,g25,g26,
 	g27,g28,g29,g30))
 data$fim_mental<-rowSums(fim_mental)/14
+mental<-with(data,data.frame(f1a,f1b,f1c,f1d,f1e,f2a,f2b,f2c,f2d,f2e,f3,
+	f4,f5,f6,f7,f8,f9,f10,f11,f12___0,f12___1,f12___2))
+data$mental<-rowSums(mental)
+moca<-with(data,data.frame(f17,f18,f19,f20,f21,f21b,f22,f23))
+data$moca<-rowSums(moca)
 
-
-phq9_cat<-car::recode(data$phq9score,"0:4.9='no';5:19='yes'")
-ces_score_cat<-car::recode(data$ces_score,"6:15.9='no';16:30='yes'")
+phq9_cat<-car::recode(data$phq9score,"0:4.9='no';5:21='yes'")
+ces_score_cat<-car::recode(data$ces_score,"0:15.9='no';16:45='yes'")
 kes_score_cat<-car::recode(data$kes_score,"0:19.9='no';20:50='yes'")
-auditscore_cat<-car::recode(data$auditscore,"0:7.9='no';8:26='yes'")
+auditscore_cat<-car::recode(data$auditscore,"0:7.9='no';8:32='yes'")
 fimphysical_cat<-car::recode(data$fim_physical,"0:5.99='yes';else='no'")
 fim_mental_cat<-car::recode(data$fim_mental,"0:5.99='yes';else='no'")
+mental_cat<-car::recode(data$mental,"0:24='yes';25:30='no'")
+cage_cat<-car::recode(data$cagescore,"0:1='no';2:4='yes'")
+
+
+#Recoding clinical conditionMessage
+data_tbi$registry_year<-as.Date(as.character(data_tbi$date_arrival),
+  format = "%m/%d/%y")
 
 #############################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -105,9 +120,9 @@ with(data,by(data,outcome,ad.test)) # Anderson-Darling test for normality
 #DESCRIPTIVES
 #############################################################################
 # Gender 0=male 1=female
-table<-with(data,table(female))
+table<-with(data,table(female,redcap_event_name))
 table
-prop.table(table)
+prop.table(table,2)
 #table<-with(data,table(female,))
 #table
 #prop.table(table,2)
@@ -116,9 +131,9 @@ prop.table(table)
 #assocstats(table) #vcd package
 
 # Marital 0=not_married 1=married
-table<-with(data,table(married))
+table<-with(data,table(married,redcap_event_name))
 table
-prop.table(table)
+prop.table(table,2)
 #table<-with(data,table(female,))
 #table
 #prop.table(table,2)
@@ -127,9 +142,9 @@ prop.table(table)
 #assocstats(table) #vcd package
 
 # Ocupation
-table<-with(data,table(redcap_event_name,occupation))
+table<-with(data,table(occupation,redcap_event_name))
 table
-prop.table(table,1)
+prop.table(table,2)
 #table<-with(data,table(female,))
 #table
 #prop.table(table,2)
@@ -138,9 +153,9 @@ prop.table(table,1)
 #assocstats(table) #vcd package
 
 # Education
-table<-with(data,table(education))
+table<-with(data,table(education,redcap_event_name))
 table
-prop.table(table)
+prop.table(table,2)
 #table<-with(data,table(female,))
 #table
 #prop.table(table,2)
@@ -149,7 +164,7 @@ prop.table(table)
 #assocstats(table) #vcd package
 
 # Home people residing in the house
-summary(data$age)
+with(data,by(age,redcap_event_name,summary))
 ad.test(data$age)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
@@ -157,7 +172,8 @@ ad.test(data$age)
 #wilcox.test(data$home_people~data$risk_classification)
 
 # Home people residing in the house
-summary(data$home_people)
+with(data,by(home_people,redcap_event_name,summary))
+# summary(data$home_people)
 ad.test(data$home_people)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
@@ -189,7 +205,8 @@ ad.test(data$adult_finan)
 #wilcox.test(data$home_people~data$risk_classification)
 
 # Personal income
-summary(data$personal_income)
+with(data,by(personal_income,redcap_event_name,summary))
+# summary(data$personal_income)
 ad.test(data$personal_income)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
@@ -197,7 +214,7 @@ ad.test(data$personal_income)
 #wilcox.test(data$home_people~data$risk_classification)
 
 # Family income
-summary(data$fam_income)
+with(data,by(fam_income,redcap_event_name,summary))
 ad.test(data$fam_income)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
@@ -209,19 +226,30 @@ ad.test(data$fam_income)
 #SF8
 
 # PHQ9
+with(data,by(phq9score,redcap_event_name,summary))
 summary(phq9score)
 ad.test(phq9score)
+# One Way Anova (Completely Randomized Design)
+kruskal.test(data$phq9score ~ data$redcap_event_name, data=data)
+posthoc.kruskal.nemenyi.test(x=data$phq9score, g=data$redcap_event_name,
+ method="Chisq")
+# summary(fit)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
-#by(data$home_people,data$risk_classification,describe)
+#by(data$home_people,data$risk_clas0sification,describe)
 #wilcox.test(data$home_people~data$risk_classification)
 table<-with(data,table(phq9_cat))
 table
 prop.table(table)
 
 # KESSLER
-summary(data$kes_score)
-ad.test(data$kes_score)
+with(data,by(kes_score,redcap_event_name,summary))
+# 1summary(kes_score)
+ad.test(kes_score)
+# One Way Anova (Completely Randomized Design)
+kruskal.test(data$kes_score ~ data$redcap_event_name, data=data)
+posthoc.kruskal.nemenyi.test(x=data$kes_score, g=data$redcap_event_name,
+ method="Chisq")
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
 #by(data$home_people,data$risk_classification,describe)
@@ -231,8 +259,13 @@ table
 prop.table(table)
 
 # CES
-summary(data$ces_score)
-ad.test(data$ces_score)
+with(data,by(ces_score,redcap_event_name,summary))
+# 1summary(ces_score)
+ad.test(ces_score)
+# One Way Anova (Completely Randomized Design)
+kruskal.test(data$ces_score ~ data$redcap_event_name, data=data)
+posthoc.kruskal.nemenyi.test(x=data$ces_score, g=data$redcap_event_name,
+ method="Chisq")
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
 #by(data$home_people,data$risk_classification,describe)
@@ -312,47 +345,135 @@ library(RColorBrewer)
 library(ggplot2)
 
 #
+with(data,table(phq9_cat,redcap_event_name))
 x<-with(data,prop.table(table(phq9_cat,redcap_event_name),2))
 t(x)
+
+with(data,table(ces_score_cat,redcap_event_name))
 y<-with(data,prop.table(table(ces_score_cat,redcap_event_name),2))
 t(y)
+
+with(data,table(kes_score_cat,redcap_event_name))
 z<-with(data,prop.table(table(kes_score_cat,redcap_event_name),2))
 t(z)
+
+with(data,table(auditscore_cat,redcap_event_name))
 a<-with(data,prop.table(table(auditscore_cat,redcap_event_name),2))
 t(a)
-a<-with(data,prop.table(table(fimphysical_cat,redcap_event_name),2))
-t(a)
-a<-with(data,prop.table(table(fim_mental_cat,redcap_event_name),2))
-t(a)
+
+with(data,table(fimphysical_cat,redcap_event_name))
+b<-with(data,prop.table(table(fimphysical_cat,redcap_event_name),2))
+t(b)
+
+with(data,table(fim_mental_cat,redcap_event_name))
+c<-with(data,prop.table(table(fim_mental_cat,redcap_event_name),2))
+t(c)
+
+with(data,table(mental_cat,redcap_event_name))
+c<-with(data,prop.table(table(mental_cat,redcap_event_name),2))
+t(c)
+
+with(data,table(cage_cat,redcap_event_name))
+c<-with(data,prop.table(table(cage_cat,redcap_event_name),2))
+t(c)
 
 
-scales <- rep(c("Anxiety","Anxiety",
-				"Depression","Depression",
+
+
+scales <- rep(c("Depression","Depression",
+				"Depression2","Depression2",
 				"Stress","Stress",
-				"Alcohol Use","Alcohol Use"),3)
+				"Alcohol Use","Alcohol Use",
+				"FIM Physical","FIM Physical",
+				"FIM Cognitive","FIM Cognitive"),3)
 
-times <- c(rep("Admission",8),rep("FUP 3",8),rep("FUP 6",8))
+times <- c(rep("Admission",12),rep("FUP 3",12),rep("FUP 6",12))
 
-Prevalence <- rep(c("no","yes","no","yes","no","yes","no","yes"),3)
+Prevalence <- rep(c("no","yes","no","yes","no","yes","no","yes",
+	"no","yes","no","yes"),3)
 
 df <- data.frame(scales,times,Prevalence)
 df
 
-df$value<-c(x[,1],y[,1],z[,1],a[,1],x[,2],y[,2],z[,2],a[,2],
-	x[,3],y[,3],z[,3],a[,3])
+df$value<-c(x[,1],y[,1],z[,1],a[,1],b[,1],c[,1],x[,2],y[,2],z[,2],a[,2],
+	b[,2],c[,2],x[,3],y[,3],z[,3],a[,3],b[,3],c[,3])
 
 #plot the stacked bar plot
-tiff("/home/joao/Desktop/menta_health1",
-	width = 600, height = 300,compression = 'lzw')
+tiff("/Users/jnv4/Desktop/menta_health1.tiff",
+	width = 800, height = 300,compression = 'lzw')
 ggplot(df, aes(x = times)) + geom_bar(aes(weight=value, fill = Prevalence),
 		 position = 'fill') + scale_y_continuous("", breaks=NULL) +
 	scale_fill_manual(values=c("lightblue","darkblue")) +
 	facet_grid(.~scales)+
-	xlab("Follow up Times")
+	xlab("Follow up Times") +
+	# geom_text(aes(y=,x=,label=df$value))
 dev.off()
 
 #plot the stacked bar plot with polar coordinates
 ggplot(df, aes(x = project)) + geom_bar(aes(weight=numbers, fill = component), position = 'fill') + scale_y_continuous("", breaks=NA) + scale_fill_manual(values = rev(brewer.pal(6, "Purples"))) + 
 coord_polar()
+
+
+#### TIME STUFF
+time_series<-with(data_tbi,data.frame(death,
+	registry_year,gcs_tot))
+# time_series<-na.omit(time_series)
+
+time_series_severe<-subset(time_series,time_series$gcs_tot<9)
+#BY month
+#recoding data to decompose time series into month based time series
+time_series_severe$date_month <- floor_date(time_series_severe$registry_year, 
+	"year")
+
+# # summarise crash data by month
+# time_series_severe_month<-ddply(time_series_severe, "date_year", summarise, 
+# 	deaths_month = table(time_series_severe$death))
+
+table(time_series_severe$date_month,time_series_severe$death)
+prop.table(table(time_series_severe$date_month,time_series_severe$death),1)
+# table<-as.data.frame(prop.table(table(time_series_severe$date_month,
+	# time_series_severe$death),1))
+#get descriptives
+# psych::describe(time_series_severe_month)
+
+table(time_series_severe$date_month,time_series_severe$death)
+prop.table(table(time_series_severe$date_month,time_series_severe$death),1)
+# table<-as.data.frame(prop.table(table(time_series$date_month,
+	# time_series$death),1))
+#get descriptives
+# psych::describe(time_series_month)
+
+table_2<-subset(table,table$Var2==1)
+
+#### ICU
+time_series<-with(data_tbi,data.frame(death,
+	registry_year,gcs_tot,surgtoicu))
+# time_series<-na.omit(time_series)
+
+time_series_severe<-subset(time_series,time_series$surgtoicu==1)
+#BY month
+#recoding data to decompose time series into month based time series
+time_series_severe$date_month <- floor_date(time_series_severe$registry_year, 
+	"year")
+
+# # summarise crash data by month
+# time_series_severe_month<-ddply(time_series_severe, "date_year", summarise, 
+# 	deaths_month = table(time_series_severe$death))
+
+table(time_series_severe$date_month,time_series_severe$death)
+prop.table(table(time_series_severe$date_month,time_series_severe$death),1)
+# table<-as.data.frame(prop.table(table(time_series_severe$date_month,
+	# time_series_severe$death),1))
+#get descriptives
+# psych::describe(time_series_severe_month)
+
+table(time_series_severe$date_month,time_series_severe$death)
+prop.table(table(time_series_severe$date_month,time_series_severe$death),1)
+# table<-as.data.frame(prop.table(table(time_series$date_month,
+	# time_series$death),1))
+#get descriptives
+# psych::describe(time_series_month)
+
+table_2<-subset(table,table$Var2==1)
 
 

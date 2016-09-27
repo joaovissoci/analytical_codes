@@ -33,7 +33,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 2/balticsv.csv",sep=",")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 2/balticsv.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -42,9 +42,9 @@ data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM
 #Creating a data frame (group of variables)
 #numeric<-with(data, data.frame(Peso,Altura,IMC,
 #                          Idade))
-data$outlet_density<-data$outlet/data$Area_km
+data$outlet_density<-data$PNTCNT_PUB/data$lenght_km
 
-data$crash_density<-data$crash_imp/data$Area_km
+data$crash_density<-data$PNT_IMP_13/data$lenght_km
 
 data$agglomeration<-car::recode(data$LISA_CL,"0=3;
 	1=2; 2=1; 3=1;4=2")
@@ -54,22 +54,29 @@ data$agglomeration<-as.factor(data$agglomeration)
 ######################################################################
 
 sum(data$crash_imp)
-sum(data$outlet)/238.5
+sum(data$PNTCNT_PUB)/238.5
 
 table(data$agglomeration)
 
-psych::describe(data$outlet_density)
-describe(data$outlet)
+psych::describe(data$PNTCNT_PUB_density)
+describe(data$PNTCNT_PUB)
 
-with(data,by(outlet,agglomeration,describe))
-with(data,by(outlet_density,agglomeration,describe))
+with(data,by(PNTCNT_PUB,agglomeration,psych::describe))
+with(data,by(PNTCNT_PUB_density,agglomeration,describe))
 with(data,by(crash_imp,agglomeration,describe))
-with(data,by(off_premis,agglomeration,summary))
+with(data,by(point_off,agglomeration,summary))
+
+prop_off<-data$point_off/data$lenght_km
+
+prop_off<-car::recode(prop_off,"NaN=0")
+
+with(data,by(prop_off,agglomeration,psych::describe))
+
 
 ######################################################################
 #EXPLORATORY ANALYSIS
 ######################################################################
-ggplot(data, aes(outlet,crash_imp)) +
+ggplot(data, aes(PNTCNT_PUB,crash_imp)) +
   geom_point() + geom_smooth(se = TRUE)
 #,color=agglomeration
 
@@ -78,7 +85,7 @@ ggplot(data, aes(outlet,crash_imp)) +
 # http://stats.stackexchange.com/questions/11096/how-to-interpret-coefficients-in-a-poisson-regression
 #http://datavoreconsulting.com/programming-tips/count-data-glms-choosing-poisson-negative-binomial-zero-inflated-poisson/
 
-fm_nbin <- glm.nb(crash_imp ~ outlet,
+fm_nbin <- glm.nb(PNT_IMP_13 ~ PNTCNT_PUB,
 	data = data)
 summary(fm_nbin)
 exp(coef(fm_nbin))
@@ -89,7 +96,7 @@ exp(confint(fm_nbin,level=0.95))
            )
 
 
-fm_nbin <- glm.nb(crash_imp ~ outlet + agglomeration + 
+fm_nbin <- glm.nb(PNT_IMP_13 ~ PNTCNT_PUB + agglomeration + 
 		lenght_km + population, 
 	data = data)
 summary(fm_nbin)
@@ -100,8 +107,8 @@ exp(confint(fm_nbin,level=0.95))
            summary(fm_nbin)$df.residual
            )
 
-fm_nbin <- glm.nb(crash_imp ~ off_premis + agglomeration + 
-    Area_km + population, 
+fm_nbin <- glm.nb(PNT_IMP_13 ~ point_off + agglomeration + 
+    lenght_km + population, 
   data = data)
 summary(fm_nbin)
 exp(coef(fm_nbin))
@@ -111,8 +118,8 @@ exp(confint(fm_nbin,level=0.95))
            summary(fm_nbin)$df.residual
            )
 
-fm_nbin <- glm.nb(crash_imp ~ onboth + agglomeration + 
-    Area_km + population, 
+fm_nbin <- glm.nb(PNT_IMP_13 ~ Points_on + agglomeration + 
+    lenght_km + population, 
   data = data)
 summary(fm_nbin)
 exp(coef(fm_nbin))
@@ -126,7 +133,7 @@ exp(confint(fm_nbin,level=0.95))
 library(rpart)
 
 # grow tree 
-fit <- rpart(crash_imp ~ outlet, 
+fit <- rpart(PNT_IMP_13 ~ PNTCNT_PUB, 
    method="poisson", data=data)
 
 printcp(fit) # display the results 
