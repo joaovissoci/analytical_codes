@@ -93,6 +93,7 @@ network_data<-remove.vars(network_data,c("moment"))
 
 cor_matrix<-cor(network_data,method="spearman")
 #qsgc<-qsgc$rho
+# cor_matrix<-Hmisc::rcorr(as.matrix(network_data),type=c("spearman"))
 
 groups<-list(Humor=c(1,2,3,4,5,6),Biomarkers=c(7,8,9,10))
 varLabels<-c("Raiva", "Tensao", "Depressao","Vigor","Fadiga","Confusao","TBARS","TIOIS","CAT","SOD")
@@ -136,7 +137,7 @@ PcorGRAPH<-qgraph(cor_matrix,layout="spring",
 
 # Para identificar no qgraph o resultado do algortimo de comunidade, criar objeto de "groups"
 # com o resultado de wcG1
-#predictors<-centrality(qsgG3)$ShortestPaths[,15]
+predictors<-centrality(PcorGRAPH)
 #centralityPlot(qsgG3)
 
 #as.data.frame(predictors[[1]])[2,]
@@ -200,8 +201,12 @@ PcorGRAPH<-qgraph(cor_matrix,layout="spring",
 
 # Para identificar no qgraph o resultado do algortimo de comunidade, criar objeto de "groups"
 # com o resultado de wcG1
-#predictors<-centrality(qsgG3)$ShortestPaths[,15]
+predictors<-centrality(PcorGRAPH)
 #centralityPlot(qsgG3)
+
+PcorGRAPH$Edgelist
+
+data.frame(PcorGRAPH$Edgelist$from,PcorGRAPH$Edgelist$to,PcorGRAPH$Edgelist$weight)
 
 #as.data.frame(predictors[[1]])[2,]
 #dim(as.data.frame(predictors[[1]]))[1]

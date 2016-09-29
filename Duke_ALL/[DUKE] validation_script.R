@@ -4,7 +4,11 @@
 #remove all objects and then check
 
 #Instal packages needes for the analysis
-lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest", "moments","nFactors","psych","ltm", "GPArotation", "gmodels","sem","eRm","mirt","googlesheets","dplyr","devtools"), library, character.only=T)
+lapply(c("ggplot2", "psych", "RCurl", 
+	"irr", "nortest", "moments",
+	"nFactors","psych","ltm", "GPArotation",
+	"gmodels","sem","eRm","mirt","googlesheets",
+	"dplyr","devtools"), library, character.only=T)
 ############################################################
 #IMPORTING DATA
 ############################################################
