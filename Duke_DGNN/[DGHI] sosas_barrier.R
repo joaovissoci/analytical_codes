@@ -9,20 +9,16 @@
 
 # install.packages("readstata13")
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", 
-	"moments","GPArotation","nFactors","boot","psy", "car",
-	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
-	"reshape2","mclust","foreign","survival","memisc","lme4",
-	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
-	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
-	"poLCA","venneuler","haven"),
+lapply(c("haven","poLCA"),
 library, character.only=T)
 # library("haven")
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
 data <- read_dta("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
+# data<-as.data.frame(data)
 
+data[] <- lapply(data, unclass)
 
 #recode missing and other random problems
 data$Gender<-car::recode(data$Gender,"'male'=0;'female'=1")
@@ -86,9 +82,8 @@ data$Time_ill<-car::recode(
 # 	65:102='elderly'")
 # data$Age<-as.factor(data$Age)
 
-data_barriers_temp<-subset(data,data$Untreated==1)
-data_barriers<-subset(data_barriers_temp,
-	data_barriers_temp$Age>=18)
+data_barriers_temp<-data[data$Untreated==1,]
+data_barriers<-data_barriers_temp[data_barriers_temp$Age>=18,]
 
 barrier_data_nomoney<-with(data_barriers,rowSums(data.frame(
 	Prob1Reason_no_money,
@@ -541,13 +536,13 @@ logistic.display(logmodel)
 ses_data_cat<-sapply(data_ses,function(x) as.factor(x))
 ses_data_cat<-as.data.frame(ses_data_cat)
 
-ses_data_cat$Household_cat<-car::recode(ses_data_cat$Household,"0:5='average';else='high'")
+ses_data_cat$Household_cat<-car::recode(ses_data_cat$Household,"0:3='average';else='high'")
 ses_data_cat$age_cat<-car::recode(ses_data_cat$Age,"
 	18:50='adult';else='elderly'")
 
 f <- cbind(Education, Literacy,
 		   Occupation,Household_cat,
-		   Time_ill, Health_status) ~ 1
+		   Time_ill) ~ 1
 
 # The ~ 1 instructs poLCA to estimate the basic latent class model. For the latent class regres- sion model, replace the ~ 1 with the desired function of covariates, as, for example:
 # f <- cbind(Y1, Y2, Y3) ~ X1 + X2 * X3
