@@ -41,7 +41,7 @@ lapply(c("Hmisc","car","psych","nortest","ggplot2",
 
 bnp_sr_data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/BNP SR/bnp_SR_data.csv")
 
-bnp_sr_metadata<-read.csv("/Users/joaovissoci/Desktop/US_bnpmeta_data.csv")
+bnp_sr_metadata<-read.csv("/Users/jnv4/Desktop/US_bnpmeta_data.csv")
 
 
 #############################################################################
@@ -189,6 +189,8 @@ metainf(meta1, pooled="random")
 # group<-c(group_table2,group_table3,group_table4,group_table5)
 
 # plot_data<-data.frame(data,name,group)
+
+bnp_sr_data_bnp<-subset(bnp_sr_data,bnp_sr_data$name=="BNP")
 
 
 ggbox2   <- ggplot(bnp_sr_data_bnp,aes(x=group, 

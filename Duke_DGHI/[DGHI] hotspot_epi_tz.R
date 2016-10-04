@@ -29,9 +29,8 @@ library, character.only=T)
 #######################################################
 
 #Linux path
-data <- read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/Tz/epi_rti_tz_police_data.csv")
 
-data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/epi_rti_tz_police_data.csv")
+data <- read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/epi_rti_Tz_police_data.csv")
 
 #Mac path
 #data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/epi_rti_tz_police_data.csv")
@@ -60,8 +59,8 @@ data_epi$gender<-car::recode(data2$male
 #recoding hour of crash
 hour_crash<-sapply(strsplit(as.character(data2$time_crash), ":"), "[", 1)
 hour_crash<-as.numeric(hour_crash)
-data_epi$hour_crash<-car::recode(hour_crash,"8:16='aday';17:24='night';
-	0='night';1:7='dawn';else=NA")
+data_epi$hour_crash<-car::recode(hour_crash,"8:16='aday';20:24='night';
+	0:4='night';5:7='dawn';17:19='dawn';else=NA")
 data_epi$hour_crash<-as.factor(data_epi$hour_crash)
 
 #CLASS OF CRASH
@@ -96,7 +95,7 @@ data_epi$weather<-car::recode(data2$weather,"0='clear';1='unclear';
 
 # Light condition
 data_epi$light_condition<-car::recode(data2$light_condition,"0='daylight';
-	1='nightnolight';2='daylight';3='nightnolight';4='nightgooglight';
+	1='nightnolight';2='daylight';3='nightnolight';4='nightnolight';
 	else=NA")
 
 # Type of Location
@@ -240,6 +239,11 @@ data_imputed<-complete(imp,4)
 #######################################################
 #DESCRIPTIVE ANALYSIS
 #######################################################
+# Gender
+table<-with(data_epi,table(outcome))
+table
+prop.table(table)
+
 # Age
 with(data_epi,describe(age))
 with(data_epi,describeBy(age,class_crash))
@@ -532,19 +536,20 @@ data_imputed$urban_location<-car::recode(data_imputed$urban_location,"
 #traffic control was not added because had cases with 0 observations
 # age and gender becaise the missing rate wsa to high
 
-logmodel<-glm(outcome ~ hour_crash +
-						urban_location +
-						as.factor(day_week) +
+logmodel<-glm(outcome ~ 
+						hour_crash +
+						# urban_location +
+						# as.factor(day_week) +
 						crash_type +
 						#rd_condition +
-						light_condition +
+						# light_condition +
 						type_location +
 						speed_limit_sign +
-						type_vehicle +
+						# type_vehicle +
 						human_crash_factor +
-						alcohol_tested +
-						victim_classification +
-						rd_size
+						alcohol_tested
+						# victim_classification +
+						# rd_size
 			,family=binomial, data=data_imputed)
 
 summary(logmodel)
