@@ -146,7 +146,7 @@ meta1 <- metacont(intervention_1,
 	control_1,
 	mean_post_control,
 	sd_post_control, 
-  data=meta_model_physical, sm="SMD",
+  data=meta_model_direct, sm="SMD",
   print.byvar=FALSE,
   comb.fixed=FALSE,studlab=study)
 summary(meta1)

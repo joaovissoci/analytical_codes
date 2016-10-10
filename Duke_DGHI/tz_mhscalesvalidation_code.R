@@ -38,7 +38,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -56,11 +56,22 @@ data_validation$married<-car::recode(data_validation$married,"
 	0='married';1='married';2='not married';
 	3='not married';4='married';5='not married'")
 
-#recoding occupation varibLE
-# data_validation$occupation<-car::recode(data_validation$occupation,"
-	# 0='';1='")
+#recoding education varibLE
+data_validation$education_cat<-car::recode(data_validation$education,"
+     0:7='Some primary';8:13='Some secondary';
+     14:16='Some university';89=NA")
 
-# data_validation$education<-
+# #recoding education varibLE
+data_validation$occupation_cat<-car::recode(
+	data_validation$occupation,"
+     0='Business';1='Farming';
+     3='Paid worker';4='Skilled worker';
+     5='Paid worker';6='Other';8='Other';89=NA")
+
+#recoding education varibLE
+data_validation$age_cat<-car::recode(
+	data_validation$age,"
+     0:35='<35';36:100='>35'")
 
 #Organize scale datasets
 #AUDIT
@@ -68,10 +79,19 @@ audit_data<-with(data_validation,data.frame(
 	h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
 summary(audit_data)
 audit_data<-na.omit(audit_data)
+summary(audit_data)
+audit_data1<-with(data_validation,data.frame(
+	h1,h2,h3))
+audit_data2<-with(data_validation,data.frame(
+	h4,h5,h6,h7,h8,h9,h10))
+audit_data2_3<-with(data_validation,data.frame(
+	h4,h5,h6))
+audit_data3_3<-with(data_validation,data.frame(
+	h7,h8,h9,h10))
 
 #CAGE
 cage_data<-with(data_validation,data.frame(
-	h11,h12,h13,h14))
+	h11,h12,h13,h14,age_cat,education_cat,female))
 summary(cage_data)
 cage_data<-na.omit(cage_data)
 
@@ -89,6 +109,21 @@ describe(data_validation$home_people)
 
 # Categorical Descriptives
 table<-with(data_validation,table(married))
+table
+prop.table(table)
+
+# Categorical Descriptives
+table<-with(data_validation,table(female))
+table
+prop.table(table)
+
+# Categorical Descriptives
+table<-with(data_validation,table(occupation_cat))
+table
+prop.table(table)
+
+# Categorical Descriptives
+table<-with(data_validation,table(education_cat))
 table
 prop.table(table)
 
@@ -131,6 +166,10 @@ summary(audit_data)
 #RELIABILITY
 #psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
 psych::alpha(audit_data,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data1,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data2,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data2_3,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data3_3,n.iter=1000,check.keys=TRUE)
 
 psych::alpha(cage_data,n.iter=1000,check.keys=TRUE)
 
@@ -313,7 +352,7 @@ fa.parallel(cage_data,cor="poly")
 #Look here http://goo.gl/kY3ln for different met
 
 #holds of estimations or rotations
-fa(cor_data,1,fm="uls",rotate="promax")
+fa(cor_data,2,rotate="promax")
 # fa(NeckDisabilityIndex,1,fm="pa",rotate="oblimin")
 
 #based on a polychoric correlation matrix
@@ -334,10 +373,22 @@ audit_model <- '
 Audit =~  h1 + h2 + h3 + h4 + h5 + h6 + h7 + h8 + h9 + h10
 			 '
 
+audit_model2 <- '
+Audit =~  h1 + h2 + h3
+Audit2 =~ h4 + h5 + h6 + h7 + h8 + h9 + h10
+			 '
+
+audit_model3 <- '
+Audit =~  h1 + h2 + h3
+Audit2 =~ h4 + h5 + h6
+Audit3 =~ h7 + h8 + h9 + h10
+Audit4 =~ Audit + Audit2 + Audit3
+			 '
+
 fit <- lavaan::cfa(audit_model, data = audit_data,
-	estimator="ulsm")
+	estimator="WLSM")
 summary(fit, fit.measures=TRUE)
-fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
+fitMeasures(fit, fit.measures = "all")
 parameterEstimates(fit)
 Est <- parameterEstimates(fit, ci = TRUE, standardized = TRUE)
 subset(Est, op == "=~")
@@ -379,7 +430,7 @@ Cage =~  h11 + h12 + h13 + h14
 			 '
 
 fit <- lavaan::cfa(cage_model, data = cage_data,
-	estimator="ulsm")
+	estimator="WLSM")
 summary(fit, fit.measures=TRUE)
 fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
 parameterEstimates(fit)
@@ -417,7 +468,7 @@ sum(Est$std.all[1:4])^2/(sum(Est$std.all[1:4])^2+sum(Est$std.all[5:8]))
 ##############################################################
 
 #### USING eRM Package
-IRTRolandMorris <- PCM(NeckDisabilityIndex)
+IRTRolandMorris <- PCM(audit_data)
 diff_index<-thresholds(IRTRolandMorris)
 summary(diff_index$threshtable[[1]][,1])
 sd(diff_index$threshtable[[1]][,1])/sqrt(length(diff_index$threshtable[[1]][,1]))
@@ -450,13 +501,6 @@ summary(itemfit(pp)$i.infitMSQ)
 sd(itemfit(pp)$i.infitMSQ)
 NPtest(IRTRolandMorris,method="T11")
 plotGOF(lrt,conf=list())
-
-##############################################################
-#EXTERNAL VALIDITY
-##############################################################
-
-
-
 
 #############################################################################
 #CAT
