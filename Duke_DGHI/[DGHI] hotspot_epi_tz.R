@@ -30,7 +30,7 @@ library, character.only=T)
 
 #Linux path
 
-data <- read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/epi_rti_Tz_police_data.csv")
+data <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/epi_rti_Tz_police_data.csv")
 
 #Mac path
 #data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/epi_rti_tz_police_data.csv")
@@ -59,8 +59,8 @@ data_epi$gender<-car::recode(data2$male
 #recoding hour of crash
 hour_crash<-sapply(strsplit(as.character(data2$time_crash), ":"), "[", 1)
 hour_crash<-as.numeric(hour_crash)
-data_epi$hour_crash<-car::recode(hour_crash,"8:16='aday';20:24='night';
-	0:4='night';5:7='dawn';17:19='dawn';else=NA")
+data_epi$hour_crash<-car::recode(hour_crash,"8:16='daylight';20:24='night';
+	0:4='night';5:7='night';17:19='night';else=NA")
 data_epi$hour_crash<-as.factor(data_epi$hour_crash)
 
 #CLASS OF CRASH
@@ -339,7 +339,7 @@ prop.table(table)
 table<-with(data_epi,table(light_condition,outcome))
 table
 prop.table(table,2)
-chisq.test(table)
+chisq.test(table) 
 fisher.test(table)
 assocstats(table) #vcd package
 
