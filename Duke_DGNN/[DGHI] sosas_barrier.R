@@ -15,13 +15,14 @@ library, character.only=T)
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
-data <- read_dta("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
+data <- read_dta("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
 # data<-as.data.frame(data)
 
 data[] <- lapply(data, unclass)
 
 #recode missing and other random problems
 data$Gender<-car::recode(data$Gender,"'male'=0;'female'=1")
+
 data$Education<-car::recode(
 	data$Education,"'edu_none'=0;
 						'primary_school'=1;
@@ -37,7 +38,7 @@ data$Literacy<-car::recode(
 					   else=NA")
 
 data$Occupation<-car::recode(
-	data$Occupation,"'domestic_helpers'=0;
+	data$Occupation,"'domestic_helpers'=1;
 						'farmer'=1;
 						'government_employees'=1;
 						'homemaker'=1;
@@ -73,6 +74,12 @@ data$Time_ill<-car::recode(
 	'months'=1;
 	'years'=1;
 	else=NA")
+
+data$Household_cat<-car::recode(data$Household,
+	"0:3='average';else='high'")
+
+data$age_cat<-car::recode(data$Age,"
+	18:50='adult';else='elderly'")
 
 # data$Age<-car::recode(
 # 	data$Age,"
@@ -175,40 +182,43 @@ barriers_dic<-sapply(barriers,
 	function(x) dicotomize(x))
 
 ses_data<-with(data_barriers,data.frame(
-	Gender,
+	Gender=as.factor(Gender),
 	Age,
-	Education,
-	Literacy,
-	Occupation,
+	age_cat,
+	Education=as.factor(Education),
+	Literacy=as.factor(Literacy),
+	Occupation=as.factor(Occupation),
 	# Ethnicity,
 	# Religion,
-	# Household_stay_length,
-	Time_ill,
+	Household_cat,
+	Time_ill=as.factor(Time_ill),
 	Health_status,
 	Household,
-	E15_rural
+	E15_rural=as.factor(E15_rural)
 	))
 
 
 analytical_data_dic<-data.frame(ses_data,barriers_dic)
 analytical_data<-data.frame(ses_data,barriers)
-data_ses<-subset(data,
-	data$Age>=18)
+# data_ses<-subset(data,
+# 	data$Age>=18)
 
 ###################################################
 #Table 1
 ###################################################
 
 # Age
+summary(data_ses$Age)
 # describe(data_ses$Age)
 by(data_ses$Age,data_ses$Untreated,summary)
 # t-test: # independent 2-group, 2 level IV
 wilcox.test(data_ses$Age ~ data_ses$Untreated)
 
 # Gender
-# table<-table(victms_gender)
-# table
-# prop.table(table)
+table<-table(data_ses$Gender)
+table
+prop.table(table)
+#
 table<-table(data_ses$Gender,data_ses$Untreated)
 table
 prop.table(table,2)
@@ -225,9 +235,10 @@ prop.table(table,2)
 # logistic.display(logmodel)
 
 # location
-# table<-table(victms_gender)
-# table
-# prop.table(table)
+table<-table(data_ses$E15_rural)
+table
+prop.table(table)
+#
 table<-table(data_ses$E15_rural,data_ses$Untreated)
 table
 prop.table(table,2)
@@ -244,15 +255,17 @@ prop.table(table,2)
 # logistic.display(logmodel)
 
 # Household size
+summary(data_ses$Household)
 # describe(data_ses$Age)
 by(data_ses$Household,data_ses$Untreated,summary)
 # t-test: # independent 2-group, 2 level IV
 testName <- t.test(age_victims ~ victimis_outcome_all)
 
 # Education
-# table<-table(victms_gender)
-# table
-# prop.table(table)
+table<-table(data_ses$Education)
+table
+prop.table(table)
+#
 table<-table(data_ses$Education,data_ses$Untreated)
 table
 prop.table(table,2)
@@ -269,9 +282,10 @@ prop.table(table,2)
 # logistic.display(logmodel)
 
 # Literacy
-# table<-table(victms_gender)
-# table
-# prop.table(table)
+table<-table(data_ses$Literacy)
+table
+prop.table(table)
+#
 table<-table(data_ses$Literacy,data_ses$Untreated)
 table
 prop.table(table,2)
@@ -288,9 +302,10 @@ prop.table(table,2)
 # logistic.display(logmodel)
 
 # Occupation
-# table<-table(victms_gender)
-# table
-# prop.table(table)
+table<-table(data_ses$Occupation)
+table
+prop.table(table)
+#
 table<-table(data_ses$Occupation,data_ses$Untreated)
 table
 prop.table(table,2)
@@ -307,9 +322,10 @@ prop.table(table,2)
 # logistic.display(logmodel)
 
 # Time ill
-# table<-table(victms_gender)
-# table
-# prop.table(table)
+table<-table(data_ses$Time_ill)
+table
+prop.table(table)
+#
 table<-table(data_ses$Time_ill,data_ses$Untreated)
 table
 prop.table(table,2)
@@ -326,9 +342,10 @@ prop.table(table,2)
 # logistic.display(logmodel)
 
 # Health status
-# table<-table(victms_gender)
-# table
-# prop.table(table)
+table<-table(data_ses$Health_status)
+table
+prop.table(table)
+#
 table<-table(data_ses$Health_status,data_ses$Untreated)
 table
 prop.table(table,2)
@@ -386,14 +403,15 @@ plot(v)
 
 
 barriers_matrix<-as.matrix(barriers_dic)
-colnames(barriers_matrix)<-c("No money",
-						  "No transport",
-						  "No time",
-						  "Fear",
-						  "Lack of social support",
-						  "Not available",
-						  "No need")
+colnames(barriers_matrix)<-c("              No money \n           128 (40%)",
+						  "No transport \n 43 (13%)",
+						  "No time \n 1 (0.3%)",
+						  "Fear \n 42 (13%)",
+						  "Social support \n 40 (13%)",
+						  "Not available \n 31 (10%)",
+						  "No need \n 52 (16%)")
 v <- venneuler(barriers_matrix)
+# v$colors<-c(0.9,0.1,0,0,0,0,0)
 plot(v)
 
 cor<-cor_auto(barriers_matrix)
@@ -407,13 +425,13 @@ str(data_barriers_temp)
 # table(data$Untreated)
 
 ## NO MONEY
-logmodel<-glm(barrier_data_nomoney ~ 
+logmodel<-glm(as.factor(barrier_data_nomoney) ~ 
 				Age + 
 				Gender +
 				Education +
-				Literacy +
+				# Literacy +
 				Occupation +
-				Household+
+				Household_cat+
 				Time_ill +
 				E15_rural +
 				Health_status,
@@ -430,7 +448,7 @@ logmodel<-glm(barrier_data_notransport ~
 				Age + 
 				Gender +
 				Education +
-				Literacy +
+				# Literacy +
 				Occupation +
 				Household+
 				Time_ill +
@@ -444,31 +462,31 @@ exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90)))
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-# NO TIME
-logmodel<-glm(barrier_data_notime ~ 
-				Age + 
-				Gender +
-				Education +
-				Literacy +
-				Occupation +
-				Household+
-				Time_ill +
-				E15_rural +
-				Health_status,
-			family=binomial, data=analytical_data_dic)
-summary(logmodel)
-#anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
+# # NO TIME
+# logmodel<-glm(barrier_data_notime ~ 
+# 				Age + 
+# 				Gender +
+# 				Education +
+# 				Literacy +
+# 				Occupation +
+# 				Household+
+# 				Time_ill +
+# 				E15_rural +
+# 				Health_status,
+# 			family=binomial, data=analytical_data_dic)
+# summary(logmodel)
+# #anova(reglogGEU)
+# exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+# #predict(model1_death, type="response") # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# logistic.display(logmodel)
 
 # FEAR
 logmodel<-glm(barrier_data_fear ~ 
 				Age + 
 				Gender +
 				Education +
-				Literacy +
+				# Literacy +
 				Occupation +
 				Household+
 				Time_ill +
@@ -487,7 +505,7 @@ logmodel<-glm(barrier_data_socialsupport ~
 				Age + 
 				Gender +
 				Education +
-				Literacy +
+				# Literacy +
 				Occupation +
 				Household+
 				Time_ill +
@@ -502,11 +520,30 @@ exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90)))
 logistic.display(logmodel)
 
 # NOT AVAILABLE
-logmodel<-glm(barrier_data_notavailable1 ~ 
+logmodel<-glm(as.factor(barrier_data_notavailable1) ~ 
 				Age + 
 				Gender +
 				Education +
-				Literacy +
+				# Literacy +
+				Occupation +
+				Household+
+				Time_ill +
+				E15_rural +
+				Health_status,
+			family=binomial, data=analytical_data_dic)
+summary(logmodel)
+#anova(reglogGEU)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+#predict(model1_death, type="response") # predicted values
+#residuals(model1_death, type="deviance") # residuals
+logistic.display(logmodel)
+
+# NOT AVAILABLE
+logmodel<-glm(as.factor(barrier_data_no_need) ~ 
+				Age + 
+				Gender +
+				Education +
+				# Literacy +
 				Occupation +
 				Household+
 				Time_ill +
@@ -533,16 +570,13 @@ logistic.display(logmodel)
 # Building the formula
 # To specify a latent class model, poLCA uses the standard, symbolic R model formula expres- sion. The response variables are the manifest variables of the model. Because latent class models have multiple manifest variables, these variables must be “bound” as cbind(Y1, Y2, Y3, ...) in the model formula. For the basic latent class model with no covariates, the formula definition takes the form
 
-ses_data_cat<-sapply(data_ses,function(x) as.factor(x))
+ses_data_cat<-sapply(ses_data,function(x) as.factor(x))
 ses_data_cat<-as.data.frame(ses_data_cat)
+ses_data_cat<-data.frame(ses_data_cat)
 
-ses_data_cat$Household_cat<-car::recode(ses_data_cat$Household,"0:3='average';else='high'")
-ses_data_cat$age_cat<-car::recode(ses_data_cat$Age,"
-	18:50='adult';else='elderly'")
-
-f <- cbind(Education, Literacy,
-		   Occupation,Household_cat,
-		   Time_ill) ~ 1
+f <- cbind(Education,Literacy,age_cat,
+		   Occupation,
+		   Time_ill,Health_status) ~ 1
 
 # The ~ 1 instructs poLCA to estimate the basic latent class model. For the latent class regres- sion model, replace the ~ 1 with the desired function of covariates, as, for example:
 # f <- cbind(Y1, Y2, Y3) ~ X1 + X2 * X3
@@ -555,7 +589,7 @@ f <- cbind(Education, Literacy,
 #========================================================= 
 # Fit for 2 latent classes: 
 #========================================================= 
-ses_data<-na.omit(ses_data)
+# ses_data<-na.omit(ses_data)
 lcamodel <- poLCA(f, ses_data_cat, nclass = 2)
 
 # Entropy
@@ -581,7 +615,7 @@ R2_entropy
 # ========================================================= 
 # Fit for 3 latent classes: 
 # ========================================================= 
-set.seed(1988)
+set.seed(1978)
 lcamodel <- poLCA(f, ses_data_cat, nclass = 3)
 
 # Entropy
@@ -669,9 +703,11 @@ R2_entropy
 #calc.se=calculate standard errors
 
 #### GRAPHING SOLUTION
+library(reshape)
+library(ggplot2)
 #Isolating classes to be plotted
 classes_prob<-as.data.frame(lcamodel$probs)[,c(2,4,6,8,10,12)]
-classes_prob$class<-c("class1","class2","class3","class4","class5")
+classes_prob$class<-c("class1","class2","class3","Class4")
 class_prob_melt<-melt(classes_prob)
 
 p <- ggplot(data = class_prob_melt, aes(class, variable, fill = value))+
@@ -687,8 +723,8 @@ p <- ggplot(data = class_prob_melt, aes(class, variable, fill = value))+
      ylab(label="Variables") +
      scale_y_discrete(
      	labels=c(
-  "Educated","Literate",
-  "Paid employment","Large household",
+  "Educated","Literate","Elderly",
+  "Paid employment",
   "Long term illness","Positive health")) +
      scale_x_discrete(
      	labels=c("Class 1","Class 2","Class 3","Class 4"))
@@ -699,8 +735,8 @@ p
 
 
 #LOGICTI REGRESSION MODELS
-
 analytical_data_dic<-na.omit(analytical_data_dic)
+# analytical_data_dic<-na.omit(analytical_data_dic)
 analytical_data_dic$class<-as.factor(lcamodel$predclass)
 analytical_data_dic$class_recoded<-car::recode(
 	analytical_data_dic$class,"1='class1';
@@ -722,7 +758,7 @@ logmodel<-glm(barrier_data_notransport ~ class_recoded
 			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
-odds_model_2<-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+odds_model_2<-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
@@ -731,7 +767,7 @@ logmodel<-glm(barrier_data_fear ~ class_recoded
 			,family=binomial, data=analytical_data_dic)
 summary(logmodel)
 #anova(reglogGEU)
-odds_model_3<-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+odds_model_3<-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
@@ -786,7 +822,7 @@ colnames(odds_data)<-c("OR","LowCI","HighCI")
 odds_data$barrier<-c(rep("No money",4),
 					rep("No transport",4),
 					rep("Fear",4),
-					rep("Lack of social support",4),
+					rep("Social support",4),
 					rep("Not available",4),
 					rep("No need",4)
 					)
@@ -804,18 +840,18 @@ geom_text(aes(label=format(round(OR,2),nsmall=2)),
   vjust=-0.5, hjust=0, size=3) +
 #coord_flip() +
 #facet_grid(measure ~ ., scales="free_x", space="free") +
-labs(y = '', x = '') +
-scale_x_continuous(breaks=seq(0, 2000, 200)) +
-annotate("segment", x = 2000, xend=2020, y = 13, yend=13,
-  colour = "black",
-  arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
-annotate("segment", x = 2000, xend=2020, y = 10, yend=10,
-  colour = "black",
-  arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
-annotate("text", x = 1990, y = 12.7,
-  colour = "black",label="2940.52",size=3) +
-annotate("text", x = 1990, y = 9.7,
-  colour = "black",label="2014.76",size=3) +
+labs(y = 'Latent classes', x = 'Odds Ration and Confidence Interval') +
+# scale_x_continuous(breaks=seq(0, 2000, 200)) +
+# annotate("segment", x = 2000, xend=2020, y = 13, yend=13,
+#   colour = "black",
+#   arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+# annotate("segment", x = 2000, xend=2020, y = 10, yend=10,
+#   colour = "black",
+#   arrow=arrow(length=unit(0.2,"cm"),type = "closed")) +
+# annotate("text", x = 1990, y = 12.7,
+#   colour = "black",label="2940.52",size=3) +
+# annotate("text", x = 1990, y = 9.7,
+#   colour = "black",label="2014.76",size=3) +
 theme_bw()
 
 object1
