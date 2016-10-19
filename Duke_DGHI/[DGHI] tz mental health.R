@@ -42,9 +42,9 @@ library, character.only=T)
 #                                  sep = ",",
 #                                  header = TRUE)
 
-data <- read.csv("/Users/jnv4/Desktop/tz_mentalhealthtbi_data.csv", header = TRUE)
+data <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv", header = TRUE)
 
-data_tbi <- read.csv("/Users/jnv4/Desktop/tz_tbiregistry_data.csv", header = TRUE)
+# data_tbi <- read.csv("/Users/jnv4/Desktop/tz_tbiregistry_data.csv", header = TRUE)
 
 #############################################################################
 #DATA MANAGEMENT
@@ -55,29 +55,40 @@ data$occupation<-car::recode(data$occupation,"89='Other'")
 data$education<-car::recode(data$education,"
 	1:7='Primary';8:13='Form';14:16='University';")
 
+#
 sf8_PCS<-with(data,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5))
 data$sf8_mcs<-rowSums(sf8_PCS)
+
 sf8_MCS<-with(data,data.frame(sf8_b6,sf8_b7,sf8_b8))
 data$sf8_pcs<-rowSums(sf8_MCS)
+
 phq9<-with(data,data.frame(phq9_b11,phq9_b12,phq9_b13,phq9_b14,
 	phq9_b15,phq9_b16,phq9_b17,phq9_b17,phq9_b18,phq9_b19))
 data$phq9score<-rowSums(phq9)
+
 audit<-with(data,data.frame(h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
 data$auditscore<-rowSums(audit)
+
 cage<-with(data,data.frame(h11,h12,h13,h14))
 data$cagescore<-rowSums(cage)
+
 fim_physical<-with(data,data.frame(g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
 	g11,g12,g13,g14,g15,g16))
+
 data$fim_physical<-rowSums(fim_physical)/16
 fim_mental<-with(data,data.frame(g17,g18,g19,g20,g21,g22,g23,g24,g25,g26,
 	g27,g28,g29,g30))
+
 data$fim_mental<-rowSums(fim_mental)/14
+
 mental<-with(data,data.frame(f1a,f1b,f1c,f1d,f1e,f2a,f2b,f2c,f2d,f2e,f3,
 	f4,f5,f6,f7,f8,f9,f10,f11,f12___0,f12___1,f12___2))
 data$mental<-rowSums(mental)
+
 moca<-with(data,data.frame(f17,f18,f19,f20,f21,f21b,f22,f23))
 data$moca<-rowSums(moca)
 
+#classifying variables
 phq9_cat<-car::recode(data$phq9score,"0:4.9='no';5:21='yes'")
 ces_score_cat<-car::recode(data$ces_score,"0:15.9='no';16:45='yes'")
 kes_score_cat<-car::recode(data$kes_score,"0:19.9='no';20:50='yes'")

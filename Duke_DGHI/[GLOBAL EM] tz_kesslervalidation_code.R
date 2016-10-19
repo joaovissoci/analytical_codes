@@ -74,61 +74,10 @@ data_validation$age_cat<-car::recode(
      0:35='<35';36:100='>35'")
 
 #Organize scale datasets
-#AUDIT
-audit_data<-with(data_validation,data.frame(
-	h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
-# audit_data1<-with(data_validation,data.frame(
-# 	h1,h2,h3))
-# audit_data2<-with(data_validation,data.frame(
-# 	h4,h5,h6,h7,h8,h9,h10))
-# audit_data2_3<-with(data_validation,data.frame(
-# 	h4,h5,h6))
-# audit_data3_3<-with(data_validation,data.frame(
-# 	h7,h8,h9,h10))
-
-#CAGE
-cage_data<-with(data_validation,data.frame(
-	h11,h12,h13,h14,age_cat,education_cat,female))
-# summary(cage_data)
-# cage_data<-na.omit(cage_data)
-
-#SF8
-sf8_PCS<-with(data,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5))
-# data$sf8_mcs<-rowSums(sf8_PCS)
-
-sf8_MCS<-with(data,data.frame(sf8_b6,sf8_b7,sf8_b8))
-# data$sf8_pcs<-rowSums(sf8_MCS)
-
-#CES-D
-ces_data<-wiht(data,data.frame(e1,e2,e3,e4,e5,e6,e7,e8,e9,
-	e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,e20))
 
 #Kessler
 kessler_data<-wiht(data,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,
 	d10))
-
-#PHQ9
-phq9<-with(data,data.frame(phq9_b11,phq9_b12,phq9_b13,phq9_b14,
-	phq9_b15,phq9_b16,phq9_b17,phq9_b17,phq9_b18,phq9_b19))
-# data$phq9score<-rowSums(phq9)
-
-#FIM
-fim_physical<-with(data,data.frame(g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
-	g11,g12,g13,g14,g15,g16))
-# data$fim_physical<-rowSums(fim_physical)/16
-
-fim_mental<-with(data,data.frame(g17,g18,g19,g20,g21,g22,g23,g24,g25,g26,
-	g27,g28,g29,g30))
-# data$fim_mental<-rowSums(fim_mental)/14
-
-#Mini-Mental
-mental<-with(data,data.frame(f1a,f1b,f1c,f1d,f1e,f2a,f2b,f2c,f2d,f2e,f3,
-	f4,f5,f6,f7,f8,f9,f10,f11,f12___0,f12___1,f12___2))
-# data$mental<-rowSums(mental)
-
-#MOCA
-moca<-with(data,data.frame(f17,f18,f19,f20,f21,f21b,f22,f23))
-# data$moca<-rowSums(moca)
 
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
