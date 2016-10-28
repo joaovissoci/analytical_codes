@@ -210,24 +210,26 @@ likert_data1<-with(data,data.frame(
 	not_my_role,
 	talking_can_be_successful))
 
+likert_data1$talking_can_be_successful
+
 table(likert_data1$discuss_risky_alc)
 table(likert_data1$discuss_counsel_pts)
 table(likert_data1$called_harmful_drinkers)
 table(likert_data1$not_my_role)
 table(likert_data1$talking_can_be_successful)
 
-likert1<-c(0,1,1,16,0)
-likert2<-c(1,2,3,12,1)
+likert1<-c(0,1,1,2,0)
+likert2<-c(1,2,3,2,1)
 likert3<-c(0,0,5,2,0)
-likert4<-c(12,18,13,2,13)
-likert5<-c(21,12,12,2,19)
+likert4<-c(12,18,13,12,13)
+likert5<-c(21,12,12,16,19)
 
 likert<-data.frame(likert1,likert2,likert3,likert4,likert5)
 likert$var<-c("q1","q2","q3","q4","q5")
 rownames(likert)<-c("In my schooling, we discussed at­risk\n alcohol behavior and alcohol abuse.",
 					"In my schooling, we discussed counseling\n patients with at­risk drinking behaviors.",
 					"Once patients suffer an injury from\n drinking they are called 'harmful drinkers",
-					"It is not my role to ask\n about alcohol use",
+					"It is my role to ask\n about alcohol use",
 					"Talking to patients about decreasing\n their alcohol ingestion can be successful.")
 
 colnames(likert)<-c("Strongly Disagree",
@@ -236,12 +238,21 @@ colnames(likert)<-c("Strongly Disagree",
 					"Agree",
 					"Strongly Agree")
 
-likert(likert,
-auto.key=list(between=1, between.columns=2),
-xlab="Percentage",
-# main="Knowledge about alcohol use in ED patients",
-BrewerPaletteName="Blues")
-# sub="Likert Scale")
+# likert(likert,
+# auto.key=list(between=1, between.columns=2),
+# xlab="Percentage",
+# # main="Knowledge about alcohol use in ED patients",
+# BrewerPaletteName="Blues")
+# # sub="Likert Scale")
+
+HH::likert(likert, main="",
+			as.percent=TRUE, rightAxisLabels=NULL, 
+			# ylab.right="Perceptions",
+            positive.order=TRUE,
+            scales=list(x=list(limits=c(-100,100),
+            	at=c(-100,-50,0,50,100))))
+            # scales=list(x=list(at=seq(0,50,100))))
+                          # labels=as.vector(rbind("",seq(0,50,100))))))
 
 #B
 
@@ -284,7 +295,9 @@ colnames(likert)<-c("Right","Wrong")
 HH::likert(likert, main="",
 			as.percent=TRUE, rightAxisLabels=NULL, 
 			# ylab.right="Perceptions",
-            positive.order=TRUE)
+            positive.order=TRUE,
+            scales=list(x=list(limits=c(-100,100),
+            at=c(-100,-50,0,50,100))))
 
 ######################################################################
 #Figure 2.
@@ -305,12 +318,12 @@ figure2_data<-with(data,data.frame(
 
 x2<-na.omit(melt(figure2_data))
 
-count_data<-count(x2, c("variable", "value"))
+count_data<-plyr::count(x2, c("variable", "value"))
 
 write.csv(count_data,"/Users/joaovissoci/blah.csv")
 
 dat<-read.csv("/Users/joaovissoci/blah.csv")
-colnames(dat)<-c("var","likert","value")
+colnames(count_data)<-c("var","likert","value")
 dat2<-cast(dat,var~likert)
 colnames(dat2)<-c("var","likert1","likert2","likert3",
 	"likert4","likert5")
@@ -338,7 +351,9 @@ colnames(dat2)<-c("var","Strongly Disagree",
 HH::likert(dat2, main="",
 			as.percent=TRUE, rightAxisLabels=NULL, 
 			# ylab.right="Perceptions",
-            positive.order=TRUE)
+            positive.order=TRUE,
+            scales=list(x=list(limits=c(-100,100),
+            at=c(-100,-50,0,50,100))))
 
 
 # likert(dat2,
@@ -389,6 +404,62 @@ HH::likert(dat2, main="",
 #Figure 3.
 ######################################################################
 
+figure4_data<-with(data,data.frame(
+						 common_ask_pts_drink,
+						 common_test_pts_alc,
+						 common_ask_pts_tobacco,
+						 resources_refer_pts,
+						 ask_pts_alc,
+						 test_alc_breath_or_serum
+						 ))
+
+x2<-na.omit(melt(figure4_data))
+
+count_data<-plyr::count(x2, c("variable", "value"))
+
+# write.csv(count_data,"/Users/joaovissoci/blah2.csv")
+
+# dat<-read.csv("/Users/joaovissoci/blah2.csv")
+colnames(count_data)<-c("var","likert","value")
+dat2<-cast(count_data,var~likert)
+
+NAto0<-function(x){
+	car::recode(x,"NA=0")
+	}
+
+dat_2_2<-sapply(dat2,NAto0)
+
+
+colnames(dat_2_2)<-c("var","likert1","likert2","likert3",
+	"likert4","likert5")
+# dat3<-rbind(dat2,likert)
+# rownames(dat3)<-dat3$var
+# dat3$gr<-as.factor(c(rep("test1",11),rep("test2",5)))
+rownames(dat_2_2)<-c(
+"It is common to ask patients about their\n drinking behavior.",
+"It is common to test patients for alcohol.",
+"It is comon to ask patients about their\n tobacco use behavior.",
+"There are resources to refer patients to\n when I determine they have high risk drinking.",
+"I ask my patients about their alcohol use",
+"I counsel patients to reduce their drinking\n if I think they have harmful drinking behavior.")
+
+colnames(dat_2_2)<-c("var","Strongly Disagree",
+					"Disagree",
+					"I don't know",
+					"Agree",
+					"Strongly Agree")
+
+HH::likert(dat_2_2[,-1], main="",
+			as.percent=TRUE, rightAxisLabels=NULL, 
+			# ylab.right="Perceptions",
+            positive.order=TRUE,
+            scales=list(x=list(limits=c(-100,100),
+            at=c(-100,-50,0,50,100))))
+
+######################################################################
+#Figure 4.
+######################################################################
+
 data$alc_treatment_failure<-car::recode(data$alc_treatment_failure,
 	"1=5;2=4;3=3;4=2;5=1")
 data$non_alcoholic_hired<-car::recode(data$non_alcoholic_hired,
@@ -427,67 +498,61 @@ count_data_fig3$value<-car::recode(count_data_fig3$value,"
 	1='Strongly disagree';
 	2='Disagree';
 	3='Somewhat disagree';
-	4='Somewhat disagree';
+	4='Somewhat agree';
 	5='Agree';
-	6='Strongly Agree'")
+	6='Strongly agree'")
+count_data_fig3$feq_2<-(count_data_fig3$freq*100)/34
+count_data_fig3$feq_2<-round(count_data_fig3$feq_2,digits=1)
 
-ggplot(count_data_fig3, aes(value,variable)) +
-	geom_point(size=count_data_fig3$freq,
-		fill=count_data_fig3$freq) + 
-	# scale_colour_gradient(low = "blue") +
-  # facet_grid(set~ . ~ class, scales="free_x", space="free") + 
-xlab("") + ylab ("Questions") + theme_bw() + 
-theme(
-axis.text.x  = element_text(angle=45, hjust=1)) #legend.position = "none",
+#Adding value of zero to likert options not chosen
+variable_add<-c("think_less_treated_person","alcoholic_trustworthy",
+	"recover_alcoholic_hired")
+value_add<-c("Somewhat disagree","Disagree","Somewhat agree")
+freq_2_add<-c(0.0,0.0,0.0)
+freq_add<-c(0,0,0)
+add<-data.frame(variable=variable_add,
+	value=value_add,
+	freq=freq_add,
+	feq_2=freq_2_add)
 
-######################################################################
-#Figure 4.
-######################################################################
+plot_data<-rbind(count_data_fig3,add)
 
-figure4_data<-with(data,data.frame(
-						 common_ask_pts_drink,
-						 common_test_pts_alc,
-						 common_ask_pts_tobacco,
-						 resources_refer_pts,
-						 ask_pts_alc,
-						 test_alc_breath_or_serum
-						 ))
+plot_data$color<-NULL
+plot_data$color[plot_data$feq_2 >= 0 & plot_data$feq_2 < 5.883]="lightcyan1"
+plot_data$color[plot_data$feq_2 >= 5.883 & plot_data$feq_2 < 11.76]="lightcyan2"
+plot_data$color[plot_data$feq_2 >= 11.76 & plot_data$feq_2 < 26.47]="lightcyan3"
+plot_data$color[plot_data$feq_2 >= 26.47]="lightcyan4"
 
-x2<-na.omit(melt(figure4_data))
-
-count_data<-plyr::count(x2, c("variable", "value"))
-
-write.csv(count_data,"/Users/joaovissoci/blah2.csv")
-
-dat<-read.csv("/Users/joaovissoci/blah2.csv")
-colnames(dat)<-c("var","likert","value")
-dat2<-cast(dat,var~likert)
-colnames(dat2)<-c("var","likert1","likert2","likert3",
-	"likert4","likert5")
-# dat3<-rbind(dat2,likert)
-# rownames(dat3)<-dat3$var
-# dat3$gr<-as.factor(c(rep("test1",11),rep("test2",5)))
-rownames(dat2)<-c(
-"It is common to ask patients about their\n drinking behavior.",
-"It is common to test patients for alcohol.",
-"It is comon to ask patients about their\n tobacco use behavior.",
-"There are resources to refer patients to\n when I determine they have high risk drinking.",
-"I ask my patients about their alcohol use",
-"I counsel patients to reduce their drinking\n if I think they have harmful drinking behavior.")
-
-
-
-
-colnames(dat2)<-c("var","Strongly Disagree",
-					"Disagree",
-					"I don't know",
-					"Agree",
-					"Strongly Agree")
-
-HH::likert(dat2, main="",
-			as.percent=TRUE, rightAxisLabels=NULL, 
-			# ylab.right="Perceptions",
-            positive.order=TRUE)
+avseq <- ggplot(plot_data, aes(y=variable, x=value)) + 
+  geom_tile(fill=plot_data$color) + 
+  geom_text(aes(y=variable, x=value, label=feq_2),size=7) + 
+  theme_minimal() + 
+  xlab(label="") + 
+  ylab(label="Stigma Scale") + 
+  scale_x_discrete(limits = c("Strongly disagree",
+  							  "Disagree",
+  							  "Somewhat disagree",
+  							  "Somewhat agree",
+  							  "Agree",
+  							  "Strongly agree")) + 
+  scale_y_discrete(limits = rev(levels(plot_data$variable)),
+  				   labels = rev(c(
+"1. Most people would willingly accept a former alcoholic \nas a close friend.",
+"2. Most people believe that a person who has had alcohol \ntreatment is just as intelligent as the average person.",
+"3. Most people believe that a former alcoholic is just as \ntrustworthy as the average person.",
+"4. Most people would accept a fully recovered former alcoholic \nas a teacher of young children in a public school.",
+"5. Most people feel that entering alcohol treatment is a \nsign of personal failure.",
+"6. Most people would not hire a former alcoholic to take care \nof their children, even if he or she had been \nsober for some time.",
+"7. Most people think less of a person who has been in alcohol \ntreatment.",
+"8. Most employers will hire a former alcoholic if he or \nshe is qualified for the job.",
+"9. Most employers will pass over the application of a former \nalcoholic in favor of another applicant.",
+"10. Most people in my community would treat a former alcoholic \njust as they would treat anyone else.",
+"11. Most young women would be reluctant to date a man \nwho has been hospitalized for alcoholism.",
+"12. Once they know a person was in alcohol treatment, \nmost people will take his or her opinion less seriously."
+							))) #+ 
+  # theme(text = element_text(size=35))  #+ 
+  # scale_y_discrete(limits=rev(levels))
+avseq
 
 ######################################################################
 #Figure 5.
