@@ -81,6 +81,11 @@ sf8_PCS<-with(data,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5))
 sf8_MCS<-with(data,data.frame(sf8_b6,sf8_b7,sf8_b8))
 # data$sf8_pcs<-rowSums(sf8_MCS)
 
+#SF8
+sf8_data<-with(data,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5,
+  sf8_b6,sf8_b7,sf8_b8))
+# data$sf8_pcs<-rowSums(sf8_MCS)
+
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
 ######################################################################
@@ -148,53 +153,26 @@ summary(audit_data)
 #Taxonometric Scale
 # MAMBAC(scale(NeckDisabilityIndexNA)[,1:3], Comp.Data = T)
 
-
-#RELIABILITY
-##############################################################
-### INTERNAL CONSISTENCY
-#RELIABILITY
-#psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
-psych::alpha(audit_data,n.iter=1000,check.keys=TRUE)
-psych::alpha(audit_data1,n.iter=1000,check.keys=TRUE)
-psych::alpha(audit_data2,n.iter=1000,check.keys=TRUE)
-psych::alpha(audit_data2_3,n.iter=1000,check.keys=TRUE)
-psych::alpha(audit_data3_3,n.iter=1000,check.keys=TRUE)
-
-psych::alpha(cage_data,n.iter=1000,check.keys=TRUE)
-
-#### INTER-RATER Agreement
-data_agreement<-with(data,data.frame( ))
-
-# data_sl_agree_model1<-melt(data_sl_temp_model1,id=c("rater","id"))
-
-#Executing agreement nalysis
-# agree<-agree(na.omit(agree_data_sl_model1), tolerance=0) #% of Agreement
-# kappa<-cohen.kappa(na.omit(agree_data_sl_model1)) #Kappa-value
-#AC1(kappa$agree)
-#cor<-cor(agree_data_sl,method=c("kendall"))
-#kendall<-Kendall(agree_data_sl$data_cluster_police_sl.RISK,agree_data_sl$data_cluster_survey_sl.RISK)
-#poly<-hetcor(agree_data_sl)
-
 #NETWORK 
 ##############################################################
 # # Define the amout of factor to retain
 # #Group of functinos to determine the number os items to be extracted
-# cor_data<-cor_auto(audit_data)
+cor_data<-cor_auto(sf8_data)
 
 # #Community analysis
-# comprehension_network_glasso<-qgraph(cor_data,
-# 	layout="spring",
-# 	vsize=6,esize=20,graph="glasso",
-# 	sampleSize=nrow(audit_data),
-# 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+comprehension_network_glasso<-qgraph(cor_data,
+	layout="spring",
+	vsize=6,esize=20,graph="glasso",
+	sampleSize=nrow(audit_data),
+	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
 
 # #Calculating Community measures
-# g<-as.igraph(comprehension_network_glasso) #creating igraph object
-# # h<-walktrap.community(g) #creatin community object
+g<-as.igraph(comprehension_network_glasso) #creating igraph object
+h<-walktrap.community(g) #creatin community object
 # h<-spinglass.community(g, weights=NA)
-# plot(h,g) #plotting community network
-# h$membership #extracting community membership for each node on the network
-# community<-data.frame(h$membership,rownames(cor_data))
+plot(h,g) #plotting community network
+h$membership #extracting community membership for each node on the network
+community<-data.frame(h$membership,rownames(cor_data))
 
 #listing grouping variables in the network resulting from the community analysis
 # network_groups<-list(
@@ -311,7 +289,7 @@ data_agreement<-with(data,data.frame( ))
 # cor_data<-cor_auto(model1_bea)
 
 #Function to calculate the KMO values - colocar link par ao gist
-kmo<-kmo(audit_data) #Run the Kmo function for the data you want to calculate
+kmo<-kmo(na.omit(sf8_data)) #Run the Kmo function for the data you want to calculate
 kmo$overall
 kmo$AIR #anti-image matrix
 
@@ -327,9 +305,7 @@ kmo$AIR #anti-image matrix
 # VSS.plot(my.vss, title="VSS of 24 mental tests")
 # scree(cor_data)
 # VSS.scree(cor_data)
-fa.parallel(audit_data,cor="poly")
-
-fa.parallel(cage_data,cor="poly")
+fa.parallel(sf8_data,cor="poly")
 
 #EXPLORATORY FACTOR ANALYSIS
 #############################################################
@@ -338,7 +314,16 @@ fa.parallel(cage_data,cor="poly")
 #Look here http://goo.gl/kY3ln for different met
 
 #holds of estimations or rotations
-fa(cor_data,2,rotate="promax")
+model <- principal(cor_data,nfactors=2,
+  rotate='promax', scores=T, cov=T)
+L <- model$loadings            # Just get the loadings matrix
+S <- model$scores              # This gives an incorrect answer in the current version
+
+d <- model1_bea              # get your data
+dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+pca1 <- dc %*% L                 # scores are the centered data times the loadings
+ # lowerCor(sc)                   #These scores, being principal components
+#                                # should be orthogonal 
 # fa(NeckDisabilityIndex,1,fm="pa",rotate="oblimin")
 
 #based on a polychoric correlation matrix
@@ -447,6 +432,33 @@ subset(Mod, mi > 10)
 
 #Composite Reliabilty
 sum(Est$std.all[1:4])^2/(sum(Est$std.all[1:4])^2+sum(Est$std.all[5:8]))
+
+#RELIABILITY
+##############################################################
+### INTERNAL CONSISTENCY
+#RELIABILITY
+#psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data1,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data2,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data2_3,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data3_3,n.iter=1000,check.keys=TRUE)
+
+psych::alpha(cage_data,n.iter=1000,check.keys=TRUE)
+
+#### INTER-RATER Agreement
+data_agreement<-with(data,data.frame( ))
+
+# data_sl_agree_model1<-melt(data_sl_temp_model1,id=c("rater","id"))
+
+#Executing agreement nalysis
+# agree<-agree(na.omit(agree_data_sl_model1), tolerance=0) #% of Agreement
+# kappa<-cohen.kappa(na.omit(agree_data_sl_model1)) #Kappa-value
+#AC1(kappa$agree)
+#cor<-cor(agree_data_sl,method=c("kendall"))
+#kendall<-Kendall(agree_data_sl$data_cluster_police_sl.RISK,agree_data_sl$data_cluster_survey_sl.RISK)
+#poly<-hetcor(agree_data_sl)
+
 
 #ITEM RESPONSE THEORY
 ##############################################################
