@@ -37,15 +37,17 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-data_tz<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_tz.csv",sep=',')
-data_sl<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_sl.csv",sep=',')
-data_rw<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/bea validation/bea_rw.csv",sep=',')
+data_tz<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_tz.csv",sep=',')
+data_sl<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_sl.csv",sep=',')
+data_rw<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_rw.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
 ######################################################
 #clean data from Sri Lanka
 data_sl2<-subset(data_sl,data_sl$rater=="e")
+
+write.csv(data_sl2,"/Users/jnv4/Desktop/sl_bea2.csv")
 
 # building merged dataset
 bea_data<-NULL
@@ -898,7 +900,41 @@ pca_score_data_rescaled<-lapply(pca_scores_data[,1:5],rescale)
 pca_score_data_rescaled<-data.frame(pca_score_data_rescaled,
 	pca_scores_data$id,pca_scores_data$country)
 
-write.csv(pca_score_data_rescaled,"/Users/joaovissoci/Desktop/bea_PCAscores.csv")
+write.csv(pca_score_data_rescaled,"/Users/jnv4/Desktop/bea_PCAscores.csv")
+
+##############################################################
+#CLUSTER ANALYSIS 
+##############################################################
+
+cluster_data<-with(pca_score_data_rescaled,
+	data.frame(PCA1a,PCA1b,PCA2,PCA3,PCA4))
+
+# ses_data<-na.omit(ses_data)
+clusters <- hclust(dist(cluster_data))
+plot(clusters)
+print(cluster)
+clusterCut <- cutree(clusters, 4)
+print(clusterCut)
+
+fit <- mclustBIC(cluster_data,3)
+plot(fit)
+cl<-mclustModel(cluster_data,fit)
+print(cl) # display the best model
+cl$parameters$mean
+cl$parameters$pro
+x<-NULL
+x[cl$z[,1]>=0.51]<-c("Lat1")
+x[cl$z[,2]>=0.51]<-c("Lat2")
+x[cl$z[,3]>=0.51]<-c("Lat3")
+
+pca_score_data_rescaled$clusters<-x
+summary(with(pca_score_data_rescaled,aov(PCA1a~clusters)))
+summary(with(pca_score_data_rescaled,aov(PCA1b~clusters)))
+summary(with(pca_score_data_rescaled,aov(PCA2~clusters)))
+summary(with(pca_score_data_rescaled,aov(PCA3~clusters)))
+summary(with(pca_score_data_rescaled,aov(PCA4~clusters)))
+
+
 ##############################################################
 #NETWORK 
 ##############################################################
