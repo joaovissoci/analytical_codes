@@ -76,7 +76,7 @@ data_validation$age_cat<-car::recode(
 #Organize scale datasets
 
 #Kessler
-kessler_data<-wiht(data,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,
+kessler_data<-with(data,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,
 	d10))
 
 ######################################################################
@@ -152,16 +152,10 @@ summary(audit_data)
 ### INTERNAL CONSISTENCY
 #RELIABILITY
 #psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
-psych::alpha(audit_data,n.iter=1000,check.keys=TRUE)
-psych::alpha(audit_data1,n.iter=1000,check.keys=TRUE)
-psych::alpha(audit_data2,n.iter=1000,check.keys=TRUE)
-psych::alpha(audit_data2_3,n.iter=1000,check.keys=TRUE)
-psych::alpha(audit_data3_3,n.iter=1000,check.keys=TRUE)
-
-psych::alpha(cage_data,n.iter=1000,check.keys=TRUE)
+psych::alpha(kessler_data,n.iter=1000,check.keys=TRUE)
 
 #### INTER-RATER Agreement
-data_agreement<-with(data,data.frame( ))
+# data_agreement<-with(data,data.frame( ))
 
 # data_sl_agree_model1<-melt(data_sl_temp_model1,id=c("rater","id"))
 
@@ -177,22 +171,25 @@ data_agreement<-with(data,data.frame( ))
 ##############################################################
 # # Define the amout of factor to retain
 # #Group of functinos to determine the number os items to be extracted
-# cor_data<-cor_auto(audit_data)
+cor_data<-cor_auto(na.omit(kessler_data))
+
+polycor_data<-polychoric(na.omit(kessler_data))$rho
+tau<-rowSums(polycor_data$tau)
 
 # #Community analysis
-# comprehension_network_glasso<-qgraph(cor_data,
-# 	layout="spring",
-# 	vsize=6,esize=20,graph="glasso",
-# 	sampleSize=nrow(audit_data),
-# 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+comprehension_network_glasso<-qgraph(cor_data,
+	layout="spring",
+	vsize=tau,esize=20,graph="glasso",
+	sampleSize=nrow(audit_data),
+	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
 
 # #Calculating Community measures
-# g<-as.igraph(comprehension_network_glasso) #creating igraph object
-# # h<-walktrap.community(g) #creatin community object
-# h<-spinglass.community(g, weights=NA)
-# plot(h,g) #plotting community network
-# h$membership #extracting community membership for each node on the network
-# community<-data.frame(h$membership,rownames(cor_data))
+g<-as.igraph(comprehension_network_glasso) #creating igraph object
+h<-walktrap.community(g) #creatin community object
+h<-spinglass.community(g, weights=NA)
+plot(h,g) #plotting community network
+h$membership #extracting community membership for each node on the network
+community<-data.frame(h$membership,rownames(cor_data))
 
 #listing grouping variables in the network resulting from the community analysis
 # network_groups<-list(
@@ -309,9 +306,11 @@ data_agreement<-with(data,data.frame( ))
 # cor_data<-cor_auto(model1_bea)
 
 #Function to calculate the KMO values - colocar link par ao gist
-kmo<-kmo(audit_data) #Run the Kmo function for the data you want to calculate
+kmo<-kmo(na.omit(kessler_data)) #Run the Kmo function for the data you want to calculate
 kmo$overall
 kmo$AIR #anti-image matrix
+
+cortest.bartlett(kessler_data, n = 297,diag=FALSE)
 
 # par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
 # ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
@@ -325,7 +324,7 @@ kmo$AIR #anti-image matrix
 # VSS.plot(my.vss, title="VSS of 24 mental tests")
 # scree(cor_data)
 # VSS.scree(cor_data)
-fa.parallel(audit_data,cor="poly")
+fa.parallel(kessler_data,cor="poly")
 
 fa.parallel(cage_data,cor="poly")
 
@@ -336,11 +335,11 @@ fa.parallel(cage_data,cor="poly")
 #Look here http://goo.gl/kY3ln for different met
 
 #holds of estimations or rotations
-fa(cor_data,2,rotate="promax")
+# fa(cor_data,2,rotate="promax")
 # fa(NeckDisabilityIndex,1,fm="pa",rotate="oblimin")
 
 #based on a polychoric correlation matrix
-# fa.poly(data_stress_reco,3,fm="uls",rotate="oblimin")
+fa.poly(kessler_data,1,fm="uls",rotate="oblimin")
 
 #efa_LOD <- efa(motivation, method="cor.polycor")
 #efa.plotCorr (efa_LOD)
@@ -352,29 +351,45 @@ fa(cor_data,2,rotate="promax")
 
 #CONFIRMATORY FACTOR ANALYSIS
 #############################################################
-audit_model <- '
-Audit =~  h1 + h2 + h3 + h4 + h5 + h6 + h7 + h8 + h9 + h10
-			 '
+# kessler_data<-lapply(kessler_data,ordered)
 
-audit_model2 <- '
-Audit =~  h1 + h2 + h3
-Audit2 =~ h4 + h5 + h6 + h7 + h8 + h9 + h10
-			 '
+cfa_model <- '
+Kessler =~  NA*d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10
 
-audit_model3 <- '
-Audit =~  h1 + h2 + h3
-Audit2 =~ h4 + h5 + h6
-Audit3 =~ h7 + h8 + h9 + h10
-Audit4 =~ Audit + Audit2 + Audit3
-			 '
+#
+Kessler ~~ 1*Kessler
 
-fit <- lavaan::cfa(audit_model, data = audit_data,
-	estimator="WLSM")
+#cov
+d2 ~~  d9
+d5 ~~  d6
+d4 ~~  d8
+       '
+
+fit <- lavaan::cfa(cfa_model, data = kessler_data,
+  ordered=colnames(kessler_data))
 summary(fit, fit.measures=TRUE)
-fitMeasures(fit, fit.measures = "all")
+lavaan::fitMeasures(fit, fit.measures = "all")
 parameterEstimates(fit)
-Est <- parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
 subset(Est, op == "=~")
+lavInspect(fit,what="th")
+
+### Modification Indexes
+Mod <- lavaan::modificationIndices(fit)
+subset(Mod)#, mi > 10)
+
+### By Group analysis
+fit <- lavaan::cfa(cfa_model, data = data,
+estimator="ULSM",group = "female")
+summary(fit, fit.measures=TRUE)
+fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
+parameterEstimates(fit)
+lavaan::inspect(fit,"rsquare")
+Est <- standardizedSolution(fit)
+subset(Est, op == "=~")
+subset(Est, op == "~")
+subset(Est, op == ":=")
+measurementInvariance(cfa_model, data = data, group = "female")
 
 nodeLabels<-c("Q1",
               "Q2",
@@ -386,7 +401,7 @@ nodeLabels<-c("Q1",
               "Q8",
               "Q9",
               "Q10",
-              "AUDIT")
+              "Kessler")
 
 color<-c(rep("grey",10),rep("white",1))
 borders<-c(rep("FALSE",10),rep("TRUE",1))
@@ -395,62 +410,22 @@ labelcex<-c(rep(0.7,10),rep(1,1))
 tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
   width = 15,
  height = 10,compression = 'lzw',res=1200,bg = "white")
-semPaths(fit,"std",residuals=TRUE, cut=1,
+semPlot::semPaths(fit,"std",layout="spring",residuals=TRUE, cut=1,
   equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
   intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
   edge.label.cex=1, label.cex=labelcex, color=color,borders=borders)
 dev.off()
-### Modification Indexes
-Mod <- modificationIndices(fit)
-subset(Mod, mi > 10)
+
+semPlot::semPaths(fit)
 
 #Composite Reliabilty
 sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+sum(Est$std.all[11:20]))
-
-#CAGE
-cage_model <- '
-Cage =~  h11 + h12 + h13 + h14
-			 '
-
-fit <- lavaan::cfa(cage_model, data = cage_data,
-	estimator="WLSM")
-summary(fit, fit.measures=TRUE)
-fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
-parameterEstimates(fit)
-Est <- parameterEstimates(fit, ci = TRUE, standardized = TRUE)
-subset(Est, op == "=~")
-
-nodeLabels<-c("Q1",
-              "Q2",
-              "Q3",
-              "Q4",
-              "CAGE")
-
-color<-c(rep("grey",4),rep("white",1))
-borders<-c(rep("FALSE",4),rep("TRUE",1))
-labelcex<-c(rep(0.7,19),rep(1,4))
-
-tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-  width = 15,
- height = 10,compression = 'lzw',res=1200,bg = "white")
-semPaths(fit,"std",residuals=TRUE, cut=1,
-  equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
-  intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
-  edge.label.cex=1, label.cex=labelcex, color=color,borders=borders)
-dev.off()
-
-### Modification Indexes
-Mod <- modificationIndices(fit)
-subset(Mod, mi > 10)
-
-#Composite Reliabilty
-sum(Est$std.all[1:4])^2/(sum(Est$std.all[1:4])^2+sum(Est$std.all[5:8]))
 
 #ITEM RESPONSE THEORY
 ##############################################################
 
 #### USING eRM Package
-IRTRolandMorris <- PCM(audit_data)
+IRTRolandMorris <- PCM(na.omit(kessler_data))
 diff_index<-thresholds(IRTRolandMorris)
 summary(diff_index$threshtable[[1]][,1])
 sd(diff_index$threshtable[[1]][,1])/sqrt(length(diff_index$threshtable[[1]][,1]))

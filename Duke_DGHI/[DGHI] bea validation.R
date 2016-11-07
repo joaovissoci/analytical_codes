@@ -909,12 +909,12 @@ write.csv(pca_score_data_rescaled,"/Users/jnv4/Desktop/bea_PCAscores.csv")
 cluster_data<-with(pca_score_data_rescaled,
 	data.frame(PCA1a,PCA1b,PCA2,PCA3,PCA4))
 
-# ses_data<-na.omit(ses_data)
-clusters <- hclust(dist(cluster_data))
-plot(clusters)
-print(cluster)
-clusterCut <- cutree(clusters, 4)
-print(clusterCut)
+# # ses_data<-na.omit(ses_data)
+# clusters <- hclust(dist(cluster_data))
+# plot(clusters)
+# print(cluster)
+# clusterCut <- cutree(clusters, 4)
+# print(clusterCut)
 
 fit <- mclustBIC(cluster_data,3)
 plot(fit)

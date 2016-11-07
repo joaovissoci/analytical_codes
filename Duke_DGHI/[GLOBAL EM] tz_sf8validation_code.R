@@ -168,7 +168,8 @@ comprehension_network_glasso<-qgraph(cor_data,
 
 # #Calculating Community measures
 g<-as.igraph(comprehension_network_glasso) #creating igraph object
-h<-walktrap.community(g) #creatin community object
+# h<-walktrap.community(g) #creatin community object
+h<-cluster_louvain(g,weights=NA)
 # h<-spinglass.community(g, weights=NA)
 plot(h,g) #plotting community network
 h$membership #extracting community membership for each node on the network
@@ -283,82 +284,71 @@ community<-data.frame(h$membership,rownames(cor_data))
 # # dev.off()
 # #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
-#ANALISE PARALELA E EIGEN VALUES
-#############################################################
-#MODEL 1 - Risk due to road deisgn
-# cor_data<-cor_auto(model1_bea)
+# #ANALISE PARALELA E EIGEN VALUES
+# #############################################################
+# #MODEL 1 - Risk due to road deisgn
+# # cor_data<-cor_auto(model1_bea)
 
-#Function to calculate the KMO values - colocar link par ao gist
-kmo<-kmo(na.omit(sf8_data)) #Run the Kmo function for the data you want to calculate
-kmo$overall
-kmo$AIR #anti-image matrix
+# #Function to calculate the KMO values - colocar link par ao gist
+# kmo<-kmo(na.omit(sf8_data)) #Run the Kmo function for the data you want to calculate
+# kmo$overall
+# kmo$AIR #anti-image matrix
 
-# par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
-# ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
-# ev # Show eigend values
-# ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
-# summary(ap)
-# nS <- nScree(ev$values) #Set up the Scree Plot 
-# # plotnScree(nS) # Plot the ScreePlot Graph
-# my.vss <- VSS(cor_data,title="VSS of BEA data")
-# #print(my.vss[,1:12],digits =2)
-# VSS.plot(my.vss, title="VSS of 24 mental tests")
-# scree(cor_data)
-# VSS.scree(cor_data)
-fa.parallel(sf8_data,cor="poly")
+# # par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
+# # ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
+# # ev # Show eigend values
+# # ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
+# # summary(ap)
+# # nS <- nScree(ev$values) #Set up the Scree Plot 
+# # # plotnScree(nS) # Plot the ScreePlot Graph
+# # my.vss <- VSS(cor_data,title="VSS of BEA data")
+# # #print(my.vss[,1:12],digits =2)
+# # VSS.plot(my.vss, title="VSS of 24 mental tests")
+# # scree(cor_data)
+# # VSS.scree(cor_data)
+# fa.parallel(sf8_data,cor="poly")
 
-#EXPLORATORY FACTOR ANALYSIS
-#############################################################
-#Functino to exctract the factor loadings. 
-#Arguments are DATA, Number of factors, rotation method. 
-#Look here http://goo.gl/kY3ln for different met
+# #EXPLORATORY FACTOR ANALYSIS
+# #############################################################
+# #Functino to exctract the factor loadings. 
+# #Arguments are DATA, Number of factors, rotation method. 
+# #Look here http://goo.gl/kY3ln for different met
 
-#holds of estimations or rotations
-model <- principal(cor_data,nfactors=2,
-  rotate='promax', scores=T, cov=T)
-L <- model$loadings            # Just get the loadings matrix
-S <- model$scores              # This gives an incorrect answer in the current version
+# #holds of estimations or rotations
+# model <- principal(cor_data,nfactors=2,
+#   rotate='promax', scores=T, cov=T)
+# L <- model$loadings            # Just get the loadings matrix
+# S <- model$scores              # This gives an incorrect answer in the current version
 
-d <- model1_bea              # get your data
-dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
-pca1 <- dc %*% L                 # scores are the centered data times the loadings
- # lowerCor(sc)                   #These scores, being principal components
-#                                # should be orthogonal 
-# fa(NeckDisabilityIndex,1,fm="pa",rotate="oblimin")
+# d <- model1_bea              # get your data
+# dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+# pca1 <- dc %*% L                 # scores are the centered data times the loadings
+#  # lowerCor(sc)                   #These scores, being principal components
+# #                                # should be orthogonal 
+# # fa(NeckDisabilityIndex,1,fm="pa",rotate="oblimin")
 
-#based on a polychoric correlation matrix
-# fa.poly(data_stress_reco,3,fm="uls",rotate="oblimin")
+# #based on a polychoric correlation matrix
+# # fa.poly(data_stress_reco,3,fm="uls",rotate="oblimin")
 
-#efa_LOD <- efa(motivation, method="cor.polycor")
-#efa.plotCorr (efa_LOD)
-#efa_LOD <- efa.compute(efa_LOD,factors =3,method="extract.uls", rotate="promax", horn=T)
-#efa.plotScree(efa_LOD)
-#efa_LOD<-efa.setMinLoad(efa_LOD, minload=0.40, col="black")
-#efa.plotFactor(efa_LOD)
-#qgraph(efa_LOD)
+# #efa_LOD <- efa(motivation, method="cor.polycor")
+# #efa.plotCorr (efa_LOD)
+# #efa_LOD <- efa.compute(efa_LOD,factors =3,method="extract.uls", rotate="promax", horn=T)
+# #efa.plotScree(efa_LOD)
+# #efa_LOD<-efa.setMinLoad(efa_LOD, minload=0.40, col="black")
+# #efa.plotFactor(efa_LOD)
+# #qgraph(efa_LOD)
 
 #CONFIRMATORY FACTOR ANALYSIS
 #############################################################
 audit_model <- '
-Audit =~  h1 + h2 + h3 + h4 + h5 + h6 + h7 + h8 + h9 + h10
-			 '
+PCS =~  sf8_b1 + sf8_b2 + sf8_b3 + sf8_b4 + sf8_b5
+PCS =~  sf8_b6 + sf8_b7 + sf8_b8'
 
-audit_model2 <- '
-Audit =~  h1 + h2 + h3
-Audit2 =~ h4 + h5 + h6 + h7 + h8 + h9 + h10
-			 '
 
-audit_model3 <- '
-Audit =~  h1 + h2 + h3
-Audit2 =~ h4 + h5 + h6
-Audit3 =~ h7 + h8 + h9 + h10
-Audit4 =~ Audit + Audit2 + Audit3
-			 '
-
-fit <- lavaan::cfa(audit_model, data = audit_data,
+fit <- lavaan::cfa(audit_model, data = sf8_data,
 	estimator="WLSM")
 summary(fit, fit.measures=TRUE)
-fitMeasures(fit, fit.measures = "all")
+lavaan::fitMeasures(fit, fit.measures = "all")
 parameterEstimates(fit)
 Est <- parameterEstimates(fit, ci = TRUE, standardized = TRUE)
 subset(Est, op == "=~")
