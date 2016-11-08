@@ -107,7 +107,8 @@ vSize<-mean_data*15
 #graph_cor<-qgraph(cor_matrix,layout="spring",vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
 #graph_layout<-averageLayout(graph_glasso,graph_pcor,graph_cor)
 
-PcorGRAPH<-qgraph(cor_matrix,layout="spring",
+PcorGRAPH<-qgraph(cor_matrix,
+	layout="spring",
 	vsize=vSize,
 	esize=20,
 	graph="pcor",
@@ -119,8 +120,10 @@ PcorGRAPH<-qgraph(cor_matrix,layout="spring",
 	groups=groups,
 	gray=FALSE,
 	color=c("steelblue","gold"),
-	legend=TRUE, 
-	nodeNames=varLabels)
+	legend=TRUE,
+	labels=varLabels,
+	label.scale=FALSE)
+	# nodeNames=varLabels)
 	# labels=varNames)#,layout=graph_layout
 #Findal PCOR representation
 #qsgG2<-qgraph(cor_matrix,layout=Lqsg,vsize=6,esize=20,graph="pcor",legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#,nodeNames=nomesqsg
@@ -172,7 +175,8 @@ vSize<-mean_data*15
 #graph_cor<-qgraph(cor_matrix,layout="spring",vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
 #graph_layout<-averageLayout(graph_glasso,graph_pcor,graph_cor)
 
-PcorGRAPH<-qgraph(cor_matrix,layout="spring",
+PcorGRAPH<-qgraph(cor_matrix,
+	layout="spring",
 	vsize=vSize,
 	esize=20,
 	graph="pcor",
@@ -184,8 +188,9 @@ PcorGRAPH<-qgraph(cor_matrix,layout="spring",
 	groups=groups,
 	gray=FALSE,
 	color=c("steelblue","gold"),
-	legend=TRUE, 
-	nodeNames=varLabels)
+	legend=TRUE,
+	labels=varLabels,
+	label.scale=TRUE)
 #Findal PCOR representation
 #qsgG2<-qgraph(cor_matrix,layout=Lqsg,vsize=6,esize=20,graph="pcor",legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#,nodeNames=nomesqsg
 #Final GLASSO representation
@@ -240,7 +245,8 @@ vSize<-mean_data*15
 #graph_cor<-qgraph(cor_matrix,layout="spring",vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
 #graph_layout<-averageLayout(graph_glasso,graph_pcor,graph_cor)
 
-PcorGRAPH<-qgraph(cor_matrix,layout="spring",
+PcorGRAPH<-qgraph(cor_matrix,
+	layout="spring",
 	vsize=vSize,
 	esize=20,
 	graph="pcor",
@@ -252,8 +258,9 @@ PcorGRAPH<-qgraph(cor_matrix,layout="spring",
 	groups=groups,
 	gray=FALSE,
 	color=c("steelblue","gold"),
-	legend=TRUE, 
-	nodeNames=varLabels)
+	legend=TRUE,
+	labels=varLabels,
+	label.scale=TRUE)
 #Findal PCOR representation
 #qsgG2<-qgraph(cor_matrix,layout=Lqsg,vsize=6,esize=20,graph="pcor",legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#,nodeNames=nomesqsg
 #Final GLASSO representation
@@ -304,7 +311,8 @@ vSize<-mean_data*15
 #graph_cor<-qgraph(cor_matrix,layout="spring",vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
 #graph_layout<-averageLayout(graph_glasso,graph_pcor,graph_cor)
 
-PcorGRAPH<-qgraph(cor_matrix,layout="spring",
+PcorGRAPH<-qgraph(cor_matrix,
+	layout="spring",
 	vsize=vSize,
 	esize=20,
 	graph="pcor",
@@ -316,8 +324,9 @@ PcorGRAPH<-qgraph(cor_matrix,layout="spring",
 	groups=groups,
 	gray=FALSE,
 	color=c("steelblue","gold"),
-	legend=TRUE, 
-	nodeNames=varLabels)
+	legend=TRUE,
+	labels=varLabels,
+	label.scale=TRUE)
 #Findal PCOR representation
 #qsgG2<-qgraph(cor_matrix,layout=Lqsg,vsize=6,esize=20,graph="pcor",legend.cex = 0.3,cut = 0.1, maximum = 1, minimum = 0, esize = 20,vsize = 5, repulsion = 0.8,groups=qsggr,gray=TRUE,color=c("gray80","gray50"),legend=F)#,nodeNames=nomesqsg
 #Final GLASSO representation
