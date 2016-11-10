@@ -38,7 +38,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -174,13 +174,13 @@ psych::alpha(kessler_data,n.iter=1000,check.keys=TRUE)
 cor_data<-cor_auto(na.omit(kessler_data))
 
 polycor_data<-polychoric(na.omit(kessler_data))$rho
-tau<-rowSums(polycor_data$tau)
+tau<-rowSums(polychoric(na.omit(kessler_data))$tau)
 
 # #Community analysis
 comprehension_network_glasso<-qgraph(cor_data,
 	layout="spring",
 	vsize=tau,esize=20,graph="glasso",
-	sampleSize=nrow(audit_data),
+	sampleSize=nrow(kessler_data),
 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
 
 # #Calculating Community measures
@@ -310,7 +310,7 @@ kmo<-kmo(na.omit(kessler_data)) #Run the Kmo function for the data you want to c
 kmo$overall
 kmo$AIR #anti-image matrix
 
-cortest.bartlett(kessler_data, n = 297,diag=FALSE)
+cortest.bartlett(cor_auto(kessler_data), n = 297,diag=FALSE)
 
 # par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
 # ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
@@ -339,7 +339,7 @@ fa.parallel(cage_data,cor="poly")
 # fa(NeckDisabilityIndex,1,fm="pa",rotate="oblimin")
 
 #based on a polychoric correlation matrix
-fa.poly(kessler_data,1,fm="uls",rotate="oblimin")
+fa.poly(kessler_data,2,fm="uls",rotate="oblimin")
 
 #efa_LOD <- efa(motivation, method="cor.polycor")
 #efa.plotCorr (efa_LOD)
@@ -432,7 +432,7 @@ sd(diff_index$threshtable[[1]][,1])/sqrt(length(diff_index$threshtable[[1]][,1])
 plotICC(IRTRolandMorris,item.subset=3,ask=F,empICC=list("raw"),empCI=list(lty="solid"))
 plotPImap(IRTRolandMorris, sorted=FALSE)
 plotPWmap(IRTRolandMorris)
-pp<-person.parameter(IRTRolandMorris)
+pp<-eRm::person.parameter(IRTRolandMorris)
 #lrt<-LRtest(IRTRolandMorris,se=TRUE)
 #Waldtest(IRTRolandMorris)
 eRm::itemfit(pp)
@@ -444,20 +444,20 @@ sd(eRm::itemfit(pp)$i.infitMSQ)
 #plotGOF(lrt,conf=list())
 #fscores(NeckDisabilityIndex, rotate = "oblimin", Target = NULL, full.scores = FALSE,method = "EAP", quadpts = NULL, response.pattern = NULL,plausible.draws = 0, returnER = FALSE, return.acov = FALSE,mean = NULL, cov = NULL, verbose = TRUE, full.scores.SE = FALSE,theta_lim = c(-6, 6), MI = 0, QMC = FALSE, custom_den = NULL, custom_theta = NULL, min_expected = 1)
 
-
-IRTRolandMorris <- RM(neckdisability2)
-plotICC(IRTRolandMorris,item.subset=1:4,ask=F,empICC=list("raw"),empCI=list(lty="solid"))
-plotPImap(IRTRolandMorris)
-pp<-person.parameter(IRTRolandMorris)
-lrt<-LRtest(IRTRolandMorris,se=TRUE)
-Waldtest(IRTRolandMorris)
-eRm::itemfit(pp)
-summary(itemfit(pp)$i.outfitMSQ)
-sd(itemfit(pp)$i.outfitMSQ)
-summary(itemfit(pp)$i.infitMSQ)
-sd(itemfit(pp)$i.infitMSQ)
-NPtest(IRTRolandMorris,method="T11")
-plotGOF(lrt,conf=list())
+#Dichotomous items
+# IRTRolandMorris <- RM(neckdisability2)
+# plotICC(IRTRolandMorris,item.subset=1:4,ask=F,empICC=list("raw"),empCI=list(lty="solid"))
+# plotPImap(IRTRolandMorris)
+# pp<-person.parameter(IRTRolandMorris)
+# lrt<-LRtest(IRTRolandMorris,se=TRUE)
+# Waldtest(IRTRolandMorris)
+# eRm::itemfit(pp)
+# summary(itemfit(pp)$i.outfitMSQ)
+# sd(itemfit(pp)$i.outfitMSQ)
+# summary(itemfit(pp)$i.infitMSQ)
+# sd(itemfit(pp)$i.infitMSQ)
+# NPtest(IRTRolandMorris,method="T11")
+# plotGOF(lrt,conf=list())
 
 #############################################################################
 #CAT
