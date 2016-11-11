@@ -38,7 +38,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -171,32 +171,47 @@ psych::alpha(kessler_data,n.iter=1000,check.keys=TRUE)
 ##############################################################
 # # Define the amout of factor to retain
 # #Group of functinos to determine the number os items to be extracted
-cor_data<-cor_auto(na.omit(kessler_data))
+#calculate correlation matrix
+cor_data<-cor_auto(kessler_data) 
 
-polycor_data<-polychoric(na.omit(kessler_data))$rho
-tau<-rowSums(polychoric(na.omit(kessler_data))$tau)
+#extract thresholds
+polycor_data<-polychoric(na.omit(kessler_data),correct=.01) # crossvalidate
+cor<-polycor_data$rho #extract correlation matrix
+tau<-rowSums(polycor_data$tau) #extract thresholds
 
-# #Community analysis
-comprehension_network_glasso<-qgraph(cor_data,
-	layout="spring",
-	vsize=tau,esize=20,graph="glasso",
-	sampleSize=nrow(kessler_data),
-	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+#Community analysis - Walking Trap
+#Generate glasso network
+network_glasso<-qgraph(
+                    cor_data,
+	                  layout="spring",
+	                  vsize=tau,
+                    # esize=20,
+                    graph="glasso",
+	                  sampleSize=nrow(kessler_data),
+	                  legend.cex = 0.5,
+                    GLratio=1.5,
+                    minimum=0.1,
+                    cut=0,
+                    border.width=1.5
+                    )
 
 # #Calculating Community measures
-g<-as.igraph(comprehension_network_glasso) #creating igraph object
+g<-as.igraph(network_glasso) #creating igraph object
 h<-walktrap.community(g) #creatin community object
 h<-spinglass.community(g, weights=NA)
+# h<-fastgreedy.community(g, weights=NA)
+# h<-edge.betweenness.community(g, weights=NA)
+h<-cluster_leading_eigen(g,weights=NA)
 plot(h,g) #plotting community network
 h$membership #extracting community membership for each node on the network
 community<-data.frame(h$membership,rownames(cor_data))
 
 #listing grouping variables in the network resulting from the community analysis
-# network_groups<-list(
-# Component1=as.numeric(rownames(community)[community[,1]==1]),
-# Component2=as.numeric(rownames(community)[community[,1]==2]),
-# Component3=as.numeric(rownames(community)[community[,1]==3])
-# )
+network_groups<-list(
+Component1=as.numeric(rownames(community)[community[,1]==1]),
+Component2=as.numeric(rownames(community)[community[,1]==2]),
+Component3=as.numeric(rownames(community)[community[,1]==3])
+)
 
 # network_groups<-list(
 # Component1=c(1,3,4,5,15,14),
@@ -339,7 +354,7 @@ fa.parallel(cage_data,cor="poly")
 # fa(NeckDisabilityIndex,1,fm="pa",rotate="oblimin")
 
 #based on a polychoric correlation matrix
-fa.poly(kessler_data,2,fm="uls",rotate="oblimin")
+fa.poly(polycor_data,2,fm="uls",rotate="oblimin")
 
 #efa_LOD <- efa(motivation, method="cor.polycor")
 #efa.plotCorr (efa_LOD)
