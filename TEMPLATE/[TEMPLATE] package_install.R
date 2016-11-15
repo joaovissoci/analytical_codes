@@ -58,6 +58,7 @@ install.packages("poLCA")
 install.packages("QCA")
 install.packages("VennDiagram")
 install.packages("haven")
+install.packages("pcalg")
 
 
 devtools::install_github("jennybc/googlesheets")
