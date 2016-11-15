@@ -409,14 +409,15 @@ Kessler =~  d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10
 Kessler ~~ Kessler
 
 #cov
-d2 ~~  d9
-d5 ~~  d6
-d3 ~~  d8
+# d2 ~~  d9
+# d5 ~~  d6
+d8 ~~  d10
 '
 
 fit <- lavaan::cfa(cfa_model,
                    data = kessler_data,
-                   estimator="WLSM",
+                   estimator="WLSMV",
+                   ordered=colnames(kessler_data)
                    )
 summary(fit, fit.measures=TRUE)
 lavaan::fitMeasures(fit, fit.measures = "all")
@@ -424,6 +425,7 @@ lavaan::fitMeasures(fit, fit.measures = "all")
 parameterEstimates(fit)
 Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
 subset(Est, op == "=~")
+subset(Est, op == "~~")
 lavInspect(fit,what="th")
 
 ### Modification Indexes
@@ -431,17 +433,17 @@ Mod <- lavaan::modificationIndices(fit)
 subset(Mod)#, mi > 10)
 
 ### By Group analysis
-fit <- lavaan::cfa(cfa_model, data = data,
-estimator="ULSM",group = "female")
-summary(fit, fit.measures=TRUE)
-lavaan::fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
-parameterEstimates(fit)
-lavaan::inspect(fit,"rsquare")
-Est <- standardizedSolution(fit)
-subset(Est, op == "=~")
-subset(Est, op == "~")
-subset(Est, op == ":=")
-measurementInvariance(cfa_model, data = data, group = "female")
+# fit <- lavaan::cfa(cfa_model, data = data,
+# estimator="ULSM",group = "female")
+# summary(fit, fit.measures=TRUE)
+# lavaan::fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
+# parameterEstimates(fit)
+# lavaan::inspect(fit,"rsquare")
+# Est <- standardizedSolution(fit)
+# subset(Est, op == "=~")
+# subset(Est, op == "~")
+# subset(Est, op == ":=")
+# measurementInvariance(cfa_model, data = data, group = "female")
 
 nodeLabels<-c("Q1",
               "Q2",
@@ -492,17 +494,21 @@ sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+sum(Est$std.all[11:20]))
 cfa_model <- '
 Depression =~  d1 + d4 + d7 + d8 + d9 + d10
 Anxiety =~ d2 + d3 + d5 + d6
+
 #
-Depression ~~ Depression
-Anxiety ~~ Anxiety
+# Depression ~~ Depression
+# Anxiety ~~ Anxiety
 
 #cov
 # d2 ~~  d9
 # d5 ~~  d6
-# d4 ~~  d8
+d7 ~~  d8
        '
 
-fit <- lavaan::cfa(cfa_model, data = kessler_data,estimator="ULSM")
+fit <- lavaan::cfa(cfa_model,
+  data = kessler_data,
+  estimator="WLSMV",
+  ordered=colnames(kessler_data))
 summary(fit, fit.measures=TRUE)
 lavaan::fitMeasures(fit, fit.measures = "all")
 parameterEstimates(fit)
@@ -681,7 +687,8 @@ Anxiety =~ d2 + d3 + d5 + d6
 fit <- lavaan::cfa(cfa_model,
                    data = kessler_data,
                    orthogonal=TRUE,
-                   estimator="WLS")
+                   estimator="WLSMV",
+                   ordered=colnames(kessler_data))
 summary(fit, fit.measures=TRUE)
 lavaan::fitMeasures(fit, fit.measures = "all")
 parameterEstimates(fit)
@@ -1076,21 +1083,23 @@ cfa_model <- '
 Kessler =~  d2 + d4 + d5 + d8 + d9 + d10
 
 #
-Kessler ~~ Kessler
+# Kessler ~~ Kessler
 
 #cov
-# d2 ~~  d9
+d2 ~~  d4
 # d5 ~~  d6
-# d4 ~~  d8
+# d5 ~~  d9
 '
 
 fit <- lavaan::cfa(cfa_model,
                    data = kessler_data_k6,
-                   estimator="ULSM")
+                   estimator="WLSMV")
 summary(fit, fit.measures=TRUE)
 lavaan::fitMeasures(fit, fit.measures = "all")
 parameterEstimates(fit)
-Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+Est <- lavaan::parameterEstimates(fit,
+                                  ci = TRUE,
+                                  standardized = TRUE)
 subset(Est, op == "=~")
 lavInspect(fit,what="th")
 
@@ -1113,328 +1122,58 @@ subset(Mod)#, mi > 10)
 #                       data = kessler_data,
 #                       group = "female")
 
-nodeLabels<-c("Q1",
+nodeLabels<-c(#"Q1",
               "Q2",
-              "Q3",
+              # "Q3",
               "Q4",
               "Q5",
-              "Q6",
-              "Q7",
+              # "Q6",
+              # "Q7",
               "Q8",
               "Q9",
               "Q10",
-              "General")
+              "K-6")
 
-color<-c(rep("grey",10),rep("white",1))
-borders<-c(rep("FALSE",10),rep("TRUE",1))
-labelcex<-c(rep(0.7,10),rep(1,1))
+
+color<-c(rep("grey",6),rep("white",1))
+borders<-c(rep("FALSE",6),rep("TRUE",1))
+labelcex<-c(rep(0.7,6),rep(1,1))
 
 tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
   width = 15,
  height = 10,compression = 'lzw',res=1200,bg = "white")
-semPlot::semPaths(fit,
-                  "model",
-                  "std",
-                  layout="tree2",
-                  style="lisrel",
-                  residuals=TRUE,
-                  # cut=1,
-                  # equalizeManifests=TRUE,
-                  # edge.color="black",
-                  exoCov=FALSE,
-                  intercepts=FALSE,
-                  nodeLabels=nodeLabels,
-                  label.scale=FALSE,
-                  edge.label.cex=0.8,
-                  label.cex=labelcex,
-                  color=color,
-                  borders=borders)
-                  # bifactor="general")
-dev.off()
-
-#Composite Reliabilty
-sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+sum(Est$std.all[13:22]))
-
-#Average Extracted Variance
-sum(Est$std.all[1:10]^2)/length(Est$std.all[1:10])
-
-# 2 factors model ###########################
-cfa_model <- '
-Depression =~  d1 + d4 + d7 + d8 + d9 + d10
-Anxiety =~ d2 + d3 + d5 + d6
-
-#
-# Depression ~~ Depression
-# Anxiety ~~ Anxiety
-
-#cov
-# d2 ~~  d9
-# d5 ~~  d6
-# d4 ~~  d8
-'
-
-fit <- lavaan::cfa(cfa_model,
-                   data = kessler_data,
-                   estimator="ULSM")
-summary(fit, fit.measures=TRUE)
-lavaan::fitMeasures(fit, fit.measures = "all")
-parameterEstimates(fit)
-Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
-subset(Est, op == "=~")
-lavInspect(fit,what="th")
-
-### Modification Indexes
-Mod <- lavaan::modificationIndices(fit)
-subset(Mod)#, mi > 10)
-
-# ### By Group analysis
-# fit <- lavaan::cfa(cfa_model, data = data,
-# estimator="ULS",group = "female")
-# summary(fit, fit.measures=TRUE)
-# fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
-# parameterEstimates(fit)
-# lavaan::inspect(fit,"rsquare")
-# Est <- standardizedSolution(fit)
-# subset(Est, op == "=~")
-# subset(Est, op == "~")
-# subset(Est, op == ":=")
-# measurementInvariance(cfa_model, data = data, group = "female")
-
-nodeLabels<-c("Q1",
-              "Q4",
-              "Q7",
-              "Q8",
-              "Q9",
-              "Q10",
-              "Q2",
-              "Q3",
-              "Q5",
-              "Q6",
-              "Depression",
-              "Anxiety")
-
-color<-c(rep("grey",10),rep("white",2))
-borders<-c(rep("FALSE",10),rep("TRUE",2))
-labelcex<-c(rep(0.7,10),rep(1,2))
-
-tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-  width = 15,
- height = 10,compression = 'lzw',res=1200,bg = "white")
-semPlot::semPaths(fit,
-                  "model",
-                  "std",
-                  layout="tree2",
-                  style="lisrel",
-                  residuals=TRUE,
-                  # cut=1,
-                  # equalizeManifests=TRUE,
-                  # edge.color="black",
-                  exoCov=FALSE,
-                  intercepts=FALSE,
-                  nodeLabels=nodeLabels,
-                  label.scale=FALSE,
-                  edge.label.cex=0.8,
-                  label.cex=labelcex,
-                  color=color,
-                  borders=borders)
-                  # bifactor="general")
+  semPlot::semPaths(fit,
+                    "model",
+                    "std",
+                    layout="tree2",
+                    style="lisrel",
+                    residuals=TRUE,
+                    # cut=1,
+                    # equalizeManifests=TRUE,
+                    # edge.color="black",
+                    exoCov=FALSE,
+                    intercepts=FALSE,
+                    nodeLabels=nodeLabels,
+                    label.scale=FALSE,
+                    edge.label.cex=1,
+                    label.cex=labelcex,
+                    color=color,
+                    borders=borders)
+                    # bifactor="general")
 dev.off()
 
 #Composite Reliabilty
 sum(Est$std.all[1:6])^2/(sum(Est$std.all[1:6])^2+
-  sum(Est$std.all[11:16]))
-sum(Est$std.all[7:10])^2/(sum(Est$std.all[7:10])^2+
-  sum(Est$std.all[17:20]))
+  sum(Est$std.all[8:13]))
 
 #Average Extracted Variance
 sum(Est$std.all[1:6]^2)/length(Est$std.all[1:6])
-sum(Est$std.all[7:10]^2)/length(Est$std.all[7:10])
-
-# # Second ordered factor model ###########################
-# cfa_model <- '
-# Depression =~  d1 + d4 + d7 + d8 + d9 + d10
-# Anxiety =~ d2 + d3 + d5 + d6
-# general =~ Depression + Anxiety
-
-# # #cov
-# # general ~~ general
-# # Anxiety ~~ Anxiety
-# # Depression ~~ Depression
-
-# # #cov
-# # # d2 ~~  d9
-# # # d5 ~~  d6
-# # # d4 ~~  d8
-# '
-
-# fit <- lavaan::cfa(cfa_model, data = kessler_data,
-#   estimator="ULSM")
-# summary(fit, fit.measures=TRUE)
-# lavaan::fitMeasures(fit, fit.measures = "all")
-# parameterEstimates(fit)
-# Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
-# subset(Est, op == "=~")
-# lavInspect(fit,what="th")
-
-# ### Modification Indexes
-# Mod <- lavaan::modificationIndices(fit)
-# subset(Mod)#, mi > 10)
-
-# ### By Group analysis
-# fit <- lavaan::cfa(cfa_model, data = data,
-# estimator="ULS",group = "female")
-# summary(fit, fit.measures=TRUE)
-# fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
-# parameterEstimates(fit)
-# lavaan::inspect(fit,"rsquare")
-# Est <- standardizedSolution(fit)
-# subset(Est, op == "=~")
-# subset(Est, op == "~")
-# subset(Est, op == ":=")
-# measurementInvariance(cfa_model, data = data, group = "female")
-
-# nodeLabels<-c("Q1",
-#               "Q2",
-#               "Q3",
-#               "Q4",
-#               "Q5",
-#               "Q6",
-#               "Q7",
-#               "Q8",
-#               "Q9",
-#               "Q10",
-#               "General",
-#               "Depression",
-#               "Anxiety")
-
-# color<-c(rep("grey",10),rep("white",3))
-# borders<-c(rep("FALSE",10),rep("TRUE",3))
-# labelcex<-c(rep(0.7,10),rep(1,3))
-
-# tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-#   width = 15,
-#  height = 10,compression = 'lzw',res=1200,bg = "white")
-# semPlot::semPaths(fit,
-#                   "model",
-#                   "std",
-#                   layout="tree2",
-#                   style="lisrel",
-#                   residuals=TRUE,
-#                   # cut=1,
-#                   # equalizeManifests=TRUE,
-#                   # edge.color="black",
-#                   exoCov=FALSE,
-#                   # intercepts=FALSE,
-#                   nodeLabels=nodeLabels,
-#                   label.scale=FALSE,
-#                   edge.label.cex=0.8,
-#                   label.cex=labelcex,
-#                   color=color,
-#                   borders=borders,
-#                   bifactor="general")
-
-# dev.off()
-
-# #Composite Reliabilty
-# sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+sum(Est$std.all[11:20]))
-
-
-# # Bi-factor model ###########################
-cfa_model <- '
-general =~  d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10
-Depression =~  d1 + d4 + d7 + d8 + d9 + d10
-Anxiety =~ d2 + d3 + d5 + d6
-
-# #cov
-# general ~~ general
-# Anxiety ~~ Anxiety
-# Depression ~~ Depression
-
-#cov
-# d1 ~~  d8
-# d5 ~~  d6
-# d4 ~~  d8
-'
-
-fit <- lavaan::cfa(cfa_model, 
-                   data = kessler_data,
-                   orthogonal=TRUE,
-                   estimator="WLS")
-summary(fit, fit.measures=TRUE)
-lavaan::fitMeasures(fit, fit.measures = "all")
-parameterEstimates(fit)
-Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
-subset(Est, op == "=~")
-lavInspect(fit,what="th")
-
-# ### Modification Indexes
-# Mod <- lavaan::modificationIndices(fit)
-# subset(Mod)#, mi > 10)
-
-# ### By Group analysis
-# fit <- lavaan::cfa(cfa_model, data = data,
-# estimator="ULS",group = "female")
-# summary(fit, fit.measures=TRUE)
-# fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
-# parameterEstimates(fit)
-# lavaan::inspect(fit,"rsquare")
-# Est <- standardizedSolution(fit)
-# subset(Est, op == "=~")
-# subset(Est, op == "~")
-# subset(Est, op == ":=")
-# measurementInvariance(cfa_model, data = data, group = "female")
-
-# nodeLabels<-c("Q1",
-#               "Q2",
-#               "Q3",
-#               "Q4",
-#               "Q5",
-#               "Q6",
-#               "Q7",
-#               "Q8",
-#               "Q9",
-#               "Q10",
-#               "General",
-#               "Depression",
-#               "Anxiety")
-
-# color<-c(rep("grey",10),rep("white",3))
-# borders<-c(rep("FALSE",10),rep("TRUE",3))
-# labelcex<-c(rep(0.7,10),rep(1,3))
-
-# tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-#   width = 15,
-#  height = 10,compression = 'lzw',res=1200,bg = "white")
-# semPlot::semPaths(fit,
-#                   "model",
-#                   "std",
-#                   layout="tree2",
-#                   style="lisrel",
-#                   residuals=TRUE,
-#                   # cut=1,
-#                   # equalizeManifests=TRUE,
-#                   # edge.color="black",
-#                   exoCov=FALSE,
-#                   # intercepts=FALSE,
-#                   nodeLabels=nodeLabels,
-#                   label.scale=FALSE,
-#                   edge.label.cex=0.8,
-#                   label.cex=labelcex,
-#                   color=color,
-#                   borders=borders,
-#                   bifactor="general")
-
-# dev.off()
-
-# #Composite Reliabilty
-# sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+sum(Est$std.all[11:20]))
-
 
 #ITEM RESPONSE THEORY
 ##############################################################
 
 #### USING eRM Package
-IRTRolandMorris <- eRm::PCM(kessler_data,se=FALSE)
+IRTRolandMorris <- eRm::PCM(kessler_data_k6,se=FALSE)
 diff_index<-thresholds(IRTRolandMorris)
 summary(diff_index$threshtable[[1]][,1])
 sd(diff_index$threshtable[[1]][,1])/sqrt(length(diff_index$threshtable[[1]][,1]))
