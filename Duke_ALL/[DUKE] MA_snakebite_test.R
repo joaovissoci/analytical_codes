@@ -27,10 +27,7 @@ data_level4<-data_level3[-c(9,10),]
 
 ### Outcome measures
 #mobile
-data_outcome<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
-
-#home
-data_outcome<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebites_SR/snakesSR_outcome.csv")
+data_outcome<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/snakebites_SR/snakesSR_outcome.csv")
 
 data_outcome$outcome_cat<-as.character(data_outcome$outcome_cat)
 data_outcome_level3<-data_outcome[data_outcome$level==3,]
@@ -165,7 +162,7 @@ tryout<-data_outcome[-c(3,9),]
 m3<-metaprop(severe,total,names, sm="PLN",
 	data=tryout,byvar=outcome_cat)
 forest(m3)
-Duk
+
 ### Metanalysis only level 3
 m3<-metaprop(severe,total,names, sm="PLN",
 	data=data_outcome_level3,byvar=outcome_cat)

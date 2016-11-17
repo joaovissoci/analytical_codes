@@ -41,7 +41,7 @@ lapply(c("Hmisc","car","psych","nortest","ggplot2",
 
 bnp_sr_data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/BNP SR/bnp_SR_data.csv")
 
-bnp_sr_metadata<-read.csv("/Users/jnv4/Desktop/US_bnpmeta_data.csv")
+bnp_sr_metadata<-read.csv("/Users/joaovissoci/Desktop/US_bnpmetaanalysis_data.csv")
 
 
 #############################################################################
@@ -66,12 +66,12 @@ meta1 <- metacont(N,
   			data=meta_bnp_normal, sm="MD")
 
 
-mean_control <- meta1$TE
-sd_control <- meta1$seTE*sqrt(meta_bnp_normal$N)
+mean_control <- round(meta1$TE,1)
+sd_control <- round(meta1$seTE*sqrt(meta_bnp_normal$N),1)
 
 #extracting studies with only Ischemic patients
 meta_bnp_ischemic<-subset(meta_bnp,
-	meta_bnp$type=="Ischemic Patients ")
+	meta_bnp$type=="Ischemic")
 
 #run metanalysis model for continuous data
 meta1 <- metacont(N, 
@@ -79,12 +79,12 @@ meta1 <- metacont(N,
 				  sd_baseline,
 				  N,
 				  mean_poststress,
-				  sd_poststress, 
-  			data=meta_bnp_ischemic, sm="MD")
+				  sd_poststress,
+  				  data=meta_bnp_ischemic, sm="MD")
 
 
-mean_exp <- meta1$TE
-sd_exp <- meta1$seTE*sqrt(meta_bnp_ischemic$N)
+mean_exp <- round(meta1$TE,1)
+sd_exp <- round(meta1$seTE*sqrt(meta_bnp_ischemic$N),1)
 
 #organizing dataset for metanalysis model
 delat_data_bnp<-data.frame(mean_exp,sd_exp,
@@ -92,26 +92,84 @@ delat_data_bnp<-data.frame(mean_exp,sd_exp,
 	sample_control=meta_bnp_normal$N)
 
 #run metanalysis model for continuous data
+#FULL MODEL
 meta1 <- metacont(	
 					sample_exp, 
 					mean_exp,
 					sd_exp,
 					sample_control,
 					mean_control,
-					sd_control, 
-  data=delat_data_bnp, sm="MD",
-  # byvar=intervention,print.byvar=FALSE,
-  studlab=meta_bnp_ischemic$study,comb.fixed=TRUE)
+					sd_control,
+					label.e="Ischemic",
+				    label.c="Normal",
+				    complab="SMD, Hodges' G",
+				    comb.random=TRUE,
+				    comb.fixed=TRUE,
+  					data=delat_data_bnp,
+  					sm="SMD",
+ 				    # byvar=intervention,print.byvar=FALSE,
+  					studlab=meta_bnp_ischemic$Authors)
+summary(meta1)
+
+#Excluding Marumoto et al., 1995
+meta1 <- metacont(	
+					sample_exp, 
+					mean_exp,
+					sd_exp,
+					sample_control,
+					mean_control,
+					sd_control,
+					label.e="Ischemic",
+				    label.c="Normal",
+				    complab="SMD, Hodges' G",
+				    # label.left=TRUE,
+				    comb.random=FALSE,
+				    comb.fixed=TRUE,
+  					data=delat_data_bnp[1:3,],
+  					sm="SMD",
+  					# keepdata=FALSE,
+ 				    # byvar=intervention,print.byvar=FALSE,
+  					studlab=meta_bnp_ischemic$Authors[1:3])
 summary(meta1)
 
 tiff("/Users/joaovissoci/Desktop/figure2.tiff",
   width = 800, height = 400,compression = 'lzw')
-forest(meta1)
+forest(meta1,
+	   leftcols=c("studlab"),
+	   rigthcols=c("w.fixed"),
+	   # overall=FALSE, #A logical indicating whether overall summaries should be plotted
+	   xlab="Delta Hogdes' g",
+	   leftlabs=c("Author"),
+	   just="center",
+	   just.studlab="left",
+	   # layout="revman5",
+	   # leftlabs=c("Author", "N", "Delta", "SD"),
+	   comb.fixed=TRUE,
+	   xlim=c(-1, 1),
+	   colgap.forest.left=unit(3.5,"cm")
+	   )
 dev.off()
 
 funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
+
+# meta1 <- metacont(	
+# 					N[1:4], 
+# 					mean_poststress[1:4],
+# 					sd_poststress[1:4],
+# 					N[5:8],
+# 					mean_poststress[5:8],
+# 					sd_poststress[5:8],
+# 					label.e="Ischemic",
+# 				    label.c="Normal",
+# 				    # complab="SMD, Hodges' G",
+# 				    comb.random=FALSE,
+# 				    comb.fixed=TRUE,
+#   					data=meta_bnp, 
+#   					sm="SMD",
+#  				    # byvar=intervention,print.byvar=FALSE,
+#   					studlab=meta_bnp_ischemic$Authors)
 
 #############################################################################
 #Figure. 2
@@ -139,8 +197,8 @@ mean_control <- meta1$TE
 sd_control <- meta1$seTE*sqrt(meta_bnp_normal$N)
 
 #extracting studies with only Ischemic patients
-meta_bnp_ischemic<-subset(meta_bnp,
-	meta_bnp$type=="Ischemic Patients ")
+meta_bnp_ischemic<-subset(meta_probnp,
+	meta_probnp$type=="Ischemic")
 
 #run metanalysis model for continuous data
 meta1 <- metacont(N, 
@@ -161,26 +219,49 @@ delat_data_bnp<-data.frame(mean_exp,sd_exp,
 	sample_control=meta_bnp_normal$N)
 
 #run metanalysis model for continuous data
+#Excluding Marumoto et al., 1995
 meta1 <- metacont(	
 					sample_exp, 
 					mean_exp,
 					sd_exp,
 					sample_control,
 					mean_control,
-					sd_control, 
-  data=delat_data_bnp, sm="MD",
-  # byvar=intervention,print.byvar=FALSE,
-  studlab=meta_bnp_ischemic$study,comb.fixed=TRUE)
+					sd_control,
+					label.e="Ischemic",
+				    label.c="Normal",
+				    complab="SMD, Hodges' G",
+				    # label.left=TRUE,
+				    comb.random=FALSE,
+				    comb.fixed=TRUE,
+  					data=delat_data_bnp,
+  					sm="SMD",
+  					# keepdata=FALSE,
+ 				    # byvar=intervention,print.byvar=FALSE,
+  					studlab=meta_bnp_ischemic$Authors)
 summary(meta1)
 
 tiff("/Users/joaovissoci/Desktop/figure2.tiff",
   width = 800, height = 400,compression = 'lzw')
-forest(meta1)
+forest(meta1,
+	   leftcols=c("studlab"),
+	   rigthcols=c("w.fixed"),
+	   # overall=FALSE, #A logical indicating whether overall summaries should be plotted
+	   xlab="Delta Hogdes' g",
+	   leftlabs=c("Author"),
+	   just="center",
+	   just.studlab="left",
+	   # layout="revman5",
+	   # leftlabs=c("Author", "N", "Delta", "SD"),
+	   comb.fixed=TRUE,
+	   xlim=c(-1, 1),
+	   colgap.forest.left=unit(3.5,"cm")
+	   )
 dev.off()
 
-funnel(meta1)
-metainf(meta1)
-metainf(meta1, pooled="random")
+
+
+
+
 
 
 ######
