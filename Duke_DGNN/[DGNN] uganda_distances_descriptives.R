@@ -45,7 +45,7 @@ lapply(c("sem","ggplot2", "psych", "irr", "nortest",
 #                                  sep = ",",
 #                                  header = TRUE)
 
-data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGNN/SOSAS/SOSAS_gis/districts_gis_uganda.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/SOSAS_gis/districts_gis_uganda.csv",sep=',')
 
 #data_hub<-read.csv("/home/joao/Desktop/hubdistance_neuro.csv",sep=',')
 
@@ -79,10 +79,17 @@ with(data,by(area_district,region,summary))
 with(data,by(area_district,region,ad.test))
 with(data,by(area_district,region,sd))
 
+with(data,summary(distance_district/1000))
 with(data,by(distance_district/1000,region,summary))
 with(data,by(distance_district,region,ad.test))
 with(data,by(distance_district,region,sd))
 
+with(data,summary(time_district))
+with(data,by(time_district,region,summary))
+with(data,by(time_district,region,ad.test))
+with(data,by(time_district,region,sd))
+
+with(data,summary(access_district*1000))
 with(data,by(access_district*100000,region,summary))
 with(data,by(access_district,region,ad.test))
 with(data,by(access_district,region,sd))
