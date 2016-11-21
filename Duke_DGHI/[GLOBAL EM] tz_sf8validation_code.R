@@ -576,7 +576,7 @@ sum(Est$std.all[1:8]^2)/length(Est$std.all[1:8])
 by(Est$std.all[13:50],Est$lhs[13:50],mean)
 
 #Factor scores
-sf8_overall<-predict(fit)
+sf8_overall<-lavaan::predict(fit)
 
 # 2 factors model ###########################
 cfa_model <- '
@@ -684,7 +684,7 @@ sum(Est$std.all[1:6]^2)/length(Est$std.all[1:6])
 sum(Est$std.all[7:10]^2)/length(Est$std.all[7:10])
 
 #Factor scores
-sf8_dimensions<-predict(fit)
+sf8_dimensions<-lavaan::predict(fit)
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
 imp <- mice(sf8_dimensions, seed = 2222, m=5)
@@ -799,122 +799,122 @@ sf8_dimensions<-complete(imp,4)
 
 
 # Bi-factor model ###########################
-cfa_model <- '
-PHC =~  sf8_b1 + sf8_b4 + sf8_b5
-# THC =~  sf8_b2 + sf8_b3
-MHC =~  sf8_b6 + sf8_b7 + sf8_b8
-general =~ sf8_b1 + sf8_b2 + sf8_b3 + sf8_b4 + sf8_b5 + sf8_b6 + sf8_b7 + sf8_b8
+# cfa_model <- '
+# PHC =~  sf8_b1 + sf8_b4 + sf8_b5
+# # THC =~  sf8_b2 + sf8_b3
+# MHC =~  sf8_b6 + sf8_b7 + sf8_b8
+# general =~ sf8_b1 + sf8_b2 + sf8_b3 + sf8_b4 + sf8_b5 + sf8_b6 + sf8_b7 + sf8_b8
 
-#
-# Kessler ~~ Kessler
+# #
+# # Kessler ~~ Kessler
 
-#cov
-# sf8_b2 ~~ sf8_b8
-# sf8_b1 ~~ sf8_b5
-'
+# #cov
+# # sf8_b2 ~~ sf8_b8
+# # sf8_b1 ~~ sf8_b5
+# '
 
-fit <- lavaan::cfa(cfa_model,
-                   data = sf8_data,
-                   orthogonal=TRUE,
-                   estimator="WLSMV",
-                   ordered=names(sf8_data))
-summary(fit, fit.measures=TRUE)
-lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
-                                          "rmsea.ci.lower.scaled",
-                                          "rmsea.ci.upper.scaled",
-                                          "cfi.scaled",
-                                          "tli.scaled",
-                                          "nnfi.scaled",
-                                          "chisq.scaled",
-                                          "pvalue.scaled"
-                                          ))
-parameterEstimates(fit)
-Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
-subset(Est, op == "=~")
-lavInspect(fit,what="th")
-
-### Modification Indexes
-Mod <- lavaan::modificationIndices(fit)
-subset(Mod)#, mi > 10)
-
-# ### By Group analysis
-# fit <- lavaan::cfa(cfa_model, data = data,
-# estimator="ULS",group = "female")
+# fit <- lavaan::cfa(cfa_model,
+#                    data = sf8_data,
+#                    orthogonal=TRUE,
+#                    estimator="WLSMV",
+#                    ordered=names(sf8_data))
 # summary(fit, fit.measures=TRUE)
-# fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
+# lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
+#                                           "rmsea.ci.lower.scaled",
+#                                           "rmsea.ci.upper.scaled",
+#                                           "cfi.scaled",
+#                                           "tli.scaled",
+#                                           "nnfi.scaled",
+#                                           "chisq.scaled",
+#                                           "pvalue.scaled"
+#                                           ))
 # parameterEstimates(fit)
-# lavaan::inspect(fit,"rsquare")
-# Est <- standardizedSolution(fit)
+# Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
 # subset(Est, op == "=~")
-# subset(Est, op == "~")
-# subset(Est, op == ":=")
-# measurementInvariance(cfa_model, data = data, group = "female")
+# lavInspect(fit,what="th")
 
-nodeLabels<-c("Q1",
-              "Q2",
-              "Q3",
-              "Q4",
-              "Q5",
-              "Q6",
-              "Q7",
-              "Q8",
-              "PCS",
-              "MHS",
-              "General")
+# ### Modification Indexes
+# Mod <- lavaan::modificationIndices(fit)
+# subset(Mod)#, mi > 10)
 
-color<-c(rep("grey",8),rep("white",3))
-borders<-c(rep("FALSE",8),rep("TRUE",3))
-labelcex<-c(rep(0.7,8),rep(1,3))
+# # ### By Group analysis
+# # fit <- lavaan::cfa(cfa_model, data = data,
+# # estimator="ULS",group = "female")
+# # summary(fit, fit.measures=TRUE)
+# # fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
+# # parameterEstimates(fit)
+# # lavaan::inspect(fit,"rsquare")
+# # Est <- standardizedSolution(fit)
+# # subset(Est, op == "=~")
+# # subset(Est, op == "~")
+# # subset(Est, op == ":=")
+# # measurementInvariance(cfa_model, data = data, group = "female")
 
-# tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-#   width = 15,
-#  height = 10,compression = 'lzw',res=1200,bg = "white")
-semPlot::semPaths(fit,
-                  "model",
-                  "std",
-                  layout="tree2",
-                  style="lisrel",
-                  residuals=FALSE,
-                  # cut=1,
-                  # equalizeManifests=TRUE,
-                  # edge.color="black",
-                  exoCov=FALSE,
-                  intercepts=FALSE,
-                  nodeLabels=nodeLabels,
-                  label.scale=FALSE,
-                  edge.label.cex=0.8,
-                  label.cex=labelcex,
-                  color=color,
-                  borders=borders,
-                  bifactor="general")
+# nodeLabels<-c("Q1",
+#               "Q2",
+#               "Q3",
+#               "Q4",
+#               "Q5",
+#               "Q6",
+#               "Q7",
+#               "Q8",
+#               "PCS",
+#               "MHS",
+#               "General")
 
-# dev.off()
+# color<-c(rep("grey",8),rep("white",3))
+# borders<-c(rep("FALSE",8),rep("TRUE",3))
+# labelcex<-c(rep(0.7,8),rep(1,3))
 
-# #Composite Reliabilty
-# sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+sum(Est$std.all[11:20]))
+# # tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
+# #   width = 15,
+# #  height = 10,compression = 'lzw',res=1200,bg = "white")
+# semPlot::semPaths(fit,
+#                   "model",
+#                   "std",
+#                   layout="tree2",
+#                   style="lisrel",
+#                   residuals=FALSE,
+#                   # cut=1,
+#                   # equalizeManifests=TRUE,
+#                   # edge.color="black",
+#                   exoCov=FALSE,
+#                   intercepts=FALSE,
+#                   nodeLabels=nodeLabels,
+#                   label.scale=FALSE,
+#                   edge.label.cex=0.8,
+#                   label.cex=labelcex,
+#                   color=color,
+#                   borders=borders,
+#                   bifactor="general")
 
-#ITEM RESPONSE THEORY
-##############################################################
+# # dev.off()
 
-# #### USING eRM Package
-# IRTRolandMorris <- PCM(kessler_data)
-# diff_index<-thresholds(IRTRolandMorris)
-# summary(diff_index$threshtable[[1]][,1])
-# sd(diff_index$threshtable[[1]][,1])/sqrt(length(diff_index$threshtable[[1]][,1]))
-# plotICC(IRTRolandMorris,item.subset=3,ask=F,empICC=list("raw"),empCI=list(lty="solid"))
-# plotPImap(IRTRolandMorris, sorted=FALSE)
-# plotPWmap(IRTRolandMorris)
-# pp<-eRm::person.parameter(IRTRolandMorris)
-# #lrt<-LRtest(IRTRolandMorris,se=TRUE)
-# #Waldtest(IRTRolandMorris)
-# eRm::itemfit(pp)
-# summary(eRm::itemfit(pp)$i.outfitMSQ)
-# sd(eRm::itemfit(pp)$i.outfitMSQ)
-# summary(eRm::itemfit(pp)$i.infitMSQ)
-# sd(eRm::itemfit(pp)$i.infitMSQ)
-#NPtest(IRTRolandMorris,method="T11")
-#plotGOF(lrt,conf=list())
-#fscores(NeckDisabilityIndex, rotate = "oblimin", Target = NULL, full.scores = FALSE,method = "EAP", quadpts = NULL, response.pattern = NULL,plausible.draws = 0, returnER = FALSE, return.acov = FALSE,mean = NULL, cov = NULL, verbose = TRUE, full.scores.SE = FALSE,theta_lim = c(-6, 6), MI = 0, QMC = FALSE, custom_den = NULL, custom_theta = NULL, min_expected = 1)
+# # #Composite Reliabilty
+# # sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+sum(Est$std.all[11:20]))
+
+# #ITEM RESPONSE THEORY
+# ##############################################################
+
+# # #### USING eRM Package
+# # IRTRolandMorris <- PCM(kessler_data)
+# # diff_index<-thresholds(IRTRolandMorris)
+# # summary(diff_index$threshtable[[1]][,1])
+# # sd(diff_index$threshtable[[1]][,1])/sqrt(length(diff_index$threshtable[[1]][,1]))
+# # plotICC(IRTRolandMorris,item.subset=3,ask=F,empICC=list("raw"),empCI=list(lty="solid"))
+# # plotPImap(IRTRolandMorris, sorted=FALSE)
+# # plotPWmap(IRTRolandMorris)
+# # pp<-eRm::person.parameter(IRTRolandMorris)
+# # #lrt<-LRtest(IRTRolandMorris,se=TRUE)
+# # #Waldtest(IRTRolandMorris)
+# # eRm::itemfit(pp)
+# # summary(eRm::itemfit(pp)$i.outfitMSQ)
+# # sd(eRm::itemfit(pp)$i.outfitMSQ)
+# # summary(eRm::itemfit(pp)$i.infitMSQ)
+# # sd(eRm::itemfit(pp)$i.infitMSQ)
+# #NPtest(IRTRolandMorris,method="T11")
+# #plotGOF(lrt,conf=list())
+# #fscores(NeckDisabilityIndex, rotate = "oblimin", Target = NULL, full.scores = FALSE,method = "EAP", quadpts = NULL, response.pattern = NULL,plausible.draws = 0, returnER = FALSE, return.acov = FALSE,mean = NULL, cov = NULL, verbose = TRUE, full.scores.SE = FALSE,theta_lim = c(-6, 6), MI = 0, QMC = FALSE, custom_den = NULL, custom_theta = NULL, min_expected = 1)
 
 #Dichotomous items
 # IRTRolandMorris <- RM(neckdisability2)
@@ -962,3 +962,6 @@ colnames(sf8_scores)<-c("SF8_overall",
 rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 sf8_scores_scaled<-lapply(sf8_scores,rescale)
 sf8_scores_scaled<-as.data.frame(sf8_scores_scaled)
+
+write.csv(sf8_scores_scaled,"/Users/jnv4/Desktop/sf8_scores.csv")
+

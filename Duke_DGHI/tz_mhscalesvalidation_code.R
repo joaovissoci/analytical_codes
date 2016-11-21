@@ -25,7 +25,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
 	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
-	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape"),
+	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape","mice"),
 library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
@@ -38,7 +38,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -75,7 +75,7 @@ data_validation$age_cat<-car::recode(
 
 #Organize scale datasets
 #AUDIT
-audit_data<-with(data_validation,data.frame(
+audit_data<-with(data,data.frame(
 	h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
 # audit_data1<-with(data_validation,data.frame(
 # 	h1,h2,h3))
@@ -87,48 +87,60 @@ audit_data<-with(data_validation,data.frame(
 # 	h7,h8,h9,h10))
 
 #CAGE
-cage_data<-with(data_validation,data.frame(
-	h11,h12,h13,h14,age_cat,education_cat,female))
+cage_data<-with(data,data.frame(
+	h11,h12,h13,h14))
 # summary(cage_data)
 # cage_data<-na.omit(cage_data)
 
-#SF8
-sf8_PCS<-with(data,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5))
-# data$sf8_mcs<-rowSums(sf8_PCS)
+# #SF8
+# sf8_PCS<-with(data,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5))
+# # data$sf8_mcs<-rowSums(sf8_PCS)
 
-sf8_MCS<-with(data,data.frame(sf8_b6,sf8_b7,sf8_b8))
-# data$sf8_pcs<-rowSums(sf8_MCS)
+# sf8_MCS<-with(data,data.frame(sf8_b6,sf8_b7,sf8_b8))
+# # data$sf8_pcs<-rowSums(sf8_MCS)
 
-#CES-D
-ces_data<-wiht(data,data.frame(e1,e2,e3,e4,e5,e6,e7,e8,e9,
-	e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,e20))
+# #CES-D
+# ces_data<-wiht(data,data.frame(e1,e2,e3,e4,e5,e6,e7,e8,e9,
+# 	e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,e20))
 
-#Kessler
-kessler_data<-wiht(data,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,
-	d10))
+# #Kessler
+# kessler_data<-wiht(data,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,
+# 	d10))
 
-#PHQ9
-phq9<-with(data,data.frame(phq9_b11,phq9_b12,phq9_b13,phq9_b14,
-	phq9_b15,phq9_b16,phq9_b17,phq9_b17,phq9_b18,phq9_b19))
-# data$phq9score<-rowSums(phq9)
+# #PHQ9
+# phq9<-with(data,data.frame(phq9_b11,phq9_b12,phq9_b13,phq9_b14,
+# 	phq9_b15,phq9_b16,phq9_b17,phq9_b17,phq9_b18,phq9_b19))
+# # data$phq9score<-rowSums(phq9)
 
-#FIM
-fim_physical<-with(data,data.frame(g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
-	g11,g12,g13,g14,g15,g16))
-# data$fim_physical<-rowSums(fim_physical)/16
+# #FIM
+# fim_physical<-with(data,data.frame(g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
+# 	g11,g12,g13,g14,g15,g16))
+# # data$fim_physical<-rowSums(fim_physical)/16
 
-fim_mental<-with(data,data.frame(g17,g18,g19,g20,g21,g22,g23,g24,g25,g26,
-	g27,g28,g29,g30))
-# data$fim_mental<-rowSums(fim_mental)/14
+# fim_mental<-with(data,data.frame(g17,g18,g19,g20,g21,g22,g23,g24,g25,g26,
+# 	g27,g28,g29,g30))
+# # data$fim_mental<-rowSums(fim_mental)/14
 
-#Mini-Mental
-mental<-with(data,data.frame(f1a,f1b,f1c,f1d,f1e,f2a,f2b,f2c,f2d,f2e,f3,
-	f4,f5,f6,f7,f8,f9,f10,f11,f12___0,f12___1,f12___2))
-# data$mental<-rowSums(mental)
+# #Mini-Mental
+# mental<-with(data,data.frame(f1a,f1b,f1c,f1d,f1e,f2a,f2b,f2c,f2d,f2e,f3,
+# 	f4,f5,f6,f7,f8,f9,f10,f11,f12___0,f12___1,f12___2))
+# # data$mental<-rowSums(mental)
 
-#MOCA
-moca<-with(data,data.frame(f17,f18,f19,f20,f21,f21b,f22,f23))
-# data$moca<-rowSums(moca)
+# #MOCA
+# moca<-with(data,data.frame(f17,f18,f19,f20,f21,f21b,f22,f23))
+# # data$moca<-rowSums(moca)
+
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+data_imputed <- mice(audit_data, seed = 2222, m=10)
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+audit_data<-mice::complete(data_imputed,4)
+
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+data_imputed <- mice(cage_data, seed = 2222, m=10)
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+cage_data<-mice::complete(data_imputed,4)
 
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -192,6 +204,413 @@ summary(audit_data)
 #AUDIT
 ##############################################################
 
+#TAXONOMETRIC ANALAYSIS
+
+#Taxonometric Scale
+# MAMBAC(scale(NeckDisabilityIndexNA)[,1:3], Comp.Data = T)
+
+
+#RELIABILITY
+##############################################################
+### INTERNAL CONSISTENCY
+#RELIABILITY
+#psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data1,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data2,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data2_3,n.iter=1000,check.keys=TRUE)
+psych::alpha(audit_data3_3,n.iter=1000,check.keys=TRUE)
+
+#### INTER-RATER Agreement
+# data_agreement<-with(data,data.frame( ))
+
+# data_sl_agree_model1<-melt(data_sl_temp_model1,id=c("rater","id"))
+
+#Executing agreement nalysis
+# agree<-agree(na.omit(agree_data_sl_model1), tolerance=0) #% of Agreement
+# kappa<-cohen.kappa(na.omit(agree_data_sl_model1)) #Kappa-value
+#AC1(kappa$agree)
+#cor<-cor(agree_data_sl,method=c("kendall"))
+#kendall<-Kendall(agree_data_sl$data_cluster_police_sl.RISK,agree_data_sl$data_cluster_survey_sl.RISK)
+#poly<-hetcor(agree_data_sl)
+
+#NETWORK 
+##############################################################
+# # Define the amout of factor to retain
+# #Group of functinos to determine the number os items to be extracted
+# cor_data<-cor_auto(audit_data)
+
+# #Community analysis
+# comprehension_network_glasso<-qgraph(cor_data,
+# 	layout="spring",
+# 	vsize=6,esize=20,graph="glasso",
+# 	sampleSize=nrow(audit_data),
+# 	legend.cex = 0.5,GLratio=1.5,minimum=0.1)
+
+# #Calculating Community measures
+# g<-as.igraph(comprehension_network_glasso) #creating igraph object
+# # h<-walktrap.community(g) #creatin community object
+# h<-spinglass.community(g, weights=NA)
+# plot(h,g) #plotting community network
+# h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,rownames(cor_data))
+
+#listing grouping variables in the network resulting from the community analysis
+# network_groups<-list(
+# Component1=as.numeric(rownames(community)[community[,1]==1]),
+# Component2=as.numeric(rownames(community)[community[,1]==2]),
+# Component3=as.numeric(rownames(community)[community[,1]==3])
+# )
+
+# network_groups<-list(
+# Component1=c(1,3,4,5,15,14),
+# Component2=c(2,16,6,7),
+# Component3=c(11,12,13,10),
+# Component4=c(19,20,21,23),
+# Component5=c(9,17,18,22,8)
+# )
+
+# creating vectors for labels
+# node_labels<-c(
+# "What is the area of the roadway?",
+# "What type of roadway?",
+# "Is this point at an intersection/junction?",
+# "How many lanes in the roadway?",
+# "Is there an auxiliary/other lane?",
+# "How is the road surface conditions?",
+# "Is there space on the side of the road 
+# for any reason or use?",
+# "Are there pedestrian pathways?",
+# "Is there a Bus Stop?",
+# "Is there a Speed bump?",
+# "Is there a traffic light at this location?",
+# "Are there road traffic signs at this hotspot?",
+# "Is there a sign for speed limit of road?",
+# "Road visibility is influenced by curves?",
+# "Is the visibility influenced by 
+# environmental factors?",
+# "Are there bridges on the road?",
+# "Is there a safe area for pedestrians 
+# to cross the road?",
+# "Is there a safe area for pedestrians
+# to in the center of the road?",
+# "Count the number of cars",
+# "Count the number of moto",
+# "Count the number of bike",
+# "Count the number of pedestrians",
+# "Count the number of bus/trucks"
+# )
+
+# creating nodes labels vector
+# node_names<-c("RD","RT","INT","TLA","AR",
+# 	"RC","RS",
+# 	"WALK","BS","SB","TLI","TS","SL","CUR",
+# 	"VIS","BRI","PED","PEDc","CARd","MOTOd","BIKEd","PEDd","TRUCKd")
+
+# creating vector with mean values for each node
+#mean_data<-sapply(network_data,mean)
+
+#creating vector with mean values adjusted to proportional sizes to be plotted
+#importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
+
+#building network figures 
+# 3 types are created to get an avarege position and layout
+#GLASSO NETWORK
+# network_glasso<-qgraph(cor_data,layout="spring",
+# 	vsize=6,esize=20,graph="glasso",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5)
+
+# #PARTIAL CORRELATION NETWORK
+# network_pcor<-qgraph(cor_data,layout="spring",
+# 	vsize=6,esize=20,graph="pcor",threshold="holm",
+# 	sampleSize=nrow(bea_data),
+# 	legend.cex = 0.5,GLratio=1.5)
+
+# #CORRELATION NETWORK
+# network_cor<-qgraph(cor_data,layout="spring",
+# 	vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
+# #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
+
+# # Organizing both figures to be with the same layout
+# layout_final<-averageLayout(network_glasso,
+# 	network_pcor,
+# 	network_cor)
+
+#postscript("/home/joao/Desktop/info_consent_figure2.eps",
+#	width = 1500, height = 1200,horizontal = FALSE, 
+#	onefile = FALSE)
+#postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
+#	width = 1500, height = 1200,horizontal = FALSE, 
+#	onefile = FALSE)
+# tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
+#  # height = 700,compression = 'lzw')
+# final_importance_network<-qgraph(cor_data,
+# 	layout='spring',
+# 	esize=20,
+# 	graph="glasso",
+# 	sampleSize=nrow(audit_data),
+# 	legend.cex = 0.6,
+# 	cut = 0.3,
+# 	maximum = 1, 
+# 	minimum = 0.1,
+# 	esize = 20,
+# 	vsize = 5, 
+# 	repulsion = 0.8)
+# 	# groups=network_groups,
+# 	# nodeNames=node_labels,
+# 	# color=c("gold","steelblue","red","grey80","green"),borders = FALSE,
+# 	# labels=node_names)#,gray=T,)#,nodeNames=nomesqsg,layoutScale=c(2,2)
+# # dev.off()
+# #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
+
+#ANALISE PARALELA E EIGEN VALUES
+#############################################################
+#MODEL 1 - Risk due to road deisgn
+# cor_data<-cor_auto(model1_bea)
+
+#Function to calculate the KMO values - colocar link par ao gist
+kmo<-kmo(audit_data) #Run the Kmo function for the data you want to calculate
+kmo$overall
+kmo$AIR #anti-image matrix
+
+# par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
+# ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
+# ev # Show eigend values
+# ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
+# summary(ap)
+# nS <- nScree(ev$values) #Set up the Scree Plot 
+# # plotnScree(nS) # Plot the ScreePlot Graph
+# my.vss <- VSS(cor_data,title="VSS of BEA data")
+# #print(my.vss[,1:12],digits =2)
+# VSS.plot(my.vss, title="VSS of 24 mental tests")
+# scree(cor_data)
+# VSS.scree(cor_data)
+fa.parallel(audit_data,cor="poly")
+
+fa.parallel(cage_data,cor="poly")
+
+#EXPLORATORY FACTOR ANALYSIS
+#############################################################
+#Functino to exctract the factor loadings. 
+#Arguments are DATA, Number of factors, rotation method. 
+#Look here http://goo.gl/kY3ln for different met
+
+#holds of estimations or rotations
+fa(cor_data,2,rotate="promax")
+# fa(NeckDisabilityIndex,1,fm="pa",rotate="oblimin")
+
+#based on a polychoric correlation matrix
+# fa.poly(data_stress_reco,3,fm="uls",rotate="oblimin")
+
+#efa_LOD <- efa(motivation, method="cor.polycor")
+#efa.plotCorr (efa_LOD)
+#efa_LOD <- efa.compute(efa_LOD,factors =3,method="extract.uls", rotate="promax", horn=T)
+#efa.plotScree(efa_LOD)
+#efa_LOD<-efa.setMinLoad(efa_LOD, minload=0.40, col="black")
+#efa.plotFactor(efa_LOD)
+#qgraph(efa_LOD)
+
+#CONFIRMATORY FACTOR ANALYSIS
+#############################################################
+#1factor model ###########
+audit_model <- '
+Audit =~  h1 + h2 + h3 + h4 + h5 + h6 + h7 + h8 + h9 + h10
+			 '
+fit <- lavaan::cfa(audit_model,
+				   data = audit_data,
+				   estimator="WLSMV",
+				   ordered=names(audit_data))
+summary(fit,
+		fit.measures=TRUE)
+lavaan::fitMeasures(fit,
+					fit.measures = "all")
+parameterEstimates(fit)
+Est <- lavaan::parameterEstimates(fit,
+								  ci = TRUE,
+								  standardized = TRUE)
+subset(Est, op == "=~")
+subset(Est, op == "~~")
+
+
+nodeLabels<-c("Q1",
+              "Q2",
+              "Q3",
+              "Q4",
+              "Q5",
+              "Q6",
+              "Q7",
+              "Q8",
+              "Q9",
+              "Q10",
+              "AUDIT")
+
+color<-c(rep("grey",10),rep("white",1))
+borders<-c(rep("FALSE",10),rep("TRUE",1))
+labelcex<-c(rep(0.7,10),rep(1,1))
+
+tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
+  width = 15,
+ height = 10,compression = 'lzw',res=1200,bg = "white")
+semPaths(fit,"std",residuals=TRUE, cut=1,
+  equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
+  intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
+  edge.label.cex=1, label.cex=labelcex, color=color,borders=borders)
+dev.off()
+
+### Modification Indexes
+Mod <- modificationIndices(fit)
+subset(Mod, mi > 10)
+
+#Composite Reliabilty
+sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+
+	sum(Est$std.all[47:56]))
+
+#Average Extracted Variance
+sum(Est$std.all[1:10]^2)/length(Est$std.all[1:10])
+
+#Factor scores
+audit_overall<-lavaan::predict(fit)
+
+# 2 factor model ###########
+
+audit_model2 <- '
+Audit =~  h1 + h2 + h3
+Audit2 =~ h4 + h5 + h6 + h7 + h8 + h9 + h10
+'
+
+fit <- lavaan::cfa(audit_model2,
+				   data = audit_data,
+				   estimator="WLSMV",
+				   ordered=names(audit_data))
+summary(fit,
+		fit.measures=TRUE)
+lavaan::fitMeasures(fit,
+					fit.measures = "all")
+parameterEstimates(fit)
+Est <- lavaan::parameterEstimates(fit,
+								  ci = TRUE,
+								  standardized = TRUE)
+subset(Est, op == "=~")
+subset(Est, op == "~~")
+
+nodeLabels<-c("Q1",
+              "Q2",
+              "Q3",
+              "Q4",
+              "Q5",
+              "Q6",
+              "Q7",
+              "Q8",
+              "Q9",
+              "Q10",
+              "AUDIT")
+
+color<-c(rep("grey",10),rep("white",1))
+borders<-c(rep("FALSE",10),rep("TRUE",1))
+labelcex<-c(rep(0.7,10),rep(1,1))
+
+tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
+  width = 15,
+ height = 10,compression = 'lzw',res=1200,bg = "white")
+semPaths(fit,"std",residuals=TRUE, cut=1,
+  equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
+  intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
+  edge.label.cex=1, label.cex=labelcex, color=color,borders=borders)
+dev.off()
+### Modification Indexes
+Mod <- modificationIndices(fit)
+subset(Mod, mi > 10)
+
+#Composite Reliabilty
+sum(Est$std.all[1:3])^2/(sum(Est$std.all[1:3])^2+
+	sum(Est$std.all[47:49]))
+
+sum(Est$std.all[4:10])^2/(sum(Est$std.all[4:10])^2+
+	sum(Est$std.all[50:56]))
+
+#Average Extracted Variance
+sum(Est$std.all[1:3]^2)/length(Est$std.all[1:3])
+
+sum(Est$std.all[4:10]^2)/length(Est$std.all[4:10])
+
+#Factor scores
+audit_2dimension<-lavaan::predict(fit)
+
+# 3-factor model ###########
+
+audit_model3 <- '
+Audit =~  h1 + h2 + h3
+Audit2 =~ h4 + h5 + h6
+Audit3 =~ h7 + h8 + h9 + h10
+# Audit4 =~ h1 + h2 + h3 + h4 + h5 + h6 + h7 + h8 + h9 + h10
+			 '
+
+fit <- lavaan::cfa(audit_model3,
+				   data = audit_data,
+				   estimator="WLSM")
+summary(fit,
+		fit.measures=TRUE)
+lavaan::fitMeasures(fit,
+					fit.measures = "all")
+parameterEstimates(fit)
+Est <- lavaan::parameterEstimates(fit,
+								  ci = TRUE,
+								  standardized = TRUE)
+subset(Est, op == "=~")
+subset(Est, op == "~~")
+
+nodeLabels<-c("Q1",
+              "Q2",
+              "Q3",
+              "Q4",
+              "Q5",
+              "Q6",
+              "Q7",
+              "Q8",
+              "Q9",
+              "Q10",
+              "AUDIT")
+
+color<-c(rep("grey",10),rep("white",1))
+borders<-c(rep("FALSE",10),rep("TRUE",1))
+labelcex<-c(rep(0.7,10),rep(1,1))
+
+tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
+  width = 15,
+ height = 10,compression = 'lzw',res=1200,bg = "white")
+semPaths(fit,"std",residuals=TRUE, cut=1,
+  equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
+  intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
+  edge.label.cex=1, label.cex=labelcex, color=color,borders=borders)
+dev.off()
+### Modification Indexes
+Mod <- modificationIndices(fit)
+subset(Mod, mi > 10)
+
+#Composite Reliabilty
+sum(Est$std.all[1:3])^2/(sum(Est$std.all[1:3])^2+
+	sum(Est$std.all[47:49]))
+
+sum(Est$std.all[4:6])^2/(sum(Est$std.all[4:6])^2+
+	sum(Est$std.all[50:52]))
+
+sum(Est$std.all[7:10])^2/(sum(Est$std.all[7:10])^2+
+	sum(Est$std.all[53:56]))
+
+#Average Extracted Variance
+sum(Est$std.all[1:3]^2)/length(Est$std.all[1:3])
+
+sum(Est$std.all[4:6]^2)/length(Est$std.all[4:6])
+
+sum(Est$std.all[7:10]^2)/length(Est$std.all[7:10])
+
+#Factor scores
+audit_3dimension<-lavaan::predict(fit)
+
+##############################################################
+#CAGE
+##############################################################
 #TAXONOMETRIC ANALAYSIS
 
 #Taxonometric Scale
@@ -403,73 +822,24 @@ fa(cor_data,2,rotate="promax")
 
 #CONFIRMATORY FACTOR ANALYSIS
 #############################################################
-audit_model <- '
-Audit =~  h1 + h2 + h3 + h4 + h5 + h6 + h7 + h8 + h9 + h10
-			 '
-
-audit_model2 <- '
-Audit =~  h1 + h2 + h3
-Audit2 =~ h4 + h5 + h6 + h7 + h8 + h9 + h10
-			 '
-
-audit_model3 <- '
-Audit =~  h1 + h2 + h3
-Audit2 =~ h4 + h5 + h6
-Audit3 =~ h7 + h8 + h9 + h10
-Audit4 =~ Audit + Audit2 + Audit3
-			 '
-
-fit <- lavaan::cfa(audit_model, data = audit_data,
-	estimator="WLSM")
-summary(fit, fit.measures=TRUE)
-fitMeasures(fit, fit.measures = "all")
-parameterEstimates(fit)
-Est <- parameterEstimates(fit, ci = TRUE, standardized = TRUE)
-subset(Est, op == "=~")
-
-nodeLabels<-c("Q1",
-              "Q2",
-              "Q3",
-              "Q4",
-              "Q5",
-              "Q6",
-              "Q7",
-              "Q8",
-              "Q9",
-              "Q10",
-              "AUDIT")
-
-color<-c(rep("grey",10),rep("white",1))
-borders<-c(rep("FALSE",10),rep("TRUE",1))
-labelcex<-c(rep(0.7,10),rep(1,1))
-
-tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-  width = 15,
- height = 10,compression = 'lzw',res=1200,bg = "white")
-semPaths(fit,"std",residuals=TRUE, cut=1,
-  equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
-  intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
-  edge.label.cex=1, label.cex=labelcex, color=color,borders=borders)
-dev.off()
-### Modification Indexes
-Mod <- modificationIndices(fit)
-subset(Mod, mi > 10)
-
-#Composite Reliabilty
-sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+sum(Est$std.all[11:20]))
-
-#CAGE
+#1 factor model
 cage_model <- '
 Cage =~  h11 + h12 + h13 + h14
 			 '
 
-fit <- lavaan::cfa(cage_model, data = cage_data,
-	estimator="WLSM")
-summary(fit, fit.measures=TRUE)
-fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
+fit <- lavaan::cfa(cage_model,
+				   data = cage_data,
+				   estimator="WLSM")
+summary(fit,
+		fit.measures=TRUE)
+lavaan::fitMeasures(fit,
+					fit.measures = "all")
 parameterEstimates(fit)
-Est <- parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+Est <- lavaan::parameterEstimates(fit,
+								  ci = TRUE,
+								  standardized = TRUE)
 subset(Est, op == "=~")
+subset(Est, op == "~~")
 
 nodeLabels<-c("Q1",
               "Q2",
@@ -495,7 +865,14 @@ Mod <- modificationIndices(fit)
 subset(Mod, mi > 10)
 
 #Composite Reliabilty
-sum(Est$std.all[1:4])^2/(sum(Est$std.all[1:4])^2+sum(Est$std.all[5:8]))
+sum(Est$std.all[1:4])^2/(sum(Est$std.all[1:4])^2+
+	sum(Est$std.all[5:8]))
+
+#Average Extracted Variance
+sum(Est$std.all[1:4]^2)/length(Est$std.all[1:4])
+
+#Factor scores
+cage_overall<-lavaan::predict(fit)
 
 #ITEM RESPONSE THEORY
 ##############################################################
@@ -554,3 +931,44 @@ plotGOF(lrt,conf=list())
 # theta<-thetaEst(it, responses)
 # q<-nextItem(catBank, theta,out=items_administered)
 # q$item
+
+#############################################################################
+#GENERATING SCORES
+#############################################################################
+
+alcohol_scores<-data.frame(audit_overall,
+						   audit_2dimension,
+						   audit_3dimension,
+						   cage_overall)
+colnames(alcohol_scores)<-c("audit_overall",
+                            "audit_2dim_d1",
+                            "audit_2dim_d2",
+                            "audit_3dim_d1",
+                            "audit_3dim_d2",
+                            "audit_3dim_d3",
+                            "cage_overall")
+
+rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+alcohol_scores_scaled<-lapply(alcohol_scores,rescale)
+alcohol_scores_scaled<-as.data.frame(alcohol_scores_scaled)
+
+write.csv(alcohol_scores_scaled,"/Users/jnv4/Desktop/alcohol_scores.csv")
+
+#############################################################################
+#VALIDITY MEASURE
+#############################################################################
+
+
+sf8_scores_scaled<-read.csv("/Users/jnv4/Desktop/sf8_scores.csv")
+depression_scores_scaled<-read.csv("/Users/jnv4/Desktop/depression_scores.csv")
+kessler_scores_scaled<-read.csv("/Users/jnv4/Desktop/kessler_scores.csv")
+
+cor_data<-data.frame(alcohol_scores_scaled,
+					 sf8_scores_scaled[2:4],
+					 depression_scores_scaled[2:3],
+					 kessler_scores_scaled[2:5])
+
+cor_data<-cor_data[data$redcap_event_name=="enrollment_arm_1",]
+
+
+Hmisc::rcorr(as.matrix(cor_data))

@@ -92,7 +92,7 @@ phq9_data1<-with(data,data.frame(phq9_b11,
 data_imputed <- mice(phq9_data1, seed = 2222, m=10)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-phq9_data<-complete(data_imputed,4)
+phq9_data<-mice::complete(data_imputed,4)
 
 #CES-D
 cesd_data1<-with(data,data.frame(e1,
@@ -121,7 +121,7 @@ cesd_data1<-with(data,data.frame(e1,
 data_imputed <- mice(cesd_data1, seed = 2222, m=10)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-cesd_data<-complete(data_imputed,4)
+cesd_data<-mice::complete(data_imputed,4)
 
 cesd_data$e4<-car::recode(cesd_data$e4,"0=3;1=2;2=1;3=0")
 cesd_data$e8<-car::recode(cesd_data$e8,"0=3;1=2;2=1;3=0")
@@ -518,33 +518,32 @@ nodeLabels<-c("Q1",
               "Q7",
               "Q8",
               "Q9",
-              "Q10",
               "General")
 
-color<-c(rep("grey",10),rep("white",1))
-borders<-c(rep("FALSE",10),rep("TRUE",1))
-labelcex<-c(rep(0.7,10),rep(1,1))
+color<-c(rep("grey",9),rep("white",1))
+borders<-c(rep("FALSE",9),rep("TRUE",1))
+labelcex<-c(rep(0.7,9),rep(1,1))
 
 tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
   width = 15,
  height = 10,compression = 'lzw',res=1200,bg = "white")
-semPlot::semPaths(fit,
-                  "model",
-                  "std",
-                  layout="tree2",
-                  style="lisrel",
-                  residuals=FALSE,
-                  # cut=1,
-                  # equalizeManifests=TRUE,
-                  # edge.color="black",
-                  exoCov=FALSE,
-                  intercepts=FALSE,
-                  nodeLabels=nodeLabels,
-                  label.scale=FALSE,
-                  edge.label.cex=0.8,
-                  label.cex=labelcex,
-                  color=color,
-                  borders=borders)
+  semPlot::semPaths(fit,
+                    "model",
+                    "std",
+                    layout="tree2",
+                    style="lisrel",
+                    residuals=FALSE,
+                    # cut=1,
+                    # equalizeManifests=TRUE,
+                    # edge.color="black",
+                    exoCov=FALSE,
+                    intercepts=FALSE,
+                    nodeLabels=nodeLabels,
+                    label.scale=FALSE,
+                    edge.label.cex=1,
+                    label.cex=labelcex,
+                    color=color,
+                    borders=borders)
                   # bifactor="general")
 dev.off()
 
@@ -556,7 +555,7 @@ sum(Est$std.all[1:9])^2/(sum(Est$std.all[1:9])^2+
 sum(Est$std.all[1:9]^2)/length(Est$std.all[1:9])
 
 #Factor scores
-phq9_overall<-predict(fit)
+phq9_overall<-lavaan::predict(fit)
 
 # # 2 factors model ###########################
 # cfa_model <- '
@@ -1257,41 +1256,50 @@ subset(Mod)#, mi > 10)
 
 nodeLabels<-c("Q1",
               "Q2",
-              "Q3",
+              # "Q3",
               "Q4",
               "Q5",
               "Q6",
-              "Q7",
+              # "Q7",
               "Q8",
               "Q9",
               "Q10",
+              "Q11",
+              "Q12",
+              "Q13",
+              "Q14",
+              "Q15",
+              "Q16",
+              "Q17",
+              "Q18",
+              "Q19",
+              "Q20",
               "General")
 
-color<-c(rep("grey",10),rep("white",1))
-borders<-c(rep("FALSE",10),rep("TRUE",1))
-labelcex<-c(rep(0.7,10),rep(1,1))
+color<-c(rep("grey",18),rep("white",1))
+borders<-c(rep("FALSE",18),rep("TRUE",1))
+labelcex<-c(rep(0.7,18),rep(1,1))
 
 tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
   width = 15,
  height = 10,compression = 'lzw',res=1200,bg = "white")
-semPlot::semPaths(fit,
-                  "model",
-                  "std",
-                  layout="tree2",
-                  style="lisrel",
-                  residuals=FALSE,
-                  # cut=1,
-                  # equalizeManifests=TRUE,
-                  # edge.color="black",
-                  exoCov=FALSE,
-                  intercepts=FALSE,
-                  nodeLabels=nodeLabels,
-                  label.scale=FALSE,
-                  edge.label.cex=0.8,
-                  label.cex=labelcex,
-                  color=color,
-                  borders=borders)
-                  # bifactor="general")
+  semPlot::semPaths(fit,
+                    "model",
+                    "std",
+                    layout="tree2",
+                    # style="lisrel",
+                    residuals=FALSE,
+                    # cut=1,
+                    # equalizeManifests=TRUE,
+                    # edge.color="black",
+                    exoCov=FALSE,
+                    intercepts=FALSE,
+                    nodeLabels=nodeLabels,
+                    label.scale=FALSE,
+                    edge.label.cex=1,
+                    label.cex=labelcex,
+                    color=color,
+                    borders=borders)
 dev.off()
 
 #Composite Reliabilty
@@ -1302,7 +1310,7 @@ sum(Est$std.all[1:18])^2/(sum(Est$std.all[1:18])^2+
 sum(Est$std.all[1:18]^2)/length(Est$std.all[1:18])
 
 #Factor scores
-cesd_overall<-predict(fit)
+cesd_overall<-lavaan::predict(fit)
 
 # # 2 factors model ###########################
 # cfa_model <- '
@@ -1678,3 +1686,5 @@ colnames(depression_scores)<-c("PHQ9_overall",
 rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 depression_scores_scaled<-lapply(depression_scores,rescale)
 depression_scores_scaled<-as.data.frame(depression_scores_scaled)
+
+write.csv(depression_scores_scaled,"/Users/jnv4/Desktop/depression_scores.csv")

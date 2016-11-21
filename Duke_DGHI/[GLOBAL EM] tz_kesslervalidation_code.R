@@ -39,7 +39,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -81,10 +81,10 @@ kessler_data1<-with(data,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,
 	d10))
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-data_imputed <- mice(kessler_data1, seed = 2222, m=50)
+data_imputed <- mice(kessler_data1, seed = 2222, m=10)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-kessler_data<-complete(data_imputed,4)
+kessler_data<-mice::complete(data_imputed,4)
 
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -510,7 +510,7 @@ sum(Est$std.all[1:10]^2)/length(Est$std.all[1:10])
 by(Est$std.all[13:50],Est$lhs[13:50],mean)
 
 #Factor scores
-kessler_overall<-predict(fit)
+kessler_overall<-lavaan::predict(fit)
 
 # 2 factors model ###########################
 cfa_model <- '
@@ -591,12 +591,12 @@ semPlot::semPaths(fit,
                   "std",
                   layout="tree2",
                   style="lisrel",
-                  residuals=TRUE,
+                  residuals=FALSE,
                   # cut=1,
                   # equalizeManifests=TRUE,
                   # edge.color="black",
                   exoCov=FALSE,
-                  # intercepts=FALSE,
+                  intercepts=FALSE,
                   nodeLabels=nodeLabels,
                   label.scale=FALSE,
                   edge.label.cex=0.8,
@@ -621,7 +621,7 @@ sum(Est$std.all[1:6]^2)/length(Est$std.all[1:6])
 sum(Est$std.all[7:10]^2)/length(Est$std.all[7:10])
 
 #Factor scores
-kessler_dimensions<-predict(fit)
+kessler_dimensions<-lavaan::predict(fit)
 
 # Second ordered factor model ###########################
 # cfa_model <- '
@@ -1220,7 +1220,7 @@ tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in',
                     "std",
                     layout="tree2",
                     style="lisrel",
-                    residuals=TRUE,
+                    residuals=FALSE,
                     # cut=1,
                     # equalizeManifests=TRUE,
                     # edge.color="black",
@@ -1246,7 +1246,7 @@ sum(Est$std.all[1:6]^2)/length(Est$std.all[1:6])
 by(Est$std.all[8:30],Est$lhs[8:30],mean)
 
 #Factor scores
-kessler_k6<-predict(fit)
+kessler_k6<-lavaan::predict(fit)
 
 #ITEM RESPONSE THEORY
 ##############################################################
@@ -1318,4 +1318,5 @@ rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 kessler_scores_scaled<-lapply(kessler_scores,rescale)
 kessler_scores_scaled<-as.data.frame(kessler_scores_scaled)
 
+write.csv(kessler_scores_scaled,"/Users/jnv4/Desktop/kessler_scores.csv")
 
