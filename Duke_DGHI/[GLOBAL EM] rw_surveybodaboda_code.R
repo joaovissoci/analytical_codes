@@ -129,7 +129,9 @@ safety_habits_data<-with(data,data.frame(crash_opinion___0,
                                          scratches_dhelmet,
                                          strap_dhelmet,
                                          glass_helmet,
-                                         fit_helmet
+                                         fit_helmet,
+                                         helmet_value,
+                                         helmet_strap_value
                                          ))
 
 #sub-sets for numeric
@@ -146,10 +148,14 @@ safety_habits_data$hairnets_available<-car::recode(safety_habits_data$hairnets_a
 safety_habits_data$headlights_always<-car::recode(safety_habits_data$headlights_always, "c(0,1,2,3)='0'; 4='1'; NA='2'")
 safety_habits_data$headlights_night<-car::recode(safety_habits_data$headlights_night, "c(0,1,2,3)='0'; 4='1'; NA='2'")
 safety_habits_data$helmet_damage<-car::recode(safety_habits_data$helmet_damage, "c(0,1,2,3)='0'; 4='1'; NA='2'")
+safety_habits_data$helmet_value<-car::recode(safety_habits_data$helmet_value, "c(1,2,3,4)='0'; 5='1'; NA='2'")
+safety_habits_data$helmet_strap_value<-car::recode(safety_habits_data$helmet_strap_value, "c(1,2,3,4)='0'; 5='1'; NA='2'")
+safety_habits_data$colleagues_risks<-car::recode(safety_habits_data$colleagues_risks, "c(0,1,2,3)='0'; 4='1'; NA='2'")
+safety_habits_data$helmet_colleagues<-car::recode(safety_habits_data$helmet_colleagues, "c(0,1,2,3)='0'; 4='1'; NA='2'")
 
 
 #recoding outcomes
-safety_habits_data$crash_lifetime<-as.factor(safety_habits_data$crash_lifetime)
+outcome_data$crash_lifetime<-as.factor(outcome_data$crash_lifetime)
 
 #recoding hours worked per week
 ses_data$hour_week<-ses_data$hours_wkvehicle*ses_data$day_wkvehicle
@@ -208,14 +214,233 @@ describe(numericNRTC$helmet_strap_use)
 ## safety_habits
 
 #safe habs
-helmet_mctable <- table(numeric$helmet_mc ,numeric$crash_lifetime)
+helmet_mctable1 <- table(safety_habits_data$helmet_mc)
+helmet_mctable1
+prop.table(helmet_mctable1)
+helmet_mctable2 <- table(safety_habits_data$helmet_mc,
+                        outcome_data$crash_lifetime)
+helmet_mctable2
+prop.table(helmet_mctable2)
 assocstats(helmet_mctable)
 
 helmet_strap_use <- table(numeric$helmet_strap_use ,numeric$helmet_strap_use)
 assocstats(helmet_strap_use)
 
+#helmet_strap_use
+table1 <- table(safety_habits_data$helmet_strap_use)
+table1
+prop.table(table1)
+table2 <- table(safety_habits_data$helmet_strap_use,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#hairnets_available
+table1 <- table(safety_habits_data$hairnets_available)
+table1
+prop.table(table1)
+table2 <- table(safety_habits_data$hairnets_available,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#headlights_always
+table1 <- table(safety_habits_data$headlights_always)
+table1
+prop.table(table1)
+table2 <- table(safety_habits_data$headlights_always,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table2)
+
+#headlights_night
+table1 <- table(safety_habits_data$headlights_night)
+table1
+prop.table(table1)
+table2 <- table(safety_habits_data$headlights_night,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#helmet_damage
+table1 <- table(safety_habits_data$helmet_damage)
+table1
+prop.table(table1)
+
+table2 <- table(safety_habits_data$helmet_damage,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#cracks_dhelmet
+table1 <- table(safety_habits_data$cracks_dhelmet)
+table1
+prop.table(table1)
+
+table2 <- table(safety_habits_data$cracks_dhelmet,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#scratches_dhelmet
+table1 <- table(safety_habits_data$scratches_dhelmet)
+table1
+prop.table(table1)
+
+table2 <- table(safety_habits_data$scratches_dhelmet,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#glass_helmet
+table1 <- table(safety_habits_data$glass_helmet)
+table1
+prop.table(table1)
+
+table2 <- table(safety_habits_data$glass_helmet,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#fit_helmet
+table1 <- table(safety_habits_data$fit_helmet)
+table1
+prop.table(table1)
+
+table2 <- table(safety_habits_data$fit_helmet,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#helmet_colleagues
+table1 <- table(safety_habits_data$helmet_colleagues)
+table1
+prop.table(table1)
+
+table2 <- table(safety_habits_data$helmet_colleagues,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#colleagues_risks
+table1 <- table(safety_habits_data$colleagues_risks)
+table1
+prop.table(table1)
+
+table2 <- table(safety_habits_data$colleagues_risks,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#helmet_value
+table1 <- table(safety_habits_data$helmet_value)
+table1
+prop.table(table1)
+assocstats(table)
+table2 <- table(safety_habits_data$helmet_value,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2)
+assocstats(table)
+
+#helmet_strap_value
+table1 <- table(safety_habits_data$helmet_strap_value)
+table1
+prop.table(table1)
+table2 <- table(safety_habits_data$helmet_strap_value,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
 ######################################################
 #TABLE 2
+######################################################
+#crash_opinion___0
+table1 <- table(safety_habits_data$crash_opinion___0)
+table1
+prop.table(table1)
+
+table2 <- table(safety_habits_data$crash_opinion___0,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#crash_opinion___1
+table1 <- table(safety_habits_data$crash_opinion___1)
+table1
+prop.table(table1)
+table2 <- table(safety_habits_data$crash_opinion___1,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#crash_opinion___2
+table1 <- table(safety_habits_data$crash_opinion___2)
+table1
+prop.table(table1)
+table2 <- table(safety_habits_data$crash_opinion___2,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#crash_opinion___3
+table1 <- table(safety_habits_data$crash_opinion___3)
+table1
+prop.table(table1)
+table2 <- table(safety_habits_data$crash_opinion___3,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#crash_opinion___4
+table1 <- table(safety_habits_data$crash_opinion___4)
+table1
+prop.table(table1)
+table2 <- table(safety_habits_data$crash_opinion___4,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#crash_opinion___5
+table1 <- table(safety_habits_data$crash_opinion___5)
+table1
+prop.table(table1)
+table2 <- table(safety_habits_data$crash_opinion___5,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+#crash_opinion___6
+table1 <- table(safety_habits_data$crash_opinion___6)
+table1
+prop.table(table1)
+table2 <- table(safety_habits_data$crash_opinion___6,
+                        outcome_data$crash_lifetime)
+table2
+prop.table(table2,2)
+assocstats(table)
+
+
+######################################################
+#TABLE 3
 ######################################################
 
 #sufered a RTC
