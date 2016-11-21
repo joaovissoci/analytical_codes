@@ -61,7 +61,7 @@ library(vcd)
 
 #data_cp<-read.csv("/home/joao/Desktop/data_cp.csv",sep=',')
 #data_rs<-read.csv("/home/joao/Desktop/data_rs.csv",sep=',')
-data <- read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Rwanda/RwandaSurvey_DATA_2016-08-15_1346.csv")
+data <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Rwanda/RwandaSurvey_DATA_2016-08-15_1346.csv")
 
 ######################################################
 #DATA MANAGEMENT

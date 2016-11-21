@@ -324,7 +324,7 @@ write.csv(count_data,"/Users/joaovissoci/blah.csv")
 
 dat<-read.csv("/Users/joaovissoci/blah.csv")
 colnames(count_data)<-c("var","likert","value")
-dat2<-cast(dat,var~likert)
+dat2<-cast(count_data,var~likert)
 colnames(dat2)<-c("var","likert1","likert2","likert3",
 	"likert4","likert5")
 # dat3<-rbind(dat2,likert)
@@ -348,7 +348,13 @@ colnames(dat2)<-c("var","Strongly Disagree",
 					"Agree",
 					"Strongly Agree")
 
-HH::likert(dat2, main="",
+NAto0<-function(x){
+	car::recode(x,"NA=0")
+	}
+
+dat_2_2<-sapply(dat2,NAto0)
+
+HH::likert(dat_2_2[,-1], main="",
 			as.percent=TRUE, rightAxisLabels=NULL, 
 			# ylab.right="Perceptions",
             positive.order=TRUE,
@@ -522,6 +528,8 @@ plot_data$color[plot_data$feq_2 >= 0 & plot_data$feq_2 < 5.883]="lightcyan1"
 plot_data$color[plot_data$feq_2 >= 5.883 & plot_data$feq_2 < 11.76]="lightcyan2"
 plot_data$color[plot_data$feq_2 >= 11.76 & plot_data$feq_2 < 26.47]="lightcyan3"
 plot_data$color[plot_data$feq_2 >= 26.47]="lightcyan4"
+
+write.csv(plot_data,"/Users/joaovissoci/plot_data.csv")
 
 avseq <- ggplot(plot_data, aes(y=variable, x=value)) + 
   geom_tile(fill=plot_data$color) + 
