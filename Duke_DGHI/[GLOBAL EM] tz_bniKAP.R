@@ -36,7 +36,7 @@ character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/BNI/Tz_bniKAP_data.csv",sep=",")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/BNI/Tz_bniKAP_data.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -485,7 +485,19 @@ figure3_data_PDis<-with(data,data.frame(alcoholic_close_friend,
 							recovered_alc_treat_same,
 							not_date_hospital_for_alc))
 
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+imp <- mice(figure3_data_PDis, seed = 2222, m=5)
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+figure3_data_PDis<-complete(imp,4)
+
 discrimination<-rowSums(figure3_data_PDis)
+discrimination<-na.omit(discrimination)
+rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+# discrimination_scaled<-lapply(discrimination,rescale)
+x<-rescale(discrimination)
+summary(x)
+x_2<-car::recode(x,"0:50='a';else='b'")
 
 figure3_data_PDev<-with(data,data.frame(alc_treatment_intelligent,
 							alcoholic_trustworthy,
@@ -493,7 +505,21 @@ figure3_data_PDev<-with(data,data.frame(alc_treatment_intelligent,
 							think_less_treated_person,
 							less_opinion_trtd_person))
 
-devaluation<-rowSums(figure3_data_PDev,figure3_data_PDev)
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+imp <- mice(figure3_data_PDev, seed = 2222, m=5)
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+figure3_data_PDev<-complete(imp,4)
+
+
+devaluation<-rowSums(figure3_data_PDev)
+devaluation<-na.omit(devaluation)
+rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+# devaluation_scaled<-lapply(devaluation,rescale)
+z<-rescale(devaluation)
+summary(z)
+z_2<-car::recode(z,"0:50='a';else='b'")
+
 
 figure3_data<-data.frame(figure3_data_PDis,figure3_data_PDev)
 

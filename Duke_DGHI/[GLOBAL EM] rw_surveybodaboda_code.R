@@ -27,7 +27,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"moments","GPArotation","nFactors","boot","psy", "car",
 	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
-	"lmerTest","dplyr"),library, character.only=T)
+	"lmerTest","dplyr","mice"),library, character.only=T)
 library(vcd)
 #Package and codes to pull data from goodle sheets
 #devtools::install_github("jennybc/googlesheets")
@@ -61,7 +61,7 @@ library(vcd)
 
 #data_cp<-read.csv("/home/joao/Desktop/data_cp.csv",sep=',')
 #data_rs<-read.csv("/home/joao/Desktop/data_rs.csv",sep=',')
-data <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Rwanda/RwandaSurvey_DATA_2016-08-15_1346.csv")
+data <- read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Rwanda/RwandaSurvey_DATA_2016-08-15_1346.csv")
 
 ######################################################
 #DATA MANAGEMENT
@@ -142,16 +142,16 @@ safety_habits_data<-with(data,data.frame(crash_opinion___0,
 # summary(numericNRTC)
 
 #recoding safe hab to N/A NR and , 0,1,2,3 = uso inadequado
-safety_habits_data$helmet_mc<-car::recode(safety_habits_data$helmet_mc, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-safety_habits_data$helmet_strap_use<-car::recode(safety_habits_data$helmet_strap_use, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-safety_habits_data$hairnets_available<-car::recode(safety_habits_data$hairnets_available, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-safety_habits_data$headlights_always<-car::recode(safety_habits_data$headlights_always, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-safety_habits_data$headlights_night<-car::recode(safety_habits_data$headlights_night, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-safety_habits_data$helmet_damage<-car::recode(safety_habits_data$helmet_damage, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-safety_habits_data$helmet_value<-car::recode(safety_habits_data$helmet_value, "c(1,2,3,4)='0'; 5='1'; NA='2'")
-safety_habits_data$helmet_strap_value<-car::recode(safety_habits_data$helmet_strap_value, "c(1,2,3,4)='0'; 5='1'; NA='2'")
-safety_habits_data$colleagues_risks<-car::recode(safety_habits_data$colleagues_risks, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-safety_habits_data$helmet_colleagues<-car::recode(safety_habits_data$helmet_colleagues, "c(0,1,2,3)='0'; 4='1'; NA='2'")
+safety_habits_data$helmet_mc<-car::recode(safety_habits_data$helmet_mc, "c(0,1,2,3)='0'; 4='1'")
+safety_habits_data$helmet_strap_use<-car::recode(safety_habits_data$helmet_strap_use, "c(0,1,2,3)='0'; 4='1'")
+safety_habits_data$hairnets_available<-car::recode(safety_habits_data$hairnets_available, "c(0,1,2,3)='0'; 4='1'")
+safety_habits_data$headlights_always<-car::recode(safety_habits_data$headlights_always, "c(0,1,2,3)='0'; 4='1'")
+safety_habits_data$headlights_night<-car::recode(safety_habits_data$headlights_night, "c(0,1,2,3)='0'; 4='1'")
+safety_habits_data$helmet_damage<-car::recode(safety_habits_data$helmet_damage, "c(0,1,2,3)='0'; 4='1'")
+safety_habits_data$helmet_value<-car::recode(safety_habits_data$helmet_value, "c(1,2,3,4)='0'; 5='1'")
+safety_habits_data$helmet_strap_value<-car::recode(safety_habits_data$helmet_strap_value, "c(1,2,3,4)='0'; 5='1'")
+safety_habits_data$colleagues_risks<-car::recode(safety_habits_data$colleagues_risks, "c(0,1,2,3)='0'; 4='1'")
+safety_habits_data$helmet_colleagues<-car::recode(safety_habits_data$helmet_colleagues, "c(0,1,2,3)='0'; 4='1'")
 
 
 #recoding outcomes
@@ -159,6 +159,27 @@ outcome_data$crash_lifetime<-as.factor(outcome_data$crash_lifetime)
 
 #recoding hours worked per week
 ses_data$hour_week<-ses_data$hours_wkvehicle*ses_data$day_wkvehicle
+
+#Imputing missing data
+
+ses_data_imputed<-mice(data.frame(ses_data,data$crash_lifetime,data$near_miss_month), seed = 2222, m=10)
+ses_data<-complete(ses_data_imputed,4)
+
+safety_habits_data_imputed<-mice(safety_habits_data, seed = 2222, m=10)
+safety_habits_data<-complete(safety_habits_data_imputed,4)
+safety_habits_data$helmet_mc<-car::recode(
+  safety_habits_data$helmet_mc,"NA=1")
+
+outcome_data$crash_lifetime<-ses_data$data.crash_lifetime
+outcome_data$near_miss_month<-ses_data$data.near_miss_month
+outcome_data$injured_crash<-car::recode(
+  outcome_data$injured_crash,"NA=0")
+outcome_data$hosp_crash<-car::recode(
+  outcome_data$hosp_crash,"NA=0")
+outcome_data$disability_crash<-car::recode(
+  outcome_data$disability_crash,"NA=0")
+
+
 ######################################################
 #TABLE 1
 ######################################################
@@ -168,23 +189,23 @@ table(safety_habits_data$crash_lifetime)
 
 #age
 describe(ses_data$age)
-describeBy(ses_data$age,safety_habits_data$crash_lifetime)
-t.test(ses_data$age~safety_habits_data$crash_lifetime)
+describeBy(ses_data$age,outcome_data$crash_lifetime)
+t.test(ses_data$age~outcome_data$crash_lifetime)
 
 #hours per day 
 describe(ses_data$hours_wkvehicle)
-describeBy(ses_data$hours_wkvehicle,safety_habits_data$crash_lifetime)
-t.test(ses_data$hours_wkvehicle~safety_habits_data$crash_lifetime)
+describeBy(ses_data$hours_wkvehicle,outcome_data$crash_lifetime)
+t.test(ses_data$hours_wkvehicle~outcome_data$crash_lifetime)
 
 #days per wk
 describe(ses_data$day_wkvehicle)
-describeBy(ses_data$day_wkvehicle,safety_habits_data$crash_lifetime)
-t.test(ses_data$day_wkvehicle~safety_habits_data$crash_lifetime)
+describeBy(ses_data$day_wkvehicle,outcome_data$crash_lifetime)
+t.test(ses_data$day_wkvehicle~outcome_data$crash_lifetime)
 
 #hours per wk
 describe(ses_data$hour_week)
-describeBy(ses_data$hour_week,safety_habits_data$crash_lifetime)
-t.test(ses_data$hour_week~safety_habits_data$crash_lifetime)
+describeBy(ses_data$hour_week,outcome_data$crash_lifetime)
+t.test(ses_data$hour_week~outcome_data$crash_lifetime)
 
 # #work start time - make 19:30 - 19,5...
 # table(numeric$time_start_wk)
@@ -198,8 +219,8 @@ t.test(ses_data$hour_week~safety_habits_data$crash_lifetime)
 
 #years worked
 describe(ses_data$years_wkvehicle)
-describeBy(ses_data$years_wkvehicle,safety_habits_data$crash_lifetime)
-t.test(ses_data$years_wkvehicle~safety_habits_data$crash_lifetime)
+describeBy(ses_data$years_wkvehicle,outcome_data$crash_lifetime)
+t.test(ses_data$years_wkvehicle~outcome_data$crash_lifetime)
 
 #helmet_mc
 table(safety_habits_data$helmet_mc)
@@ -221,10 +242,7 @@ helmet_mctable2 <- table(safety_habits_data$helmet_mc,
                         outcome_data$crash_lifetime)
 helmet_mctable2
 prop.table(helmet_mctable2)
-assocstats(helmet_mctable)
-
-helmet_strap_use <- table(numeric$helmet_strap_use ,numeric$helmet_strap_use)
-assocstats(helmet_strap_use)
+assocstats(helmet_mctable1)
 
 #helmet_strap_use
 table1 <- table(safety_habits_data$helmet_strap_use)
@@ -234,7 +252,8 @@ table2 <- table(safety_habits_data$helmet_strap_use,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
+fisher.test(table2)
 
 #hairnets_available
 table1 <- table(safety_habits_data$hairnets_available)
@@ -245,6 +264,7 @@ table2 <- table(safety_habits_data$hairnets_available,
 table2
 prop.table(table2,2)
 assocstats(table)
+fisher.test(table2)
 
 #headlights_always
 table1 <- table(safety_habits_data$headlights_always)
@@ -264,7 +284,7 @@ table2 <- table(safety_habits_data$headlights_night,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #helmet_damage
 table1 <- table(safety_habits_data$helmet_damage)
@@ -275,7 +295,7 @@ table2 <- table(safety_habits_data$helmet_damage,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #cracks_dhelmet
 table1 <- table(safety_habits_data$cracks_dhelmet)
@@ -286,7 +306,7 @@ table2 <- table(safety_habits_data$cracks_dhelmet,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #scratches_dhelmet
 table1 <- table(safety_habits_data$scratches_dhelmet)
@@ -297,7 +317,7 @@ table2 <- table(safety_habits_data$scratches_dhelmet,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #glass_helmet
 table1 <- table(safety_habits_data$glass_helmet)
@@ -308,7 +328,7 @@ table2 <- table(safety_habits_data$glass_helmet,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #fit_helmet
 table1 <- table(safety_habits_data$fit_helmet)
@@ -319,7 +339,7 @@ table2 <- table(safety_habits_data$fit_helmet,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #helmet_colleagues
 table1 <- table(safety_habits_data$helmet_colleagues)
@@ -330,7 +350,7 @@ table2 <- table(safety_habits_data$helmet_colleagues,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #colleagues_risks
 table1 <- table(safety_habits_data$colleagues_risks)
@@ -341,18 +361,18 @@ table2 <- table(safety_habits_data$colleagues_risks,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #helmet_value
 table1 <- table(safety_habits_data$helmet_value)
 table1
 prop.table(table1)
-assocstats(table)
+
 table2 <- table(safety_habits_data$helmet_value,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2)
-assocstats(table)
+assocstats(table2)
 
 #helmet_strap_value
 table1 <- table(safety_habits_data$helmet_strap_value)
@@ -362,7 +382,7 @@ table2 <- table(safety_habits_data$helmet_strap_value,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 ######################################################
 #TABLE 2
@@ -376,7 +396,7 @@ table2 <- table(safety_habits_data$crash_opinion___0,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #crash_opinion___1
 table1 <- table(safety_habits_data$crash_opinion___1)
@@ -386,7 +406,7 @@ table2 <- table(safety_habits_data$crash_opinion___1,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #crash_opinion___2
 table1 <- table(safety_habits_data$crash_opinion___2)
@@ -396,7 +416,7 @@ table2 <- table(safety_habits_data$crash_opinion___2,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #crash_opinion___3
 table1 <- table(safety_habits_data$crash_opinion___3)
@@ -406,7 +426,7 @@ table2 <- table(safety_habits_data$crash_opinion___3,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #crash_opinion___4
 table1 <- table(safety_habits_data$crash_opinion___4)
@@ -416,7 +436,7 @@ table2 <- table(safety_habits_data$crash_opinion___4,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #crash_opinion___5
 table1 <- table(safety_habits_data$crash_opinion___5)
@@ -426,7 +446,7 @@ table2 <- table(safety_habits_data$crash_opinion___5,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 #crash_opinion___6
 table1 <- table(safety_habits_data$crash_opinion___6)
@@ -436,7 +456,7 @@ table2 <- table(safety_habits_data$crash_opinion___6,
                         outcome_data$crash_lifetime)
 table2
 prop.table(table2,2)
-assocstats(table)
+assocstats(table2)
 
 
 ######################################################
@@ -528,20 +548,23 @@ prop.table(crash_year)
 #TABLE 3.
 ######################################################
 ## OR table ##
+
+reg_data<-data.frame(ses_data,safety_habits_data,outcome_data)
+
 #crashlifetime
-crashlifetime <-glm(as.factor(numeric$crash_lifetime) ~ numeric$age + 
-					# numeric$hours_wkvehicle + 
-					# numeric$day_wkvehicle +
-     #          		# numeric$time_start_wk + 
-     #          		# numeric$time_stop_wk + 
-              		numeric$time_motodr + 
-              		numeric$helmet_mc +
-              		numeric$belt_driver + 
-              		numeric$belt_back + 
-              		numeric$belt_passenger +
-            	  	numeric$stop_fast + 
-            	  	numeric$road_wrongside
-                   ,family=binomial, data=numeric)
+crashlifetime <-glm(as.factor(crash_lifetime) ~ 
+                  age + 
+					# hours_wkvehicle + 
+					# day_wkvehicle +
+     #          		# time_start_wk + 
+     #          		# time_stop_wk + 
+              		time_motodr + 
+              		hairnets_available +
+              		headlights_always + 
+              		helmet_damage +
+            	  	stop_fast + 
+            	  	road_wrongside
+                   ,family=binomial, data=reg_data)
 summary(crashlifetime)
 exp(coef(crashlifetime))
 exp(confint(crashlifetime))
