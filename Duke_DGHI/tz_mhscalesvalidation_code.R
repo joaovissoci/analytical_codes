@@ -38,10 +38,15 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+
+data2<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tz_bnipatients_data.csv")
 
 ######################################################
 #DATA MANAGEMENT
+######################################################
+
+#Data WAVE 1
 ######################################################
 
 #subsetting data set to keep only baseline data
@@ -141,6 +146,35 @@ data_imputed <- mice(cage_data, seed = 2222, m=10)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
 cage_data<-mice::complete(data_imputed,4)
+
+
+#Data WAVE 2
+######################################################
+#getting second dataset for external validity
+audit_data2<-with(data2,data.frame(
+				how_often_drink,                  
+				number_drinks_day,
+				how_often_6_more_drinks,
+				how_often_cant_stop_drinking,
+				fail_expectation_bc_drinking,
+				how_often_drink_morning,
+				how_often_guilt_postdrinking,
+				how_often_no_memory_postdrinking,
+				drinking_injured_you_or_someone,
+				others_concerned_your_drinking,
+				consumption,
+				alcohol_6h_ainjury,
+				pos_etoh))
+
+#Getting only participants that responded about alcohol consumption
+audit_data2<-audit_data2[which(is.na(audit_data2$consumption)==FALSE),]
+
+#imputing 0 for the answers from abstainers
+NAto0<-function(x){
+	car::recode(x,"NA=0")
+	}
+
+audit_data_cleaned<-lapply(audit_data2[1:10],NAto0)
 
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -445,17 +479,28 @@ nodeLabels<-c("Q1",
               "Q10",
               "AUDIT")
 
-color<-c(rep("grey",10),rep("white",1))
+color<-c(rep("grey30",10),rep("white",1))
 borders<-c(rep("FALSE",10),rep("TRUE",1))
-labelcex<-c(rep(0.7,10),rep(1,1))
+labelcex<-c(rep(1.5,10),rep(1.5,1))
 
 tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
   width = 15,
  height = 10,compression = 'lzw',res=1200,bg = "white")
-semPaths(fit,"std",residuals=TRUE, cut=1,
-  equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
-  intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
-  edge.label.cex=1, label.cex=labelcex, color=color,borders=borders)
+qgraph(fit,
+		"std",
+		# residuals=TRUE,
+		cut=1,
+  		equalizeManifests=TRUE,
+  		edge.color="black",
+  		exoCov=FALSE,
+  		intercepts=TRUE,
+  		nodeLabels=nodeLabels,
+  		label.scale=FALSE,
+  		edge.label.cex=1,
+  		label.cex=labelcex,
+  		# color=color,
+  		borders=borders,
+  		curvePivot = TRUE)
 dev.off()
 
 ### Modification Indexes
@@ -471,6 +516,12 @@ sum(Est$std.all[1:10]^2)/length(Est$std.all[1:10])
 
 #Factor scores
 audit_overall<-lavaan::predict(fit)
+
+#Thresholds
+with(subset(Est, op == "|"),
+  by(std.all,lhs,mean))
+tau<-as.data.frame(with(subset(Est, op == "|"),
+  by(std.all,lhs,mean))[1:9])
 
 # 2 factor model ###########
 
@@ -952,23 +1003,97 @@ rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 alcohol_scores_scaled<-lapply(alcohol_scores,rescale)
 alcohol_scores_scaled<-as.data.frame(alcohol_scores_scaled)
 
-write.csv(alcohol_scores_scaled,"/Users/jnv4/Desktop/alcohol_scores.csv")
+# write.csv(alcohol_scores_scaled,"/Users/jnv4/Desktop/alcohol_scores.csv")
+
+Hmisc::rcorr(as.matrix(alcohol_scores),type="spearman")
+
+cor(alcohol_scores,method="spearman")
+
 
 #############################################################################
 #VALIDITY MEASURE
 #############################################################################
+# sf8_scores_scaled<-read.csv("/Users/jnv4/Desktop/sf8_scores.csv")
+# depression_scores_scaled<-read.csv("/Users/jnv4/Desktop/depression_scores.csv")
+# kessler_scores_scaled<-read.csv("/Users/jnv4/Desktop/kessler_scores.csv")
+
+# cor_data<-data.frame(alcohol_scores_scaled,
+# 					 sf8_scores_scaled[2:4],
+# 					 depression_scores_scaled[2:3],
+# 					 kessler_scores_scaled[2:5])
+
+# cor_data<-cor_data[data$redcap_event_name=="enrollment_arm_1",]
 
 
-sf8_scores_scaled<-read.csv("/Users/jnv4/Desktop/sf8_scores.csv")
-depression_scores_scaled<-read.csv("/Users/jnv4/Desktop/depression_scores.csv")
-kessler_scores_scaled<-read.csv("/Users/jnv4/Desktop/kessler_scores.csv")
+# Hmisc::rcorr(as.matrix(cor_data))
 
-cor_data<-data.frame(alcohol_scores_scaled,
-					 sf8_scores_scaled[2:4],
-					 depression_scores_scaled[2:3],
-					 kessler_scores_scaled[2:5])
+audit2<-as.data.frame(audit_data_cleaned)
+audit_score2<-rowSums(audit2)
+audit_score2_1<-rowSums(audit2[1:3])
+audit_score2_2<-rowSums(audit2[4:10])
+audit_score3_1<-rowSums(audit2[1:3])
+audit_score3_2<-rowSums(audit2[4:6])
+audit_score3_3<-rowSums(audit2[7:10])
 
-cor_data<-cor_data[data$redcap_event_name=="enrollment_arm_1",]
 
 
-Hmisc::rcorr(as.matrix(cor_data))
+rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+# audit_score2_scaled<-lapply(alcohol_scores,rescale)
+# alcohol_scores_scaled<-as.data.frame(alcohol_scores_scaled)
+audit_score2_scaled<-rescale(scale(rowSums(audit2)))
+audit_score2_1_scaled<-rescale(scale(rowSums(audit2[1:3])))
+audit_score2_2_scaled<-rescale(scale(rowSums(audit2[4:10])))
+audit_score3_1_scaled<-rescale(scale(rowSums(audit2[1:3])))
+audit_score3_2_scaled<-rescale(scale(rowSums(audit2[4:6])))
+audit_score3_3_scaled<-rescale(scale(rowSums(audit2[7:10])))
+
+describeBy(audit_score2,audit_data$alcohol_6h_ainjury)
+by(audit_score2_scaled,audit_data2$alcohol_6h_ainjury,summary)
+wilcox.test(audit_score2_scaled~audit_data2$alcohol_6h_ainjury)
+
+# describeBy(audit_score2_1_scaled,audit_data$alcohol_6h_ainjury)
+by(audit_score2_1_scaled,audit_data2$alcohol_6h_ainjury,summary)
+wilcox.test(audit_score2_1_scaled~audit_data2$alcohol_6h_ainjury)
+
+# describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
+by(audit_score2_2_scaled,audit_data2$alcohol_6h_ainjury,summary)
+wilcox.test(audit_score2_2_scaled~audit_data2$alcohol_6h_ainjury)
+
+# describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
+by(audit_score3_1_scaled,audit_data2$alcohol_6h_ainjury,summary)
+wilcox.test(audit_score2_2_scaled~audit_data2$alcohol_6h_ainjury)
+
+# describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
+by(audit_score3_2_scaled,audit_data2$alcohol_6h_ainjury,summary)
+wilcox.test(audit_score3_2_scaled~audit_data2$alcohol_6h_ainjury)
+
+# describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
+by(audit_score3_3_scaled,audit_data2$alcohol_6h_ainjury,summary)
+wilcox.test(audit_score3_2_scaled~audit_data2$alcohol_6h_ainjury)
+
+
+
+
+
+
+describeBy(audit_score2,audit_data$pos_etoh)
+
+wilcox.test(audit_score2~audit_data$pos_etoh)
+
+boxplot<-data.frame(audit_score2,grop=audit_data$alcohol_6h_ainjury)
+boxplot<-na.omit(boxplot)
+
+library(ggplot2)
+# Use single color
+p<-ggplot(boxplot, aes(x=as.factor(grop), y=audit_score2)) +
+  geom_boxplot(fill='#A4A4A4', color="black")
+p + theme(legend.position="left")
+# p + scale_fill_grey() + theme_classic()
+
+# Change box plot colors by groups
+p<-ggplot(ToothGrowth, aes(x=dose, y=len, fill=dose)) +
+  geom_boxplot()
+p
+
+
+

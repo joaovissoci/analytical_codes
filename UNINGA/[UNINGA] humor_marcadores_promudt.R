@@ -31,7 +31,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArota
 #IMPORTING DATA
 ########################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/jnv4/Desktop/mood_bio.csv",sep=",")
+data<-read.csv("/Users/joaoissoci/Desktop/mood_bio.csv",sep=",")
 
 #information between " " are the path to the directory in your computer where the data is stored
 

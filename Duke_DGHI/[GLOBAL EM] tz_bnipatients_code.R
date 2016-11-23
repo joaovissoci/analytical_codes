@@ -1,9 +1,46 @@
+######################################################################
+#BASIC R STATISTICS TEMPLATE
+######################################################################
+#
+#
+#
+#
+#
+######################################################################
+#SETTING ENVIRONMENT
+######################################################################
+#PASCKAGES INSTALLATION CODES
+#install.packages("Hmisc")
+#install.packages("car")
+#install.packages("psych")
+#install.packages("nortest")
+#install.packages("ggplot2")
+#install.packages("pastecs")
+#install.packages("repmis")
+#install.packages("mvnormtest")
+#install.packages("polycor")
 
+#PACKAGES LOADING CODE
+#Load packages neededz for the analysis
+#library(Hmisc)
+
+#All packages must be installes with install.packages() function
+lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis",
+	"mvnormtest","polycor"), 
+library, character.only=T)
+
+######################################################################
+#IMPORTING DATA
+######################################################################
+#LOADING DATA FROM A .CSV FILE
 
 data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tz_bnipatients_data.csv")
 
+######################################################################
+#DATA MANAGEMENT
+######################################################################
 
-names(data)\
+names(data)
 
 audit_data<-with(data,data.frame(
 				consumption,
@@ -37,6 +74,9 @@ audit_score_cat_nonabst<-subset(data.frame(
 	audit_score,audit_data$drink_drive,),
 	audit_data_NAto0[1]!=0)
 
+######################################################################
+#TABLE 1
+######################################################################
 by(audit_score_cat_nonabst,)
 with(audit_score_cat_nonabst,
 	wilcox.test(audit_score~audit_data.drink_drive))
