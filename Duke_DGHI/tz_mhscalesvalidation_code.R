@@ -486,20 +486,20 @@ labelcex<-c(rep(1.5,10),rep(1.5,1))
 tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
   width = 15,
  height = 10,compression = 'lzw',res=1200,bg = "white")
-qgraph(fit,
-		"std",
+semPlot::semPaths(fit,
+		"model")#,
 		# residuals=TRUE,
 		cut=1,
   		equalizeManifests=TRUE,
   		edge.color="black",
   		exoCov=FALSE,
-  		intercepts=TRUE,
-  		nodeLabels=nodeLabels,
+  		intercepts=FALSE,
+  		# nodeLabels=nodeLabels,
   		label.scale=FALSE,
   		edge.label.cex=1,
-  		label.cex=labelcex,
+  		# label.cex=labelcex,
   		# color=color,
-  		borders=borders,
+  		# borders=borders,
   		curvePivot = TRUE)
 dev.off()
 
@@ -532,7 +532,7 @@ Audit2 =~ h4 + h5 + h6 + h7 + h8 + h9 + h10
 
 fit <- lavaan::cfa(audit_model2,
 				   data = audit_data,
-				   estimator="WLSMV",
+				   estimator="WLSM",
 				   ordered=names(audit_data))
 summary(fit,
 		fit.measures=TRUE)
@@ -555,7 +555,8 @@ nodeLabels<-c("Q1",
               "Q8",
               "Q9",
               "Q10",
-              "AUDIT")
+              "AUDIT1",
+              "AUDIT2")
 
 color<-c(rep("grey",10),rep("white",1))
 borders<-c(rep("FALSE",10),rep("TRUE",1))
@@ -564,11 +565,11 @@ labelcex<-c(rep(0.7,10),rep(1,1))
 tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
   width = 15,
  height = 10,compression = 'lzw',res=1200,bg = "white")
-semPaths(fit,"std",residuals=TRUE, cut=1,
+semPlot::semPaths(fit,"std")#,residuals=TRUE, cut=1,
   equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
   intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
-  edge.label.cex=1, label.cex=labelcex, color=color,borders=borders)
-dev.off()
+  edge.label.cex=1, label.cex=labelcex)
+sdev.off()
 ### Modification Indexes
 Mod <- modificationIndices(fit)
 subset(Mod, mi > 10)
@@ -630,10 +631,21 @@ labelcex<-c(rep(0.7,10),rep(1,1))
 tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
   width = 15,
  height = 10,compression = 'lzw',res=1200,bg = "white")
-semPaths(fit,"std",residuals=TRUE, cut=1,
-  equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
-  intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
-  edge.label.cex=1, label.cex=labelcex, color=color,borders=borders)
+semPlot::semPaths(fit,
+		"std",
+		# residuals=TRUE,
+		cut=1,
+  		equalizeManifests=TRUE,
+  		edge.color="black",
+  		exoCov=FALSE,
+  		intercepts=FALSE,
+  		# nodeLabels=nodeLabels,
+  		label.scale=FALSE,
+  		edge.label.cex=1,
+  		# label.cex=labelcex,
+  		# color=color,
+  		# borders=borders,
+  		curvePivot = TRUE)
 dev.off()
 ### Modification Indexes
 Mod <- modificationIndices(fit)

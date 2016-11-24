@@ -77,7 +77,7 @@ data_validation$age_cat<-car::recode(
 #Organize scale datasets
 
 #PHQ9
-phq9_data1<-with(data,data.frame(phq9_b11,
+phq9_data1<-with(data_validation,data.frame(phq9_b11,
                                  phq9_b12,
                                  phq9_b13,
                                  phq9_b14,
@@ -354,7 +354,7 @@ node_names<-c("Q1",
   layout='spring',
   # esize=20,
   graph="glasso",
-  sampleSize=nrow(kessler_data),
+  sampleSize=nrow(phq9_data),
   legend.cex = 0.5,
   cut = 0.3,
   # maximum = 1, 
@@ -391,7 +391,7 @@ eigen_centrality(as.igraph(network_glasso),
 # qgraph(pc.fit, labels = names, colour = groups)
 
 #Directed Acyclic Graph / require package bnlearn
-dag_data <- data.frame(apply(phq9_data, 2, as.factor))
+dag_data <- data.frame(apply(phq9_data, 2, as.ordered))
 res<-rsmax2(dag_data,
             restrict = "si.hiton.pc")
             # maximize = "tabu")
@@ -482,7 +482,9 @@ lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
                                           ))
 # AIC(fit)
 parameterEstimates(fit)
-Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+Est <- lavaan::parameterEstimates(fit,
+                                  ci = TRUE,
+                                  standardized = TRUE)
 subset(Est, op == "=~")
 subset(Est, op == "~~")
 
@@ -495,6 +497,24 @@ tau<-as.data.frame(with(subset(Est, op == "|"),
 ### Modification Indexes
 Mod <- lavaan::modificationIndices(fit)
 subset(Mod)#, mi > 10)
+
+#Composite Reliabilty
+sum(Est$std.all[1:9])^2/(sum(Est$std.all[1:9])^2+
+  sum(Est$std.all[71:77]))
+
+#Average Extracted Variance
+sum(Est$std.all[1:9]^2)/length(Est$std.all[1:9])
+
+#Factor scores
+phq9_overall<-lavaan::predict(fit)
+
+#measurementInvariance #too small sample size
+invariance_data<-data.frame(phq9_data,
+                            gender=data_validation$female,
+                            education=data_validation$education_cat)
+semTools::measurementInvariance(cfa_model,
+                                data=na.omit(invariance_data),
+                                group="education")
 
 ### By Group analysis
 # fit <- lavaan::cfa(cfa_model, data = data,
@@ -518,11 +538,11 @@ nodeLabels<-c("Q1",
               "Q7",
               "Q8",
               "Q9",
-              "General")
+              "PHQ9")
 
 color<-c(rep("grey",9),rep("white",1))
 borders<-c(rep("FALSE",9),rep("TRUE",1))
-labelcex<-c(rep(0.7,9),rep(1,1))
+labelcex<-c(rep(1.5,9),rep(1.5,1))
 
 tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
   width = 15,
@@ -531,8 +551,9 @@ tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in',
                     "model",
                     "std",
                     layout="tree2",
-                    style="lisrel",
-                    residuals=FALSE,
+                    # style="lisrel",
+                    # residuals=FALSE,
+                    # esize=c(10,tau),
                     # cut=1,
                     # equalizeManifests=TRUE,
                     # edge.color="black",
@@ -546,16 +567,6 @@ tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in',
                     borders=borders)
                   # bifactor="general")
 dev.off()
-
-#Composite Reliabilty
-sum(Est$std.all[1:9])^2/(sum(Est$std.all[1:9])^2+
-  sum(Est$std.all[32:40]))
-
-#Average Extracted Variance
-sum(Est$std.all[1:9]^2)/length(Est$std.all[1:9])
-
-#Factor scores
-phq9_overall<-lavaan::predict(fit)
 
 # # 2 factors model ###########################
 # cfa_model <- '
@@ -1101,20 +1112,20 @@ node_names<-c("Q1",
   layout='spring',
   # esize=20,
   graph="glasso",
-  sampleSize=nrow(kessler_data),
+  sampleSize=nrow(cesd_data),
   legend.cex = 0.5,
   cut = 0.3,
   # maximum = 1, 
   minimum = 0.1,
   # esize = 20,
-  vsize = tau*5, 
+  # vsize = tau*5, 
   # repulsion = 0.8,
   # nodeNames=node_labels,
   shape="square",
-  border.width=5,
+  border.width=5
   # groups=network_groups,
   # color=c("gold","steelblue","red","grey80","green"),borders = FALSE,
-  labels=node_names
+  # labels=node_names
   #gray=T,
   )
 # dev.off()
@@ -1138,12 +1149,12 @@ eigen_centrality(as.igraph(network_glasso),
 # qgraph(pc.fit, labels = names, colour = groups)
 
 #Directed Acyclic Graph / require package bnlearn
-# dag_data <- data.frame(apply(kessler_data, 2, as.factor))
-# res<-rsmax2(dag_data,
-#             restrict = "si.hiton.pc",
-#             maximize = "tabu")
-# res2<-(res$arcs)
-# qgraph(res2)
+dag_data <- data.frame(apply(cesd_data, 2, as.ordered))
+res<-rsmax2(dag_data,
+            restrict = "si.hiton.pc",
+            maximize = "tabu")
+res2<-(res$arcs)
+qgraph(res2)
 
 #ANALISE PARALELA E EIGEN VALUES
 #############################################################
@@ -1169,7 +1180,7 @@ cortest.bartlett(cor_auto(kessler_data), n = 297,diag=FALSE)
 # VSS.plot(my.vss, title="VSS of 24 mental tests")
 # scree(cor_data)
 # VSS.scree(cor_data)
-fa.parallel(kessler_data,cor="poly")
+fa.parallel(cesd_data,cor="poly")
 
 #EXPLORATORY FACTOR ANALYSIS
 #############################################################
@@ -1201,7 +1212,9 @@ fa.poly(cesd_data,2,fm="wls",rotate="oblimin")
 
 # 1 factor model
 cfa_model <- '
-CESD =~  e1 + e2 + e4 + e5 + e6 + e8 + e9 + e10 + e11 + e12 + e13 + e14 + e15 + e16 + e17 + e18 + e19 + e20
+CESD =~  e1 + e2 + e4 + e5 + e6 + e7 + e8 + 
+         e9 + e10 + e11 + e12 + e13 + e14 + 
+         e15 + e16 + e17 + e18 + e19 + e20
 
 #
 # Kessler ~~ Kessler
@@ -1230,6 +1243,8 @@ parameterEstimates(fit)
 Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
 subset(Est, op == "=~")
 subset(Est, op == "~~")
+subset(Est, op == "|")
+
 lavInspect(fit,what="th")
 
 #Thresholds
@@ -1679,6 +1694,7 @@ cesd_overall<-lavaan::predict(fit)
 #############################################################################
 #GENERATING SCORES
 #############################################################################
+
 depression_scores<-data.frame(phq9_overall,
                               cesd_overall)
 colnames(depression_scores)<-c("PHQ9_overall",
@@ -1688,3 +1704,19 @@ depression_scores_scaled<-lapply(depression_scores,rescale)
 depression_scores_scaled<-as.data.frame(depression_scores_scaled)
 
 write.csv(depression_scores_scaled,"/Users/jnv4/Desktop/depression_scores.csv")
+
+#############################################################################
+#EXTERNAL VALIDITY
+#############################################################################
+
+sf8_scores<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/sf8_scores.csv")
+kessler_scores<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/kessler_scores.csv")
+depression_scores<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/depression_scores.csv")
+
+cor_data<-data.frame(
+           sf8_scores[2:4],
+           depression_scores[2:3],
+           kessler_scores[2:5])
+
+cor(cor_data,method="spearman")
+
