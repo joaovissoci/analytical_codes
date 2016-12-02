@@ -138,7 +138,7 @@ forest(meta1,
 	   leftcols=c("studlab"),
 	   rigthcols=c("w.fixed"),
 	   # overall=FALSE, #A logical indicating whether overall summaries should be plotted
-	   xlab="Delta Hogdes' g",
+	   xlab="Delta Hedges' g",
 	   leftlabs=c("Author"),
 	   just="center",
 	   just.studlab="left",
@@ -234,19 +234,19 @@ meta1 <- metacont(
 				    comb.random=FALSE,
 				    comb.fixed=TRUE,
   					data=delat_data_bnp,
-  					sm="SMD",
+  					sm="MD",
   					# keepdata=FALSE,
  				    # byvar=intervention,print.byvar=FALSE,
   					studlab=meta_bnp_ischemic$Authors)
 summary(meta1)
 
-tiff("/Users/joaovissoci/Desktop/figure2.tiff",
+tiff("/Users/joaovissoci/Desktop/figure3.tiff",
   width = 800, height = 400,compression = 'lzw')
 forest(meta1,
 	   leftcols=c("studlab"),
 	   rigthcols=c("w.fixed"),
 	   # overall=FALSE, #A logical indicating whether overall summaries should be plotted
-	   xlab="Delta Hogdes' g",
+	   xlab="Delta Hedges' g",
 	   leftlabs=c("Author"),
 	   just="center",
 	   just.studlab="left",

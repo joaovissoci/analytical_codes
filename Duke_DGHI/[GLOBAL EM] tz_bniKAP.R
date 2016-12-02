@@ -29,14 +29,14 @@ lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments",
 	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
 	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust","foreign",
 	"survival","memisc","lme4","lmerTest","dplyr","qgraph",
-	"grid","lattice","latticeExtra","HH"),library, 
+	"grid","lattice","latticeExtra","HH","mice"),library, 
 character.only=T)
 
 ######################################################################
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/BNI/Tz_bniKAP_data.csv",sep=",")
+data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/BNI/Tz_bniKAP_data.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -465,19 +465,68 @@ HH::likert(dat_2_2[,-1], main="",
 ######################################################################
 #Figure 4.
 ######################################################################
+score_data<-with(data, data.frame(alcoholic_close_friend,
+							recovered_alcoholic_teacher,
+							recover_alcoholic_chldrn,
+							recover_alcoholic_hired,
+							non_alcoholic_hired,
+							recovered_alc_treat_same,
+							not_date_hospital_for_alc,
+							alc_treatment_intelligent,
+							alcoholic_trustworthy,
+							alc_treatment_failure,
+							think_less_treated_person,
+							less_opinion_trtd_person))
 
-data$alc_treatment_failure<-car::recode(data$alc_treatment_failure,
-	"1=5;2=4;3=3;4=2;5=1")
-data$non_alcoholic_hired<-car::recode(data$non_alcoholic_hired,
-	"1=5;2=4;3=3;4=2;5=1")
-data$think_less_treated_person<-car::recode(data$think_less_treated_person,
-	"1=5;2=4;3=3;4=2;5=1")
-data$not_date_hospital_for_alc<-car::recode(data$not_date_hospital_for_alc,
-	"1=5;2=4;3=3;4=2;5=1")
-data$less_opinion_trtd_person<-car::recode(data$less_opinion_trtd_person,
-	"1=5;2=4;3=3;4=2;5=1")
 
-figure3_data_PDis<-with(data,data.frame(alcoholic_close_friend,
+#recoding positive oriented items to ensure a higher score indicates high stigma
+score_data$alcoholic_close_friend<-car::recode(data$alcoholic_close_friend,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+score_data$alc_treatment_intelligent<-car::recode(data$alc_treatment_intelligent,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+score_data$alcoholic_trustworthy<-car::recode(data$alcoholic_trustworthy,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+score_data$recovered_alcoholic_teacher<-car::recode(data$recovered_alcoholic_teacher,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+score_data$recover_alcoholic_hired<-car::recode(data$recover_alcoholic_hired,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+score_data$recovered_alc_treat_same<-car::recode(data$recovered_alc_treat_same,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+
+#Calculate PAS
+figure3_data_PAS<-with(score_data,data.frame(alcoholic_close_friend,
+							recovered_alcoholic_teacher,
+							recover_alcoholic_chldrn,
+							recover_alcoholic_hired,
+							non_alcoholic_hired,
+							recovered_alc_treat_same,
+							not_date_hospital_for_alc,
+							alc_treatment_intelligent,
+							alcoholic_trustworthy,
+							alc_treatment_failure,
+							think_less_treated_person,
+							less_opinion_trtd_person))
+
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+imp <- mice(figure3_data_PAS, seed = 2222, m=5)
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+figure3_data_PAS<-complete(imp,4)
+
+pas_score<-rowSums(figure3_data_PAS)/ncol(figure3_data_PAS)
+summary(pas_score)
+describe(pas_score)
+# discrimination<-na.omit(discrimination)
+# rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+# # discrimination_scaled<-lapply(discrimination,rescale)
+# x<-rescale(pas_score)
+# summary(x)
+pas_score_cat<-car::recode(pas_score,"0:3='low';else='high'")
+table(pas_score_cat)
+prop.table(table(pas_score_cat))
+
+#Calculate PDiscrimination score
+figure3_data_PDis<-with(score_data,data.frame(alcoholic_close_friend,
 							recovered_alcoholic_teacher,
 							recover_alcoholic_chldrn,
 							recover_alcoholic_hired,
@@ -491,15 +540,19 @@ imp <- mice(figure3_data_PDis, seed = 2222, m=5)
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
 figure3_data_PDis<-complete(imp,4)
 
-discrimination<-rowSums(figure3_data_PDis)
-discrimination<-na.omit(discrimination)
-rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+discrimination<-rowSums(figure3_data_PDis)/ncol(figure3_data_PDis)
+# discrimination<-na.omit(discrimination)
+# rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 # discrimination_scaled<-lapply(discrimination,rescale)
-x<-rescale(discrimination)
-summary(x)
-x_2<-car::recode(x,"0:50='a';else='b'")
+# x<-rescale(discrimination)
+summary(discrimination)
+describe(discrimination)
+discrimination_cat<-car::recode(discrimination,"0:3='low';else='high'")
+table(discrimination_cat)
+prop.table(table(discrimination_cat))
 
-figure3_data_PDev<-with(data,data.frame(alc_treatment_intelligent,
+#Calculate Perceived Devaluation score
+figure3_data_PDev<-with(score_data,data.frame(alc_treatment_intelligent,
 							alcoholic_trustworthy,
 							alc_treatment_failure,
 							think_less_treated_person,
@@ -511,17 +564,36 @@ imp <- mice(figure3_data_PDev, seed = 2222, m=5)
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
 figure3_data_PDev<-complete(imp,4)
 
-
-devaluation<-rowSums(figure3_data_PDev)
-devaluation<-na.omit(devaluation)
-rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+devaluation<-rowSums(figure3_data_PDev)/ncol(figure3_data_PDev)
+# devaluation<-na.omit(devaluation)
+# rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 # devaluation_scaled<-lapply(devaluation,rescale)
-z<-rescale(devaluation)
-summary(z)
-z_2<-car::recode(z,"0:50='a';else='b'")
+# z<-rescale(devaluation)
+summary(devaluation)
+describe(devaluation)
+devaluation_cat<-car::recode(devaluation,"0:3='low';else='high'")
+table(devaluation_cat)
+prop.table(table(devaluation_cat))
 
+#Building graph for each item
+figure3_data1<-with(data, data.frame(alcoholic_close_friend,
+							recovered_alcoholic_teacher,
+							recover_alcoholic_chldrn,
+							recover_alcoholic_hired,
+							non_alcoholic_hired,
+							recovered_alc_treat_same,
+							not_date_hospital_for_alc,
+							alc_treatment_intelligent,
+							alcoholic_trustworthy,
+							alc_treatment_failure,
+							think_less_treated_person,
+							less_opinion_trtd_person))
 
-figure3_data<-data.frame(figure3_data_PDis,figure3_data_PDev)
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+imp <- mice(figure3_data1, seed = 2222, m=5)
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+figure3_data<-complete(imp,4)
 
 graph<-melt(figure3_data)
 count_data_fig3<-plyr::count(graph, c("variable", "value"))
@@ -533,7 +605,7 @@ count_data_fig3$value<-car::recode(count_data_fig3$value,"
 	4='Somewhat agree';
 	5='Agree';
 	6='Strongly agree'")
-count_data_fig3$feq_2<-(count_data_fig3$freq*100)/34
+count_data_fig3$feq_2<-(count_data_fig3$freq*100)/35
 count_data_fig3$feq_2<-round(count_data_fig3$feq_2,digits=1)
 
 #Adding value of zero to likert options not chosen
@@ -549,18 +621,67 @@ add<-data.frame(variable=variable_add,
 
 plot_data<-rbind(count_data_fig3,add)
 
+# plot_data$color<-NULL
+# plot_data$color[plot_data$feq_2 >= 0 & plot_data$feq_2 < 5.883]="lightcyan1"
+# plot_data$color[plot_data$feq_2 >= 5.883 & plot_data$feq_2 < 11.76]="lightcyan2"
+# plot_data$color[plot_data$feq_2 >= 11.76 & plot_data$feq_2 < 26.47]="lightcyan3"
+# plot_data$color[plot_data$feq_2 >= 26.47]="lightcyan4"
+
+#find colors numbers: diverge_hcl(7, c = 100, l = c(50, 90), power = 1)
+#from: https://cran.r-project.org/web/packages/colorspace/vignettes/hcl-colors.pdf
 plot_data$color<-NULL
-plot_data$color[plot_data$feq_2 >= 0 & plot_data$feq_2 < 5.883]="lightcyan1"
-plot_data$color[plot_data$feq_2 >= 5.883 & plot_data$feq_2 < 11.76]="lightcyan2"
-plot_data$color[plot_data$feq_2 >= 11.76 & plot_data$feq_2 < 26.47]="lightcyan3"
-plot_data$color[plot_data$feq_2 >= 26.47]="lightcyan4"
+plot_data$color[plot_data$value == "Strongly agree"]="#4A6FE3"
+plot_data$color[plot_data$value == "Agree"]="#8595E1"
+plot_data$color[plot_data$value == "Somewhat agree"]="#B5BBE3"
 
-write.csv(plot_data,"/Users/joaovissoci/plot_data.csv")
+plot_data$color[plot_data$value == "Somewhat disagree"]="#E6AFB9"
+plot_data$color[plot_data$value == "Disagree"]="#E07B91"
+plot_data$color[plot_data$value == "Strongly disagree"]="#D33F6A"
 
-avseq <- ggplot(plot_data, aes(y=variable, x=value)) + 
-  geom_tile(fill=plot_data$color) + 
-  geom_text(aes(y=variable, x=value, label=feq_2),size=7) + 
-  theme_minimal() + 
+
+# write.csv(plot_data,"/Users/joaovissoci/plot_data.csv")
+
+# avseq <- ggplot(plot_data, aes(y=variable, x=value)) + 
+#   geom_tile(fill=plot_data$color) + 
+#   geom_text(aes(y=variable, x=value, label=feq_2),size=7) + 
+#   theme_minimal() + 
+#   xlab(label="") + 
+#   ylab(label="Stigma Scale") + 
+#   scale_x_discrete(limits = c("Strongly disagree",
+#   							  "Disagree",
+#   							  "Somewhat disagree",
+#   							  "Somewhat agree",
+#   							  "Agree",
+#   							  "Strongly agree")) + 
+#   scale_y_discrete(limits = rev(levels(plot_data$variable)),
+#   				   labels = rev(c(
+# "1. Most people would willingly accept a former alcoholic \nas a close friend.",
+# "2. Most people believe that a person who has had alcohol \ntreatment is just as intelligent as the average person.",
+# "3. Most people believe that a former alcoholic is just as \ntrustworthy as the average person.",
+# "4. Most people would accept a fully recovered former alcoholic \nas a teacher of young children in a public school.",
+# "5. Most people feel that entering alcohol treatment is a \nsign of personal failure.",
+# "6. Most people would not hire a former alcoholic to take care \nof their children, even if he or she had been \nsober for some time.",
+# "7. Most people think less of a person who has been in alcohol \ntreatment.",
+# "8. Most employers will hire a former alcoholic if he or \nshe is qualified for the job.",
+# "9. Most employers will pass over the application of a former \nalcoholic in favor of another applicant.",
+# "10. Most people in my community would treat a former alcoholic \njust as they would treat anyone else.",
+# "11. Most young women would be reluctant to date a man \nwho has been hospitalized for alcoholism.",
+# "12. Once they know a person was in alcohol treatment, \nmost people will take his or her opinion less seriously."
+# 							))) #+ 
+#   # theme(text = element_text(size=35))  #+ 
+#   # scale_y_discrete(limits=rev(levels))
+# avseq
+
+library(ggplot2)
+ggplot(plot_data, aes(y=variable, x=value)) +
+  geom_point(aes(size = plot_data$feq_2*2), 
+  			 alpha=0.8, 
+  			 color=plot_data$color, 
+  			 show.legend=FALSE) +
+  geom_text(aes(label = feq_2), 
+  			color="white") +
+  scale_size(range = c(0,25)) +
+  theme_bw() +
   xlab(label="") + 
   ylab(label="Stigma Scale") + 
   scale_x_discrete(limits = c("Strongly disagree",
@@ -568,8 +689,25 @@ avseq <- ggplot(plot_data, aes(y=variable, x=value)) +
   							  "Somewhat disagree",
   							  "Somewhat agree",
   							  "Agree",
-  							  "Strongly agree")) + 
-  scale_y_discrete(limits = rev(levels(plot_data$variable)),
+  							  "Strongly agree"),
+  				   labels = c("Strongly \ndisagree",
+  							  "Disagree",
+  							  "Somewhat \ndisagree",
+  							  "Somewhat \nagree",
+  							  "Agree",
+  							  "Strongly \nagree")) + 
+  scale_y_discrete(limits = rev(c("alcoholic_close_friend",
+  								  "alc_treatment_intelligent",
+  								  "alcoholic_trustworthy",
+  								  "recovered_alcoholic_teacher",
+  								  "alc_treatment_failure",
+  								  "recover_alcoholic_chldrn",
+  								  "think_less_treated_person",
+  								  "recover_alcoholic_hired",
+  								  "non_alcoholic_hired",
+  								  "recovered_alc_treat_same",
+  								  "not_date_hospital_for_alc",
+  								  "less_opinion_trtd_person")),
   				   labels = rev(c(
 "1. Most people would willingly accept a former alcoholic \nas a close friend.",
 "2. Most people believe that a person who has had alcohol \ntreatment is just as intelligent as the average person.",
@@ -583,16 +721,13 @@ avseq <- ggplot(plot_data, aes(y=variable, x=value)) +
 "10. Most people in my community would treat a former alcoholic \njust as they would treat anyone else.",
 "11. Most young women would be reluctant to date a man \nwho has been hospitalized for alcoholism.",
 "12. Once they know a person was in alcohol treatment, \nmost people will take his or her opinion less seriously."
-							))) #+ 
-  # theme(text = element_text(size=35))  #+ 
-  # scale_y_discrete(limits=rev(levels))
-avseq
+							)))
 
 ######################################################################
 #Figure 5.
 ######################################################################
 network_data<-data.frame(likert_data1,
-	figure2_data,figure4_data,discrimination,devaluation)
+	figure2_data,figure4_data,pas_score,discrimination,devaluation)
 
 cor<-cor(na.omit(network_data),method="spearman")
 # cor<-cor_auto(na.omit(network_data))
@@ -600,12 +735,12 @@ cor<-cor(na.omit(network_data),method="spearman")
 #listing grouping variables in the network resulting from the 
 #community analysis
 node_groups<-list(knowledge=c(1:5),
-	perception=c(6:16),practice=c(17:22),stigma=c(23:24))
+	perception=c(6:16),practice=c(17:22),stigma=c(23))
 
 # creating vectors for labels
 node_labels<-c(
-"In my schooling, we discussed at­-risk alcohol\n behavior and alcohol abuse.",
-"In my schooling, we discussed counseling\n patients with a-t­risk drinking behaviors.",
+"In my schooling, we discussed at­ risk alcohol\n behavior and alcohol abuse.",
+"In my schooling, we discussed counseling\n patients with at­ risk drinking behaviors.",
 "Once patients suffer an injury from\n drinking they are called 'harmful drinkers",
 "It is not my role to ask\n about alcohol use.",
 "Talking to patients about decreasing\n their alcohol ingestion can be successful.",
@@ -626,15 +761,15 @@ node_labels<-c(
 "There are resources to refer patients\n to when I determine they have high risk drinking.",
 "I ask my patients about their alcohol use",
 "I counsel patients to reduce their drinking\n if I think they have harmful drinking behavior.",
-"Personal Discrimination",
-"Personal Devaluation")
+"Perceived alcohol stigma")#,
+# "Personal Devaluation")
 
 # creating nodes labels vector
 node_names<-c("Know1","Know2","Know3","Know4","Know5",
 	"Percept1","Percept2","Percept3","Percept4","Percept5",
 	"Percept6","Percept7","Percept8","Percept9","Percept10",
 	"Percept11","Pract1","Pract2","Pract3","Pract4","Pract5",
-	"Pract6","PDisc","PDeval")
+	"Pract6","PAS")#,"PDeval")
 
 # findGraph(cor, 34, type = "cor")
 
@@ -657,11 +792,11 @@ network<-qgraph(cor,
 	legend.mode="names")#,gray=T,)#,nodeNames=nomesqsg
 
 #Identify SPLs within the graph and extract direct paths to WP
-predictors<-centrality(network)$ShortestPaths[,23]
+predictors<-centrality(network,all.shortest.paths=TRUE)$ShortestPaths[,23]
 predictors
 
-predictors<-centrality(network)$ShortestPaths[,24]
-predictors
+# predictors<-centrality(network)$ShortestPaths[,24]
+# predictors
 
 
 ######################################################################
