@@ -39,7 +39,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -77,7 +77,7 @@ data_validation$age_cat<-car::recode(
 #Organize scale datasets
 
 #SF8
-sf8_data1<-with(data,data.frame(sf8_b1,
+sf8_data1<-with(data_validation,data.frame(sf8_b1,
                                 sf8_b2,
                                 sf8_b3,
                                 sf8_b4,
@@ -355,8 +355,8 @@ eigen_centrality(as.igraph(network_glasso),
 #Directed Acyclic Graph / require package bnlearn
 dag_data <- data.frame(apply(sf8_data, 2, as.factor))
 res<-rsmax2(dag_data,
-            restrict = "si.hiton.pc",
-            maximize = "tabu")
+            restrict = "si.hiton.pc")
+            # maximize = "tabu")
 res2<-(res$arcs)
 qgraph(res2)
 
@@ -408,7 +408,7 @@ fa.parallel(sf8_data,cor="poly")
 # #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
 
  model <- principal(cor_data,
-                    nfactors=2,
+                    nfactors=3,
                     rotate='varimax',
                     scores=T,
                     cov=T)
@@ -462,7 +462,7 @@ fa.parallel(sf8_data,cor="poly")
 
 #based on a polychoric correlation matrix
 fa.poly(sf8_data,1,fm="wls",rotate="oblimin")
-fa.poly(cor_data,2,fm="uls",rotate="oblimin")
+fa.poly(sf8_data,2,fm="wls",rotate="oblimin")
 
 #efa_LOD <- efa(motivation, method="cor.polycor")
 #efa.plotCorr (efa_LOD)
@@ -897,24 +897,24 @@ sf8_dimensions<-complete(imp,4)
 # ##############################################################
 
 # # #### USING eRM Package
-# # IRTRolandMorris <- PCM(kessler_data)
-# # diff_index<-thresholds(IRTRolandMorris)
-# # summary(diff_index$threshtable[[1]][,1])
-# # sd(diff_index$threshtable[[1]][,1])/sqrt(length(diff_index$threshtable[[1]][,1]))
-# # plotICC(IRTRolandMorris,item.subset=3,ask=F,empICC=list("raw"),empCI=list(lty="solid"))
-# # plotPImap(IRTRolandMorris, sorted=FALSE)
-# # plotPWmap(IRTRolandMorris)
-# # pp<-eRm::person.parameter(IRTRolandMorris)
-# # #lrt<-LRtest(IRTRolandMorris,se=TRUE)
-# # #Waldtest(IRTRolandMorris)
-# # eRm::itemfit(pp)
-# # summary(eRm::itemfit(pp)$i.outfitMSQ)
-# # sd(eRm::itemfit(pp)$i.outfitMSQ)
-# # summary(eRm::itemfit(pp)$i.infitMSQ)
-# # sd(eRm::itemfit(pp)$i.infitMSQ)
-# #NPtest(IRTRolandMorris,method="T11")
-# #plotGOF(lrt,conf=list())
-# #fscores(NeckDisabilityIndex, rotate = "oblimin", Target = NULL, full.scores = FALSE,method = "EAP", quadpts = NULL, response.pattern = NULL,plausible.draws = 0, returnER = FALSE, return.acov = FALSE,mean = NULL, cov = NULL, verbose = TRUE, full.scores.SE = FALSE,theta_lim = c(-6, 6), MI = 0, QMC = FALSE, custom_den = NULL, custom_theta = NULL, min_expected = 1)
+IRTRolandMorris <- PCM(sf8_data)
+diff_index<-thresholds(IRTRolandMorris)
+summary(diff_index$threshtable[[1]][,1])
+sd(diff_index$threshtable[[1]][,1])/sqrt(length(diff_index$threshtable[[1]][,1]))
+plotICC(IRTRolandMorris,item.subset=3,ask=F,empICC=list("raw"),empCI=list(lty="solid"))
+plotPImap(IRTRolandMorris, sorted=FALSE)
+plotPWmap(IRTRolandMorris)
+pp<-eRm::person.parameter(IRTRolandMorris)
+#lrt<-LRtest(IRTRolandMorris,se=TRUE)
+#Waldtest(IRTRolandMorris)
+eRm::itemfit(pp)
+summary(eRm::itemfit(pp)$i.outfitMSQ)
+sd(eRm::itemfit(pp)$i.outfitMSQ)
+summary(eRm::itemfit(pp)$i.infitMSQ)
+sd(eRm::itemfit(pp)$i.infitMSQ)
+NPtest(IRTRolandMorris,method="T11")
+plotGOF(lrt,conf=list())
+fscores(NeckDisabilityIndex, rotate = "oblimin", Target = NULL, full.scores = FALSE,method = "EAP", quadpts = NULL, response.pattern = NULL,plausible.draws = 0, returnER = FALSE, return.acov = FALSE,mean = NULL, cov = NULL, verbose = TRUE, full.scores.SE = FALSE,theta_lim = c(-6, 6), MI = 0, QMC = FALSE, custom_den = NULL, custom_theta = NULL, min_expected = 1)
 
 #Dichotomous items
 # IRTRolandMorris <- RM(neckdisability2)
