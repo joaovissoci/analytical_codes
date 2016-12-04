@@ -277,13 +277,13 @@ table(data$risky_drinks_week_women_NEW)
 likert1<-c(8,18,5,9)
 likert2<-c(26,16,29,24)
 
-likert<-data.frame(likert1,likert2)
+likert<-data.frame(likert2,likert1)
 rownames(likert)<-c("How many drinks per sitting is\n at­risk drinking for men?",
 					"How many drinks per sitting is\n at­risk drinking for women?",
 					"How many drinks per week is\n at­risk drinking for men?",
 					"How many drinks per week is\n at­risk drinking for women?")
 
-colnames(likert)<-c("Right","Wrong")
+colnames(likert)<-c("Wrong","Right")
 
 # likert(likert,
 # auto.key=list(between=1, between.columns=2),
@@ -293,11 +293,13 @@ colnames(likert)<-c("Right","Wrong")
 # # sub="Likert Scale")
 
 HH::likert(likert, main="",
-			as.percent=TRUE, rightAxisLabels=NULL, 
+			as.percent=TRUE, 
+			rightAxisLabels=NULL, 
 			# ylab.right="Perceptions",
             positive.order=TRUE,
             scales=list(x=list(limits=c(-100,100),
-            at=c(-100,-50,0,50,100))))
+            at=c(-100,-50,0,50,100))),
+            col=c("#D33F6A","#4A6FE3"))
 
 ######################################################################
 #Figure 2.
@@ -727,49 +729,66 @@ ggplot(plot_data, aes(y=variable, x=value)) +
 #Figure 5.
 ######################################################################
 network_data<-data.frame(likert_data1,
-	figure2_data,figure4_data,pas_score,discrimination,devaluation)
+	figure2_data,figure4_data,pas_score)
+colnames(network_data)<-c("Q1","Q2","Q3","Q4","Q5",
+	"Q6","Q7","Q8","Q9","Q10",
+	"Q11","Q12","Q13","Q14","Q15",
+	"Q16","Q17","Q18","Q19","Q20",
+	"Q21","Q22","PAS")
 
 cor<-cor(na.omit(network_data),method="spearman")
 # cor<-cor_auto(na.omit(network_data))
 
+Hmisc::rcorr(as.matrix(network_data),type="spearman")
+
 #listing grouping variables in the network resulting from the 
 #community analysis
-node_groups<-list(knowledge=c(1:5),
-	perception=c(6:16),practice=c(17:22),stigma=c(23))
+node_groups<-list(first_path=c(8,11,22),
+	non_sig_PAS=c(6,7,10,18,21),
+	second_path=c(1,2,3,4,5,9,12,13,14,15,16,17,19,20),
+	stigma=c(23))
 
 # creating vectors for labels
 node_labels<-c(
-"In my schooling, we discussed at­ risk alcohol\n behavior and alcohol abuse.",
-"In my schooling, we discussed counseling\n patients with at­ risk drinking behaviors.",
-"Once patients suffer an injury from\n drinking they are called 'harmful drinkers",
-"It is not my role to ask\n about alcohol use.",
-"Talking to patients about decreasing\n their alcohol ingestion can be successful.",
+"In my schooling, we discussed at­ risk alcohol behavior and alcohol abuse.",
+"In my schooling, we discussed counseling patients with at­ risk drinking behaviors.",
+"Once patients suffer an injury from drinking they are called 'harmful drinkers",
+"It is not my role to ask about alcohol use.",
+"Talking to patients about decreasing their alcohol ingestion can be successful.",
+
 "A large number of patients drink alcohol.",
-"Alcohol use and abuse is not a problem \n amongs our patient population at KCMC.",
-"Injury pateints at KCMC were likely drinking\n when they were injured.",
+"Alcohol use and abuse is not a problem amongs our patient population at KCMC.",
+"Injury pateints at KCMC were likely drinking when they were injured.",
 "Caring for patients who are intoxicated is\n frustrating as they caused themselves\n to be ill/injured.",
-"Few injury patients at KCMC suffer from\n alcohol related injuries.",
-"Knowing if patients have atrisk drinking\n does NOT improve care I can provide.",
-"I feel comfortable asking patients about\n their alcohol use behavior.",
-"I feel comfortable counseling patients about\n their atrisk drinking.",
-"How motivated are you and your colleagues at\n implementing alcohol screening\n and testing?",
-"How willing are you and your colleagues to\n learn about reducing harmful alcohol\n use among injury patients?",
+"Few injury patients at KCMC suffer from alcohol related injuries.",
+"Knowing if patients have atrisk drinking does NOT improve care I can provide.",
+"I feel comfortable asking patients about their alcohol use behavior.",
+"I feel comfortable counseling patients about their atrisk drinking.",
+"How motivated are you and your colleagues at implementing alcohol screening\n and testing?",
+"How willing are you and your colleagues to learn about reducing\n harmful alcohol\n use among injury patients?",
 "How willing are you and your colleagues to\n implement alcohol screening among\n injury patients?",
+
 "It is common to ask patients about their drinking behavior.",
 "It is common to test patients for alcohol.",
-"It is comon to ask patients about their\n tobacco use behavior.",
-"There are resources to refer patients\n to when I determine they have high risk drinking.",
+"It is comon to ask patients about their tobacco use behavior.",
+"There are resources to refer patients to when I determine\n they have high risk drinking.",
 "I ask my patients about their alcohol use",
 "I counsel patients to reduce their drinking\n if I think they have harmful drinking behavior.",
 "Perceived alcohol stigma")#,
 # "Personal Devaluation")
 
 # creating nodes labels vector
-node_names<-c("Know1","Know2","Know3","Know4","Know5",
-	"Percept1","Percept2","Percept3","Percept4","Percept5",
-	"Percept6","Percept7","Percept8","Percept9","Percept10",
-	"Percept11","Pract1","Pract2","Pract3","Pract4","Pract5",
-	"Pract6","PAS")#,"PDeval")
+# node_names<-c("Know1","Know2","Know3","Know4","Know5",
+# 	"Percept1","Percept2","Percept3","Percept4","Percept5",
+# 	"Percept6","Percept7","Percept8","Percept9","Percept10",
+# 	"Percept11","Pract1","Pract2","Pract3","Pract4","Pract5",
+# 	"Pract6","PAS")#,"PDeval")
+
+node_names<-c("Q1","Q2","Q3","Q4","Q5",
+	"Q6","Q7","Q8","Q9","Q10",
+	"Q11","Q12","Q13","Q14","Q15",
+	"Q16","Q17","Q18","Q19","Q20",
+	"Q21","Q22","PAS")#,"PDeval")
 
 # findGraph(cor, 34, type = "cor")
 
@@ -779,13 +798,13 @@ network<-qgraph(cor,
 	esize=20,
 	# graph="pcor",
 	sampleSize=nrow(network_data),
-	cut = 0.6,
+	# cut = 0.6,
 	maximum = 1, 
-	minimum = 0.3,
+	minimum = 0.35,
 	repulsion = 0.8,
 	groups=node_groups,
 	nodeNames=node_labels,
-	color=c("gold","steelblue","red","grey80",layoutScale=c(2,2)),
+	color=c("steelblue","white","grey","gold",layoutScale=c(2,2)),
 	borders = FALSE,
 	labels=node_names,
 	legend.cex=0.35,
