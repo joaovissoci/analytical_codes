@@ -66,7 +66,19 @@ names<-rownames(cor$correlations)
 #  posCol=c("#BF0000","red"),
 #  gray=FALSE)
 
-Q2_atleta2 <- qgraph(cor$correlations, borders = TRUE, cut=0.8, minimum = 0.4, labels=names,label.cex = 1, vsize=word_freq,label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
+Q2_atleta2 <- qgraph(cor$correlations,
+                     borders = TRUE,
+                     cut=0.8, 
+                     minimum = 0.4, 
+                     labels=names,
+                     label.cex = 1, 
+                     vsize=word_freq,
+                     label.color="black",
+                     layout = "spring",
+                     directed=FALSE,
+                     label.scale=FALSE,
+                     gray=FALSE,
+                     posCol=c("gray","gray"))
 
 g<-as.igraph(Q2_atleta2)
 h<-spinglass.community(g)
@@ -204,11 +216,12 @@ node_names<-rownames(cor$correlations)
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=FALSE,
+  borders=TRUE,
   # border.width=5,
-  groups=network_groups,
-  color=c("gold","steelblue","red"),
+  # groups=network_groups,
+  # color=c("grey"),
   labels=rownames(cor$correlations)
+  # label.scale=FALSE
   #gray=T,
   )
 # dev.off()
@@ -410,11 +423,12 @@ word_freq<-car::recode(word_freq,"1:5=7;8=9;10:11=15;13:14=20")
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=FALSE,
+  borders=TRUE,
   # border.width=5,
-  groups=network_groups,
-  color=c("gold","steelblue","red","grey50"),
+  # groups=network_groups,
+  # color=c("grey50"),
   labels=rownames(cor)
+  # label.scale=FALSE
   #gray=T,
   )
 # dev.off()
@@ -593,7 +607,7 @@ node_names<-rownames(cor)
 #   network_pcor,
 #   network_cor)
 
-word_freq<-car::recode(word_freq,"17=15")
+word_freq<-car::recode(word_freq,"24=15")
 
 # postscript("/home/joao/Desktop/info_consent_figure2.eps",
 #   width = 1500, height = 1200,horizontal = FALSE, 
@@ -609,18 +623,18 @@ word_freq<-car::recode(word_freq,"17=15")
   # graph="glasso",
   # sampleSize=nrow(sf8_data),
   legend.cex = 0.5,
-  cut = 0.4,
+  cut = 0.6,
   # maximum = 1, 
-  minimum = 0.2,
+  minimum = 0.4,
   # esize = 20,
   vsize = word_freq, 
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=FALSE,
+  borders=TRUE,
   # border.width=5,
-  groups=network_groups,
-  color=c("gold","steelblue","red"),#,"grey50"),
+  # groups=network_groups,
+  # color=c("gold","steelblue","red"),#,"grey50"),
   labels=rownames(cor)
   #gray=T,
   )
@@ -815,18 +829,18 @@ node_names<-rownames(cor)
   # graph="glasso",
   # sampleSize=nrow(sf8_data),
   legend.cex = 0.5,
-  cut = 0.4,
+  cut = 0.6,
   # maximum = 1, 
-  minimum = 0.2,
+  minimum = 0.4,
   # esize = 20,
   vsize = word_freq/3, 
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=FALSE,
+  borders=TRUE,
   # border.width=5,
-  groups=network_groups,
-  color=c("gold","steelblue","red"),#,"grey50"),
+  # groups=network_groups,
+  # color=c("gold","steelblue","red"),#,"grey50"),
   labels=rownames(cor)
   #gray=T,
   )
@@ -1021,18 +1035,18 @@ word_freq<-car::recode(word_freq,"15=8")
   # graph="glasso",
   # sampleSize=nrow(sf8_data),
   legend.cex = 0.5,
-  cut = 0.4,
+  cut = 0.6,
   # maximum = 1, 
-  minimum = 0.2,
+  minimum = 0.4,
   # esize = 20,
   vsize = word_freq*2, 
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=FALSE,
+  borders=TRUE,
   # border.width=5,
-  groups=network_groups,
-  color=c("gold","steelblue","red"),#,"grey50"),
+  # groups=network_groups,
+  # color=c("gold","steelblue","red"),#,"grey50"),
   labels=rownames(cor)
   #gray=T,
   )
@@ -1227,18 +1241,18 @@ word_freq<-car::recode(word_freq,"13=8")
   # graph="glasso",
   # sampleSize=nrow(sf8_data),
   legend.cex = 0.5,
-  cut = 0.4,
+  cut = 0.6,
   # maximum = 1, 
-  minimum = 0.2,
+  minimum = 0.4,
   # esize = 20,
   vsize = word_freq*2, 
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=FALSE,
+  borders=TRUE,
   # border.width=5,
-  groups=network_groups,
-  color=c("gold","steelblue","red"),#,"grey50"),
+  # groups=network_groups,
+  # color=c("gold","steelblue","red"),#,"grey50"),
   labels=rownames(cor)
   #gray=T,
   )

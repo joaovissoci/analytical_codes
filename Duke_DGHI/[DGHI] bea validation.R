@@ -712,25 +712,25 @@ cor_data<-cor_auto(model2_bea)
 # summary(ap)
 # nS <- nScree(ev$values) #Set up the Scree Plot 
 # plotnScree(nS) # Plot the ScreePlot Graph
-my.vss <- VSS(cor_data,title="VSS of BEA data")
-#print(my.vss[,1:12],digits =2)
-VSS.plot(my.vss, title="VSS of 24 mental tests")
-scree(cor_data)
-VSS.scree(cor_data)
-fa.parallel(cor_data,n.obs=229)
+# my.vss <- VSS(cor_data,title="VSS of BEA data")
+# #print(my.vss[,1:12],digits =2)
+# VSS.plot(my.vss, title="VSS of 24 mental tests")
+# scree(cor_data)
+# VSS.scree(cor_data)
+# fa.parallel(cor_data,n.obs=229)
 
-# Pricipal Components Analysis
-# entering raw data and extracting PCs 
-# from the correlation matrix 
-fit <- psych::principal(cor_data,nfactors=1,rotate="none",scores=TRUE)
-fit
-summary(fit) # print variance accounted for 
-loadings(fit) # pc loadings 
-fit$scores
-predict(fit,bea_data[,-1])
-scores<-scoreItems(fit$weights,bea_data[,-1],totals=TRUE)
-summary(scores)
-describe(scores$scores)
+# # Pricipal Components Analysis
+# # entering raw data and extracting PCs 
+# # from the correlation matrix 
+# fit <- psych::principal(cor_data,nfactors=1,rotate="none",scores=TRUE)
+# fit
+# summary(fit) # print variance accounted for 
+# loadings(fit) # pc loadings 
+# fit$scores
+# predict(fit,bea_data[,-1])
+# scores<-scoreItems(fit$weights,bea_data[,-1],totals=TRUE)
+# summary(scores)
+# describe(scores$scores)
 # by(scores$scores,data_bea$risk_classification,summary)
 # wilcox.test(scores$scores[,1]~data_bea$risk_classification)
 # wilcox.test(scores$scores[,2]~data_bea$risk_classification)
@@ -780,27 +780,27 @@ cor_data<-cor_auto(model3_bea)
 # summary(ap)
 # nS <- nScree(ev$values) #Set up the Scree Plot 
 # plotnScree(nS) # Plot the ScreePlot Graph
-my.vss <- VSS(cor_data,title="VSS of BEA data")
-#print(my.vss[,1:12],digits =2)
-VSS.plot(my.vss, title="VSS of 24 mental tests")
-scree(cor_data)
-VSS.scree(cor_data)
-fa.parallel(cor_data,n.obs=229)
+# my.vss <- VSS(cor_data,title="VSS of BEA data")
+# #print(my.vss[,1:12],digits =2)
+# VSS.plot(my.vss, title="VSS of 24 mental tests")
+# scree(cor_data)
+# VSS.scree(cor_data)
+# fa.parallel(cor_data,n.obs=229)
 
-# Pricipal Components Analysis
-# entering raw data and extracting PCs 
-# from the correlation matrix 
-fit <- psych::principal(cor_data,nfactors=1,rotate="none",scores=TRUE)
-fit
-summary(fit) # print variance accounted for 
-loadings(fit) # pc loadings 
-fit$scores
-predict(fit,bea_data[,-1])
-scores<-scoreItems(fit$weights,bea_data[,-1],totals=TRUE)
-summary(scores)
-describe(scores$scores)
-# by(scores$scores,data_bea$risk_classification,summary)
-# wilcox.test(scores$scores[,1]~data_bea$risk_classification)
+# # Pricipal Components Analysis
+# # entering raw data and extracting PCs 
+# # from the correlation matrix 
+# fit <- psych::principal(cor_data,nfactors=1,rotate="none",scores=TRUE)
+# fit
+# summary(fit) # print variance accounted for 
+# loadings(fit) # pc loadings 
+# fit$scores
+# predict(fit,bea_data[,-1])
+# scores<-scoreItems(fit$weights,bea_data[,-1],totals=TRUE)
+# summary(scores)
+# describe(scores$scores)
+# # by(scores$scores,data_bea$risk_classification,summary)
+# # wilcox.test(scores$scores[,1]~data_bea$risk_classification)
 # wilcox.test(scores$scores[,2]~data_bea$risk_classification)
 # wilcox.test(scores$scores[,3]~data_bea$risk_classification)
 # #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
@@ -848,25 +848,25 @@ cor_data<-cor_auto(model4_bea)
 # summary(ap)
 # nS <- nScree(ev$values) #Set up the Scree Plot 
 # plotnScree(nS) # Plot the ScreePlot Graph
-my.vss <- VSS(cor_data,title="VSS of BEA data")
-#print(my.vss[,1:12],digits =2)
-VSS.plot(my.vss, title="VSS of 24 mental tests")
-scree(cor_data)
-VSS.scree(cor_data)
-fa.parallel(cor_data,n.obs=229)
+# my.vss <- VSS(cor_data,title="VSS of BEA data")
+# #print(my.vss[,1:12],digits =2)
+# VSS.plot(my.vss, title="VSS of 24 mental tests")
+# scree(cor_data)
+# VSS.scree(cor_data)
+# fa.parallel(cor_data,n.obs=229)
 
 # Pricipal Components Analysis
 # entering raw data and extracting PCs 
 # from the correlation matrix 
-fit <- psych::principal(cor_data,nfactors=1,rotate="none",scores=TRUE)
-fit
-summary(fit) # print variance accounted for 
-loadings(fit) # pc loadings 
-fit$scores
-predict(fit,model4_bea)
-scores<-scoreItems(fit$weights,model4_bea,totals=TRUE)
-summary(scores)
-describe(scores$scores)
+# fit <- psych::principal(cor_data,nfactors=1,rotate="none",scores=TRUE)
+# fit
+# summary(fit) # print variance accounted for 
+# loadings(fit) # pc loadings 
+# fit$scores
+# predict(fit,model4_bea)
+# scores<-scoreItems(fit$weights,model4_bea,totals=TRUE)
+# summary(scores)
+# describe(scores$scores)
 # by(scores$scores,data_bea$risk_classification,summary)
 # wilcox.test(scores$scores[,1]~data_bea$risk_classification)
 # wilcox.test(scores$scores[,2]~data_bea$risk_classification)
@@ -897,6 +897,7 @@ pca_scores_data<-na.omit(pca_scores_data)
 
 rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 pca_score_data_rescaled<-lapply(pca_scores_data[,1:5],rescale)
+pca_score_data_rescaled<-round(as.data.frame(pca_score_data_rescaled),1)
 pca_score_data_rescaled<-data.frame(pca_score_data_rescaled,
 	pca_scores_data$id,pca_scores_data$country)
 
@@ -927,13 +928,34 @@ x[cl$z[,1]>=0.51]<-c("Lat1")
 x[cl$z[,2]>=0.51]<-c("Lat2")
 x[cl$z[,3]>=0.51]<-c("Lat3")
 
-pca_score_data_rescaled$clusters<-x
-summary(with(pca_score_data_rescaled,aov(PCA1a~clusters)))
-summary(with(pca_score_data_rescaled,aov(PCA1b~clusters)))
-summary(with(pca_score_data_rescaled,aov(PCA2~clusters)))
-summary(with(pca_score_data_rescaled,aov(PCA3~clusters)))
-summary(with(pca_score_data_rescaled,aov(PCA4~clusters)))
 
+pca_score_data_rescaled$clusters<-as.factor(x)
+
+
+with(pca_score_data_rescaled,
+	by(PCA1a,clusters,summary))
+with(pca_score_data_rescaled,
+	kruskal.test(PCA1a,clusters))
+
+with(pca_score_data_rescaled,
+	by(PCA1b,clusters,summary))
+with(pca_score_data_rescaled,
+	kruskal.test(PCA1b~clusters))
+
+with(pca_score_data_rescaled,
+	by(PCA2,clusters,summary))
+with(pca_score_data_rescaled,
+	kruskal.test(PCA2~clusters))
+
+with(pca_score_data_rescaled,
+	by(PCA3,clusters,summary))
+with(pca_score_data_rescaled,
+	kruskal.test(PCA3~clusters))
+
+with(pca_score_data_rescaled,
+	by(PCA4,clusters,summary))
+with(pca_score_data_rescaled,
+	kruskal.test(PCA4~clusters))
 
 ##############################################################
 #NETWORK 

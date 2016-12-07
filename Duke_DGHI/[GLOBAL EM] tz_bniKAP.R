@@ -36,7 +36,7 @@ character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/BNI/Tz_bniKAP_data.csv",sep=",")
+data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/BNI/Tz_bniKAP_data.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -750,31 +750,31 @@ node_groups<-list(first_path=c(8,11,22),
 
 # creating vectors for labels
 node_labels<-c(
-"In my schooling, we discussed at­ risk alcohol behavior and alcohol abuse.",
-"In my schooling, we discussed counseling patients with at­ risk drinking behaviors.",
-"Once patients suffer an injury from drinking they are called 'harmful drinkers",
-"It is not my role to ask about alcohol use.",
-"Talking to patients about decreasing their alcohol ingestion can be successful.",
+"1.In my schooling, we discussed at­ risk alcohol behavior and alcohol abuse.",
+"2.In my schooling, we discussed counseling patients with at­ risk drinking behaviors.",
+"3.Once patients suffer an injury from drinking they are called 'harmful drinkers",
+"4.It is not my role to ask about alcohol use.",
+"5.Talking to patients about decreasing their alcohol ingestion can be successful.",
 
-"A large number of patients drink alcohol.",
-"Alcohol use and abuse is not a problem amongs our patient population at KCMC.",
-"Injury pateints at KCMC were likely drinking when they were injured.",
-"Caring for patients who are intoxicated is\n frustrating as they caused themselves\n to be ill/injured.",
-"Few injury patients at KCMC suffer from alcohol related injuries.",
-"Knowing if patients have atrisk drinking does NOT improve care I can provide.",
-"I feel comfortable asking patients about their alcohol use behavior.",
-"I feel comfortable counseling patients about their atrisk drinking.",
-"How motivated are you and your colleagues at implementing alcohol screening\n and testing?",
-"How willing are you and your colleagues to learn about reducing\n harmful alcohol\n use among injury patients?",
-"How willing are you and your colleagues to\n implement alcohol screening among\n injury patients?",
+"6.A large number of patients drink alcohol.",
+"7.Alcohol use and abuse is not a problem amongs our patient population at KCMC.",
+"8.Injury pateints at KCMC were likely drinking when they were injured.",
+"9.Caring for patients who are intoxicated is\n frustrating as they caused themselves\n to be ill/injured.",
+"10.Few injury patients at KCMC suffer from alcohol related injuries.",
+"11.Knowing if patients have atrisk drinking does NOT improve care I can provide.",
+"12.I feel comfortable asking patients about their alcohol use behavior.",
+"13.I feel comfortable counseling patients about their atrisk drinking.",
+"14.How motivated are you and your colleagues at implementing alcohol screening\n and testing?",
+"15.How willing are you and your colleagues to learn about reducing\n harmful alcohol\n use among injury patients?",
+"16.How willing are you and your colleagues to\n implement alcohol screening among\n injury patients?",
 
-"It is common to ask patients about their drinking behavior.",
-"It is common to test patients for alcohol.",
-"It is comon to ask patients about their tobacco use behavior.",
-"There are resources to refer patients to when I determine\n they have high risk drinking.",
-"I ask my patients about their alcohol use",
-"I counsel patients to reduce their drinking\n if I think they have harmful drinking behavior.",
-"Perceived alcohol stigma")#,
+"17.It is common to ask patients about their drinking behavior.",
+"18.It is common to test patients for alcohol.",
+"19.It is comon to ask patients about their tobacco use behavior.",
+"20.There are resources to refer patients to when I determine\n they have high risk drinking.",
+"21.I ask my patients about their alcohol use",
+"22.I counsel patients to reduce their drinking\n if I think they have harmful drinking behavior.",
+"23.Perceived alcohol stigma")#,
 # "Personal Devaluation")
 
 # creating nodes labels vector
@@ -803,7 +803,7 @@ network<-qgraph(cor,
 	minimum = 0.35,
 	repulsion = 0.8,
 	groups=node_groups,
-	nodeNames=node_labels,
+	# nodeNames=node_labels,
 	color=c("steelblue","white","grey","gold",layoutScale=c(2,2)),
 	borders = FALSE,
 	labels=node_names,
@@ -811,7 +811,7 @@ network<-qgraph(cor,
 	legend.mode="names")#,gray=T,)#,nodeNames=nomesqsg
 
 #Identify SPLs within the graph and extract direct paths to WP
-predictors<-centrality(network,all.shortest.paths=TRUE)$ShortestPaths[,23]
+predictors<-centrality(network,all.shortest.paths=TRUE)$ShortestPaths[,22]
 predictors
 
 # predictors<-centrality(network)$ShortestPaths[,24]
