@@ -35,9 +35,9 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 #IMPORTING DATA
 ######################################################
 
-data_bea<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/Tz/bea_indicators.csv",sep=',')
+data_bea<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/bea_indicators.csv",sep=',')
 
-data_bea_pcascores<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/Tz/bea_indicators.csv",sep=',')
+data_bea_pcascores<-read.csv("/Users/jnv4/Desktop/bea_PCAscores.csv",sep=',')
 ######################################################
 #DATA MANAGEMENT
 ######################################################
@@ -74,6 +74,11 @@ data_bea$visibility<-car::recode(data_bea$visibility,"NA=11.64")
 data_bea$risk_classification<-car::recode(data_bea$Risk.Classification, "'High'=1;'Low'=0")
 
 data_bea$risk_classification<-as.numeric(as.character(data_bea$risk_classification))
+
+data_bea_clusters<-subset(data_bea_pcascores,
+	data_bea_pcascores$pca_scores_data.country=="tz")
+
+data_bea_clusters$outcome<-data_bea$risk_classification
 ######################################################
 #DESCRIPTIVE ANALYSIS
 ######################################################
@@ -430,143 +435,167 @@ wilcox.test(scores$scores[,3]~data_bea$risk_classification)
 #QUALITATIVE COMPARATIVE ANALYSIS
 ######################################################
 
-# Organizing dataset
-#####################
-beaPCAscores <- read.csv("/Users/joaovissoci//Desktop/bea_PCAscores.csv")
-#Excluding variables
-#night_lights - no variance
-#walkways - no variance
-# 
+# # Organizing dataset
+# #####################
+# beaPCAscores <- read.csv("/Users/joaovissoci//Desktop/bea_PCAscores.csv")
+# #Excluding variables
+# #night_lights - no variance
+# #walkways - no variance
+# # 
 
-pca_data<-with(data_bea,data.frame(road_area,road_design,
-	intersections,conflict_intersections___0,
-	conflict_intersections___1,conflict_intersections___2,
-	lane_type,pavement,road_narrow,roadside,roadside_danger,
-	unevenness_roadside,bus_stop,bump,road_traffic_signs,
-	speed_limit,curve_type,visibility,ddensity_level,
-	ddensity_motos,ddensity_cars,
-	ddensity_bikes,ddensity_daladala,ddensity_peda_crossing,
-	ddensity_peds_road,ndensity_motos_lights,
-	outcome=risk_classification))
+# pca_data<-with(data_bea,data.frame(road_area,road_design,
+# 	intersections,conflict_intersections___0,
+# 	conflict_intersections___1,conflict_intersections___2,
+# 	lane_type,pavement,road_narrow,roadside,roadside_danger,
+# 	unevenness_roadside,bus_stop,bump,road_traffic_signs,
+# 	speed_limit,curve_type,visibility,ddensity_level,
+# 	ddensity_motos,ddensity_cars,
+# 	ddensity_bikes,ddensity_daladala,ddensity_peda_crossing,
+# 	ddensity_peds_road,ndensity_motos_lights,
+# 	outcome=risk_classification))
 
-summary(pca_data)
+# summary(pca_data)
 
-# generating correlation matrix
-cor_data<-cor_auto(pca_data)
+# # generating correlation matrix
+# cor_data<-cor_auto(pca_data)
 
-#visualizing correlation matrix with a network
-qgraph(cor_data,layout="spring")
+# #visualizing correlation matrix with a network
+# qgraph(cor_data,layout="spring")
 
-# Organize dataset with dichotomous respondes for cQCA or with proportions from 0 to 1 for fQCA
-qca_data<-with(data_bea,data.frame(road_area,road_design,
-	pavement,road_narrow,unevenness_roadside,
-	speed_limit,test=risk_classification))#,outcome=bancocerto$Q13)
+# # Organize dataset with dichotomous respondes for cQCA or with proportions from 0 to 1 for fQCA
+# qca_data<-with(data_bea,data.frame(road_area,road_design,
+# 	pavement,road_narrow,unevenness_roadside,
+# 	speed_limit,test=risk_classification))#,outcome=bancocerto$Q13)
 
-summary(qca_data)
+# summary(qca_data)
 
-#write.csv(qca_data,"/Users/jnv4/Desktop/qca_data.csv")
+# #write.csv(qca_data,"/Users/jnv4/Desktop/qca_data.csv")
 
-### Calibration of numeric variables to crispy sets
-# Transform a set os thresholds to be calibrated from (cathegorized from)
-# Using quantiles as reference
-#th <- quantile(scores$scores, c(0.1, 0.5, 0.9))
+# ### Calibration of numeric variables to crispy sets
+# # Transform a set os thresholds to be calibrated from (cathegorized from)
+# # Using quantiles as reference
+# #th <- quantile(scores$scores, c(0.1, 0.5, 0.9))
 
-# Calibrate a trivalient set using thresholds derived from cluster analysis
-# Calls in the findTh function with an interval cased variable, a desired number of groups, clustering method (from hclust), distance measure used.
-#pred1<-calibrate(scores$scores[,1], thresholds = findTh(scores$scores[,1], groups = 2, hclustm="complete", distm="euclidean"))
-#pred2<-calibrate(scores$scores[,2], thresholds = findTh(scores$scores[,2], groups = 2, hclustm="complete", distm="euclidean"))
-#pred3<-calibrate(scores$scores[,3], thresholds = findTh(scores$scores[,3], groups = 2, hclustm="complete", distm="euclidean"))
+# # Calibrate a trivalient set using thresholds derived from cluster analysis
+# # Calls in the findTh function with an interval cased variable, a desired number of groups, clustering method (from hclust), distance measure used.
+# #pred1<-calibrate(scores$scores[,1], thresholds = findTh(scores$scores[,1], groups = 2, hclustm="complete", distm="euclidean"))
+# #pred2<-calibrate(scores$scores[,2], thresholds = findTh(scores$scores[,2], groups = 2, hclustm="complete", distm="euclidean"))
+# #pred3<-calibrate(scores$scores[,3], thresholds = findTh(scores$scores[,3], groups = 2, hclustm="complete", distm="euclidean"))
 
-### Fuzzification - transform a variablie into an interval from 0 to 1
-# Argument type="fuzzy" to calculate end-point or mid-point concepts
-# Calibrate fuzzy set using logistic function
-#round(calibrate(scores$scores, type = "fuzzy", thresholds = th), 2)
-#plot(x, calibrate(x, type = "fuzzy", thresholds = th[c(1,2,3,3,4,5)]), ylab = "Fuzzy Set Membership")
+# ### Fuzzification - transform a variablie into an interval from 0 to 1
+# # Argument type="fuzzy" to calculate end-point or mid-point concepts
+# # Calibrate fuzzy set using logistic function
+# #round(calibrate(scores$scores, type = "fuzzy", thresholds = th), 2)
+# #plot(x, calibrate(x, type = "fuzzy", thresholds = th[c(1,2,3,3,4,5)]), ylab = "Fuzzy Set Membership")
 
-# Analysis of Necessity
-#########################
-#outcome<-data_bea$risk_classification
-#qca_data<-data.frame(pred1,pred2,pred3,outcome)
+# # Analysis of Necessity
+# #########################
+# #outcome<-data_bea$risk_classification
+# #qca_data<-data.frame(pred1,pred2,pred3,outcome)
 
-tt <- truthTable(data, outcome = "test", neg.out = TRUE, conditions =
-+ "road_area, road_design, pavement, road_narrow, unevenness_roadside,
-+ speed_limit", sort.by = "out=TRUE")
-tt
+# tt <- truthTable(data, outcome = "test", neg.out = TRUE, conditions =
+# + "road_area, road_design, pavement, road_narrow, unevenness_roadside,
+# + speed_limit", sort.by = "out=TRUE")
+# tt
 
-####
+# ####
 
-# Minimization
-# Sufficient and necessary solution relation="sufnec"
-eqmcc(data, outcome = "test", neg.out = TRUE, conditions = "road_area,
-road_design, pavement, road_narrow, unevenness_roadside, speed_limit",
-relation = "sufnec", all.sol = TRUE, details = TRUE, show.cases = TRUE)
-
-
-# solution complex
-eqmcc(data, outcome = "test", neg.out = TRUE, conditions = "road_area,
-road_design, pavement, road_narrow, unevenness_roadside, speed_limit",
-all.sol = TRUE, details = TRUE, show.cases = TRUE)
-
-#Heatmap for the Thruth Table
-#############################
-
-heat_data<-TT$tt[TT$tt$OUT==1,]
-
-data_plot<-melt(heat_data)
-data_plot$value[43:49]<-0
-data_plot$value2<-c(rep(NA,42),
-	paste(round((heat_data$n/12)*100,0),"%"))
-
-avseq <- ggplot(data_plot, aes(y=cases, x=variable)) + 
-  geom_raster(aes(fill=as.factor(value))) + 
-  scale_fill_manual(values=c("white","steelblue"),
-  	guide = guide_legend(title = " "),labels=c("Abscence","Presence")) +
-  geom_text(aes(y=cases, x=variable, label=value2)) + 
-  xlab(label="BEA indicators") + 
-  ylab(label="Conditions") + 
-  scale_x_discrete(labels=c("Road area", "Road design", "Pavement",
-  	"Road narrow","Uneveness", "Speed limit", "Coverage")) +
-  scale_y_discrete(labels=c("Condition 1","Condition 2",
-  	"Condition 3","Condition 4","Condition 5","Condition 6",
-  	"Condition 7")) +
-    theme(axis.text.x = element_text(angle=60,vjust=0.5))
-avseq
-
-# Venn Diagrams
-#####################
-
-network_data<-data.frame(dataPS$pims,outcome=qca_data$test)
-colnames(network_data)<-c(1:8)
-
-dataMatrix <- t(as.matrix(network_data)) %*% as.matrix(network_data)
-
-qsgG3<-qgraph(dataMatrix,layout="spring",cut = 3, minimum = 0,nodeNames=rownames(dataMatrix))#,esize=20,graph="pcor",sampleSize=nrow(pca_data),legend.cex = 0.6,cut = 0.6, maximum = 1, minimum = 0.2, esize = 20,vsize = 5, repulsion = 0.8,nodeNames=colnames(pca_data),borders = FALSE)#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
+# # Minimization
+# # Sufficient and necessary solution relation="sufnec"
+# eqmcc(data, outcome = "test", neg.out = TRUE, conditions = "road_area,
+# road_design, pavement, road_narrow, unevenness_roadside, speed_limit",
+# relation = "sufnec", all.sol = TRUE, details = TRUE, show.cases = TRUE)
 
 
+# # solution complex
+# eqmcc(data, outcome = "test", neg.out = TRUE, conditions = "road_area,
+# road_design, pavement, road_narrow, unevenness_roadside, speed_limit",
+# all.sol = TRUE, details = TRUE, show.cases = TRUE)
+
+# #Heatmap for the Thruth Table
+# #############################
+
+# heat_data<-TT$tt[TT$tt$OUT==1,]
+
+# data_plot<-melt(heat_data)
+# data_plot$value[43:49]<-0
+# data_plot$value2<-c(rep(NA,42),
+# 	paste(round((heat_data$n/12)*100,0),"%"))
+
+# avseq <- ggplot(data_plot, aes(y=cases, x=variable)) + 
+#   geom_raster(aes(fill=as.factor(value))) + 
+#   scale_fill_manual(values=c("white","steelblue"),
+#   	guide = guide_legend(title = " "),labels=c("Abscence","Presence")) +
+#   geom_text(aes(y=cases, x=variable, label=value2)) + 
+#   xlab(label="BEA indicators") + 
+#   ylab(label="Conditions") + 
+#   scale_x_discrete(labels=c("Road area", "Road design", "Pavement",
+#   	"Road narrow","Uneveness", "Speed limit", "Coverage")) +
+#   scale_y_discrete(labels=c("Condition 1","Condition 2",
+#   	"Condition 3","Condition 4","Condition 5","Condition 6",
+#   	"Condition 7")) +
+#     theme(axis.text.x = element_text(angle=60,vjust=0.5))
+# avseq
 
 
+########################################################
+#BEA analysis
+########################################################
 
+#PCA1a
+with(data_bea_clusters,
+	by(PCA1a,clusters,summary))
+with(data_bea_clusters,
+	kruskal.test(PCA1a,clusters))
 
+#PCA1b
+with(data_bea_clusters,
+	by(PCA1b,clusters,summary))
+with(data_bea_clusters,
+	kruskal.test(PCA1b~clusters))
 
+#PCA2
+with(data_bea_clusters,
+	by(PCA2,clusters,summary))
+with(data_bea_clusters,
+	kruskal.test(PCA2~clusters))
 
+#PCA3
+with(data_bea_clusters,
+	by(PCA3,clusters,summary))
+with(data_bea_clusters,
+	kruskal.test(PCA3~clusters))
 
+#PCA4
+with(data_bea_clusters,
+	by(PCA4,clusters,summary))
+with(data_bea_clusters,
+	kruskal.test(PCA4~clusters))
 
+#Outcome
 
+# Road Area
+table<-with(data_bea_clusters,
+	table(outcome))
+table
+prop.table(table)
+table<-with(data_bea_clusters,
+	table(outcome,clusters))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
 
+#data_epi$type_vehicle<-car::recode(data_epi$type_vehicle,"'pedestrian'=NA;'bicycle'=NA")
+logmodel<-glm(outcome ~   clusters,
+						  family=binomial, 
+						  data=data_bea_clusters)
+summary(logmodel)
+#anova(reglogGEU)
+exp(coef(logmodel)) # exponentiated coefficients
+exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+#predict(model1_death, type="response") # predicted values
+#residuals(model1_death, type="deviance") # residuals
+logistic.display(logmodel)
 
-
-
-pca_data<-with(data_bea,data.frame(road_area,road_design,intersections,conflict_intersections___0,conflict_intersections___1,conflict_intersections___2,lane_type,pavement,road_narrow,roadside,roadside_danger,unevenness_roadside,bus_stop,bump,road_traffic_signs,speed_limit,curve_type,night_lights,risk_classification))#,outcome=bancocerto$Q13)
-
-
-# generating correlation matrix
-cor_data<-polychoric(pca_data)$rho
-
-#visualizing correlation matrix with a network
-qsgG3<-qgraph(cor_data,layout="spring",esize=20,graph="pcor",sampleSize=nrow(pca_data),legend.cex = 0.6,cut = 0.6, maximum = 1, minimum = 0.2, esize = 20,vsize = 5, repulsion = 0.8,nodeNames=colnames(pca_data),borders = FALSE)#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
-
-g<-as.igraph(qsgG3)
-h<-walktrap.community(g)
-h<-spinglass.community(g)
-
-plot(h,g)

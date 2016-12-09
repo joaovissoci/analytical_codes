@@ -322,9 +322,9 @@ x2<-na.omit(melt(figure2_data))
 
 count_data<-plyr::count(x2, c("variable", "value"))
 
-write.csv(count_data,"/Users/joaovissoci/blah.csv")
+# write.csv(count_data,"/Users/joaovissoci/blah.csv")
 
-dat<-read.csv("/Users/joaovissoci/blah.csv")
+# dat<-read.csv("/Users/joaovissoci/blah.csv")
 colnames(count_data)<-c("var","likert","value")
 dat2<-cast(count_data,var~likert)
 colnames(dat2)<-c("var","likert1","likert2","likert3",
@@ -332,7 +332,14 @@ colnames(dat2)<-c("var","likert1","likert2","likert3",
 # dat3<-rbind(dat2,likert)
 # rownames(dat3)<-dat3$var
 # dat3$gr<-as.factor(c(rep("test1",11),rep("test2",5)))
-rownames(dat2)<-c("A large number of patients drink alcohol.",
+
+NAto0<-function(x){
+	car::recode(x,"NA=0")
+	}
+
+dat_2_2<-sapply(dat2,NAto0)
+
+rownames(dat_2_2)<-c("A large number of patients drink alcohol.",
 				"Alcohol use and abuse is not a problem \n amongs our patient population at KCMC.",
 				"Injury pateints at KCMC were likely drinking\n when they were injured.",
 			  	"Caring for patients who are intoxicated is\n frustrating as they caused themselves\n to be ill/injured.",
@@ -344,17 +351,13 @@ rownames(dat2)<-c("A large number of patients drink alcohol.",
 			  	"How willing are you and your colleagues to\n learn about reducing harmful alcohol\n use among injury patients?",
 			  	"How willing are you and your colleagues to\n implement alcohol screening among\n injury patients?")
 
-colnames(dat2)<-c("var","Strongly Disagree",
+colnames(dat_2_2)<-c("var","Strongly Disagree",
 					"Disagree",
 					"I don't know",
 					"Agree",
 					"Strongly Agree")
 
-NAto0<-function(x){
-	car::recode(x,"NA=0")
-	}
 
-dat_2_2<-sapply(dat2,NAto0)
 
 HH::likert(dat_2_2[,-1], main="",
 			as.percent=TRUE, rightAxisLabels=NULL, 
@@ -418,7 +421,8 @@ figure4_data<-with(data,data.frame(
 						 common_ask_pts_tobacco,
 						 resources_refer_pts,
 						 ask_pts_alc,
-						 test_alc_breath_or_serum
+						 test_alc_breath_or_serum,
+						 counsel_patients
 						 ))
 
 x2<-na.omit(melt(figure4_data))
@@ -449,6 +453,7 @@ rownames(dat_2_2)<-c(
 "It is comon to ask patients about their\n tobacco use behavior.",
 "There are resources to refer patients to\n when I determine they have high risk drinking.",
 "I ask my patients about their alcohol use",
+"I test injured patients for alcohol in their\n breath or serum",
 "I counsel patients to reduce their drinking\n if I think they have harmful drinking behavior.")
 
 colnames(dat_2_2)<-c("var","Strongly Disagree",
@@ -734,19 +739,21 @@ colnames(network_data)<-c("Q1","Q2","Q3","Q4","Q5",
 	"Q6","Q7","Q8","Q9","Q10",
 	"Q11","Q12","Q13","Q14","Q15",
 	"Q16","Q17","Q18","Q19","Q20",
-	"Q21","Q22","PAS")
+	"Q21","Q22","Q23","PAS")
 
 cor<-cor(na.omit(network_data),method="spearman")
 # cor<-cor_auto(na.omit(network_data))
 
 Hmisc::rcorr(as.matrix(network_data),type="spearman")
 
+test<-FDRnetwork(cor, cutoff=0.06,method="pval")
+
 #listing grouping variables in the network resulting from the 
 #community analysis
-node_groups<-list(first_path=c(8,11,22),
+node_groups<-list(first_path=c(8,11,22,24),
 	non_sig_PAS=c(6,7,10,18,21),
 	second_path=c(1,2,3,4,5,9,12,13,14,15,16,17,19,20),
-	stigma=c(23))
+	outcome=c(22,23))
 
 # creating vectors for labels
 node_labels<-c(
@@ -773,8 +780,9 @@ node_labels<-c(
 "19.It is comon to ask patients about their tobacco use behavior.",
 "20.There are resources to refer patients to when I determine\n they have high risk drinking.",
 "21.I ask my patients about their alcohol use",
-"22.I counsel patients to reduce their drinking\n if I think they have harmful drinking behavior.",
-"23.Perceived alcohol stigma")#,
+"22. Testing breath and serum"
+"23.I counsel patients to reduce their drinking\n if I think they have harmful drinking behavior.",
+"24.Perceived alcohol stigma")#,
 # "Personal Devaluation")
 
 # creating nodes labels vector
@@ -788,7 +796,7 @@ node_names<-c("Q1","Q2","Q3","Q4","Q5",
 	"Q6","Q7","Q8","Q9","Q10",
 	"Q11","Q12","Q13","Q14","Q15",
 	"Q16","Q17","Q18","Q19","Q20",
-	"Q21","Q22","PAS")#,"PDeval")
+	"Q21","Q22","Q23","PAS")#,"PDeval")
 
 # findGraph(cor, 34, type = "cor")
 
@@ -812,6 +820,9 @@ network<-qgraph(cor,
 
 #Identify SPLs within the graph and extract direct paths to WP
 predictors<-centrality(network,all.shortest.paths=TRUE)$ShortestPaths[,22]
+predictors
+
+predictors<-centrality(network,all.shortest.paths=TRUE)$ShortestPaths[,23]
 predictors
 
 # predictors<-centrality(network)$ShortestPaths[,24]
