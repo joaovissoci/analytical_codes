@@ -10,15 +10,17 @@
 #SETTING ENVIRONMENT
 #################################################################
 #All packages must be installes with install.packages() function
-lapply(c("epicalc", "sem","Hmisc","ggplot2", "psych", "irr", 
-	"nortest", "moments","GPArotation","nFactors","repmis",
-	"gdata","qgraph","igraph","meta","metafor"), 
+lapply(c("epicalc","sem","Hmisc","ggplot2", 
+		 "psych", "irr","nortest","moments",
+		 "GPArotation","nFactors","repmis",
+		 "gdata","qgraph","igraph","meta",
+		 "metafor"), 
 library, character.only=T)
 #################################################################
 #IMPORTING DATA
 #################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/GIC 2016/suicide_SR.csv",sep=",")
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/GIC 2016/suicide_SR.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 #############################################################################
