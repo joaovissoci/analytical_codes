@@ -89,23 +89,23 @@ meta_bssi$sdDIFF_control<-as.numeric(
 
 #recoding metanalysis groups
 meta_bssi$intervention<-car::recode(meta_bssi$intervention,"
-	'targeted education awarenes'='TEA or BI';
-	'brief intervention and contact'='TEA or BI';
+	'targeted education awarenes'='Targeted education and awareness';
+	'brief intervention and contact'='Brief intervention and contact';
 	'psychotherapy'='Psychotherapy'")
 
 #run metanalysis model for continuous data
 meta1 <- metacont(N_group_FUP1, 
-	meanDIFF_exerimental,
-	sdDIFF_experiment,
+	mean_FUP1_experimental_group,
+	sd_FUP1_experimental_group,
 	N_control_FUP1,
-	meandDIFF_control,
-	sdDIFF_control, 
-  data=meta_bssi, sm="MD",
+	mean_FUP1_experimental_control,
+	sd_FUP1_experimental_control, 
+  data=meta_bssi, sm="SMD",
   byvar=intervention,print.byvar=FALSE,
   studlab=study,comb.fixed=FALSE)
 summary(meta1)
 
-tiff("/Users/joaovissoci/Desktop/figure2.tiff",
+tiff("/Users/jnv4/Desktop/SR_suicidepreventionBSSI_figure2.tiff",
   width = 800, height = 400,compression = 'lzw')
 forest(meta1)
 dev.off()
@@ -136,9 +136,9 @@ meta_rate<-na.omit(meta_rate)
 
 #recoding metanalysis groups
 meta_rate$intervention<-car::recode(meta_rate$intervention,"
-	'targeted education awarenes'='TEA or BI';
-	'brief intervention and contact'='TEA or BI';
-	'damage control'='Damage control'")
+	'targeted education awarenes'='Targeted education and awareness';
+	'brief intervention and contact'='Brief intervention and contact';
+	'damage control'='Restricted access to legal means'")
 
 #Adjusting to avoind the error of a missing category in
 #the byvar analysis
@@ -171,7 +171,7 @@ meta1 <- metabin(proportion_FUP1_experimental_group,
 summary(meta1)
 funnel(meta1)
 
-tiff("/Users/joaovissoci/Desktop/figure3.tiff",
+tiff("/Users/jnv4/Desktop/SR_suicidepreventionRATE_figure3.tiff",
   width = 900, height = 500,compression = 'lzw')
 forest(meta1)
 dev.off()
@@ -219,23 +219,23 @@ meta_dep$sdDIFF_control<-as.numeric(
 
 #recoding metanalysis groups
 meta_dep$intervention<-car::recode(meta_dep$intervention,"
-	'targeted education awarenes'='TEA or BI';
-	'brief intervention and contact'='TEA or BI';
+	'targeted education awarenes'='Targeted education and awareness';
+	'brief intervention and contact'='Brief intervention and contact';
 	'psychotherapy'='Psychotherapy'")
 
 #run metanalysis model for continuous data
 meta1 <- metacont(N_group_FUP1, 
-	meanDIFF_exerimental,
-	sdDIFF_experiment,
+	mean_FUP1_experimental_group,
+	sd_FUP1_experimental_group,
 	N_control_FUP1,
-	meandDIFF_control,
-	sdDIFF_control, 
+	mean_FUP1_experimental_control,
+	sd_FUP1_experimental_control, 
   data=meta_dep, sm="SMD",
   byvar=intervention,print.byvar=FALSE,
   studlab=study,comb.fixed=FALSE)
 summary(meta1)
 
-tiff("/Users/joaovissoci/Desktop/figure4.tiff",
+tiff("/Users/jnv4/Desktop/SR_suicidepreventionDEPRESSION_figure4.tiff",
   width = 800, height = 400,compression = 'lzw')
 forest(meta1)
 dev.off()
@@ -287,23 +287,23 @@ meta_hope$sdDIFF_control<-as.numeric(
 
 #recoding metanalysis groups
 meta_hope$intervention<-car::recode(meta_hope$intervention,"
-	'targeted education awarenes'='TEA or BI';
-	'brief intervention and contact'='TEA or BI';
+	'targeted education awarenes'='Targeted education and awareness';
+	'brief intervention and contact'='Brief intervention and contact';
 	'psychotherapy'='Psychotherapy'")
 
 #run metanalysis model for continuous data
 meta1 <- metacont(N_group_FUP1, 
-	meanDIFF_exerimental,
-	sdDIFF_experiment,
+	mean_FUP1_experimental_group,
+	sd_FUP1_experimental_group,
 	N_control_FUP1,
-	meandDIFF_control,
-	sdDIFF_control, 
-  data=meta_hope, sm="MD",
+	mean_FUP1_experimental_control,
+	sd_FUP1_experimental_control, 
+  data=meta_hope, sm="SMD",
   byvar=intervention,print.byvar=FALSE,
   studlab=study,comb.fixed=FALSE)
 summary(meta1)
 
-tiff("/Users/joaovissoci/Desktop/figure5.tiff",
+tiff("/Users/jnv4/Desktop/SR_suicidepreventionHOPLESSNESS_figure5.tiff",
   width = 800, height = 400,compression = 'lzw')
 forest(meta1)
 dev.off()

@@ -37,7 +37,7 @@ character.only=T)
 #Pulling data from dropbox
 #data_hamilton <- repmis::source_DropboxData("lena_hamilton.csv","r31zt5zeiygsc23",sep = ",",header = TRUE)
 
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -109,8 +109,8 @@ outcomes$rtc_involvement<-car::recode(outcomes$rtc_involvement,"'No'=0;'Yes'=1;e
 outcomes$rtc_involvement<-as.numeric(as.character(outcomes$rtc_involvement))
 outcomes$hospitalization<-car::recode(data$hospitalization,"'No'='No';'Yes'='Yes';else=NA")
 
-data_all<-data.frame(safe_habits,outcomes[,c(1,2,7)],work_experience,
-	age=data$age)
+data_all<-data.frame(safe_habits,outcomes[,c(1,2,5)],work_experience,
+	age=data$age,work_night=data$final_work_time_cat)
 
 data_all<-na.omit(data_all)
 
@@ -502,6 +502,7 @@ logmodel<-glm(rtc_involvement ~
 								age +
 								years_work_onbodaboda +
 								hours_work_week + 
+								work_night +
 								helmet_cracks + 
 								safety_helmet_use +
 								safety_buckle_helmet + 
@@ -775,7 +776,8 @@ logmodel<-glm(injury ~
 								age +
 								years_work_onbodaboda +
 								hours_work_week + 
-								helmet_cracks + 
+								helmet_cracks +
+								work_night + 
 								safety_helmet_use +
 								safety_buckle_helmet + 
 								helmet_obscure_face_shield + 
@@ -907,7 +909,9 @@ table<-with(data_all,table(safety_headlight_use_day,
 table
 prop.table(table,2)
 chisq.test(table)
+
 fisher.test(table)
+
 assocstats(table) #vcd package
 
 #safety_headlight_use_night
@@ -1049,17 +1053,18 @@ logmodel<-glm(nearmissmonth ~
 								age +
 								years_work_onbodaboda +
 								hours_work_week + 
-								# safety_helmet_use +
+								safety_helmet_use +
+								work_night +								
 								helmet_cracks + 
-								# safety_buckle_helmet + 
+								safety_buckle_helmet + 
 								helmet_obscure_face_shield + 
 								helmet_face_shield + 
 								# helmet_fit +
-								# safety_headlight_use_day + 
-								safety_headlight_use_night,
-								# safety_purchase_helmet_after_use +
-								# safety_belief_helmet_reduce_risk,
-								# safety_belief_helmetstraps_reduce_risk,
+								safety_headlight_use_day + 
+								safety_headlight_use_night +
+								safety_purchase_helmet_after_use +
+								# safety_belief_helmet_reduce_risk +
+								safety_belief_helmetstraps_reduce_risk,
 	family=binomial, data=data_all)
 summary(logmodel)
 #anova(reglogGEU)
@@ -1070,30 +1075,63 @@ exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 logistic.display(logmodel)
 
 ######################################################
-#Latence class analysis
-#######################################################
+#PRINCIPAL COMPONENT ANALYSIS - From psych package - http://twt.lk/bdAQ or http://twt.lk/bdAR or http://twt.lk/bdAS
+######################################################
+pca_outcomes<-with(data_all,data.frame(
+	rtc_involvement,
+	rtc_injury=as.numeric(injury),
+	nearmissmonth))
+# Pricipal Components Analysis
+model <- principal(pca_outcomes,
+	nfactors=1, rotate='varimx', scores=T)
+summary(model) # print variance accounted for 
+loadings(model) # pc loadings 
+
+ L <- model$loadings            # Just get the loadings matrix
+ # S <- model$scores              # This gives an incorrect answer in the current version
+ d <- pca_outcomes              # get your data
+ dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+ pca1 <- dc %*% L                 # scores are the centered data times the loadings
+ # lowerCor(sc)                   #These scores, being principal components
+#                                # should be orthogonal 
+colnames(pca1)<-c("Outcome")
+
+pca_safehabits<-with(data_all,data.frame(
+	safety_helmet_use,
+	helmet_cracks, 
+	safety_buckle_helmet, 
+	helmet_obscure_face_shield, 
+	helmet_face_shield, 
+	helmet_fit,
+	safety_headlight_use_day, 
+	safety_headlight_use_night,
+	safety_purchase_helmet_after_use,
+	safety_belief_helmet_reduce_risk,
+	safety_belief_helmetstraps_reduce_risk))
+
+pca_safehabits_temp<-lapply(pca_safehabits,as.numeric)
+pca_safehabits<-as.data.frame(pca_safehabits_temp)
+
+# Pricipal Components Analysis
+model <- principal(pca_safehabits,
+	nfactors=4, rotate='varimax', scores=T)
+summary(model) # print variance accounted for 
+loadings(model) # pc loadings 
+
+ L <- model$loadings            # Just get the loadings matrix
+ # S <- model$scores              # This gives an incorrect answer in the current version
+ d <- pca_safehabits              # get your data
+ dc <- scale(d,scale=FALSE)     # center the data but do not standardize it
+ pca1 <- dc %*% L                 # scores are the centered data times the loadings
+ # lowerCor(sc)                   #These scores, being principal components
+#                                # should be orthogonal 
+colnames(pca1)<-c("Outcome")
 
 
-# ######################################################
-# #PRINCIPAL COMPONENT ANALYSIS - From psych package - http://twt.lk/bdAQ or http://twt.lk/bdAR or http://twt.lk/bdAS
-# ######################################################
-# # # Define the amout of factor to retain
-# # #Group of functinos to determine the number os items to be extracted
-# # par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
-# # ev <- eigen(cor_auto(safe_habits_numeric)) # get eigenvalues - insert the data you want to calculate the scree plot for
-# # ev # Show eigend values
-# # ap <- parallel(subject=nrow(safe_habits_numeric),var=ncol(safe_habits_numeric),rep=100,cent=.05) #Calculate the acceleration factor
-# # summary(ap)
-# # nS <- nScree(ev$values) #Set up the Scree Plot 
-# # plotnScree(nS) # Plot the ScreePlot Graph
-# # my.vss <- VSS(cor_auto(safe_habits_numeric),title="VSS of BEA data")
-# # print(my.vss[,1:12],digits =2)
-# # VSS.plot(my.vss, title="VSS of 24 mental tests")
-# # scree(safe_habits_numeric)
-# # VSS.scree(cor_auto(safe_habits_numeric))
-# # fa.parallel(cor_auto(safe_habits_numeric),n.obs=36)
+pca_demographics<-
 
-# # Pricipal Components Analysis
+
+# Pricipal Components Analysis
 # model <- principal(pca_data,
 # 	nfactors=4, rotate='varimx', scores=T)
 # summary(model) # print variance accounted for 
@@ -1108,6 +1146,8 @@ logistic.display(logmodel)
 #  # lowerCor(sc)                   #These scores, being principal components
 # #                                # should be orthogonal 
 # colnames(pca1)<-c("PCA1","PCA2","PCA3","PCA4")
+
+
 
 # # Pricipal Components Analysis
 # # entering raw data and extracting PCs 
