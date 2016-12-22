@@ -66,6 +66,9 @@ names<-rownames(cor$correlations)
 #  posCol=c("#BF0000","red"),
 #  gray=FALSE)
 
+tiff("/Users/jnv4/Desktop/ana_fig1.tiff", units='in', 
+  width = 15,
+ height = 10,compression = 'lzw',res=1200,bg = "white")
 Q2_atleta2 <- qgraph(cor$correlations,
                      borders = TRUE,
                      cut=0.8, 
@@ -77,8 +80,9 @@ Q2_atleta2 <- qgraph(cor$correlations,
                      layout = "spring",
                      directed=FALSE,
                      label.scale=FALSE,
-                     gray=FALSE,
-                     posCol=c("gray","gray"))
+                     gray=TRUE)
+                     # posCol=c("gray","gray"))
+dev.off()
 
 g<-as.igraph(Q2_atleta2)
 h<-spinglass.community(g)
