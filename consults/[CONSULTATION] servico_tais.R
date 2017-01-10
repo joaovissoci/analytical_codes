@@ -22,7 +22,7 @@ lapply(c("metafor","ggplot2","gridExtra" ,"psych", "RCurl", "irr", "nortest", "m
 data<-read.csv("/home/joao/Dropbox/datasets/depressao_teens.csv",header=T)
 #data<-read.csv("/Users/rpietro/Desktop/depressao_teens.csv",header=T)er
 
-data_summary<-read.csv("/home/joao/Dropbox/datasets/depression_teens.csv",header=T)
+data_summary<-read.csv("/Users/joaovissoci/Desktop/depression_teens.csv",header=T)
 #data_summary<-read.csv("/Users/rpietro/Desktop/meta_summary.csv",header=T)
 
 #Instructions here http://goo.gl/Ofa7gQ
@@ -277,7 +277,7 @@ rownames(study_data)<-data_summary$X
 network_data<-rbind(variable_data,study_data)
 network_data <- (as.matrix(network_data)) %*% t(as.matrix(network_data))
 diag(network_data) <- 0
-names<-c(c("EA","OT","ECR","OU","FR","MD","ST","QF"),rownames(study_data))
+names<-c(c("AE","OT","RCT","OI","FR","IM","ST","FI"),rownames(study_data))
 
 size_edges<-c(effect_sizes[,1]*10,intensity_sizes*1.5)
 color<-c("red","yellow","lightblue","lightblue","red","red","yellow","yellow",rep("grey",46))
@@ -285,9 +285,9 @@ shape<-c(rep("circle",8),rep("square",46))
 label.cex<- c(rep(1.5,8),rep(1.0,46))
 #groups<-c("Ensaio Clínico","Medicamentos","Outras Razões")
 
-tiff("/home/joao/Desktop/sporedata_depression_sr_network.tiff", width = 1000, height = 700,compression = 'lzw')
+tiff("/Users/joaovissoci/Desktop/sporedata_depression_sr_network.tiff", width = 1000, height = 700,compression = 'lzw')
 network_meta <- qgraph(network_data,layout = "spring",minimum=0.5,cut=100,labels=names,label.scale=FALSE,label.cex = label.cex,vsize=size_edges,shape=shape,grey=T,color=color,borders = FALSE,posCol = "grey")
-legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
+legend(0.8,-0.8, bty=".",c("Clinical trials","Medication","Other reasons"),cex=1.2,fill=c("lightblue","red","yellow"))
 #legend(-1.32,-0.5	, bty="n",c("EA: Efeitos Adversos","OT: Outro Tratamento","ECR: Questões com o ECR","FR: Falha no Retorno","MD: Problemas com medicamentos","ST: Melhora nos Sintomas","QF: Questões Familiares","OU: Outras Razões"),cex=1.2)
 dev.off()
 

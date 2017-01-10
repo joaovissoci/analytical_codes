@@ -3,7 +3,7 @@
 
 #lendo o arquivo "noname"
 #file <- file.choose()
-dados <- read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/CCS/juvenile_offenders/adolecents_prisoners_text_data_coded.csv", header = TRUE)
+dados <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/CCS/juvenile_offenders/adolecents_prisoners_text_data_coded.csv", header = TRUE)
 dados_theme1<-subset(dados,dados$Theme=="perspectiva de futuro")
 dados_theme2<-subset(dados,dados$Theme=="reconhecimento")
 dados_theme3<-subset(dados,dados$Theme=="relacoes e vinculos familiares")
@@ -66,23 +66,20 @@ names<-rownames(cor$correlations)
 #  posCol=c("#BF0000","red"),
 #  gray=FALSE)
 
-tiff("/Users/jnv4/Desktop/ana_fig1.tiff", units='in', 
-  width = 15,
- height = 10,compression = 'lzw',res=1200,bg = "white")
 Q2_atleta2 <- qgraph(cor$correlations,
-                     borders = TRUE,
                      cut=0.8, 
                      minimum = 0.4, 
                      labels=names,
                      label.cex = 1, 
                      vsize=word_freq,
                      label.color="black",
+                     color="grey80",
                      layout = "spring",
                      directed=FALSE,
                      label.scale=FALSE,
-                     gray=TRUE)
+                     gray=TRUE,
+                     borders=FALSE)
                      # posCol=c("gray","gray"))
-dev.off()
 
 g<-as.igraph(Q2_atleta2)
 h<-spinglass.community(g)
@@ -204,9 +201,9 @@ node_names<-rownames(cor$correlations)
 # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
 #   width = 1500, height = 1200,horizontal = FALSE, 
 #   onefile = FALSE)
-# tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
- # height = 700,compression = 'lzw')
-  network_glasso<-qgraph(cor$correlations,
+tiff("/Users/joaovissoci/Desktop/ana_perspectivafuturo_tiff", width = 1200,
+ height = 700,compression = 'lzw')
+  network_glasso<-qgraph(cor,
   layout='spring',
   # esize=20,
   # graph="glasso",
@@ -220,15 +217,16 @@ node_names<-rownames(cor$correlations)
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=TRUE,
+  borders=FALSE,
   # border.width=5,
   # groups=network_groups,
-  # color=c("grey"),
-  labels=rownames(cor$correlations)
-  # label.scale=FALSE
-  #gray=T,
+  color=c("grey80"),
+  labels=node_names,
+  label.scale=FALSE,
+  label.cex=word_freq/3,
+  gray=T
   )
-# dev.off()
+dev.off()
 #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
 #Directed Acyclic Graph / require package bnlearn
@@ -281,7 +279,20 @@ names<-rownames(cor)
 #  posCol=c("#BF0000","red"),
 #  gray=FALSE)
 
-Q2_atleta2 <- qgraph(cor, borders = FALSE, cut=0.6, minimum = 0.4, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
+Q2_atleta2 <- qgraph(cor,
+                     borders = FALSE,
+                     cut=0.6,
+                     minimum = 0.4,
+                     labels=names,
+                     label.cex = 0.80,
+                     label.color="black",
+                     layout = "spring",
+                     directed=FALSE,
+                     label.scale=FALSE,
+                     gray=FALSE,
+                     color="grey80",
+                     greyscale=TRUE)
+                     # posCol=c("gray","gray"))
 
 # Q2_atleta2 <- qgraph(cor$correlations, borders = TRUE, cut=0.8, minimum = 0.4, labels=names,label.cex = 1, vsize=word_freq,label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
@@ -411,8 +422,8 @@ word_freq<-car::recode(word_freq,"1:5=7;8=9;10:11=15;13:14=20")
 # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
 #   width = 1500, height = 1200,horizontal = FALSE, 
 #   onefile = FALSE)
-# tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
- # height = 700,compression = 'lzw')
+tiff("/Users/joaovissoci/Desktop/ana_reconhecimento_tiff", width = 1200,
+ height = 700,compression = 'lzw')
   network_glasso<-qgraph(cor,
   layout='spring',
   # esize=20,
@@ -427,15 +438,16 @@ word_freq<-car::recode(word_freq,"1:5=7;8=9;10:11=15;13:14=20")
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=TRUE,
+  borders=FALSE,
   # border.width=5,
   # groups=network_groups,
-  # color=c("grey50"),
-  labels=rownames(cor)
-  # label.scale=FALSE
-  #gray=T,
+  color=c("grey80"),
+  labels=rownames(cor),
+  label.scale=FALSE,
+  label.cex=word_freq/4,
+  gray=T
   )
-# dev.off()
+dev.off()
 #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
 #Directed Acyclic Graph / require package bnlearn
@@ -619,8 +631,8 @@ word_freq<-car::recode(word_freq,"24=15")
 # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
 #   width = 1500, height = 1200,horizontal = FALSE, 
 #   onefile = FALSE)
-# tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
- # height = 700,compression = 'lzw')
+tiff("/Users/joaovissoci/Desktop/bea_relacoesfamiliares.tiff", width = 1200,
+ height = 700,compression = 'lzw')
   network_glasso<-qgraph(cor,
   layout='spring',
   # esize=20,
@@ -635,14 +647,16 @@ word_freq<-car::recode(word_freq,"24=15")
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=TRUE,
+  borders=FALSE,
   # border.width=5,
   # groups=network_groups,
-  # color=c("gold","steelblue","red"),#,"grey50"),
-  labels=rownames(cor)
-  #gray=T,
+  color=c("grey80"),
+  labels=node_names,
+  label.scale=FALSE,
+  label.cex=word_freq/3,
+  gray=T
   )
-# dev.off()
+dev.off()
 #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
 #Directed Acyclic Graph / require package bnlearn
@@ -825,8 +839,8 @@ node_names<-rownames(cor)
 # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
 #   width = 1500, height = 1200,horizontal = FALSE, 
 #   onefile = FALSE)
-# tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
- # height = 700,compression = 'lzw')
+tiff("/Users/joaovissoci/Desktop/ana_vivencia.tiff", width = 1200,
+ height = 700,compression = 'lzw')
   network_glasso<-qgraph(cor,
   layout='spring',
   # esize=20,
@@ -841,14 +855,16 @@ node_names<-rownames(cor)
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=TRUE,
+  borders=FALSE,
   # border.width=5,
   # groups=network_groups,
-  # color=c("gold","steelblue","red"),#,"grey50"),
-  labels=rownames(cor)
-  #gray=T,
+  color=c("grey80"),
+  labels=rownames(cor),
+  label.scale=FALSE,
+  label.cex=word_freq/6,
+  gray=T
   )
-# dev.off()
+dev.off()
 #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
 #Directed Acyclic Graph / require package bnlearn
@@ -1031,8 +1047,8 @@ word_freq<-car::recode(word_freq,"15=8")
 # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
 #   width = 1500, height = 1200,horizontal = FALSE, 
 #   onefile = FALSE)
-# tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
- # height = 700,compression = 'lzw')
+tiff("/Users/joaovissoci/Desktop/ana_vivenciafamiliar.tiff", width = 1200,
+ height = 700,compression = 'lzw')
   network_glasso<-qgraph(cor,
   layout='spring',
   # esize=20,
@@ -1047,14 +1063,16 @@ word_freq<-car::recode(word_freq,"15=8")
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=TRUE,
+  borders=FALSE,
   # border.width=5,
   # groups=network_groups,
-  # color=c("gold","steelblue","red"),#,"grey50"),
-  labels=rownames(cor)
-  #gray=T,
+  color=c("grey80"),
+  labels=node_names,
+  label.cex=word_freq/2,
+  label.scale=FALSE,
+  gray=T
   )
-# dev.off()
+dev.off()
 #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
 #Directed Acyclic Graph / require package bnlearn
@@ -1237,15 +1255,15 @@ word_freq<-car::recode(word_freq,"13=8")
 # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
 #   width = 1500, height = 1200,horizontal = FALSE, 
 #   onefile = FALSE)
-# tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
- # height = 700,compression = 'lzw')
+tiff("/Users/joaovissoci/Desktop/ana_medidasocioeducativa.tiff", width = 1200,
+ height = 700,compression = 'lzw')
   network_glasso<-qgraph(cor,
   layout='spring',
   # esize=20,
   # graph="glasso",
   # sampleSize=nrow(sf8_data),
   legend.cex = 0.5,
-  cut = 0.6,
+  cut = 0.8,
   # maximum = 1, 
   minimum = 0.4,
   # esize = 20,
@@ -1253,14 +1271,16 @@ word_freq<-car::recode(word_freq,"13=8")
   # repulsion = 0.8,
   # nodeNames=
   # shape="square",
-  borders=TRUE,
+  borders=FALSE,
   # border.width=5,
   # groups=network_groups,
-  # color=c("gold","steelblue","red"),#,"grey50"),
-  labels=rownames(cor)
-  #gray=T,
+  color=c("grey80"),
+  labels=node_names,
+  label.scale=FALSE,
+  label.cex=word_freq/2,
+  gray=T
   )
-# dev.off()
+dev.off()
 #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
 #Directed Acyclic Graph / require package bnlearn
