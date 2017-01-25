@@ -12,11 +12,11 @@ library(reshape2)
 
  
 # Get data
-data2009<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2009_datecoded.csv")
-data2010<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2010_datecoded.csv")
-data2011<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2011_datecoded.csv")
-data2012<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2012_datecoded.csv")
-data2013<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2013_datecoded.csv")
+data2009<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2009_datecoded.csv")
+data2010<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2010_datecoded.csv")
+data2011<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2011_datecoded.csv")
+data2012<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2012_datecoded.csv")
+data2013<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2013_datecoded.csv")
 
 #Data on points vs. polygons by category
 all_data<-rbind(
@@ -533,3 +533,23 @@ dev.off()
 
 ####################################
 
+
+
+
+CHANGE points
+
+set.seed(10)
+m.data=c(rnorm(100,0,1),rnorm(100,1,1),rnorm(100,0,1),rnorm(100,0.2,1))
+ts.plot(m.data,xlab='Index')
+
+m.pelt=cpt.meanvar(timeseries_data,test.stat='Poisson',method='BinSeg')
+plot(m.pelt,type='l',cpt.col='blue',xlab='Index',cpt.width=4)
+cpts(m.pelt)
+
+
+data(Lai2005fig4)
+Lai.default=cpt.mean(Lai2005fig4[,5],method='PELT')
+plot(Lai.default,pch=20,col='grey',cpt.col='black',type='p',xlab='Index')
+cpts(Lai.default)
+
+coef(Lai.default)
