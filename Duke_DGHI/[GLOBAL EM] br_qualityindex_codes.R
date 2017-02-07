@@ -11,7 +11,7 @@ Lein_Data<-read.csv("/Users/joaovissoci/Desktop/AL_RawData.csv")
 
 city_level_data<-read.csv("/Users/joaovissoci/Desktop/City.csv")
 
-hc_level_data<-read.csv("/Users/joaovissoci/Desktop/HealthCenter (1).csv")
+hc_level_data<-read.csv("/Users/jnv4/Desktop/HealthCenter (1).csv")
 
 
 
@@ -218,20 +218,20 @@ library(lavaan)
 model <- '
 
 #Latent variables         
-SES =~ literacy + urban_population + gdp + income
-HS =~ Coverage + Investment + PhysicianPercent
+SES =~ urban_population + gdp + income
+HS =~ Coverage + PhysicianPercent + Investment
 # QAL =~ Comp1 + Comp2 + Comp3
 
 #Regressions
-# HS ~ SES
-Comp1 ~ HS + SES
-Comp2 ~ HS + SES
-Comp3 ~ HS + SES
-HACSC ~ HS + Comp1 + Comp2 + Comp3 + SES
+HS ~ SES
+Comp1 ~ HS
+Comp2 ~ HS
+Comp3 ~ HS
+HACSC ~ HS + Comp1 + Comp2 + Comp3
 
 #Residual Covariances
 gdp ~~ gdp
-literacy ~~ literacy 
+# literacy ~~ literacy 
 urban_population ~~ urban_population
 # infant_death ~~ infant_death
 income ~~ income
@@ -246,6 +246,7 @@ HACSC ~~ HACSC
 # Comp1 ~~ Comp2
 # Comp2 ~~ Comp3
 # Comp3 ~~ Comp1
+Coverage ~~  Investment
 '
 
 modelfit<-sem(model, data=sem_data_scaled) #fixed.x=FALSE)
