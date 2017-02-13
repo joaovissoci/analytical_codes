@@ -42,7 +42,7 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tz_bnipatients_data.csv")
+data1<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tz_bnipatients_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -50,8 +50,7 @@ data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/t
 
 names(data)
 
-data<-subset(data,data$audit_complete[2]==2)
-
+data<-subset(data,data1$audit_complete==2)
 
 audit_data<-with(data,data.frame(
 				consumption,
@@ -78,6 +77,10 @@ NAto0<-function(x){
 audit_data_NAto0<-lapply(audit_data_questions,NAto0)
 audit_data_NAto0<-as.data.frame(audit_data_NAto0)
 audit_data_questions$audit_score<-rowSums(audit_data_NAto0)
+audit_data_questions$audit_score_D1<-rowSums(audit_data_NAto0[,1:3])
+audit_data_questions$audit_score_D2<-rowSums(audit_data_NAto0[,4:10])
+# audit_data_questions$audit_score_D3<-rowSums(audit_data_NAto0[,7:])
+
 audit_data_questions$audit_score_cat<-car::recode(
 	audit_data_questions$audit_score,
 	"0:8='No';else='Yes'")
@@ -207,7 +210,7 @@ describe(pas_score)
 # discrimination<-na.omit(discrimination)
 rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 # discrimination_scaled<-lapply(pas_score,rescale)
-pas_score<-rescale(pas_score)
+pas_score_scaled<-rescale(pas_score)
 # summary(x)
 # sd(x)
 pas_score_cat<-car::recode(pas_score,"0:3='low';else='high'")
@@ -259,47 +262,180 @@ summary(devaluation)
 describe(devaluation)
 devaluation_cat<-car::recode(devaluation,"0:3='low';else='high'")
 
-data_nonabst<-subset(data.frame(audit_data_cleaned,
+#Non-Abstainners = everyone who responded 1 or 2 in the consumption question
+data_nonabst<-subset(data.frame(age=data$age,
+							gender=data$female,
+							alcohol=data$alcohol_6h_ainjury,
+							positive_breath=data$pos_etoh,
+							mvc=data$mvc,
+							audit_data_cleaned,
 								pas_score,
 								pas_score_cat,
 								devaluation_scaled,
+								devaluation,
 								devaluation_cat,
 								discrimination_scaled,
 								discrimination,
 								drinc_data_score,
 								drinc_data_score_cat),							
-								audit_data_NAto0[1]!=0)
+								data$consumption!=0)
+
+data_nonabst$groups<-data_nonabst$drink_drive
+
+data_abst<-subset(data.frame(age=data$age,
+							gender=data$female,
+							alcohol=data$alcohol_6h_ainjury,
+							positive_breath=data$pos_etoh,
+							mvc=data$mvc,
+							audit_data_cleaned,
+							pas_score,
+							pas_score_cat,
+							devaluation_scaled,
+							devaluation_cat,
+							devaluation,
+							discrimination_scaled,
+							discrimination,
+							drinc_data_score,
+							drinc_data_score_cat),							
+							data$consumption==0)
+
+data_abst$groups<-c(3)
+
+
+data_full1<-rbind(data_nonabst,data_abst)
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+imp2 <- mice(data_full1, seed = 2222, m=5)
+
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+data_full<-complete(imp2,4)
+
 ######################################################################
 #TABLE 1
 ######################################################################
+str(data_full)
+
+with(data_full,table(groups))
+with(data_full,prop.table(table(groups)))
+
+#Age
+with(data_full,
+	describe(age))
+with(data_full,
+	by(age,groups,describe))
+with(data_full,
+	kruskal.test(audit_score~groups))
+
+#gender
+with(data_full,table(gender))
+with(data_full,prop.table(table(gender)))
+with(data_full,table(gender,groups))
+with(data_full,prop.table(table(gender,groups),2))
+
+#alcohol
+with(data_full,table(alcohol))
+with(data_full,prop.table(table(alcohol)))
+with(data_full,table(alcohol,groups))
+with(data_full,prop.table(table(alcohol,groups),2))
+
+#positive_breath
+with(data_full,table(positive_breath))
+with(data_full,prop.table(table(positive_breath)))
+with(data_full,table(positive_breath,groups))
+with(data_full,prop.table(table(positive_breath,groups),2))
+
+#mvc
+with(data_full,table(mvc))
+with(data_full,prop.table(table(mvc)))
+with(data_full,table(mvc,groups))
+with(data_full,prop.table(table(mvc,groups),2))
+
 #Comparing AUdit Scores
-with(data_nonabst,
-	by(audit_score,drink_drive,summary))
-with(data_nonabst,
-	t.test(audit_score~drink_drive))
-data_nonabst$audit_cat<-car::recode(data_nonabst$audit_score,"
-	0.00:4.00='a';
-	4.01:7.50='b';
-	7.51:15.00='c';
-	15.01:36.00='d'")
+with(data_full,
+	summary(audit_score))
+with(data_full,
+	by(audit_score,groups,summary))
+with(,
+	kruskal.test(audit_score~groups))
+# data_nonabst$audit_cat<-car::recode(data_nonabst$audit_score,"
+# 	0.00:4.00='a';
+# 	4.01:7.50='b';
+# 	7.51:15.00='c';
+# 	15.01:36.00='d'")
 
-with(data_nonabst,
-	by(pas_score,drink_drive,summary))
-with(data_nonabst,
-	wilcox.test(pas_score~drink_drive))
+#Comparing AUdit Scores - D1
+with(data_full,
+	summary(audit_score_D1))
+with(data_full,
+	by(audit_score_D1,groups,summary))
+with(data_full,
+	kruskal.test(audit_score_D1~groups))
+# data_nonabst$audit_cat<-car::recode(data_nonabst$audit_score,"
+# 	0.00:4.00='a';
+# 	4.01:7.50='b';
+# 	7.51:15.00='c';
+# 	15.01:36.00='d'")
 
-summary(data_nonabst$discrimination_scaled)
-with(data_nonabst,
-	by(discrimination_scaled,drink_drive,summary))
-with(data_nonabst,
-	wilcox.test(discrimination_scaled~drink_drive))
+#Comparing AUdit Scores - D1
+with(data_full,
+	summary(audit_score_D2))
+with(data_full,
+	by(audit_score_D2,groups,summary))
+with(data_full,
+	kruskal.test(audit_score_D2~groups))
+# data_nonabst$audit_cat<-car::recode(data_nonabst$audit_score,"
+# 	0.00:4.00='a';
+# 	4.01:7.50='b';
+# 	7.51:15.00='c';
+# 	15.01:36.00='d'")
 
-summary(data_nonabst$devaluation_scaled)
-with(data_nonabst,
-	by(devaluation_scaled,drink_drive,summary))
-with(data_nonabst,
-	wilcox.test(devaluation_scaled~drink_drive))
+######################################################################
+#FIGURE 1
+######################################################################
 
+#
+p <- ggplot(subset(data_full,data_full$groups!=3),
+			aes(as.factor(groups),audit_score))
+p <- p + geom_boxplot(fill="grey")
+p <- p + xlab("Drink and drive") + ylab("AUDIT Score")
+p <- p + theme_bw()
+p <- p + scale_x_discrete(breaks=c("0", "2"),
+                      labels=c("No", "Yes"))
+p
+
+######################################################################
+#TABLE 2
+######################################################################
+
+#PDD summary
+with(data_full,
+	summary(pas_score))
+with(data_full,
+	by(pas_score,groups,summary))
+with(data_full,
+	kruskal.test(pas_score~groups))
+
+#mvc
+with(data_full,table(pas_score_cat))
+with(data_full,prop.table(table(pas_score_cat)))
+x<-with(data_full,table(pas_score_cat,groups))
+with(data_full,prop.table(table(pas_score_cat,groups),2))
+assocstats(x)
+fisher.test(x)
+
+summary(data_full$discrimination)
+with(data_full,
+	by(discrimination,groups,summary))
+with(data_full,
+	kruskal.test(discrimination~groups))
+
+summary(data_full$devaluation)
+with(data_full,
+	by(devaluation,groups,summary))
+with(data_full,
+	kruskal.test(devaluation~groups))
+
+with(data_full,cor(data.frame(pas_score,audit_score)))
 
 ######################################################################
 #TABLE 2
@@ -329,4 +465,18 @@ with(care,
 
 with(care,
 	wilcox.test(discrimination~care_seeking))
+
+######################################################################
+#FIGURE 2
+######################################################################
+
+#
+p <- ggplot(subset(data_full,data_full$groups!=3),
+			aes(as.factor(groups),pas_score))
+p <- p + geom_boxplot(fill="grey")
+p <- p + xlab("Drink and drive") + ylab("PDD Score")
+p <- p + theme_bw()
+p <- p + scale_x_discrete(breaks=c("0", "2"),
+                      labels=c("No", "Yes"))
+p
 
