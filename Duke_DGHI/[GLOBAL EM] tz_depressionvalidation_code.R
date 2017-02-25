@@ -39,7 +39,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -140,6 +140,10 @@ cesd_data$e16<-car::recode(cesd_data$e16,"0=3;1=2;2=1;3=0")
 #summary(data)#This comand will provide a whole set of descriptive #results for each variables
 describe(data_validation$age)
 describe(data_validation$home_people)
+
+summary(data_validation$personal_income/2235.00)
+
+summary(data_validation$fam_income/2235.00)
 
 # Categorical Descriptives
 table<-with(data_validation,table(married))

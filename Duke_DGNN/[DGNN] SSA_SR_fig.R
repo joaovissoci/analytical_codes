@@ -21,7 +21,7 @@ library, character.only=T)
 #Instructions here http://goo.gl/Ofa7gQ
 #data <- repmis::source_DropboxData("rti_sr_data.csv","yr0yf1szzyqji35",sep = ",",header = TRUE)
 
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
 
 data$study<-with(data,paste(Author,year, sep=", "))
 
@@ -48,9 +48,10 @@ meta_rti<-na.omit(meta_rti)
 #Calculating metanalysis
 m3<-metaprop(total_rti_death,total_rti,sm="PLN",
 	data=meta_rti,studlab=Author,
-	comb.fixed=FALSE)
+	comb.fixed=FALSE,
+	comb.random=FALSE)
  
-tiff("/home/joao/Desktop/rti_deaths_overall.tiff", 
+tiff("/Users/jnv4/Desktop/rti_deaths_overall.tiff", 
 	width = 700, height = 800,compression = 'lzw')
 meta::forest(m3)
 dev.off()
@@ -67,7 +68,7 @@ meta_trauma<-na.omit(meta_trauma)
 m3<-metaprop(total_rti,total_traume,sm="PLN",data=meta_trauma,
 	studlab=Author,comb.fixed=FALSE)
  
-tiff("/home/joao/Desktop/rti_trauma_overall.tiff", 
+tiff("/Users/jnv4/Desktop/rti_trauma_overall.tiff", 
 	width = 700, height = 1200,compression = 'lzw')
 meta::forest(m3)
 dev.off()
@@ -130,10 +131,10 @@ meta_byinjury<-as.data.frame(meta_byinjury)
 meta_byinjury$total_rti<-as.numeric(as.character(meta_byinjury$total_rti))
 meta_byinjury$total_rti_death<-as.numeric(as.character(meta_byinjury$total_rti_death))
 
-tiff("/home/joao/Desktop/rti_deaths_by_injury.tiff", width = 700, height = 1500,compression = 'lzw')
+tiff("/Users/jnv4/Desktop/rti_deaths_by_injury.tiff", width = 700, height = 1500,compression = 'lzw')
 m3<-metaprop(total_rti_death,total_rti,sm="PLN",
 	byvar=type_injury,data=meta_byinjury,
-	studlab=Author,comb.fixed=FALSE)
+	studlab=Author,comb.fixed=FALSE,comb.random=FALSE)
 meta::forest(m3)
 dev.off()
 
@@ -146,8 +147,10 @@ meta_byinjury<-as.data.frame(meta_byinjury)
 meta_byinjury$total_rti<-as.numeric(as.character(meta_byinjury$total_rti))
 meta_byinjury$total_traume<-as.numeric(as.character(meta_byinjury$total_traume))
 
-tiff("/home/joao/Desktop/rti_trauma_by_injury.tiff", width = 700, height = 1500,compression = 'lzw')
-m3<-metaprop(total_rti,total_traume,sm="PLN",byvar=type_injury,data=meta_byinjury,studlab=Author,comb.fixed=FALSE)
+tiff("/Users/jnv4/Desktop/rti_trauma_by_injury.tiff", width = 700, height = 1500,compression = 'lzw')
+m3<-metaprop(total_rti,total_traume,sm="PLN",
+	byvar=type_injury,data=meta_byinjury,
+	studlab=Author,comb.fixed=FALSE,comb.random=FALSE)
 meta::forest(m3)
 dev.off()
 
@@ -164,11 +167,11 @@ meta_byage_groups$total_rti<-as.numeric(as.character(meta_byage_groups$total_rti
 meta_byage_groups$total_rti_death<-as.numeric(as.character(meta_byage_groups$total_rti_death))
 order<-meta_byage_groups$total_rti_death/meta_byage_groups$total_rti
 meta_byage_groups<-meta_byage_groups[order(order),] 
-tiff("/Users/joaovissoci/Desktop/rti_deaths_by_age_groups.tiff",
+tiff("/Users/jnv4/Desktop/rti_deaths_by_age_groups.tiff",
  width = 800, height = 1000,compression = 'lzw')
 m3<-metaprop(total_rti_death,total_rti,sm="PLN",
 	byvar=age_groups,data=meta_byage_groups,
-	studlab=study,comb.fixed=FALSE,
+	studlab=study,comb.fixed=FALSE,comb.random=FALSE,
 	print.byvar=FALSE)
 meta::forest(m3)
 dev.off()
@@ -182,11 +185,11 @@ meta_byage_groups$total_rti<-as.numeric(as.character(meta_byage_groups$total_rti
 meta_byage_groups$total_traume<-as.numeric(as.character(meta_byage_groups$total_traume))
 order<-meta_byage_groups$total_rti/meta_byage_groups$total_traume
 meta_byage_groups<-meta_byage_groups[order(order),] 
-tiff("/Users/joaovissoci/Desktop/rti_trauma_by_age_groups.tiff", 
+tiff("/Users/jnv4/Desktop/rti_trauma_by_age_groups.tiff", 
 	width = 800, height = 1300,compression = 'lzw')
 m3<-metaprop(total_rti,total_traume,sm="PLN",
 	byvar=age_groups,data=meta_byage_groups,
-	studlab=Author,comb.fixed=FALSE,
+	studlab=Author,comb.fixed=FALSE,comb.random=FALSE,
 	print.byvar=FALSE)
 meta::forest(m3,hetstat=FALSE)
 dev.off()
@@ -212,11 +215,11 @@ meta_bypopulation$proportion_death<-as.numeric(as.character(
 order<-meta_bypopulation$total_rti_death/meta_bypopulation$total_rti
 meta_bypopulation<-meta_bypopulation[order(order),] 
 
-tiff("/Users/joaovissoci/Desktop/rti_deaths_by_population.tiff", 
+tiff("/Users/jnv4/Desktop/rti_deaths_by_population.tiff", 
 	width = 700, height = 800,compression = 'lzw')
 m3<-metaprop(total_rti_death,total_rti,sm="PLN",
 	byvar=type_population,data=meta_bypopulation,
-	studlab=study,comb.fixed=FALSE,
+	studlab=study,comb.fixed=FALSE,comb.random=FALSE,
 	print.byvar=FALSE)
 meta::forest(m3,hetstat=FALSE)
 dev.off()
@@ -241,11 +244,11 @@ meta_bypopulation$proportion_rti<-as.numeric(as.character(
 order<-meta_bypopulation$total_rti/meta_bypopulation$total_traume
 meta_bypopulation<-meta_bypopulation[order(order),] 
 
-tiff("/Users/joaovissoci/Desktop/rti_trauma_by_population.tiff",
+tiff("/Users/jnv4/Desktop/rti_trauma_by_population.tiff",
 	width = 700, height = 1000,compression = 'lzw')
 m3<-metaprop(total_rti,total_traume,sm="PLN",
 	byvar=type_population,data=meta_bypopulation,
-	studlab=study,comb.fixed=FALSE,
+	studlab=study,comb.fixed=FALSE,comb.random=FALSE,
 	print.byvar=FALSE)
 meta::forest(m3,hetstat=FALSE)
 dev.off()	

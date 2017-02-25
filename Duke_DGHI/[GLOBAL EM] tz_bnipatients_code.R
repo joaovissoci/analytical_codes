@@ -50,7 +50,7 @@ data1<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/
 
 names(data)
 
-data<-subset(data,data1$audit_complete==2)
+data<-subset(data1,data1$audit_complete==2)
 
 audit_data<-with(data,data.frame(
 				consumption,
