@@ -75,9 +75,10 @@ ses_data<-with(data, data.frame(age,
                                 day_wkvehicle,
                                 # time_start_wk,
                                 # time_stop_wk,
-                                years_wkvehicle=time_motodr
+                                years_wkvehicle=time_motodr,
                                 # vehicle_home,
-                                # hours_hmvehicle
+                                # hours_hmvehicle,
+                                time_crash
                                 ))
 
 
@@ -101,6 +102,7 @@ outcome_data<-with(data,data.frame(crash_lifetime,
                                    missed_work_crash,
                                    rehabrec_crash,
                                    crash_year,
+                                   type_disability_crash,
                                    # number_crash_yr,
                                    near_miss_month
                                    ))
@@ -231,6 +233,16 @@ describe(numericNRTC$helmet_mc)
 describe(numeric$helmet_strap_use)
 describe(ses_data$helmet_strap_use)
 describe(numericNRTC$helmet_strap_use)
+
+#safe habs
+time_crash <- table(ses_data$time_crash)
+time_crash
+prop.table(time_crash)
+helmet_mctable2 <- table(safety_habits_data$helmet_mc,
+                        outcome_data$crash_lifetime)
+helmet_mctable2
+prop.table(helmet_mctable2)
+assocstats(helmet_mctable1)
 
 ## safety_habits
 
@@ -529,42 +541,52 @@ hosp
 prop.table(hosp)
 
 #LOS
-describe(outcome_data$day_hosp_crash)
+summary(outcome_data$day_hosp_crash)
 
 #disability_crash
 disab <- table(outcome_data$disability_crash)
 disab
 prop.table(disab)
 
+#disability_crash
+disab <- table(outcome_data$type_disability_crash)
+disab
+prop.table(disab)
+
 #rehab
-describe(outcome_data$rehabrec_crash)
+summary(data$missed_work_crash)
 
 #crash_year
 crash_year <- table(outcome_data$crash_year)
 crash_year
 prop.table(crash_year)
 
+
+
 ######################################################
 #TABLE 3.
 ######################################################
 ## OR table ##
 
-reg_data<-data.frame(ses_data,safety_habits_data,outcome_data)
+reg_data<-data.frame(ses_data,
+                     safety_habits_data,
+                     outcome_data)
 
 #crashlifetime
 crashlifetime <-glm(as.factor(crash_lifetime) ~ 
                   age + 
-					# hours_wkvehicle + 
-					# day_wkvehicle +
+					        years_wkvehicle +                  
+					          # day_wkvehicle +
      #          		# time_start_wk + 
      #          		# time_stop_wk + 
-              		time_motodr + 
+              		# time_motodr + 
               		hairnets_available +
               		headlights_always + 
               		helmet_damage +
-            	  	stop_fast + 
-            	  	road_wrongside
-                   ,family=binomial, data=reg_data)
+                  helmet_colleagues +
+                  helmet_strap_value +
+                  helmet_value
+                  ,family=binomial, data=reg_data)
 summary(crashlifetime)
 exp(coef(crashlifetime))
 exp(confint(crashlifetime))
@@ -632,46 +654,6 @@ summary(disab)
 exp(coef(disab))
 exp(confint(disab))
 logistic.display(disab)
-
-#los
-num_hosp<-subset(data,data$injured_crash=="1")
-los <-glm(as.factor(num_hosp$day_hosp_crash) ~ 
-					num_hosp$age + 
-					num_hosp$hours_wkvehicle + 
-					num_hosp$day_wkvehicle +
-              		# num_hosp$time_start_wk + 
-              		# num_hosp$time_stop_wk + 
-              		num_hosp$time_motodr + 
-              		num_hosp$helmet_mc +
-              		# num_hosp$belt_driver + 
-              		# num_hosp$belt_back + 
-              		num_hosp$belt_passenger +
-            	  	num_hosp$stop_fast
-            	  	# num_hosp$road_wrongside
-                   ,family=binomial, data=num_hosp)
-summary(los)
-exp(coef(los))
-exp(confint(los))
-
-#days/work
-num_work<-subset(data,data$injured_crash=="1")
-dayswork <-glm(as.factor(num_work$missed_work_crash) ~ 
-					num_work$age + 
-					num_work$hours_wkvehicle + 
-					num_work$day_wkvehicle +
-              		# num_work$time_start_wk + 
-              		# num_work$time_stop_wk + 
-              		num_work$time_motodr + 
-              		num_work$helmet_mc +
-              		# num_work$belt_driver + 
-              		# num_work$belt_back + 
-              		num_work$belt_passenger +
-            	  	num_work$stop_fast
-            	  	# num_work$road_wrongside
-                   ,family=binomial, data=num_work)
-summary(dayswork)
-exp(coef(dayswork))
-exp(confint(dayswork))
 
 ######################################################
 #PRINCIPAL COMPONENTS
