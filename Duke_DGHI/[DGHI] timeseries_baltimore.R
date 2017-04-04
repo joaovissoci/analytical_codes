@@ -12,11 +12,11 @@ library(reshape2)
 
  
 # Get data
-data2009<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2009_datecoded.csv")
-data2010<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2010_datecoded.csv")
-data2011<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2011_datecoded.csv")
-data2012<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2012_datecoded.csv")
-data2013<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 1/crashdata2013_datecoded.csv")
+data2009<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/baltimore_gis/paper 1/crashdata2009_datecoded.csv")
+data2010<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/baltimore_gis/paper 1/crashdata2010_datecoded.csv")
+data2011<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/baltimore_gis/paper 1/crashdata2011_datecoded.csv")
+data2012<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/baltimore_gis/paper 1/crashdata2012_datecoded.csv")
+data2013<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/baltimore_gis/paper 1/crashdata2013_datecoded.csv")
 
 #Data on points vs. polygons by category
 all_data<-rbind(
@@ -459,15 +459,6 @@ ggplot(graph_data,aes(x=months,y=prev_crashes_month)) +
   theme_bw()
 dev.off()
 
-
-ggplot(data2,aes(y=mean,x=months)) + geom_path()+ 
-geom_point(color="black")
-
-# #                          values = c("blue", "brown")) +
-#   #ggtitle("Closing Stock Prices: IBM & Linkedin") + 
-  #scale_x_date(format = "%b-%Y") +
-  # theme(plot.title = element_text(lineheight=.7, face="bold")) +
-
 #### ARIMA
 timeseries_data <- ts(time_series_month$crashes_month, 
  	start=c(2009,1),frequency=12)
@@ -531,25 +522,47 @@ ggplot(time_series_month,aes(date_month,prev_vru)) +
   theme_bw()
 dev.off()
 
-####################################
+###########################################################
+#CHANGE points
+###########################################################
 
-
-
-
-CHANGE points
 
 set.seed(10)
 m.data=c(rnorm(100,0,1),rnorm(100,1,1),rnorm(100,0,1),rnorm(100,0.2,1))
 ts.plot(m.data,xlab='Index')
 
-m.pelt=cpt.meanvar(timeseries_data,test.stat='Poisson',method='BinSeg')
+changepoint_data<-data.frame(time_series_month$impaired)
+rownames(changepoint_data)<-time_series_month$date_month
+
+library("changepoint")
+m.pelt=cpt.meanvar(changepoint_data[,1],test.stat='Poisson',
+	method='BinSeg')
+plot(m.pelt,type='l',cpt.col='blue',xlab='Index',cpt.width=4)
+cpts(m.pelt)
+
+coef(m.pelt)
+
+#### ARIMA
+timeseries_data <- ts(time_series_month$impaired,frequency=12)
+
+stl_beer = stl(timeseries_data, "periodic")
+random_stl_beer  <- stl_beer$time.series[,3]
+plot(random_stl_beer)
+m.pelt=cpt.meanvar(random_stl_beer)
 plot(m.pelt,type='l',cpt.col='blue',xlab='Index',cpt.width=4)
 cpts(m.pelt)
 
 
-data(Lai2005fig4)
-Lai.default=cpt.mean(Lai2005fig4[,5],method='PELT')
-plot(Lai.default,pch=20,col='grey',cpt.col='black',type='p',xlab='Index')
-cpts(Lai.default)
+intervention<-c(rep(0,21),rep(1,39))
 
-coef(Lai.default)
+fit<-auto.arima(timeseries_data)
+summary(fit)
+tsdiag(fit)
+plot(forecast(fit))
+
+require(lmtest)
+coeftest(fit)
+
+fit <- auto.arima(WWWusage)
+plot(forecast(fit,h=20))
+

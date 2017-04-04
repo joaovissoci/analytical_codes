@@ -5,52 +5,110 @@
 
 ###
 
-# Time Series Plotting
-library(ggplot2)
-library(xts)
-library(dygraphs)
+# Time Series Decomposition
+## A time series is a sum of Seasonality, Trend and Noise.
+## This code will show you how to decompose a time series
+## All decomposition is based on the nature of the time series:
+## a) Additive (seasonality keeps constant over time);
+## b) Multiplicative (seasonality increases over time)
+## ref - https://anomaly.io/seasonal-trend-decomposition-in-r/
+
+#Packages
+install.packages("fpp") #Additive
+install.packages("Ecdat") #Multiplicative
+install.packages("forecast")
+
+# 1. Trend
+
+#Additive
+library(fpp)
+data(ausbeer)
+timeserie_beer = tail(head(ausbeer, 17*4+2),17*4-4)
+plot(as.ts(timeserie_beer))
+
+library(forecast)
+trend_beer = ma(timeserie_beer, order = 4, centre = T)
+plot(as.ts(timeserie_beer))
+lines(trend_beer)
+plot(as.ts(trend_beer))
+
+#Multiplicative
+library(Ecdat)
+data(AirPassengers)
+timeserie_air = AirPassengers
+plot(as.ts(timeserie_air))
+
+install.packages("forecast")
+library(forecast)
+trend_air = ma(timeserie_air, order = 12, centre = T)
+plot(as.ts(timeserie_air))
+lines(trend_air)
+plot(as.ts(trend_air))
+
+# 2. Isolate seasonality
+
+detrend_beer = timeserie_beer - trend_beer
+plot(as.ts(detrend_beer))
+
+m_beer = t(matrix(data = detrend_beer, nrow = 4))
+seasonal_beer = colMeans(m_beer, na.rm = T)
+plot(as.ts(rep(seasonal_beer,16)))
+
+detrend_air = timeserie_air / trend_air
+plot(as.ts(detrend_air))
+
+m_air = t(matrix(data = detrend_air, nrow = 12))
+seasonal_air = colMeans(m_air, na.rm = T)
+plot(as.ts(rep(seasonal_air,12)))
+
+# 3. Random or noise
+
+random_beer = timeserie_beer - trend_beer - seasonal_beer
+plot(as.ts(random_beer))
+
+random_air = timeserie_air / (trend_air * seasonal_air)
+plot(as.ts(random_air))
+
+## Full decomposition with the decopmose() and STL()
+
+#decompose()
+ts_beer = ts(timeserie_beer, frequency = 4)
+decompose_beer = decompose(ts_beer, "additive")
  
-# Get IBM and Linkedin stock data from Yahoo Finance
-ibm_url <- "http://real-chart.finance.yahoo.com/table.csv?s=IBM&a=07&b=24&c=2010&d=07&e=24&f=2015&g=d&ignore=.csv"
-lnkd_url <- "http://real-chart.finance.yahoo.com/table.csv?s=LNKD&a=07&b=24&c=2010&d=07&e=24&f=2015&g=d&ignore=.csv"
+plot(as.ts(decompose_beer$seasonal))
+plot(as.ts(decompose_beer$trend))
+plot(as.ts(decompose_beer$random))
+plot(decompose_beer)
 
-yahoo.read <- function(url){
-   dat <- read.table(url,header=TRUE,sep=",")
-   df <- dat[,c(1,5)]
-   df$Date <- as.Date(as.character(df$Date))
-   return(df)}
+ts_beer = ts(timeserie_beer, frequency = 4)
+decompose_beer = decompose(ts_beer, "additive")
  
-ibm  <- yahoo.read(ibm_url)
-lnkd2 <- yahoo.read(lnkd_url)
+plot(as.ts(decompose_beer$seasonal))
+plot(as.ts(decompose_beer$trend))
+plot(as.ts(decompose_beer$random))
+plot(decompose_beer)
 
-ggplot(ibm,aes(Date,Close)) + 
-  geom_line(aes(color="ibm")) +
-  geom_line(data=lnkd2,aes(color="lnkd")) +
-  labs(color="Legend") +
-  scale_colour_manual("", breaks = c("ibm", "lnkd"),
-                          values = c("blue", "brown")) +
-  ggtitle("Closing Stock Prices: IBM & Linkedin") + 
-  theme(plot.title = element_text(lineheight=.7, face="bold"))
-
-# Plot with the htmlwidget dygraphs
-# dygraph() needs xts time series objects
-ibm_xts <- xts(ibm$Close,order.by=ibm$Date,frequency=365)
-lnkd_xts <- xts(lnkd2$Close,order.by=lnkd2$Date,frequency=365)
+ts_air = ts(timeserie_air, frequency = 12)
+decompose_air = decompose(ts_air, "multiplicative")
  
-stocks <- cbind(ibm_xts,lnkd_xts)
+plot(as.ts(decompose_air$seasonal))
+plot(as.ts(decompose_air$trend))
+plot(as.ts(decompose_air$random))
+plot(decompose_air)
+
+#STL()
+
+ts_beer = ts(timeserie_beer, frequency = 4)
+stl_beer = stl(ts_beer, "periodic")
+seasonal_stl_beer   <- stl_beer$time.series[,1]
+trend_stl_beer     <- stl_beer$time.series[,2]
+random_stl_beer  <- stl_beer$time.series[,3]
  
-dygraph(stocks,ylab="Close", 
-        main="IBM and Linkedin Closing Stock Prices") %>%
-  dySeries("..1",label="IBM") %>%
-  dySeries("..2",label="LNKD") %>%
-  dyOptions(colors = c("blue","brown")) %>%
-  dyRangeSelector()
-
-births <- scan("http://robjhyndman.com/tsdldata/data/nybirths.dat")
-
-birthstimeseries <- ts(births, frequency=12, start=c(1946,1))
-birthstimeseries
-
+plot(ts_beer)
+plot(as.ts(seasonal_stl_beer))
+plot(trend_stl_beer)
+plot(random_stl_beer)
+plot(stl_beer)
 
 ##### ARIMA
 
@@ -78,8 +136,6 @@ ts.plot(AirPassengers, fore$pred, U, L,
 legend("topleft", c("Actual", "Forecast", 
 	"Error Bounds (95% Confidence)"), 
 col=c(1,2,4), lty=c(1,1,2))
-
-#Another example
 
 #ARIMA MODEL
 
@@ -146,3 +202,46 @@ LH.pred<-predict(fit,n.ahead=8)
 lines(LH.pred$pred,col="red")
 lines(LH.pred$pred+2*LH.pred$se,col="red",lty=3)
 lines(LH.pred$pred-2*LH.pred$se,col="red",lty=3)
+
+### Change Plot
+
+set.seed(10)
+m.data=c(rnorm(100,0,1),rnorm(100,1,1),rnorm(100,0,1),rnorm(100,0.2,1))
+ts.plot(m.data,xlab='Index')
+
+m.pelt=cpt.meanvar(timeseries_data,test.stat='Poisson',method='BinSeg')
+plot(m.pelt,type='l',cpt.col='blue',xlab='Index',cpt.width=4)
+cpts(m.pelt)
+
+data(Lai2005fig4)
+Lai.default=cpt.mean(Lai2005fig4[,5],method='PELT')
+plot(Lai.default,pch=20,col='grey',cpt.col='black',type='p',xlab='Index')
+cpts(Lai.default)
+
+coef(Lai.default)
+
+## Interrupted time series
+
+intervention <- rep(c(0, 1), each = 100)
+
+# set up an autocorrelation dataset
+yprocess <- arima.sim(list(order = c(1, 0, 0), 
+                                     ar = c(0.7)),
+                       200)
+yobs <- yprocess + rnorm(200, 0.5) * intervention
+
+#Look at http://stats.stackexchange.com/questions/108374/arima-intervention-transfer-function-how-to-visualize-the-effect?rq=1
+#Look at http://stats.stackexchange.com/questions/225138/method-for-quantifying-intervention-effect-in-time-series?rq=1
+
+# naive way, doesn't account for autcorr
+summary(lm(yobs ~ intervention))
+
+# using arima
+arima(yobs, c(1, 0, 0), xreg = intervention)
+
+### Time series Clustering
+
+# https://www.r-bloggers.com/time-series-analysis-and-mining-with-r/
+
+### Time series classificationinterru
+

@@ -33,7 +33,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/baltimore_gis/paper 2/balticsv.csv",sep=",")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/baltimore_gis/paper 2/balticsv.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -96,9 +96,33 @@ exp(confint(fm_nbin,level=0.95))
            )
 
 
-fm_nbin <- glm.nb(PNT_IMP_13 ~ PNTCNT_PUB + agglomeration + 
+fm_nbin <- glm.nb(PNT_IMP_13 ~ PNTCNT_PUB + 
 		lenght_km + population, 
 	data = data)
+summary(fm_nbin)
+exp(coef(fm_nbin))
+exp(confint(fm_nbin,level=0.95))
+
+1 - pchisq(summary(fm_nbin)$deviance,
+           summary(fm_nbin)$df.residual
+           )
+
+fm_nbin <- glm.nb(PNT_IMP_13 ~ agglomeration + 
+    lenght_km + population, 
+  data = data)
+summary(fm_nbin)
+exp(coef(fm_nbin))
+exp(confint(fm_nbin,level=0.95))
+
+1 - pchisq(summary(fm_nbin)$deviance,
+           summary(fm_nbin)$df.residual
+           )
+
+PNTCNT_noIMP <- with(data,PNTCNT-PNT_IMP_13)
+
+fm_nbin <- glm.nb(PNTCNT_noIMP ~ PNTCNT_PUB + agglomeration + 
+    lenght_km + population, 
+  data = data)
 summary(fm_nbin)
 exp(coef(fm_nbin))
 exp(confint(fm_nbin,level=0.95))
