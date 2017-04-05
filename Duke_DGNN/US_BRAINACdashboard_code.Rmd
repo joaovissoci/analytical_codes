@@ -1,0 +1,114 @@
+---
+title: "BRAINIAC - Neurosurgery"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    social: menu
+    source_code: embed
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(ggplot2)
+library(tm)
+library(SnowballC)
+library(wordcloud)
+data<-read.csv("/Users/jnv4/Desktop/Part 3: Resident- ZPD Evaluation Form - with Attending Feedback_December 10, 2016_14.13.csv")
+```
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+This is a pilot test for BRAINIAC feedback interface.
+
+Please choose the procedure you want to see your score:
+
+```{r}
+#selectInput('cat', 'Participant', data$cat)
+    
+selectInput('procedure', 'Procedure', data$procedure,
+               selected=1)
+    
+#numericInput('clusters', 'Cluster count', 3,
+#              min = 1, max = 9)
+
+# Combine the selected variables into a new data frame
+selectedData <- reactive({
+  subset(data,data$procedure==input$procedure)
+})
+
+```
+
+Column
+-----------------------------------------------------------------------
+
+### Resident and Attending Scoring
+
+```{r}
+#palette(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3",
+#  "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999"))
+
+#clusters <- reactive({
+#  kmeans(selectedData(), input$clusters)
+#})
+
+renderPlot({
+  #par(mar = c(5.1, 4.1, 0, 1))
+ ggplot(data=selectedData(), aes(x=cat, y=average1)) +
+  geom_bar(stat="identity")
+  #points(clusters()$centers, pch = 4, cex = 4, lwd = 4)
+})
+```
+
+### Resident Scoring by ZD
+
+```{r}
+#palette(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3",
+#  "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999"))
+
+# Combine the selected variables into a new data frame
+#selectedData <- reactive({
+#  data
+#})
+
+#clusters <- reactive({
+#  kmeans(selectedData(), input$clusters)
+#})
+
+renderPlot({
+  #par(mar = c(5.1, 4.1, 0, 1))
+ ggplot(data=selectedData(), aes(x=ZD, y=average2)) +
+  geom_bar(stat="identity") + coord_flip()
+  #points(clusters()$centers, pch = 4, cex = 4, lwd = 4)
+})
+```
+
+<!-- Column -->
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ```{r} -->
+<!-- renderTable({ -->
+<!--   selectedData() -->
+<!-- }) -->
+<!-- ``` -->
+
+Column
+-----------------------------------------------------------------------
+
+### Resident Scoring by ZD
+
+```{r}
+#palette(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3",
+#  "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999"))
+renderPlot({
+
+jeopCorpus <- Corpus(VectorSource(selectedData()$Afeedback))
+jeopCorpus <- tm_map(jeopCorpus, PlainTextDocument)
+jeopCorpus <- tm_map(jeopCorpus, removePunctuation)
+# jeopCorpus <- tm_map(jeopCorpus, removeWords, stopwords('english'))
+# jeopCorpus <- tm_map(jeopCorpus, stemDocument)
+
+wordcloud(jeopCorpus, max.words = 100, random.order = FALSE)
+})
+```
