@@ -19,7 +19,7 @@ lapply(c("metafor","ggplot2","gridExtra" ,"psych", "RCurl", "irr", "nortest", "m
 ##############################################################
 #IMPORTING DATA AND RECODING
 ##############################################################
-data<-read.csv("/home/joao/Dropbox/datasets/depressao_teens.csv",header=T)
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/depressao_teens.csv",header=T)
 #data<-read.csv("/Users/rpietro/Desktop/depressao_teens.csv",header=T)er
 
 data_summary<-read.csv("/Users/joaovissoci/Desktop/depression_teens.csv",header=T)
@@ -62,10 +62,10 @@ data_model1<-with(data,data.frame(attrition,total_sample,autor_ano))
 data_model1<-na.omit(data_model1)
 m3<-metaprop(attrition,total_sample,sm="PLN",data=data_model1,studlab=autor_ano)
 
-tiff("/Users/rpietro/Desktop/depression_sr_overall_attrition.tiff", width = 1000, height = 800,compression = 'lzw')
+tiff("/Users/joaovissoci/Desktop/depression_sr_overall_attrition.tiff", width = 10, height = 12, units='in',compression = 'lzw', res = 300)
 forest(m3)
 dev.off()
-funnel(m3)
+# funnel(m3)
 #metainf(m3)
 #metainf(m3, pooled="random")
 #metareg(m3, ~ data_model1$age + data_model1$intervention_type + data_model1$country)
@@ -93,9 +93,18 @@ metainf(m3)
 ### BY Intervention type SUBGROUP ANALYSIS
 data_model3<-with(data,data.frame(attrition,total_sample,autor_ano,intervention_cat))
 data_model3<-na.omit(data_model3)
+data_model3$intervention_cat<-car::recode(
+	data_model3$intervention_cat,"
+	'Antidepressivo Triciclico'='Tryciclic';
+	'Inibidor Seletivo da Recapta̤̣o de Noradrenalina'='Selective Noradrenaline Reuptake Inhibitor';
+	'Inibidor Seletivo da Recapta̤̣o de Serotonina'='Selective Serotonina Reuptake Inhibitor';
+	'Inibidor da Mono Amino Oxidase'='Monoamine Oxidase Inhibitors'")
 m3<-metaprop(attrition,total_sample,sm="PLN",data=data_model3,studlab=autor_ano,byvar=intervention_cat)
-tiff("/home/joao/Desktop/depression_sr_overall_attrition_by_interventiontype.tiff", width = 1000, height = 1500,compression = 'lzw')
-forest(m3)
+
+setEPS()
+postscript("/Users/joaovissoci/Desktop/depression_sr_overall_attrition_by_interventiontype.eps",width = 10, height = 14)
+# tiff("/Users/joaovissoci/Desktop/depression_sr_overall_attrition_by_interventiontype.tiff", width = 10, height = 14, units='in',compression = 'lzw', res = 300)
+forest(m3,print.byvar=FALSE)
 dev.off()
 metainf(m3)
 metainf(m3, pooled="random")
@@ -106,9 +115,16 @@ metainf(m3, pooled="random")
 ### BY Intervention type SUBGROUP ANALYSIS
 data_model3<-with(data,data.frame(attrition,total_sample,autor_ano,intervention_type))
 data_model3<-na.omit(data_model3)
+data_model3$intervention_type<-car::recode(
+	data_model3$intervention_type,"
+	'CBT + medicamento'='CBT + Antidepressant';
+	'Medicamento'='Antidepressant'")
 m3<-metaprop(attrition,total_sample,sm="PLN",data=data_model3,studlab=autor_ano,byvar=intervention_type)
-tiff("/home/joao/Desktop/depression_sr_overall_attrition_by_interventiontype.tiff", width = 1000, height = 1500,compression = 'lzw')
-forest(m3)
+# tiff("/Users/joaovissoci/Desktop/depression_sr_overall_attrition_by_interventionmethod.tiff", width = 10, height = 14, units='in',compression = 'lzw', res = 300)
+setEPS()
+postscript("/Users/joaovissoci/Desktop/depression_sr_overall_attrition_by_interventionmethod.eps",width = 10, height = 14)
+# tiff("/Users/joaovissoci/Desktop/depression_sr_overall_attrition_by_interventiontype.tiff", width = 10, height = 14, units='in',compression = 'lzw', res = 300)
+forest(m3,print.byvar=FALSE)
 dev.off()
 metainf(m3)
 metainf(m3, pooled="random")
@@ -285,7 +301,9 @@ shape<-c(rep("circle",8),rep("square",46))
 label.cex<- c(rep(1.5,8),rep(1.0,46))
 #groups<-c("Ensaio Clínico","Medicamentos","Outras Razões")
 
-tiff("/Users/joaovissoci/Desktop/sporedata_depression_sr_network.tiff", width = 1000, height = 700,compression = 'lzw')
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/joaovissoci/Desktop/depression_sr_network.eps",width = 16, height = 8)
 network_meta <- qgraph(network_data,layout = "spring",minimum=0.5,cut=100,labels=names,label.scale=FALSE,label.cex = label.cex,vsize=size_edges,shape=shape,grey=T,color=color,borders = FALSE,posCol = "grey")
 legend(0.8,-0.8, bty=".",c("Clinical trials","Medication","Other reasons"),cex=1.2,fill=c("lightblue","red","yellow"))
 #legend(-1.32,-0.5	, bty="n",c("EA: Efeitos Adversos","OT: Outro Tratamento","ECR: Questões com o ECR","FR: Falha no Retorno","MD: Problemas com medicamentos","ST: Melhora nos Sintomas","QF: Questões Familiares","OU: Outras Razões"),cex=1.2)
