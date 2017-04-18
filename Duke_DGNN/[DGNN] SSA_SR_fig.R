@@ -21,11 +21,11 @@ library, character.only=T)
 #Instructions here http://goo.gl/Ofa7gQ
 #data <- repmis::source_DropboxData("rti_sr_data.csv","yr0yf1szzyqji35",sep = ",",header = TRUE)
 
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
 
-data$study<-with(data,paste(Author,year, sep=", "))
+data$study<-with(data,paste(Author,year, sep=" "))
 
-data_country<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
+data_country<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
 
 wmap   <- readShapePoly("/Users/joaovissoci/Gits/analytical_codes/shapefiles/africaR/africa_R.shp")
 
@@ -167,13 +167,29 @@ meta_byage_groups$total_rti<-as.numeric(as.character(meta_byage_groups$total_rti
 meta_byage_groups$total_rti_death<-as.numeric(as.character(meta_byage_groups$total_rti_death))
 order<-meta_byage_groups$total_rti_death/meta_byage_groups$total_rti
 meta_byage_groups<-meta_byage_groups[order(order),] 
-tiff("/Users/jnv4/Desktop/rti_deaths_by_age_groups.tiff",
- width = 800, height = 1000,compression = 'lzw')
 m3<-metaprop(total_rti_death,total_rti,sm="PLN",
 	byvar=age_groups,data=meta_byage_groups,
 	studlab=study,comb.fixed=FALSE,comb.random=FALSE,
 	print.byvar=FALSE)
-meta::forest(m3)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/jnv4/Desktop/figure1B.eps",
+	width = 8, height = 12)
+# tiff("/Users/jnv4/Desktop/figure1B.tiff",
+ # width = 2100, height = 3500,compression = 'lzw', res=300)
+meta::forest(m3,
+			 hetstat=FALSE,
+			 xlim = c(0,100),
+			 pscale = 100,
+			 leftcols = c("studlab", "event", "n", "effect", "ci"), 
+			 rightcols = FALSE,
+			 leftlabs = c("Study", "Number", "Total", "Prop.(%)", "[95% CI]"),
+			 xlab = "Proportion (%)", 
+			 addspace = FALSE, 
+			 digits = 1, 
+			 squaresize = 1,
+			 plotwidth=unit(3,"cm"),
+			 smlab="")
 dev.off()
 
 #TOTAL TRAUMA Vs. TOTAL RTI
@@ -185,13 +201,30 @@ meta_byage_groups$total_rti<-as.numeric(as.character(meta_byage_groups$total_rti
 meta_byage_groups$total_traume<-as.numeric(as.character(meta_byage_groups$total_traume))
 order<-meta_byage_groups$total_rti/meta_byage_groups$total_traume
 meta_byage_groups<-meta_byage_groups[order(order),] 
-tiff("/Users/jnv4/Desktop/rti_trauma_by_age_groups.tiff", 
-	width = 800, height = 1300,compression = 'lzw')
+
 m3<-metaprop(total_rti,total_traume,sm="PLN",
 	byvar=age_groups,data=meta_byage_groups,
-	studlab=Author,comb.fixed=FALSE,comb.random=FALSE,
+	studlab=study,comb.fixed=FALSE,comb.random=FALSE,
 	print.byvar=FALSE)
-meta::forest(m3,hetstat=FALSE)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/jnv4/Desktop/figure1A.eps",
+	width = 8, height = 12)
+# tiff("/Users/jnv4/Desktop/figure1B.tiff",
+ # width = 2100, height = 3500,compression = 'lzw', res=300)
+meta::forest(m3,
+			 hetstat=FALSE,
+			 xlim = c(0,100),
+			 pscale = 100,
+			 leftcols = c("studlab", "event", "n", "effect", "ci"), 
+			 rightcols = FALSE,
+			 leftlabs = c("Study", "Number", "Total", "Prop.(%)", "[95% CI]"),
+			 xlab = "Proportion (%)", 
+			 addspace = FALSE, 
+			 digits = 1, 
+			 squaresize = 1,
+			 plotwidth=unit(3,"cm"),
+			 smlab="")
 dev.off()
 
 ###################################################
@@ -215,13 +248,31 @@ meta_bypopulation$proportion_death<-as.numeric(as.character(
 order<-meta_bypopulation$total_rti_death/meta_bypopulation$total_rti
 meta_bypopulation<-meta_bypopulation[order(order),] 
 
-tiff("/Users/jnv4/Desktop/rti_deaths_by_population.tiff", 
-	width = 700, height = 800,compression = 'lzw')
+# tiff("/Users/jnv4/Desktop/rti_deaths_by_population.tiff", 
+	# width = 700, height = 800,compression = 'lzw')
 m3<-metaprop(total_rti_death,total_rti,sm="PLN",
 	byvar=type_population,data=meta_bypopulation,
 	studlab=study,comb.fixed=FALSE,comb.random=FALSE,
 	print.byvar=FALSE)
-meta::forest(m3,hetstat=FALSE)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/jnv4/Desktop/figure4.eps",
+	width = 8, height = 12)
+# tiff("/Users/jnv4/Desktop/figure1B.tiff",
+ # width = 2100, height = 3500,compression = 'lzw', res=300)
+meta::forest(m3,
+			 hetstat=FALSE,
+			 xlim = c(0,100),
+			 pscale = 100,
+			 leftcols = c("studlab", "event", "n", "effect", "ci"), 
+			 rightcols = FALSE,
+			 leftlabs = c("Study", "Number", "Total", "Prop.(%)", "[95% CI]"),
+			 xlab = "Proportion (%)", 
+			 addspace = FALSE, 
+			 digits = 1, 
+			 squaresize = 1,
+			 plotwidth=unit(3,"cm"),
+			 smlab="")
 dev.off()
 
 by(meta_bypopulation$proportion_death,meta_bypopulation$type_population,summary)
@@ -244,13 +295,31 @@ meta_bypopulation$proportion_rti<-as.numeric(as.character(
 order<-meta_bypopulation$total_rti/meta_bypopulation$total_traume
 meta_bypopulation<-meta_bypopulation[order(order),] 
 
-tiff("/Users/jnv4/Desktop/rti_trauma_by_population.tiff",
-	width = 700, height = 1000,compression = 'lzw')
+# tiff("/Users/jnv4/Desktop/rti_trauma_by_population.tiff",
+# 	width = 700, height = 1000,compression = 'lzw')
 m3<-metaprop(total_rti,total_traume,sm="PLN",
 	byvar=type_population,data=meta_bypopulation,
 	studlab=study,comb.fixed=FALSE,comb.random=FALSE,
 	print.byvar=FALSE)
-meta::forest(m3,hetstat=FALSE)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/jnv4/Desktop/figure3.eps",
+	width = 8, height = 12)
+# tiff("/Users/jnv4/Desktop/figure1B.tiff",
+ # width = 2100, height = 3500,compression = 'lzw', res=300)
+meta::forest(m3,
+			 hetstat=FALSE,
+			 xlim = c(0,100),
+			 pscale = 100,
+			 leftcols = c("studlab", "event", "n", "effect", "ci"), 
+			 rightcols = FALSE,
+			 leftlabs = c("Study", "Number", "Total", "Prop.(%)", "[95% CI]"),
+			 xlab = "Proportion (%)", 
+			 addspace = FALSE, 
+			 digits = 1, 
+			 squaresize = 1,
+			 plotwidth=unit(3,"cm"),
+			 smlab="")
 dev.off()	
 
 by(meta_bypopulation$proportion_rti,meta_bypopulation$type_population,summary)
@@ -327,17 +396,22 @@ model<-c(rep("RTI",6),rep("Death",5))
 
 graph_data<-data.frame(value,npapers,dates,model)
 
-tiff("/Users/joaovissoci/Desktop/rti_trauma_byyear.tiff", width = 700, 
-	height = 500,compression = 'lzw')
-ggplot(data=graph_data, aes(x=dates, y=value, group=model,
-	color=model)) + geom_line(size=1.5) + 
+# tiff("/Users/joaovissoci/Desktop/rti_trauma_byyear.tiff", width = 700, 
+# # 	height = 500,compression = 'lzw')
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/jnv4/Desktop/figure2.eps",
+# 	width = 8, height = 6)
+plot<- ggplot(data=graph_data, aes(x=dates, y=value, group=model,
+	color=model)) + geom_line(size=0.5) + 
 	geom_point(size=5,fill="white") + 
 	ylab("Prevalence (%)") + 
 	xlab("Dates") + 
 	scale_colour_manual(values=c("black", "#E69F00"),name="")+ 
 	theme_bw() + 
 	geom_bar(aes(x=dates,y=npapers/100),
-		stat="identity", alpha=0.5, fill="white") + 
+		stat="identity", alpha=0.5, fill="white",
+		) + 
 	annotate("text", x = 1, y = 0.02, label = "2",size=5)+
 	annotate("text", x = 2, y = 0.17, label = "16",size=5)+
 	annotate("text", x = 3, y = 0.11, label = "10",size=5)+
@@ -346,15 +420,21 @@ ggplot(data=graph_data, aes(x=dates, y=value, group=model,
 	annotate("text", x = 6, y = 0.37, label = "36",size=5) + 
 	geom_jitter(data=m_data, aes(x=m_year,y=m_prev,
 		group=m_model,color=m_model),size=3,fill="black") +
-	theme(legend.justification=c(1,0), legend.position=c(0.1,0.8)) +
-	theme(axis.line = element_line(colour = "black"),
-    panel.grid.major = element_blank(),
+	theme(legend.justification=c(1,0), 
+		legend.position=c(0.15,0.75)) +
+	theme(panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
     panel.border = element_blank(),
-    panel.background = element_blank()) 
-dev.off()
+    panel.background = element_blank()) +
+    theme(axis.line = element_line(colour = "black")) 
+# dev.off()
 
-
+ggsave("figure2.eps",
+		plot,
+		path="/Users/jnv4/Desktop",
+		width = 5.5, 
+		height = 4.3, 
+		device=cairo_ps)
 ###################################################
 #MAPS
 ###################################################

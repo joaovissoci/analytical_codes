@@ -30,7 +30,7 @@ library, character.only=T)
 
 #Linux path
 
-data <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/epi_rti_Tz_police_data.csv")
+data <- read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/epi_rti_Tz_police_data.csv")
 
 #Mac path
 #data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Tz/epi_rti_tz_police_data.csv")
@@ -532,6 +532,14 @@ data_imputed$outcome<-car::recode(data_imputed$outcome,"
 data_imputed$urban_location<-car::recode(data_imputed$urban_location,"
 	'urban'='aurban'")
 
+data_imputed$type_vehicle_bus<-car::recode(data_imputed$type_vehicle,"
+	'bus'='tbus';
+	else='other'")
+
+data_imputed$type_vehicle_truck<-car::recode(data_imputed$type_vehicle,"
+	'truck'='truck';
+	else='other'")
+
 #MODEL 1 - Adding every variable
 #traffic control was not added because had cases with 0 observations
 # age and gender becaise the missing rate wsa to high
@@ -541,11 +549,13 @@ logmodel<-glm(outcome ~
 						# urban_location +
 						# as.factor(day_week) +
 						crash_type +
-						#rd_condition +
+						# rd_condition +
 						# light_condition +
 						type_location +
-						speed_limit_sign +
-						# type_vehicle +
+						# speed_limit_sign +
+						type_vehicle +
+						# type_vehicle_truck +
+						# type_vehicle_bus +
 						human_crash_factor +
 						alcohol_tested
 						# victim_classification +
@@ -554,7 +564,7 @@ logmodel<-glm(outcome ~
 
 summary(logmodel)
 #anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
