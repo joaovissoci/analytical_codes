@@ -21,11 +21,11 @@ library, character.only=T)
 #Instructions here http://goo.gl/Ofa7gQ
 #data <- repmis::source_DropboxData("rti_sr_data.csv","yr0yf1szzyqji35",sep = ",",header = TRUE)
 
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
 
 data$study<-with(data,paste(Author,year, sep=", "))
 
-data_country<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
+data_country<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/RTI SSA SR/rti_sr_data.csv",sep=',')
 
 wmap   <- readShapePoly("/Users/joaovissoci/Gits/analytical_codes/shapefiles/africaR/africa_R.shp")
 
@@ -327,8 +327,8 @@ model<-c(rep("RTI",6),rep("Death",5))
 
 graph_data<-data.frame(value,npapers,dates,model)
 
-tiff("/home/joao/Desktop/rti_trauma_byyear.tiff", width = 500, 
-	height = 700,compression = 'lzw')
+tiff("/Users/joaovissoci/Desktop/rti_trauma_byyear.tiff", width = 700, 
+	height = 500,compression = 'lzw')
 ggplot(data=graph_data, aes(x=dates, y=value, group=model,
 	color=model)) + geom_line(size=1.5) + 
 	geom_point(size=5,fill="white") + 
@@ -345,8 +345,15 @@ ggplot(data=graph_data, aes(x=dates, y=value, group=model,
 	annotate("text", x = 5, y = 0.29, label = "28",size=5)+
 	annotate("text", x = 6, y = 0.37, label = "36",size=5) + 
 	geom_jitter(data=m_data, aes(x=m_year,y=m_prev,
-		group=m_model,color=m_model),size=3,fill="black")
+		group=m_model,color=m_model),size=3,fill="black") +
+	theme(legend.justification=c(1,0), legend.position=c(0.1,0.8)) +
+	theme(axis.line = element_line(colour = "black"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank()) 
 dev.off()
+
 
 ###################################################
 #MAPS
