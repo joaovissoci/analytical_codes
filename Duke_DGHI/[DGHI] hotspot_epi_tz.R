@@ -553,9 +553,9 @@ logmodel<-glm(outcome ~
 						# light_condition +
 						type_location +
 						# speed_limit_sign +
-						type_vehicle +
-						# type_vehicle_truck +
-						# type_vehicle_bus +
+						# type_vehicle +
+						type_vehicle_truck +
+						type_vehicle_bus +
 						human_crash_factor +
 						alcohol_tested
 						# victim_classification +

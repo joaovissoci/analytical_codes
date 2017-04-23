@@ -26,7 +26,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
 	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
 	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
-  "mice"),
+  "mice","ROCR","pROC"),
 library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
@@ -39,7 +39,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -55,6 +55,17 @@ data$type<-car::recode(data$time,"
             '24days'='phone';
             '28days'='paper';
             else='phone'")
+
+data$time_2measures<-car::recode(data$time,"
+            '3days'='Tnothing';
+            '7days'='T1paper';
+            '10days'='T1phone';
+            '14days'='T2paper';
+            '17days'='T2phone';
+            '21days'='T3paper';
+            '24days'='T3phone';
+            '28days'='Tnothin2';
+            else='Tnithin3'")
 
 #Kessler
 psfs_questions<-with(data,data.frame(q1,q2,q3))
@@ -115,11 +126,19 @@ icc_temporal_phone<-cast(icc_temporal_phone1,
 
 ### Consistency between methods of application
 
-icc<-subset(data,data$time=="10days" | data$time=="14days")
+icc<-subset(data,data$time=="14days" | data$time=="17days")
 
 icc_data1<-with(icc,data.frame(X...id,time,score))
 icc_data<-cast(icc_data1,
                           X...id~time)
+
+descriptive_data<-subset(data,data$time_2measures=="T1paper" | 
+                              data$time_2measures=="T1phone" |
+                              data$time_2measures=="T2paper" |
+                              data$time_2measures=="T2phone" |
+                              data$time_2measures=="T3paper" |
+                              data$time_2measures=="T3phone"
+                              )
 
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -156,19 +175,31 @@ ggplot(data, aes(time, score)) + geom_line() +
 #FLOORING AND CEILING EFFECT
 ######################################################################
 # Categorical Descriptives
-table<-with(data,table(data_validationT0$score))
+table<-with(descriptive_data,table(score,time_2measures))
 table
-prop.table(table)
+prop.table(table,2)
 
 # Categorical Descriptives
-table<-with(data,table(data_validationT1$score))
-table
-prop.table(table)
+with(descriptive_data,describeBy(score,time_2measures))
 
-# Categorical Descriptives
-table<-with(data,table(data_validationT2$score))
-table
-prop.table(table)
+# Comparison by time
+
+descriptive_data_T1<-subset(data,data$time_2measures=="T1paper" | 
+                              data$time_2measures=="T1phone" )
+
+with(descriptive_data_T1,t.test(score~time_2measures))
+
+descriptive_data_T1<-subset(data,data$time_2measures=="T2paper" | 
+                              data$time_2measures=="T2phone" )
+
+with(descriptive_data_T1,t.test(score~time_2measures))
+
+descriptive_data_T1<-subset(data,data$time_2measures=="T3paper" | 
+                              data$time_2measures=="T3phone" )
+
+with(descriptive_data_T1,t.test(score~time_2measures))
+
+
 
 ##############################################################
 #PSFS
@@ -195,7 +226,8 @@ psych::alpha(psfs_data_paper,n.iter=1000,check.keys=TRUE)
 
 #TEMPORAL stability
 
-ICC(icc_temporal_paper[,-1])
+x<-ICC(icc_temporal_paper[,-1])
+plot(x)
 
 ICC(na.omit(icc_temporal_phone[,-1]))
 
@@ -217,6 +249,34 @@ bland.altman.plot(icc_data[,2], icc_data[,3], conf.int=.95, pch=19)
 
 
 SEM<-()
+
+########################################################
+#ROC Plot with Sensitivity and Specificity
+########################################################
+cor(na.omit(icc_data[,c(2,3)]))
+
+ggplot(icc_data, aes(icc_data[,2],icc_data[,3])) +
+    geom_point(shape=1) +    # Use hollow circles
+    geom_smooth()            # Add a loess smoothed fit curve with confidence region
+#> `geom_smooth()` using method = 'loess'
+
+#Initial ROC analysis
+x<-roc(psfs_data_phone[,2],psfs_data_paper[,1]) #first argument = outcome; second = predictor
+print(roc(agree_data_sl[,2],agree_data_sl[,1])) #first argument = outcome; second = predictor
+icc_data<-na.omit(icc_data)
+#CI and Plotting
+roc1 <- roc(icc_data[,2],
+            icc_data[,3], percent=TRUE,
+            # arguments for auc
+            # partial.auc=c(100, 90), partial.auc.correct=TRUE,
+            #partial.auc.focus="sens",
+            # arguments for ci
+            ci=TRUE, boot.n=100, ci.alpha=0.9, stratified=FALSE,
+            # arguments for plot
+            plot=TRUE, auc.polygon=FALSE, max.auc.polygon=FALSE, grid=TRUE,
+            print.auc=TRUE, show.thres=TRUE,col=c("black"),print.thres=T,print.auc.x=39, print.auc.y=60)
+
+
 
 #NETWORK 
 ##############################################################
