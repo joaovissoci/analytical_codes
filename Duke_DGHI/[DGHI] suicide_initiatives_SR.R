@@ -20,7 +20,7 @@ library, character.only=T)
 #IMPORTING DATA
 #################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/GIC 2016/suicide_SR.csv",sep=",")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/GIC 2016/suicide_SR.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 #############################################################################
@@ -88,10 +88,10 @@ meta_bssi$sdDIFF_control<-as.numeric(
 	as.character(meta_bssi$sdDIFF_control))
 
 #recoding metanalysis groups
-meta_bssi$intervention<-car::recode(meta_bssi$intervention,"
-	'targeted education awarenes'='Targeted education and awareness';
-	'brief intervention and contact'='Brief intervention and contact';
-	'psychotherapy'='Psychotherapy'")
+# meta_bssi$intervention<-car::recode(meta_bssi$intervention,"
+# 	'targeted education awarenes'='Targeted education and awareness';
+# 	'brief intervention and contact'='Brief intervention and contact';
+# 	'psychotherapy'='Psychotherapy'")
 
 #run metanalysis model for continuous data
 meta1 <- metacont(N_group_FUP1, 
@@ -105,14 +105,28 @@ meta1 <- metacont(N_group_FUP1,
   studlab=study,comb.fixed=FALSE)
 summary(meta1)
 
-tiff("/Users/jnv4/Desktop/SR_suicidepreventionBSSI_figure2.tiff",
-  width = 800, height = 400,compression = 'lzw')
+setEPS()
+postscript("/Users/joaovissoci/Desktop/SR_suicideprevention_figure2a.eps",
+	width = 12, height = 8)
+# tiff("/Users/jnv4/Desktop/SR_suicideprevention_figure2a.tiff",
+  # width = 800, height = 400,compression = 'lzw',)
 forest(meta1)
 dev.off()
 
 funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
+
+meta1 <- metacont(N_group_FUP1, 
+	mean_FUP1_experimental_group,
+	sd_FUP1_experimental_group,
+	N_control_FUP1,
+	mean_FUP1_experimental_control,
+	sd_FUP1_experimental_control, 
+  data=meta_bssi, sm="SMD",
+  # byvar=intervention,print.byvar=FALSE,
+  studlab=study,comb.fixed=FALSE)
+metabias(meta1,k.min=3)
 
 #############################################################################
 #Figure. 3
@@ -135,10 +149,10 @@ meta_rate<-remove.vars(meta_rate,
 meta_rate<-na.omit(meta_rate)
 
 #recoding metanalysis groups
-meta_rate$intervention<-car::recode(meta_rate$intervention,"
-	'targeted education awarenes'='Targeted education and awareness';
-	'brief intervention and contact'='Brief intervention and contact';
-	'damage control'='Restricted access to legal means'")
+# meta_rate$intervention<-car::recode(meta_rate$intervention,"
+# 	'targeted education awarenes'='Targeted education and awareness';
+# 	'brief intervention and contact'='Brief intervention and contact';
+# 	'damage control'='Restricted access to legal means'")
 
 #Adjusting to avoind the error of a missing category in
 #the byvar analysis
@@ -164,20 +178,34 @@ meta1 <- metabin(proportion_FUP1_experimental_group,
 				 N_group_FUP1,
 				 proportion_FUP1_control_group,
 				 N_control_FUP1,
-				 data=meta_rate, 
+				 data=meta_rate[-c(3,4,7),], 
 				 sm="OR",byvar=intervention,
 				 print.byvar=FALSE,
  				 studlab=study,comb.fixed=FALSE)
 summary(meta1)
 funnel(meta1)
 
-tiff("/Users/jnv4/Desktop/SR_suicidepreventionRATE_figure3.tiff",
-  width = 900, height = 500,compression = 'lzw')
+setEPS()
+postscript("/Users/joaovissoci/Desktop/SR_suicideprevention_figure2b.eps",
+	width = 12, height = 8)
+# tiff("/Users/jnv4/Desktop/SR_suicideprevention_figure2a.tiff",
+  # width = 800, height = 400,compression = 'lzw',)
 forest(meta1)
 dev.off()
 
 metainf(meta1)
 metainf(meta1, pooled="random")
+
+meta1 <- metabin(proportion_FUP1_experimental_group,
+				 N_group_FUP1,
+				 proportion_FUP1_control_group,
+				 N_control_FUP1,
+				 data=meta_rate[-c(3,4,7),], 
+				 sm="OR",#byvar=intervention,
+				 print.byvar=FALSE,
+ 				 studlab=study,comb.fixed=FALSE)
+
+metabias(meta1,k.min=3)
 
 #############################################################################
 #Figure. 4
@@ -217,11 +245,11 @@ meta_dep$meandDIFF_control<-as.numeric(
 meta_dep$sdDIFF_control<-as.numeric(
 	as.character(meta_dep$sdDIFF_control))
 
-#recoding metanalysis groups
-meta_dep$intervention<-car::recode(meta_dep$intervention,"
-	'targeted education awarenes'='Targeted education and awareness';
-	'brief intervention and contact'='Brief intervention and contact';
-	'psychotherapy'='Psychotherapy'")
+# #recoding metanalysis groups
+# meta_dep$intervention<-car::recode(meta_dep$intervention,"
+# 	'targeted education awarenes'='Targeted education and awareness';
+# 	'brief intervention and contact'='Brief intervention and contact';
+# 	'psychotherapy'='Psychotherapy'")
 
 #run metanalysis model for continuous data
 meta1 <- metacont(N_group_FUP1, 
@@ -230,13 +258,16 @@ meta1 <- metacont(N_group_FUP1,
 	N_control_FUP1,
 	mean_FUP1_experimental_control,
 	sd_FUP1_experimental_control, 
-  data=meta_dep, sm="SMD",
+  data=meta_dep[-c(1),], sm="SMD",
   byvar=intervention,print.byvar=FALSE,
   studlab=study,comb.fixed=FALSE)
 summary(meta1)
 
-tiff("/Users/jnv4/Desktop/SR_suicidepreventionDEPRESSION_figure4.tiff",
-  width = 800, height = 400,compression = 'lzw')
+setEPS()
+postscript("/Users/joaovissoci/Desktop/SR_suicideprevention_figure2c.eps",
+	width = 12, height = 8)
+# tiff("/Users/jnv4/Desktop/SR_suicideprevention_figure2a.tiff",
+  # width = 800, height = 400,compression = 'lzw',)
 forest(meta1)
 dev.off()
 
@@ -244,6 +275,16 @@ funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
 
+meta1 <- metacont(N_group_FUP1, 
+	mean_FUP1_experimental_group,
+	sd_FUP1_experimental_group,
+	N_control_FUP1,
+	mean_FUP1_experimental_control,
+	sd_FUP1_experimental_control, 
+  data=meta_dep[-c(1),], sm="SMD",
+  #byvar=intervention,print.byvar=FALSE,
+  studlab=study,comb.fixed=FALSE)
+metabias(meta1,k.min=3)
 #############################################################################
 #Figure. 5
 #############################################################################
@@ -286,10 +327,10 @@ meta_hope$sdDIFF_control<-as.numeric(
 	as.character(meta_hope$sdDIFF_control))
 
 #recoding metanalysis groups
-meta_hope$intervention<-car::recode(meta_hope$intervention,"
-	'targeted education awarenes'='Targeted education and awareness';
-	'brief intervention and contact'='Brief intervention and contact';
-	'psychotherapy'='Psychotherapy'")
+# meta_hope$intervention<-car::recode(meta_hope$intervention,"
+# 	'targeted education awarenes'='Targeted education and awareness';
+# 	'brief intervention and contact'='Brief intervention and contact';
+# 	'psychotherapy'='Psychotherapy'")
 
 #run metanalysis model for continuous data
 meta1 <- metacont(N_group_FUP1, 
@@ -303,14 +344,38 @@ meta1 <- metacont(N_group_FUP1,
   studlab=study,comb.fixed=FALSE)
 summary(meta1)
 
-tiff("/Users/jnv4/Desktop/SR_suicidepreventionHOPLESSNESS_figure5.tiff",
-  width = 800, height = 400,compression = 'lzw')
+setEPS()
+postscript("/Users/joaovissoci/Desktop/SR_suicideprevention_figure2d.eps",
+	width = 12, height = 8)
+# tiff("/Users/jnv4/Desktop/SR_suicideprevention_figure2a.tiff",
+  # width = 800, height = 400,compression = 'lzw',)
 forest(meta1)
 dev.off()
 
 funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
+
+meta1 <- metacont(N_group_FUP1, 
+	mean_FUP1_experimental_group,
+	sd_FUP1_experimental_group,
+	N_control_FUP1,
+	mean_FUP1_experimental_control,
+	sd_FUP1_experimental_control, 
+  data=meta_hope, sm="SMD",
+ # byvar=intervention,print.byvar=FALSE,
+  studlab=study,comb.fixed=FALSE)
+metabias(meta1,k.min=3)
+
+##############################################################################
+#COMBINING PLOTS
+##############################################################################
+
+
+
+
+
+
 
 ##############################################################################
 #END
