@@ -28,10 +28,24 @@ library, character.only=T)
 #IMPORTING DATA
 #######################################################
 
-#Path
+##### EPI data
 data <- read.spss("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/sri lanka/sl_epi_data.sav",
                        to.data.frame=TRUE)
 data<-as.data.frame(data)
+
+##### BEA data
+data_bea1<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_sl.csv",sep=',')
+
+#clean data from Sri Lanka
+data_bea<-subset(data_bea1,data_bea1$rater=="e")
+
+##### BEA Scores data
+data_bea_scores<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_PCAscores.csv",sep=',')
+
+#clean data for Sri Lanka only
+data_bea_scoressl<-subset(data_bea_scores,
+	data_bea_scores$pca_scores_data.country=="sl2")
+
 #######################################################
 #DATA MANAGEMENT
 #######################################################
@@ -163,6 +177,48 @@ data_epi$rd_size<-car::recode(data2$rd_size,"0='single';
 #tranform dlist into a data.frame
 data_epi<-as.data.frame(data_epi)
 
+##Recode BEA variables
+
+#road design
+data_bea$road_design<-car::recode(data_bea$road_design,"
+	0=1;1=0;2=0;3=0;99=NA")
+
+#intersections
+data_bea$intersections<-car::recode(data_bea$intersections,"
+	0=0;1=1;2=1;99=NA")
+
+#auxiliary lane
+data_bea$auxiliary_lane<-car::recode(data_bea$auxiliary_lane,"
+	99=NA")
+
+#pavement
+data_bea$pavement<-car::recode(data_bea$pavement,"
+	99=NA")
+
+#bus stop
+data_bea$bus_stop<-car::recode(data_bea$bus_stop,"
+	99=NA")
+
+#speed limit
+data_bea$speed_limit<-car::recode(data_bea$speed_limit,"
+	99=0")
+
+# lane_type
+data_bea$lane_type_recoded<-car::recode(data_bea$lane_type,"
+	0=0; 1=1; 2=1; 3=0;4=0")
+
+# pavement
+data_bea$pavement_recoded<-car::recode(data_bea$pavement,"
+	0=0; 1=0; 2=1")
+
+#walkways
+data_bea$walkways<-car::recode(data_bea$walkways,"0=0;1=1;2=1")
+
+# speed_limit
+data_bea$speed_limit<-car::recode(data_bea$speed_limit,"
+	0=1")
+
+
 #######################################################
 #ANALYZING MISSING DATA
 #######################################################
@@ -234,7 +290,7 @@ data_imputed<-complete(imp,4)
 #imp <- mice(nhanes, pred = pred, pri = FALSE) # rerun the model specifying pred argumento witht eh matriz recoded.
 
 #######################################################
-#DESCRIPTIVE ANALYSIS
+#TABLE 1
 #######################################################
 # Age
 with(data_epi,describe(age))
@@ -511,9 +567,8 @@ chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
 
-#######################################################
 #MULTIVARIATE ANALYSIS
-#######################################################
+#########################
 
 data_imputed$type_vehicle<-car::recode(data_imputed$type_vehicle,"
 	'Other'='zother'")
@@ -546,6 +601,338 @@ logmodel<-glm(outcome ~ hour_crash +
 summary(logmodel)
 #anova(reglogGEU)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.90))) 
+#predict(model1_death, type="response") # predicted values
+#residuals(model1_death, type="deviance") # residuals
+logistic.display(logmodel)
+
+######################################################
+#TABLE 2
+######################################################
+# Road Area
+table<-with(data_bea,table(road_area))
+table
+prop.table(table)
+table<-with(data_bea,table(road_area,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road Area
+table<-with(data_bea,table(road_design))
+table
+prop.table(table)
+table<-with(data_bea,table(road_design,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# intersection
+table<-with(data_bea,table(intersections))
+table
+prop.table(table)	
+table<-with(data_bea,table(intersections,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# intersectionwith cars in the same direction
+table<-with(data_bea,table(conflict_intersections___0))
+table
+prop.table(table)	
+table<-with(data_bea,table(conflict_intersections___0,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# intersectionwith cars in the same direction
+table<-with(data_bea,table(conflict_intersections___1))
+table
+prop.table(table)	
+table<-with(data_bea,table(conflict_intersections___1,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# intersectionwith cars in the same direction
+table<-with(data_bea,table(conflict_intersections___2))
+table
+prop.table(table)	
+table<-with(data_bea,table(conflict_intersections___2,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# lane type - one vs two
+table<-with(data_bea,table(lane_type))
+table
+prop.table(table)	
+table<-with(data_bea,table(lane_type,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# pavement
+table<-with(data_bea,table(pavement))
+table
+prop.table(table)	
+table<-with(data_bea,table(pavement,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Road narrowness
+table<-with(data_bea,table(road_narrow___0))
+table
+prop.table(table)	
+table<-with(data_bea,table(road_narrow,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Roadside danger
+table<-with(data_bea,table(roadside))
+table
+prop.table(table)	
+table<-with(data_bea,table(roadside,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Roadside danger
+table<-with(data_bea,table(roadside_danger))
+table
+prop.table(table)	
+table<-with(data_bea,table(roadside_danger,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# roadside Uneveness
+table<-with(data_bea,table(unevenness_roadside))
+table
+prop.table(table)	
+table<-with(data_bea,table(unevenness_roadside,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Roadsie Median
+table<-with(data_bea,table(median))
+table
+prop.table(table)	
+table<-with(data_bea,table(median,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Walkways
+table<-with(data_bea,table(walkways))
+table
+prop.table(table)	
+table<-with(data_bea,table(walkways,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Bus stop
+table<-with(data_bea,table(bus_stop))
+table
+prop.table(table)	
+table<-with(data_bea,table(bus_stop,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Speed Bumps
+table<-with(data_bea,table(bump))
+table
+prop.table(table)	
+table<-with(data_bea,table(bump,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Traffic Signs
+table<-with(data_bea,table(traffic_light))
+table
+prop.table(table)	
+table<-with(data_bea,table(traffic_light,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Speed Limit
+table<-with(data_bea,table(speed_limit))
+table
+prop.table(table)	
+table<-with(data_bea,table(speed_limit,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Speed Limit
+table<-with(data_bea,table(curves_type___0))
+table
+prop.table(table)	
+table<-with(data_bea,table(curves_type___0,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Night Lights
+table<-with(data_bea,table(light_condition))
+table
+prop.table(table)	
+table<-with(data_bea,table(light_condition,risk_classification))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd pacMENTORING PLANkage
+
+# Car density
+summary(data_bea$car_density)
+ad.test(data_bea$car_density)
+#hist(data_bea$car_density)
+#ci_func(data_bea$car_density,.95)
+by(data_bea$car_density,data_bea$risk_classification,summary)
+wilcox.test(data_bea$car_density~data_bea$risk_classification)
+
+# Truck density
+summary(data_bea$bus_truck_density)
+ad.test(data_bea$bus_truck_density)
+#hist(data_bea$ddensity_trucks)
+#ci_func(data_bea$ddensity_trucks,.95)
+by(data_bea$bus_truck_density,data_bea$risk_classification,summary)
+wilcox.test(data_bea$bus_truck_density~data_bea$risk_classification)
+
+# Bike density
+summary(data_bea$bike_density)
+ad.test(data_bea$bike_density)
+#hist(data_bea$bike_density)
+#ci_func(data_bea$bike_density,.95)
+by(data_bea$bike_density,data_bea$risk_classification,summary)
+wilcox.test(data_bea$bike_density~data_bea$risk_classification)
+
+# Moto density
+summary(data_bea$motorcycle_density)
+ad.test(data_bea$motorcycle_density)
+#hist(data_bea$motorcycle_density)
+#ci_func(data_bea$motorcycle_density,.95)
+by(data_bea$motorcycle_density,data_bea$risk_classification,summary)
+wilcox.test(data_bea$motorcycle_density~data_bea$risk_classification)
+
+# DalaDala density
+summary(data_bea$tuktuk_density)
+ad.test(data_bea$tuktuk_density)
+#hist(data_bea$tuktuk_density)
+#ci_func(data_bea$tuktuk_density,.95)
+by(data_bea$tuktuk_density,data_bea$risk_classification,summary)
+wilcox.test(data_bea$tuktuk_density~data_bea$risk_classification)
+
+# Pedestrian Crossings
+summary(data_bea$pedestrian_density)
+ad.test(data_bea$pedestrian_density)
+#hist(data_bea$pedestrian_density)
+#ci_func(data_bea$pedestrian_density,.95)
+by(data_bea$pedestrian_density,data_bea$risk_classification,summary)
+wilcox.test(data_bea$pedestrian_density~data_bea$risk_classification)
+
+########################################################
+#BEA analysis
+########################################################
+
+#PCA1a
+with(data_bea_scoressl,
+	by(PCA1a,clusters,summary))
+with(data_bea_scoressl,
+	kruskal.test(PCA1a,clusters))
+
+#PCA1b
+with(data_bea_scoressl,
+	by(PCA1b,clusters,summary))
+with(data_bea_scoressl,
+	kruskal.test(PCA1b~clusters))
+
+#PCA2
+with(data_bea_scoressl,
+	by(PCA2,clusters,summary))
+with(data_bea_scoressl,
+	kruskal.test(PCA2~clusters))
+
+#PCA3
+with(data_bea_scoressl,
+	by(PCA3,clusters,summary))
+with(data_bea_scoressl,
+	kruskal.test(PCA3~clusters))
+
+#PCA4
+with(data_bea_scoressl,
+	by(PCA4,clusters,summary))
+with(data_bea_scoressl,
+	kruskal.test(PCA4~clusters))
+
+#Outcome
+
+# Road Area
+table<-with(data_bea_scoressl,
+	table(outcome))
+table
+prop.table(table)
+table<-with(data_bea_scoressl,
+	table(outcome,clusters))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+#data_epi$type_vehicle<-car::recode(data_epi$type_vehicle,"'pedestrian'=NA;'bicycle'=NA")
+logmodel<-glm(outcome ~   clusters,
+						  family=binomial, 
+						  data=data_bea_scoressl)
+summary(logmodel)
+#anova(reglogGEU)
+exp(coef(logmodel)) # exponentiated coefficients
+exp(confint(logmodel)) # 95% CI for exponentiated coefficients
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)

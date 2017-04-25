@@ -47,7 +47,7 @@ data_rw<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/b
 #clean data from Sri Lanka
 data_sl2<-subset(data_sl,data_sl$rater=="e")
 
-write.csv(data_sl2,"/Users/jnv4/Desktop/sl_bea2.csv")
+# write.csv(data_sl2,"/Users/jnv4/Desktop/sl_bea2.csv")
 
 # building merged dataset
 bea_data<-NULL
@@ -642,25 +642,25 @@ cor_data<-cor_auto(model1_bea)
 # ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
 # ev # Show eigend values
 # ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
-# summary(ap)
-# nS <- nScree(ev$values) #Set up the Scree Plot 
-# plotnScree(nS) # Plot the ScreePlot Graph
-my.vss <- VSS(cor_data,title="VSS of BEA data")
-#print(my.vss[,1:12],digits =2)
-VSS.plot(my.vss, title="VSS of 24 mental tests")
-scree(cor_data)
-VSS.scree(cor_data)
-fa.parallel(cor_data,n.obs=229)
+# # summary(ap)
+# # nS <- nScree(ev$values) #Set up the Scree Plot 
+# # plotnScree(nS) # Plot the ScreePlot Graph
+# my.vss <- VSS(cor_data,title="VSS of BEA data")
+# #print(my.vss[,1:12],digits =2)
+# VSS.plot(my.vss, title="VSS of 24 mental tests")
+# scree(cor_data)
+# VSS.scree(cor_data)
+# fa.parallel(cor_data,n.obs=229)
 
-# Pricipal Components Analysis
-# entering raw data and extracting PCs 
-# from the correlation matrix 
-fit <- psych::principal(cor_data,nfactors=2,rotate="none",scores=TRUE)
-fit
-summary(fit) # print variance accounted for 
-loadings(fit) # pc loadings 
-#fit$scores
-pca1<-predict(fit,model1_bea)
+# # Pricipal Components Analysis
+# # entering raw data and extracting PCs 
+# # from the correlation matrix 
+# fit <- psych::principal(cor_data,nfactors=2,rotate="none",scores=TRUE)
+# fit
+# summary(fit) # print variance accounted for 
+# loadings(fit) # pc loadings 
+# #fit$scores
+# pca1<-predict(fit,model1_bea)
 # scores<-scoreItems(fit$weights,bea_data[,-1],totals=TRUE)
 # summary(scores)
 # describe(scores$scores)
@@ -901,8 +901,6 @@ pca_score_data_rescaled<-round(as.data.frame(pca_score_data_rescaled),1)
 pca_score_data_rescaled<-data.frame(pca_score_data_rescaled,
 	pca_scores_data$id,pca_scores_data$country)
 
-write.csv(pca_score_data_rescaled,"/Users/jnv4/Desktop/bea_PCAscores.csv")
-
 ##############################################################
 #CLUSTER ANALYSIS 
 ##############################################################
@@ -931,6 +929,7 @@ x[cl$z[,3]>=0.51]<-c("Lat3")
 
 pca_score_data_rescaled$clusters<-as.factor(x)
 
+# write.csv(pca_score_data_rescaled,"/Users/jnv4/Desktop/bea_PCAscores.csv")
 
 with(pca_score_data_rescaled,
 	by(PCA1a,clusters,summary))
