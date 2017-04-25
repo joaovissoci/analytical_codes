@@ -9,16 +9,17 @@ lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest", "moments","nFactors","ps
 #IMPORTING DATA
 ############################################################
 
-#uploading data ------------------------------------------------------------------------
-sheet <- gs_title("back_pain_dataset")
-#gap_url <- "https://docs.google.com/spreadsheets/d/1NWiYzkW2KxQIjF0eNlkMcLAj8cDsFVWxS6wrMcZwA5A/edit?usp=sharing"
-#gap <- gap_url %>% gs_url()
-data<-gs_read(sheet,ws = "Lumbar_Pain")
-data<-as.data.frame(data)
-#data <- read.csv("/Users/apbonilauri/Google Drive/IOT/MTurk Low Back Pain/BackPain_mturk/Data Set MTurk - Back Pain - Lumbar_Pain.csv", header=T)
+# #uploading data ------------------------------------------------------------------------
+# sheet <- gs_title("back_pain_dataset")
+# #gap_url <- "https://docs.google.com/spreadsheets/d/1NWiYzkW2KxQIjF0eNlkMcLAj8cDsFVWxS6wrMcZwA5A/edit?usp=sharing"
+# #gap <- gap_url %>% gs_url()
+# data<-gs_read(sheet,ws = "Lumbar_Pain")
+# data<-as.data.frame(data)
+data <- read.csv("/Users/joaovissoci/Desktop/back_pain_dataset.csv", header=T)
 
 #detach(data)
 attach(data)
+detach(data)
 
 ##########################################################################
 #EXPLORATORY DATA ANALYSIS
@@ -42,6 +43,39 @@ summary(data)#This comand will provide a whole set of descriptive results for ea
 ##########################################################################
 #DESCRIPTIVES
 ##########################################################################
+
+with(data,table(Gender))
+with(data,prop.table(table(Gender)))
+
+with(data,describe(Age))
+
+data$Race<-car::recode(data$Race,"
+  1='White';
+  2='Black';
+  3='Asian';
+  else='other'")
+with(data,table(Race))
+with(data,prop.table(table(Race)))
+
+data$Status<-car::recode(data$Status,"
+  2='Married';
+  else='Not married'")
+with(data,table(Status))
+with(data,prop.table(table(Status)))
+
+data$Education<-car::recode(data$Education,"
+  1='Elementary incomplete';
+  2='Elementary';
+  3='Elementary';
+  4='High school';
+  5='High school';
+  6='College';
+  else='College'")
+with(data,table(Education))
+with(data,prop.table(table(Education)))
+
+with(data,table(BackPain))
+with(data,prop.table(table(BackPain)))
 
 ##########################################################################
 #OBJECTIVE 2 - Individual validation for each scale
@@ -87,7 +121,7 @@ RolandMorrisNA<-na.omit(RolandMorrisOriginal)
 
 
 #### Taxonometric Scale
-MAMBAC(scale(RolandMorrisOriginal)[,1:3], Comp.Data = T)
+# MAMBAC(scale(RolandMorrisOriginal)[,1:3], Comp.Data = T)
 
 
 #### FACTOR ANALYSIS APPROACH
@@ -213,9 +247,31 @@ MAMBAC(QuebecOriginal[,1:3], Comp.Data = T)
 
 ####TRYOUT with all the original 6 categories of responses ###############
 
-QuebecOriginal<-data.frame(Getoutbed,Sleep,Turn.over,Ride,Standup,Chair,Climb,Fewblocks,
+  ## Trying to recode the data
+  data_quebec<-NULL
+  data_quebec$Getoutbed<-car::recode(Getoutbed,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Sleep<-car::recode(Sleep,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Turn.over<-car::recode(Turn.over,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Ride<-car::recode(Ride,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Standup<-car::recode(Standup,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Chair<-car::recode(Chair,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Climb<-car::recode(Climb,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Fewblocks<-car::recode(Fewblocks,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Severalmiles<-car::recode(Severalmiles,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Shelves<-car::recode(Shelves,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Ball<-car::recode(Ball,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Run<-car::recode(Run,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Food<-car::recode(Food,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Makebed<-car::recode(Makebed,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Pantyhose<-car::recode(Pantyhose,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Bathtub<-car::recode(Bathtub,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Movechair<-car::recode(Movechair,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Heavydoors<-car::recode(Heavydoors,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Carrybags<-car::recode(Carrybags,"1=0;2=1;3=2;4=3;5=4;6=5")
+  data_quebec$Suitcase<-car::recode(Suitcase,"1=0;2=1;3=2;4=3;5=4;6=5")
+QuebecOriginal<-with(data_quebec,data.frame(Getoutbed,Sleep,Turn.over,Ride,Standup,Chair,Climb,Fewblocks,
                            Severalmiles,Shelves,Ball,Run,Food,Makebed,Pantyhose,Bathtub,
-                           Movechair,Heavydoors,Carrybags,Suitcase)
+                           Movechair,Heavydoors,Carrybags,Suitcase))
 #Excluding NAs
 QuebecNA<-na.omit(QuebecOriginal)
 
