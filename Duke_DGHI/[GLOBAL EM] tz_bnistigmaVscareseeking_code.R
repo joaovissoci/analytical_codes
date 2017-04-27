@@ -42,7 +42,7 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k award/tz_bnisurveypatients_data.csv")
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k award/tz_bnisurveypatients_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -156,67 +156,67 @@ data_nonabst$talked_dr<-car::recode(data_nonabst$talked_dr,"
 #Selfhelp_group
 
 # #Drinc
-# drinc_data<-with(data,data.frame(
-# 				had_hangover,
-# 				bad_about_self,
-# 				missed_work_school,
-# 				ppl_worry,
-# 				enjoy_taste,
-# 				work_suffered,
-# 				good_parent,
-# 				sleep_pdrink,
-# 				drink_drive,
-# 				other_drugs,
-# 				sick_vomit,
-# 				unhappy,
-# 				poor_eating,
-# 				fail_expect,
-# 				relax,
-# 				guilt_ashamed,
-# 				embarrassing,
-# 				worse_persona,
-# 				fool_risk,
-# 				trouble,
-# 				harsh_cruel,
-# 				impulsive_regret,
-# 				fight,
-# 				harm_phys_health,
-# 				more_pos,
-# 				money_prob,
-# 				harm_love,
-# 				smoke_more,
-# 				harm_appearance,
-# 				hurt_fam,
-# 				damage_friend,
-# 				overweight,
-# 				sex_suffers,
-# 				lose_interest,
-# 				enjoy_social,
-# 				harm_spiritual,
-# 				not_want_life,
-# 				no_growth,
-# 				damage_social,
-# 				lost_money,
-# 				dui,
-# 				legal_trouble,
-# 				lose_marriage,
-# 				fired,
-# 				drink_no_prob,
-# 				lost_friend,
-# 				accident,
-# 				hurt_injury,
-# 				injur_other,
-# 				broken_things))
+drinc_data<-with(data_nonabst,data.frame(
+				had_hangover,
+				bad_about_self,
+				missed_work_school,
+				ppl_worry,
+				enjoy_taste,
+				work_suffered,
+				good_parent,
+				sleep_pdrink,
+				drink_drive,
+				other_drugs,
+				sick_vomit,
+				unhappy,
+				poor_eating,
+				fail_expect,
+				relax,
+				guilt_ashamed,
+				embarrassing,
+				worse_persona,
+				fool_risk,
+				trouble,
+				harsh_cruel,
+				impulsive_regret,
+				fight,
+				harm_phys_health,
+				more_pos,
+				money_prob,
+				harm_love,
+				smoke_more,
+				harm_appearance,
+				hurt_fam,
+				damage_friend,
+				overweight,
+				sex_suffers,
+				lose_interest,
+				enjoy_social,
+				harm_spiritual,
+				not_want_life,
+				no_growth,
+				damage_social,
+				lost_money,
+				dui,
+				legal_trouble,
+				lose_marriage,
+				fired,
+				drink_no_prob,
+				lost_friend,
+				accident,
+				hurt_injury,
+				injur_other,
+				broken_things))
 
 # drinc_data_questions<-subset(drinc_data,audit_data[2]==2)
 
 # # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-# imp <- mice(drinc_data, seed = 2222, m=5)
+imp <- mice(drinc_data, seed = 2222, m=5)
 
 # # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-# drinc_data_questions<-complete(imp,4)
+drinc_data_questions<-complete(imp,4)
 
-# drinc_data_score<-rowSums(drinc_data_questions)/2
+drinc_data_score<-rowSums(drinc_data_questions)/2
 # drinc_data_score_cat<-car::recode(
 # 	drinc_data_score,"0:5='Low';else='High'")
 
@@ -348,8 +348,8 @@ data_full<-data.frame(age=data_nonabst$age,
 					  audit_total=audit_data$audit_score,
 					  audit_alcoholuse=audit_data$audit_score_D1,
 					  audit_alcoholdependence=audit_data$audit_score_D2,
-					  audit_alcoholrisk=audit_data$audit_score_D3
-					  )
+					  audit_alcoholrisk=audit_data$audit_score_D3,
+					  drinc_data_score)
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
 imp <- mice(data_full, seed = 2222, m=5)
@@ -491,14 +491,23 @@ with(data_full,
 	by(audit_alcoholrisk,talked_dr,summary))
 with(data_full,
 	wilcox.test(audit_alcoholrisk~talked_dr))
+
+
+#drinc_data_score
+with(data_full,
+	summary(drinc_data_score))
+with(data_full,
+	by(drinc_data_score,talked_dr,summary))
+with(data_full,
+	wilcox.test(drinc_data_score~talked_dr))
 ######################################################################
 #FIGURE 1
 ######################################################################
 
 #
-network_data<-data.frame(age=data_nonabst$age,
-					  female=data_nonabst$female,
-					  pos_etoh=data_nonabst$pos_etoh,
+network_data<-data.frame(#age=data_nonabst$age,
+					  #female=data_nonabst$female,
+					  #pos_etoh=data_nonabst$pos_etoh,
 					  daily_drink=data_nonabst$daily_drink,
 					  # number_drinks_day=data_nonabst$number_drinks_day,
 					  drinking_interferes=as.numeric(as.factor(data_nonabst$drinking_interferes)),
@@ -508,7 +517,7 @@ network_data<-data.frame(age=data_nonabst$age,
 					  # pas_score,
 					  devaluation,
 					  discrimination,
-					  talked_dr=data_nonabst$talked_dr,
+					  talked_dr=as.numeric(as.factor(data_nonabst$talked_dr)),
 					  # helpful_treatment=data_nonabst$helpful_treatment,
 					  # recent_trtmnt=data_nonabst$recent_trtmnt,
 					  # hospital_alc=data_nonabst$hospital_alc,
@@ -524,82 +533,19 @@ cor<-cor_auto(network_data)
 network_glasso<-qgraph(cor,layout="spring",
 	vsize=6,esize=20,graph="glasso",
 	sampleSize=nrow(network_data),
-	legend.cex = 0.5,GLratio=1.5)
+	legend.cex = 0.5,GLratio=1.5,
+	label.scale=FALSE,
+	labels=colnames(cor))
 
-######################################################################
-#TABLE 2
-######################################################################
 
-#PDD summary
-with(data_full,
-	summary(pas_score))
-with(data_full,
-	by(pas_score,groups,summary))
-with(data_full,
-	kruskal.test(pas_score~groups))
-
-#mvc
-with(data_full,table(pas_score_cat))
-with(data_full,prop.table(table(pas_score_cat)))
-x<-with(data_full,table(pas_score_cat,groups))
-with(data_full,prop.table(table(pas_score_cat,groups),2))
-assocstats(x)
-fisher.test(x)
-
-summary(data_full$discrimination)
-with(data_full,
-	by(discrimination,groups,summary))
-with(data_full,
-	kruskal.test(discrimination~groups))
-
-summary(data_full$devaluation)
-with(data_full,
-	by(devaluation,groups,summary))
-with(data_full,
-	kruskal.test(devaluation~groups))
-
-with(data_full,cor(data.frame(pas_score,audit_score)))
-
-######################################################################
-#TABLE 2
-######################################################################
-
-model<-glm(as.factor(drink_drive) ~ audit_score*pas_score,
-			data=data_nonabst,
-			family=binomial())
-summary(model)
-
-exp(coef(model)) # exponentiated coefficients
-exp(confint(model)) # 95% CI for exponentiated coefficients
-
-#Stigma and care seeking
-
-care<-data.frame(care_seeking=data$talked_dr,pas_score)
-care_seeking<-car::recode(care$care_seeking,"8=NA")
-# x_clean<-subset(x,audit_data[2]==2)
-with(care,
-	by(devaluation,care_seeking,summary))
-
-wilcox.test(pas_score~care_seeking)
-
-# x_clean<-subset(x,audit_data[2]==2)
-with(care,
-	by(discrimination,care_seeking,summary))
-
-with(care,
-	wilcox.test(discrimination~care_seeking))
+# Same, but with different colors and add regression lines
+ggplot(network_data, aes(x=audit_total, y=devaluation, 
+	color=data_nonabst$talked_dr)) +
+    geom_point(shape=1) +
+    scale_colour_hue(l=50) + # Use a slightly darker palette than normal
+    geom_smooth(   # Add linear regression lines
+                se=FALSE)    # Don't add shaded confidence region
 
 ######################################################################
 #FIGURE 2
 ######################################################################
-
-#
-p <- ggplot(subset(data_full,data_full$groups!=3),
-			aes(as.factor(groups),pas_score))
-p <- p + geom_boxplot(fill="grey")
-p <- p + xlab("Drink and drive") + ylab("PDD Score")
-p <- p + theme_bw()
-p <- p + scale_x_discrete(breaks=c("0", "2"),
-                      labels=c("No", "Yes"))
-p
-
