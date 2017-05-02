@@ -32,9 +32,10 @@ lapply(c("Hmisc",
 		 "ggplot2",
 		 "pastecs",
 		 "repmis",
-		 "mvnormtest",
+		 # "mvnormtest",
 		 "polycor",
-		 "mice"), 
+		 "mice",
+		 "semPlot"), 
 library, character.only=T)
 
 ######################################################################
@@ -42,7 +43,7 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k award/tz_bnisurveypatients_data.csv")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k award/tz_bnisurveypatients_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -214,7 +215,7 @@ drinc_data<-with(data_nonabst,data.frame(
 imp <- mice(drinc_data, seed = 2222, m=5)
 
 # # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-drinc_data_questions<-complete(imp,4)
+drinc_data_questions<-mice::complete(imp,4)
 
 drinc_data_score<-rowSums(drinc_data_questions)/2
 # drinc_data_score_cat<-car::recode(
@@ -268,7 +269,7 @@ figure3_data_PAS<-with(score_data,data.frame(alcoholic_close_friend,
 imp <- mice(figure3_data_PAS, seed = 2222, m=5)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-figure3_data_PAS<-complete(imp,4)
+figure3_data_PAS<-mice::complete(imp,4)
 
 pas_score<-rowSums(figure3_data_PAS)/ncol(figure3_data_PAS)
 # summary(pas_score)
@@ -294,7 +295,7 @@ figure3_data_PDis<-with(score_data,data.frame(alcoholic_close_friend,
 imp <- mice(figure3_data_PDis, seed = 2222, m=5)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-figure3_data_PDis<-complete(imp,4)
+figure3_data_PDis<-mice::complete(imp,4)
 
 discrimination<-rowSums(figure3_data_PDis)/ncol(figure3_data_PDis)
 # discrimination<-na.omit(discrimination)
@@ -317,7 +318,7 @@ figure3_data_PDev<-with(score_data,data.frame(alc_treatment_intelligent,
 imp <- mice(figure3_data_PDev, seed = 2222, m=5)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-figure3_data_PDev<-complete(imp,4)
+figure3_data_PDev<-mice::complete(imp,4)
 
 devaluation<-rowSums(figure3_data_PDev)/ncol(figure3_data_PDev)
 # devaluation<-na.omit(devaluation)
@@ -355,7 +356,7 @@ data_full<-data.frame(age=data_nonabst$age,
 imp <- mice(data_full, seed = 2222, m=5)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-data_full<-complete(imp,4)
+data_full<-mice::complete(imp,4)
 
 ######################################################################
 #TABLE 1
@@ -509,47 +510,82 @@ with(data_full,
 ######################################################################
 
 #
-network_data<-data.frame(#age=data_nonabst$age,
+network_data<-with(data_full,data.frame(#age=data_nonabst$age,
 					  #female=data_nonabst$female,
 					  #pos_etoh=data_nonabst$pos_etoh,
-					  daily_drink=data_nonabst$daily_drink,
-					  # number_drinks_day=data_nonabst$number_drinks_day,
-					  drinking_interferes=as.numeric(as.factor(data_nonabst$drinking_interferes)),
-					  drinking_arguments=as.numeric(as.factor(data_nonabst$drinking_arguments)),
-					  could_get_hurt=as.numeric(as.factor(data_nonabst$could_get_hurt)),
-					  police_bc_drink=as.numeric(as.factor(data_nonabst$police_bc_drink)),
+					  # daily_drink=data_nonabst$daily_drink,
+					  # # number_drinks_day=data_nonabst$number_drinks_day,
+					  # drinking_interferes=as.numeric(as.factor(data_nonabst$drinking_interferes)),
+					  # drinking_arguments=as.numeric(as.factor(data_nonabst$drinking_arguments)),
+					  # could_get_hurt=as.numeric(as.factor(data_nonabst$could_get_hurt)),
+					  # police_bc_drink=as.numeric(as.factor(data_nonabst$police_bc_drink)),
 					  # pas_score,
 					  devaluation,
 					  discrimination,
-					  talked_dr=as.numeric(as.factor(data_nonabst$talked_dr)),
+					  talked_dr=as.numeric(as.factor(talked_dr)),
 					  # helpful_treatment=data_nonabst$helpful_treatment,
 					  # recent_trtmnt=data_nonabst$recent_trtmnt,
 					  # hospital_alc=data_nonabst$hospital_alc,
 					  # selfhelp_group=data_nonabst$selfhelp_group,
-					  audit_total=audit_data$audit_score
+					  audit_total=audit_total,
 					  # audit_alcoholuse=audit_data$audit_score_D1,
 					  # audit_alcoholdependence=audit_data$audit_score_D2,
-					  # audit_alcoholrisk=audit_data$audit_score_D3
-					  )
+					  # audit_alcoholrisk=audit_data$audit_score_D3.
+					  drinc_data_score
+					  ))
 
 cor<-cor_auto(network_data)
 
-network_glasso<-qgraph(cor,layout="spring",
-	vsize=6,esize=20,graph="glasso",
-	sampleSize=nrow(network_data),
-	legend.cex = 0.5,GLratio=1.5,
-	label.scale=FALSE,
-	labels=colnames(cor))
+network_glasso<-qgraph(
+                    cor,
+                    layout="spring", 
+                    # vsize=tau,
+                    # esize=20,
+                    graph="glasso",
+                    sampleSize=nrow(network_data),
+                    legend.cex = 0.5,
+                    GLratio=1.5,
+                    minimum=0.1,
+                    cut=0,
+                    border.width=1.5,
+                    shape="square"
+                    )
 
+# Mediation analysis
 
-# Same, but with different colors and add regression lines
-ggplot(network_data, aes(x=audit_total, y=devaluation, 
-	color=data_nonabst$talked_dr)) +
-    geom_point(shape=1) +
-    scale_colour_hue(l=50) + # Use a slightly darker palette than normal
-    geom_smooth(   # Add linear regression lines
-                se=FALSE)    # Don't add shaded confidence region
+model <- ' # direct effect
+			 audit_total ~ z*pas_score
+             talked_dr ~ c*audit_total
+           # mediator
+             drinc_data_score ~ a*audit_total
+             talked_dr ~ b*drinc_data_score
+           # # indirect effect (a*b)
+           #   ab := a*b*z
+           # # total effect
+           #   total := c + (a*b)
+         '
 
+fit <- lavaan::sem(model, data = network_data)
+summary(fit)
+
+semPlot::semPaths(fit,
+                  "model",
+                  "std",
+                  layout="tree2",
+                  style="lisrel",
+                  residuals=FALSE,
+                  # cut=1,
+                  # equalizeManifests=TRUE,
+                  # edge.color="black",
+                  exoCov=FALSE,
+                  intercepts=FALSE,
+                  # nodeLabels=colnames(network_data),
+                  label.scale=FALSE,
+                  edge.label.cex=0.8
+                  # label.cex=labelcex,
+                  # color=color,
+                  # borders=borders
+				  )
 ######################################################################
 #FIGURE 2
 ######################################################################
