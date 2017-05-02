@@ -50,7 +50,7 @@ data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k
 
 data_nonabst<-subset(data,data$consumption!=0)
 
-names(data)
+# names(data)
 
 #####socioeconomic variables
 #age
@@ -361,6 +361,9 @@ data_full<-complete(imp,4)
 #TABLE 1
 ######################################################################
 
+with(data_full,table(talked_dr))
+
+
 #Age
 with(data_full,
 	describe(age))
@@ -373,6 +376,7 @@ with(data_full,
 with(data_full,table(female))
 with(data_full,prop.table(table(female)))
 table<-with(data_full,table(female,talked_dr))
+table
 with(data_full,prop.table(table(female,talked_dr),2))
 chisq.test(table)
 fisher.test(table)
