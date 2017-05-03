@@ -15,11 +15,9 @@ library, character.only=T)
 ######################################################################
 
 ### Diagnostic measures
-#computer
-data<-read.csv("/Users/joaovissoci/OneDrive - Duke University/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
 
 #notebook
-data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/snakebites_SR/snakesSR_metanalysis_data.csv")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/snakebites/snakebites_SR/snakesSR_metanalysis_data.csv")
 
 data_level3<-subset(data,data$level==3)
 
@@ -47,8 +45,8 @@ metal_model<-with(data,data.frame(TP,FP,TN,FN,study_name))
 descrip<-madad(metal_model, type = "sens",plotci=TRUE,snames=study_name)
 descrip
 
-descriptors<-data.frame(descrip$sens$sens,descrip$sens$sens.ci,descrip$spec$spec,descrip$spec$spec.ci,descrip$negLR$negLR,descrip$negLR$negLR.ci,descrip$posLR$posLR,descrip$posLR$posLR.ci)
-colnames(descriptors)<-c("sens","sens_CIlower","sens_CIhigher","spec","spec_CIlower","spec_CIhigher","negLR","negLR_CIlower","negLR_CIhigher","posLR","posLR_lower","posLR_higher")
+descriptors<-data.frame(metal_model$study_name,descrip$sens$sens,descrip$sens$sens.ci,descrip$spec$spec,descrip$spec$spec.ci,descrip$negLR$negLR,descrip$negLR$negLR.ci,descrip$posLR$posLR,descrip$posLR$posLR.ci)
+colnames(descriptors)<-c("study","sens","sens_CIlower","sens_CIhigher","spec","spec_CIlower","spec_CIhigher","negLR","negLR_CIlower","negLR_CIhigher","posLR","posLR_lower","posLR_higher")
 #############################################################################
 #METANALYSIS - Snake Bites- Sensitivie and Specificity
 #############################################################################
