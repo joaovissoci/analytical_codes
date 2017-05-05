@@ -43,7 +43,7 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k award/tz_bnisurveypatients_data.csv")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k award/tz_bnisurveypatients_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -591,17 +591,17 @@ exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95)))
 #
 network_data<-with(data_full,data.frame(#age=data_nonabst$age,
 					  #female=data_nonabst$female,
-					  #pos_etoh=data_nonabst$pos_etoh,
+					  # pos_etoh=data_nonabst$pos_etoh,
 					  # daily_drink=data_nonabst$daily_drink,
 					  # # number_drinks_day=data_nonabst$number_drinks_day,
-					  # drinking_interferes=as.numeric(as.factor(data_nonabst$drinking_interferes)),
-					  # drinking_arguments=as.numeric(as.factor(data_nonabst$drinking_arguments)),
-					  # could_get_hurt=as.numeric(as.factor(data_nonabst$could_get_hurt)),
+					  drinking_interferes=as.numeric(as.factor(data_nonabst$drinking_interferes)),
+					  drinking_arguments=as.numeric(as.factor(data_nonabst$drinking_arguments)),
+					  could_get_hurt=as.numeric(as.factor(data_nonabst$could_get_hurt)),
 					  # police_bc_drink=as.numeric(as.factor(data_nonabst$police_bc_drink)),
 					  pas_score,
 					  # devaluation,
 					  # discrimination,
-					  talked_dr=as.numeric(as.factor(talked_dr)),
+					  # talked_dr=as.numeric(as.factor(talked_dr)),
 					  # helpful_treatment=data_nonabst$helpful_treatment,
 					  # recent_trtmnt=data_nonabst$recent_trtmnt,
 					  # hospital_alc=data_nonabst$hospital_alc,
@@ -625,7 +625,7 @@ network_glasso<-qgraph(
                     legend.cex = 0.5,
                     GLratio=1.5,
                     minimum=0.1,
-                    cut=0,
+                    cut=0.1,
                     border.width=1.5,
                     shape="square"
                     )
@@ -657,15 +657,20 @@ subset(Est, op == ":=")
 # Mediation analysis - STIGMA
 
 model <- ' # direct effect
-             # talked_dr ~ dA*audit_total
+             talked_dr ~ dA*audit_total
              talked_dr ~ dB*drinc_data_score
              talked_dr ~ dC*pas_score
+             # talked_dr ~ dC*devaluation
+             # talked_dr ~ dD*discrimination
            
            # mediator
              drinc_data_score ~ indA*audit_total
              pas_score ~ indB*drinc_data_score
-             audit_total ~ indC*pas_score
-
+             # audit_total ~ indC*pas_score             
+             # devaluation ~ indB*drinc_data_score
+             # audit_total ~ indC*devaluation
+             # discrimination ~ indD*drinc_data_score
+             # audit_total ~ indE*discrimination
             
            # # indirect effect (a*b)
            #   ab := a*b
