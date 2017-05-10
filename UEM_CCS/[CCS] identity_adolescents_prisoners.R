@@ -3,12 +3,12 @@
 
 #lendo o arquivo "noname"
 #file <- file.choose()
-dados <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/CCS/juvenile_offenders/adolecents_prisoners_text_data_coded.csv", header = TRUE)
+dados <- read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/CCS/juvenile_offenders/adolecents_prisoners_text_data_coded.csv", header = TRUE)
 dados_theme1<-subset(dados,dados$Theme=="perspectiva de futuro")
 dados_theme2<-subset(dados,dados$Theme=="reconhecimento")
 dados_theme3<-subset(dados,dados$Theme=="relacoes e vinculos familiares")
-dados_theme4<-subset(dados,dados$Theme=="vivencia")
-dados_theme5<-subset(dados,dados$Theme=="vivencia escolar")
+# dados_theme4<-subset(dados,dados$Theme=="vivencia")
+# dados_theme5<-subset(dados,dados$Theme=="vivencia escolar")
 dados_theme6<-subset(dados,dados$Theme=="medida_socioeducativa")
 #str(dados)
 library(tm)
@@ -57,8 +57,34 @@ word_freq<-colSums(data)
 #data[data>=1] <- 1
 dataMatrix <- t(data) %*% data
 
-cor <- hetcor(data)
-names<-rownames(cor$correlations)
+cor <- cor(data,method="spearman")
+node_names<-c("learning",
+              "biqueira",
+              "car",
+               "home",
+              "city",
+              "buy",
+              "crime",
+              "course",
+              "difficult",
+              "money",
+              "doubt",
+              "study",
+              "college",
+              "family",
+              "son",
+              "future",
+              "invest",
+              "brother",
+              "mechanic",
+              "change",
+              "father",
+              "think",
+              "get out",
+              "dream",
+              "time",
+              "work",
+              "life")
 
 #Q1_atleta1 <- qgraph(dataMatrix, borders = FALSE, cut=20, 
 #  minimum = 5, labels=rownames(dataMatrix),label.cex = 0.60, label.color="black",
@@ -66,142 +92,169 @@ names<-rownames(cor$correlations)
 #  posCol=c("#BF0000","red"),
 #  gray=FALSE)
 
-Q2_atleta2 <- qgraph(cor$correlations,
-                     cut=0.8, 
-                     minimum = 0.4, 
-                     labels=names,
-                     label.cex = 1, 
-                     vsize=word_freq,
-                     label.color="black",
-                     color="grey80",
-                     layout = "spring",
-                     directed=FALSE,
-                     label.scale=FALSE,
-                     gray=TRUE,
-                     borders=FALSE)
-                     # posCol=c("gray","gray"))
-
-g<-as.igraph(Q2_atleta2)
-h<-spinglass.community(g)
-plot(h,g)
-h$membership
-
-# Q2_atleta2 <- qgraph(dataMatrix, borders = FALSE, cut=10, minimum = 3, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
+# Q2_atleta2 <- qgraph(cor$correlations,
+#                      cut=0.8, 
+#                      minimum = 0.4, 
+#                      labels=names,
+#                      label.cex = 1, 
+#                      vsize=word_freq,
+#                      label.color="black",
+#                      color="grey80",
+#                      layout = "spring",
+#                      directed=FALSE,
+#                      label.scale=FALSE,
+#                      gray=TRUE,
+#                      borders=FALSE)
+#                      # posCol=c("gray","gray"))
 
 # g<-as.igraph(Q2_atleta2)
 # h<-spinglass.community(g)
 # plot(h,g)
 # h$membership
 
-# #Calculating Community measures
-# g<-as.igraph(network_glasso) #creating igraph object
-# h<-walktrap.community(g) #creatin community object
-# h<-spinglass.community(g, weights=NA) #creatin community object
-# # h<-fastgreedy.community(g, weights=NA) #creatin community object
-# # h<-edge.betweenness.community(g, weights=NA) #creatin community object
-# h<-cluster_leading_eigen(g,weights=NA) #creatin community object
-# plot(h,g) #plotting community network
-# h$membership #extracting community membership for each node on the network
-community<-data.frame(h$membership,rownames(dataMatrix))
+# # Q2_atleta2 <- qgraph(dataMatrix, borders = FALSE, cut=10, minimum = 3, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
-#listing grouping variables in the network resulting from the community analysis
-network_groups<-list(
-Component1=as.numeric(rownames(community)
-	[community[,1]==1]),
-Component2=as.numeric(rownames(community)
-	[community[,1]==2]),
-Component3=as.numeric(rownames(community)
-	[community[,1]==3])
-)
+# # g<-as.igraph(Q2_atleta2)
+# # h<-spinglass.community(g)
+# # plot(h,g)
+# # h$membership
 
-# # network_groups<-list(
-# Component1=c(1,3,4,5,15,14),
-# Component2=c(2,16,6,7),
-# Component3=c(11,12,13,10),
-# Component4=c(19,20,21,23),
-# Component5=c(9,17,18,22,8)
+# # #Calculating Community measures
+# # g<-as.igraph(network_glasso) #creating igraph object
+# # h<-walktrap.community(g) #creatin community object
+# # h<-spinglass.community(g, weights=NA) #creatin community object
+# # # h<-fastgreedy.community(g, weights=NA) #creatin community object
+# # # h<-edge.betweenness.community(g, weights=NA) #creatin community object
+# # h<-cluster_leading_eigen(g,weights=NA) #creatin community object
+# # plot(h,g) #plotting community network
+# # h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,rownames(dataMatrix))
+
+# #listing grouping variables in the network resulting from the community analysis
+# network_groups<-list(
+# Component1=as.numeric(rownames(community)
+# 	[community[,1]==1]),
+# Component2=as.numeric(rownames(community)
+# 	[community[,1]==2]),
+# Component3=as.numeric(rownames(community)
+# 	[community[,1]==3])
 # )
 
-# creating vectors for labels
-# node_labels<-c(
-# "What is the area of the roadway?",
-# "What type of roadway?",
-# "Is this point at an intersection/junction?",
-# "How many lanes in the roadway?",
-# "Is there an auxiliary/other lane?",
-# "How is the road surface conditions?",
-# "Is there space on the side of the road 
-# for any reason or use?",
-# "Are there pedestrian pathways?",
-# "Is there a Bus Stop?",
-# "Is there a Speed bump?",
-# "Is there a traffic light at this location?",
-# "Are there road traffic signs at this hotspot?",
-# "Is there a sign for speed limit of road?",
-# "Road visibility is influenced by curves?",
-# "Is the visibility influenced by 
-# environmental factors?",
-# "Are there bridges on the road?",
-# "Is there a safe area for pedestrians 
-# to cross the road?",
-# "Is there a safe area for pedestrians
-# to in the center of the road?",
-# "Count the number of cars",
-# "Count the number of moto",
-# "Count the number of bike",
-# "Count the number of pedestrians",
-# "Count the number of bus/trucks"
-# )
+# # # network_groups<-list(
+# # Component1=c(1,3,4,5,15,14),
+# # Component2=c(2,16,6,7),
+# # Component3=c(11,12,13,10),
+# # Component4=c(19,20,21,23),
+# # Component5=c(9,17,18,22,8)
+# # )
 
-# creating nodes labels vector
-# node_names<-c("Q1",
-#               "Q2",
-#               "Q3",
-#               "Q4",
-#               "Q5",
-#               "Q6",
-#               "Q7",
-#               "Q8")
+# # creating vectors for labels
+# # node_labels<-c(
+# # "What is the area of the roadway?",
+# # "What type of roadway?",
+# # "Is this point at an intersection/junction?",
+# # "How many lanes in the roadway?",
+# # "Is there an auxiliary/other lane?",
+# # "How is the road surface conditions?",
+# # "Is there space on the side of the road 
+# # for any reason or use?",
+# # "Are there pedestrian pathways?",
+# # "Is there a Bus Stop?",
+# # "Is there a Speed bump?",
+# # "Is there a traffic light at this location?",
+# # "Are there road traffic signs at this hotspot?",
+# # "Is there a sign for speed limit of road?",
+# # "Road visibility is influenced by curves?",
+# # "Is the visibility influenced by 
+# # environmental factors?",
+# # "Are there bridges on the road?",
+# # "Is there a safe area for pedestrians 
+# # to cross the road?",
+# # "Is there a safe area for pedestrians
+# # to in the center of the road?",
+# # "Count the number of cars",
+# # "Count the number of moto",
+# # "Count the number of bike",
+# # "Count the number of pedestrians",
+# # "Count the number of bus/trucks"
+# # )
 
-node_names<-rownames(cor$correlations)
+# # creating nodes labels vector
+# # node_names<-c("Q1",
+# #               "Q2",
+# #               "Q3",
+# #               "Q4",
+# #               "Q5",
+# #               "Q6",
+# #               "Q7",
+# #               "Q8")
 
-# creating vector with mean values for each node
-#mean_data<-sapply(network_data,mean)
+# node_names<-c("learning",
+#               "biqueira",
+#               "car",
+#                "home",
+#               "city",
+#               "buy",
+#               "crime",
+#               "course",
+#               "difficult",
+#               "money",
+#               "doubt",
+#               "study",
+#               "college",
+#               "family",
+#               "son",
+#               "future",
+#               "invest",
+#               "brother",
+#               "mechanic",
+#               "change",
+#               "father",
+#               "think",
+#               "get out",
+#               "dream",
+#               "time",
+#               "work",
+#               "life")
 
-#creating vector with mean values adjusted to proportional sizes to be plotted
-#importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
 
-#building network figures 
-# 3 types are created to get an avarege position and layout
-#GLASSO NETWORK
-# network_glasso<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,graph="glasso",
-#   sampleSize=nrow(bea_data),
-#   legend.cex = 0.5,GLratio=1.5)
+# # creating vector with mean values for each node
+# #mean_data<-sapply(network_data,mean)
 
-# #PARTIAL CORRELATION NETWORK
-# network_pcor<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,graph="pcor",threshold="holm",
-#   sampleSize=nrow(bea_data),
-#   legend.cex = 0.5,GLratio=1.5)
+# #creating vector with mean values adjusted to proportional sizes to be plotted
+# #importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
 
-# #CORRELATION NETWORK
-# network_cor<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
-# #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
+# #building network figures 
+# # 3 types are created to get an avarege position and layout
+# #GLASSO NETWORK
+# # network_glasso<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,graph="glasso",
+# #   sampleSize=nrow(bea_data),
+# #   legend.cex = 0.5,GLratio=1.5)
 
-# # Organizing both figures to be with the same layout
-# layout_final<-averageLayout(network_glasso,
-#   network_pcor,
-#   network_cor)
+# # #PARTIAL CORRELATION NETWORK
+# # network_pcor<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,graph="pcor",threshold="holm",
+# #   sampleSize=nrow(bea_data),
+# #   legend.cex = 0.5,GLratio=1.5)
 
-# postscript("/home/joao/Desktop/info_consent_figure2.eps",
-#   width = 1500, height = 1200,horizontal = FALSE, 
-#   onefile = FALSE)
-# postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
-#   width = 1500, height = 1200,horizontal = FALSE, 
-#   onefile = FALSE)
-tiff("/Users/joaovissoci/Desktop/ana_perspectivafuturo_tiff", width = 1200,
+# # #CORRELATION NETWORK
+# # network_cor<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
+# # #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
+
+# # # Organizing both figures to be with the same layout
+# # layout_final<-averageLayout(network_glasso,
+# #   network_pcor,
+# #   network_cor)
+
+# # postscript("/home/joao/Desktop/info_consent_figure2.eps",
+# #   width = 1500, height = 1200,horizontal = FALSE, 
+# #   onefile = FALSE)
+# # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
+# #   width = 1500, height = 1200,horizontal = FALSE, 
+# #   onefile = FALSE)
+tiff("/Users/jnv4/Desktop/ana_perspectivafuturo_tiff", width = 1200,
  height = 700,compression = 'lzw')
   network_glasso<-qgraph(cor,
   layout='spring',
@@ -227,16 +280,16 @@ tiff("/Users/joaovissoci/Desktop/ana_perspectivafuturo_tiff", width = 1200,
   gray=T
   )
 dev.off()
-#legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
+# #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
-#Directed Acyclic Graph / require package bnlearn
-# dag_data <- data.frame(apply(sf8_data, 2, as.factor))
-dag_data<-as.data.frame(dataMatrix)
-res<-rsmax2(dag_data,
-            restrict = "si.hiton.pc",
-            maximize = "tabu")
-res2<-(res$arcs)
-qgraph(res2)
+# #Directed Acyclic Graph / require package bnlearn
+# # dag_data <- data.frame(apply(sf8_data, 2, as.factor))
+# dag_data<-as.data.frame(dataMatrix)
+# res<-rsmax2(dag_data,
+#             restrict = "si.hiton.pc",
+#             maximize = "tabu")
+# res2<-(res$arcs)
+# qgraph(res2)
 
 #### THEME 2 ###############################################
 #fazendo a mineração de texto:
@@ -271,7 +324,42 @@ word_freq<-colSums(data)
 dataMatrix <- t(data) %*% data
 
 cor <- cor(data,method="spearman")
-names<-rownames(cor)
+names<-c("adrenaline",
+         "friend",
+         "gun",
+         "car",
+         "buy",
+         "known",
+         "crime",
+         "money",
+         "drugs",
+         "involved",
+         "involvement",
+         "easy",
+         "slum",
+         "gain",
+         "like",
+         "influence",
+         "kill",
+         "fear",
+         "better",
+         "motorcycle",
+         "woman",
+         "power",
+         "recognition",
+         "repeat offence",
+         "respected",
+         "respect",
+         "steal",
+         "street",
+         "feeling",
+         "status",
+         "have",
+          "dealing",
+          "everything",
+          "sell",
+          "life")
+
 
 #Q1_atleta1 <- qgraph(dataMatrix, borders = FALSE, cut=20, 
 #  minimum = 5, labels=rownames(dataMatrix),label.cex = 0.60, label.color="black",
@@ -279,150 +367,150 @@ names<-rownames(cor)
 #  posCol=c("#BF0000","red"),
 #  gray=FALSE)
 
-Q2_atleta2 <- qgraph(cor,
-                     borders = FALSE,
-                     cut=0.6,
-                     minimum = 0.4,
-                     labels=names,
-                     label.cex = 0.80,
-                     label.color="black",
-                     layout = "spring",
-                     directed=FALSE,
-                     label.scale=FALSE,
-                     gray=FALSE,
-                     color="grey80",
-                     greyscale=TRUE)
+# Q2_atleta2 <- qgraph(cor,
+#                      borders = FALSE,
+#                      cut=0.6,
+#                      minimum = 0.4,
+#                      labels=names,
+#                      label.cex = 0.80,
+#                      label.color="black",
+#                      layout = "spring",
+#                      directed=FALSE,
+#                      label.scale=FALSE,
+#                      gray=FALSE,
+#                      color="grey80",
+#                      greyscale=TRUE)
                      # posCol=c("gray","gray"))
 
-# Q2_atleta2 <- qgraph(cor$correlations, borders = TRUE, cut=0.8, minimum = 0.4, labels=names,label.cex = 1, vsize=word_freq,label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
-
-g<-as.igraph(Q2_atleta2)
-h<-spinglass.community(g)
-plot(h,g)
-h$membership
-
-# Q2_atleta2 <- qgraph(dataMatrix, borders = FALSE, cut=10, minimum = 3, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
+# # Q2_atleta2 <- qgraph(cor$correlations, borders = TRUE, cut=0.8, minimum = 0.4, labels=names,label.cex = 1, vsize=word_freq,label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
 # g<-as.igraph(Q2_atleta2)
 # h<-spinglass.community(g)
 # plot(h,g)
 # h$membership
 
-# #Calculating Community measures
-# g<-as.igraph(network_glasso) #creating igraph object
-# h<-walktrap.community(g) #creatin community object
-# h<-spinglass.community(g, weights=NA) #creatin community object
-# # h<-fastgreedy.community(g, weights=NA) #creatin community object
-# # h<-edge.betweenness.community(g, weights=NA) #creatin community object
-# h<-cluster_leading_eigen(g,weights=NA) #creatin community object
-# plot(h,g) #plotting community network
-# h$membership #extracting community membership for each node on the network
-community<-data.frame(h$membership,
-	rownames(cor))
+# # Q2_atleta2 <- qgraph(dataMatrix, borders = FALSE, cut=10, minimum = 3, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
-#listing grouping variables in the network resulting from the community analysis
-network_groups<-list(
-Component1=as.numeric(rownames(community)
-	[community[,1]==1]),
-Component2=as.numeric(rownames(community)
-	[community[,1]==2]),
-Component3=as.numeric(rownames(community)
-	[community[,1]==3]),
-Component4=as.numeric(rownames(community)
-	[community[,1]==4])
-)
+# # g<-as.igraph(Q2_atleta2)
+# # h<-spinglass.community(g)
+# # plot(h,g)
+# # h$membership
 
-# # network_groups<-list(
-# Component1=c(1,3,4,5,15,14),
-# Component2=c(2,16,6,7),
-# Component3=c(11,12,13,10),
-# Component4=c(19,20,21,23),
-# Component5=c(9,17,18,22,8)
+# # #Calculating Community measures
+# # g<-as.igraph(network_glasso) #creating igraph object
+# # h<-walktrap.community(g) #creatin community object
+# # h<-spinglass.community(g, weights=NA) #creatin community object
+# # # h<-fastgreedy.community(g, weights=NA) #creatin community object
+# # # h<-edge.betweenness.community(g, weights=NA) #creatin community object
+# # h<-cluster_leading_eigen(g,weights=NA) #creatin community object
+# # plot(h,g) #plotting community network
+# # h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,
+# 	rownames(cor))
+
+# #listing grouping variables in the network resulting from the community analysis
+# network_groups<-list(
+# Component1=as.numeric(rownames(community)
+# 	[community[,1]==1]),
+# Component2=as.numeric(rownames(community)
+# 	[community[,1]==2]),
+# Component3=as.numeric(rownames(community)
+# 	[community[,1]==3]),
+# Component4=as.numeric(rownames(community)
+# 	[community[,1]==4])
 # )
 
-# creating vectors for labels
-# node_labels<-c(
-# "What is the area of the roadway?",
-# "What type of roadway?",
-# "Is this point at an intersection/junction?",
-# "How many lanes in the roadway?",
-# "Is there an auxiliary/other lane?",
-# "How is the road surface conditions?",
-# "Is there space on the side of the road 
-# for any reason or use?",
-# "Are there pedestrian pathways?",
-# "Is there a Bus Stop?",
-# "Is there a Speed bump?",
-# "Is there a traffic light at this location?",
-# "Are there road traffic signs at this hotspot?",
-# "Is there a sign for speed limit of road?",
-# "Road visibility is influenced by curves?",
-# "Is the visibility influenced by 
-# environmental factors?",
-# "Are there bridges on the road?",
-# "Is there a safe area for pedestrians 
-# to cross the road?",
-# "Is there a safe area for pedestrians
-# to in the center of the road?",
-# "Count the number of cars",
-# "Count the number of moto",
-# "Count the number of bike",
-# "Count the number of pedestrians",
-# "Count the number of bus/trucks"
-# )
+# # # network_groups<-list(
+# # Component1=c(1,3,4,5,15,14),
+# # Component2=c(2,16,6,7),
+# # Component3=c(11,12,13,10),
+# # Component4=c(19,20,21,23),
+# # Component5=c(9,17,18,22,8)
+# # )
 
-# creating nodes labels vector
-# node_names<-c("Q1",
-#               "Q2",
-#               "Q3",
-#               "Q4",
-#               "Q5",
-#               "Q6",
-#               "Q7",
-#               "Q8")
+# # creating vectors for labels
+# # node_labels<-c(
+# # "What is the area of the roadway?",
+# # "What type of roadway?",
+# # "Is this point at an intersection/junction?",
+# # "How many lanes in the roadway?",
+# # "Is there an auxiliary/other lane?",
+# # "How is the road surface conditions?",
+# # "Is there space on the side of the road 
+# # for any reason or use?",
+# # "Are there pedestrian pathways?",
+# # "Is there a Bus Stop?",
+# # "Is there a Speed bump?",
+# # "Is there a traffic light at this location?",
+# # "Are there road traffic signs at this hotspot?",
+# # "Is there a sign for speed limit of road?",
+# # "Road visibility is influenced by curves?",
+# # "Is the visibility influenced by 
+# # environmental factors?",
+# # "Are there bridges on the road?",
+# # "Is there a safe area for pedestrians 
+# # to cross the road?",
+# # "Is there a safe area for pedestrians
+# # to in the center of the road?",
+# # "Count the number of cars",
+# # "Count the number of moto",
+# # "Count the number of bike",
+# # "Count the number of pedestrians",
+# # "Count the number of bus/trucks"
+# # )
 
-node_names<-rownames(cor)
+# # creating nodes labels vector
+# # node_names<-c("Q1",
+# #               "Q2",
+# #               "Q3",
+# #               "Q4",
+# #               "Q5",
+# #               "Q6",
+# #               "Q7",
+# #               "Q8")
 
-# creating vector with mean values for each node
-#mean_data<-sapply(network_data,mean)
+# node_names<-rownames(cor)
 
-#creating vector with mean values adjusted to proportional sizes to be plotted
-#importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
+# # creating vector with mean values for each node
+# #mean_data<-sapply(network_data,mean)
 
-#building network figures 
-# 3 types are created to get an avarege position and layout
-#GLASSO NETWORK
-# network_glasso<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,graph="glasso",
-#   sampleSize=nrow(bea_data),
-#   legend.cex = 0.5,GLratio=1.5)
+# #creating vector with mean values adjusted to proportional sizes to be plotted
+# #importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
 
-# #PARTIAL CORRELATION NETWORK
-# network_pcor<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,graph="pcor",threshold="holm",
-#   sampleSize=nrow(bea_data),
-#   legend.cex = 0.5,GLratio=1.5)
+# #building network figures 
+# # 3 types are created to get an avarege position and layout
+# #GLASSO NETWORK
+# # network_glasso<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,graph="glasso",
+# #   sampleSize=nrow(bea_data),
+# #   legend.cex = 0.5,GLratio=1.5)
 
-# #CORRELATION NETWORK
-# network_cor<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
-# #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
+# # #PARTIAL CORRELATION NETWORK
+# # network_pcor<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,graph="pcor",threshold="holm",
+# #   sampleSize=nrow(bea_data),
+# #   legend.cex = 0.5,GLratio=1.5)
 
-# # Organizing both figures to be with the same layout
-# layout_final<-averageLayout(network_glasso,
-#   network_pcor,
-#   network_cor)
+# # #CORRELATION NETWORK
+# # network_cor<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
+# # #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
+
+# # # Organizing both figures to be with the same layout
+# # layout_final<-averageLayout(network_glasso,
+# #   network_pcor,
+# #   network_cor)
 
 word_freq<-word_freq/3
 word_freq<-car::recode(word_freq,"1:5=7;8=9;10:11=15;13:14=20")
 
-# postscript("/home/joao/Desktop/info_consent_figure2.eps",
-#   width = 1500, height = 1200,horizontal = FALSE, 
-#   onefile = FALSE)
-# postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
-#   width = 1500, height = 1200,horizontal = FALSE, 
-#   onefile = FALSE)
-tiff("/Users/joaovissoci/Desktop/ana_reconhecimento_tiff", width = 1200,
+# # postscript("/home/joao/Desktop/info_consent_figure2.eps",
+# #   width = 1500, height = 1200,horizontal = FALSE, 
+# #   onefile = FALSE)
+# # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
+# #   width = 1500, height = 1200,horizontal = FALSE, 
+# #   onefile = FALSE)
+tiff("/Users/jnv4/Desktop/ana_reconhecimento_tiff", width = 1200,
  height = 700,compression = 'lzw')
   network_glasso<-qgraph(cor,
   layout='spring',
@@ -448,16 +536,16 @@ tiff("/Users/joaovissoci/Desktop/ana_reconhecimento_tiff", width = 1200,
   gray=T
   )
 dev.off()
-#legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
+# #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
-#Directed Acyclic Graph / require package bnlearn
-# dag_data <- data.frame(apply(sf8_data, 2, as.factor))
-dag_data<-as.data.frame(dataMatrix)
-res<-rsmax2(dag_data,
-            restrict = "si.hiton.pc",
-            maximize = "tabu")
-res2<-(res$arcs)
-qgraph(res2)
+# #Directed Acyclic Graph / require package bnlearn
+# # dag_data <- data.frame(apply(sf8_data, 2, as.factor))
+# dag_data<-as.data.frame(dataMatrix)
+# res<-rsmax2(dag_data,
+#             restrict = "si.hiton.pc",
+#             maximize = "tabu")
+# res2<-(res$arcs)
+# qgraph(res2)
 
 
 #### THEME 3 ################################################
@@ -494,22 +582,44 @@ word_freq<-colSums(data)
 dataMatrix <- t(data) %*% data
 
 cor <- cor(data,method="spearman")
-names<-rownames(cor)
+node_names<-c("love",
+         "attention",
+         "hit", 
+         "biqueira",
+         "home", 
+         "advice", 
+         "crime",
+         "drug",
+         "Family",
+         "childhood",
+         "sister",
+         "brother",
+         "mother", 
+         "kill",
+         "father",
+         "arrested",
+         "street",
+         "missing",
+         "suffer",
+         "time",
+         "work",
+         "life",
+         "violence")
 
 #Q1_atleta1 <- qgraph(dataMatrix, borders = FALSE, cut=20, 
 #  minimum = 5, labels=rownames(dataMatrix),label.cex = 0.60, label.color="black",
 #  layout = "spring",directed=FALSE,label.scale=FALSE,
-#  posCol=c("#BF0000","red"),
-#  gray=FALSE)
+# #  posCol=c("#BF0000","red"),
+# #  gray=FALSE)
 
-Q2_atleta2 <- qgraph(cor, borders = FALSE, cut=0.6, minimum = 0.4, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
+# Q2_atleta2 <- qgraph(cor, borders = FALSE, cut=0.6, minimum = 0.4, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
-# Q2_atleta2 <- qgraph(cor$correlations, borders = TRUE, cut=0.8, minimum = 0.4, labels=names,label.cex = 1, vsize=word_freq,label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
+# # Q2_atleta2 <- qgraph(cor$correlations, borders = TRUE, cut=0.8, minimum = 0.4, labels=names,label.cex = 1, vsize=word_freq,label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
-g<-as.igraph(Q2_atleta2)
-h<-spinglass.community(g)
-plot(h,g)
-h$membership
+# g<-as.igraph(Q2_atleta2)
+# h<-spinglass.community(g)
+# plot(h,g)
+# h$membership
 
 # Q2_atleta2 <- qgraph(dataMatrix, borders = FALSE, cut=10, minimum = 3, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
@@ -527,20 +637,20 @@ h$membership
 # h<-cluster_leading_eigen(g,weights=NA) #creatin community object
 # plot(h,g) #plotting community network
 # h$membership #extracting community membership for each node on the network
-community<-data.frame(h$membership,
-	rownames(cor))
+# community<-data.frame(h$membership,
+# 	rownames(cor))
 
-#listing grouping variables in the network resulting from the community analysis
-network_groups<-list(
-Component1=as.numeric(rownames(community)
-	[community[,1]==1]),
-Component2=as.numeric(rownames(community)
-	[community[,1]==2]),
-Component3=as.numeric(rownames(community)
-	[community[,1]==3])
-# Component4=as.numeric(rownames(community)
-# 	[community[,1]==4])
-)
+# #listing grouping variables in the network resulting from the community analysis
+# network_groups<-list(
+# Component1=as.numeric(rownames(community)
+# 	[community[,1]==1]),
+# Component2=as.numeric(rownames(community)
+# 	[community[,1]==2]),
+# Component3=as.numeric(rownames(community)
+# 	[community[,1]==3])
+# # Component4=as.numeric(rownames(community)
+# # 	[community[,1]==4])
+# )
 
 # # network_groups<-list(
 # Component1=c(1,3,4,5,15,14),
@@ -591,7 +701,7 @@ Component3=as.numeric(rownames(community)
 #               "Q7",
 #               "Q8")
 
-node_names<-rownames(cor)
+# node_names<-rownames(cor)
 
 # creating vector with mean values for each node
 #mean_data<-sapply(network_data,mean)
@@ -631,7 +741,7 @@ word_freq<-car::recode(word_freq,"24=15")
 # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
 #   width = 1500, height = 1200,horizontal = FALSE, 
 #   onefile = FALSE)
-tiff("/Users/joaovissoci/Desktop/bea_relacoesfamiliares.tiff", width = 1200,
+tiff("/Users/jnv4/Desktop/ana_relacoesfamiliares.tiff", width = 1200,
  height = 700,compression = 'lzw')
   network_glasso<-qgraph(cor,
   layout='spring',
@@ -661,428 +771,428 @@ dev.off()
 
 #Directed Acyclic Graph / require package bnlearn
 # dag_data <- data.frame(apply(sf8_data, 2, as.factor))
-dag_data<-as.data.frame(dataMatrix)
-res<-rsmax2(dag_data,
-            restrict = "si.hiton.pc",
-            maximize = "tabu")
-res2<-(res$arcs)
-qgraph(res2)
+# dag_data<-as.data.frame(dataMatrix)
+# res<-rsmax2(dag_data,
+#             restrict = "si.hiton.pc",
+#             maximize = "tabu")
+# res2<-(res$arcs)
+# qgraph(res2)
 
 #### THEME 4 ################################################
-#fazendo a mineração de texto:
-corpus = Corpus(VectorSource(dados_theme4$Text))
-#plot(h,g)#corpus<- tm_map(corpus, function(x) iconv(enc2utf8(x), sub = "byte"))
-corpus <- tm_map(corpus, content_transformer(tolower))
-corpus <- tm_map(corpus, removePunctuation)
-corpus <- tm_map(corpus, function(x) removeWords(x, stopwords("portuguese")))
-corpus <- tm_map(corpus, stemDocument)
+# #fazendo a mineração de texto:
+# corpus = Corpus(VectorSource(dados_theme4$Text))
+# #plot(h,g)#corpus<- tm_map(corpus, function(x) iconv(enc2utf8(x), sub = "byte"))
+# corpus <- tm_map(corpus, content_transformer(tolower))
+# corpus <- tm_map(corpus, removePunctuation)
+# corpus <- tm_map(corpus, function(x) removeWords(x, stopwords("portuguese")))
+# corpus <- tm_map(corpus, stemDocument)
 
 
-# olhando o primeiro conteudo das entrevistas
-corpus[[1]]
+# # olhando o primeiro conteudo das entrevistas
+# corpus[[1]]
 
-#transformando em matriz
-dtm <- DocumentTermMatrix(corpus)
-dtm
+# #transformando em matriz
+# dtm <- DocumentTermMatrix(corpus)
+# dtm
 
-# removendo "sparse terms": vai fazer cair de 3 mil e cacetada termos para menos termos
-dtm <- removeSparseTerms(dtm, 0.80)
-dtm
+# # removendo "sparse terms": vai fazer cair de 3 mil e cacetada termos para menos termos
+# dtm <- removeSparseTerms(dtm, 0.80)
+# dtm
 
-#findFreqTerms(dtm, 5)
-#findAssocs(dtm, "vencer", 0.5)
+# #findFreqTerms(dtm, 5)
+# #findAssocs(dtm, "vencer", 0.5)
 
-#fazendo um plot da relação entre as palavras novamente
-#plot(dtm, corThreshold = 0.3, weighting = TRUE)
+# #fazendo um plot da relação entre as palavras novamente
+# #plot(dtm, corThreshold = 0.3, weighting = TRUE)
 
-data<-as.matrix(dtm)
-word_freq<-colSums(data)
+# data<-as.matrix(dtm)
+# word_freq<-colSums(data)
 
-#data[data>=1] <- 1
-dataMatrix <- t(data) %*% data
+# #data[data>=1] <- 1
+# dataMatrix <- t(data) %*% data
 
-cor <- cor(data,method="spearman")
-names<-rownames(cor)
+# cor <- cor(data,method="spearman")
+# names<-rownames(cor)
 
-#Q1_atleta1 <- qgraph(dataMatrix, borders = FALSE, cut=20, 
-#  minimum = 5, labels=rownames(dataMatrix),label.cex = 0.60, label.color="black",
-#  layout = "spring",directed=FALSE,label.scale=FALSE,
-#  posCol=c("#BF0000","red"),
-#  gray=FALSE)
+# #Q1_atleta1 <- qgraph(dataMatrix, borders = FALSE, cut=20, 
+# #  minimum = 5, labels=rownames(dataMatrix),label.cex = 0.60, label.color="black",
+# #  layout = "spring",directed=FALSE,label.scale=FALSE,
+# #  posCol=c("#BF0000","red"),
+# #  gray=FALSE)
 
-Q2_atleta2 <- qgraph(cor, borders = FALSE, cut=0.6, minimum = 0.4, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
+# Q2_atleta2 <- qgraph(cor, borders = FALSE, cut=0.6, minimum = 0.4, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
-# Q2_atleta2 <- qgraph(cor$correlations, borders = TRUE, cut=0.8, minimum = 0.4, labels=names,label.cex = 1, vsize=word_freq,label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
-
-g<-as.igraph(Q2_atleta2)
-h<-spinglass.community(g)
-plot(h,g)
-h$membership
-
-# Q2_atleta2 <- qgraph(dataMatrix, borders = FALSE, cut=10, minimum = 3, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
+# # Q2_atleta2 <- qgraph(cor$correlations, borders = TRUE, cut=0.8, minimum = 0.4, labels=names,label.cex = 1, vsize=word_freq,label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
 # g<-as.igraph(Q2_atleta2)
 # h<-spinglass.community(g)
 # plot(h,g)
 # h$membership
 
-# #Calculating Community measures
-# g<-as.igraph(network_glasso) #creating igraph object
-# h<-walktrap.community(g) #creatin community object
-# h<-spinglass.community(g, weights=NA) #creatin community object
-# # h<-fastgreedy.community(g, weights=NA) #creatin community object
-# # h<-edge.betweenness.community(g, weights=NA) #creatin community object
-# h<-cluster_leading_eigen(g,weights=NA) #creatin community object
-# plot(h,g) #plotting community network
-# h$membership #extracting community membership for each node on the network
-community<-data.frame(h$membership,
-	rownames(cor))
+# # Q2_atleta2 <- qgraph(dataMatrix, borders = FALSE, cut=10, minimum = 3, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
-#listing grouping variables in the network resulting from the community analysis
-network_groups<-list(
-Component1=as.numeric(rownames(community)
-	[community[,1]==1]),
-Component2=as.numeric(rownames(community)
-	[community[,1]==2]),
-Component3=as.numeric(rownames(community)
-	[community[,1]==3])
-# Component4=as.numeric(rownames(community)
-# 	[community[,1]==4])
-)
+# # g<-as.igraph(Q2_atleta2)
+# # h<-spinglass.community(g)
+# # plot(h,g)
+# # h$membership
 
-# # network_groups<-list(
-# Component1=c(1,3,4,5,15,14),
-# Component2=c(2,16,6,7),
-# Component3=c(11,12,13,10),
-# Component4=c(19,20,21,23),
-# Component5=c(9,17,18,22,8)
+# # #Calculating Community measures
+# # g<-as.igraph(network_glasso) #creating igraph object
+# # h<-walktrap.community(g) #creatin community object
+# # h<-spinglass.community(g, weights=NA) #creatin community object
+# # # h<-fastgreedy.community(g, weights=NA) #creatin community object
+# # # h<-edge.betweenness.community(g, weights=NA) #creatin community object
+# # h<-cluster_leading_eigen(g,weights=NA) #creatin community object
+# # plot(h,g) #plotting community network
+# # h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,
+# 	rownames(cor))
+
+# #listing grouping variables in the network resulting from the community analysis
+# network_groups<-list(
+# Component1=as.numeric(rownames(community)
+# 	[community[,1]==1]),
+# Component2=as.numeric(rownames(community)
+# 	[community[,1]==2]),
+# Component3=as.numeric(rownames(community)
+# 	[community[,1]==3])
+# # Component4=as.numeric(rownames(community)
+# # 	[community[,1]==4])
 # )
 
-# creating vectors for labels
-# node_labels<-c(
-# "What is the area of the roadway?",
-# "What type of roadway?",
-# "Is this point at an intersection/junction?",
-# "How many lanes in the roadway?",
-# "Is there an auxiliary/other lane?",
-# "How is the road surface conditions?",
-# "Is there space on the side of the road 
-# for any reason or use?",
-# "Are there pedestrian pathways?",
-# "Is there a Bus Stop?",
-# "Is there a Speed bump?",
-# "Is there a traffic light at this location?",
-# "Are there road traffic signs at this hotspot?",
-# "Is there a sign for speed limit of road?",
-# "Road visibility is influenced by curves?",
-# "Is the visibility influenced by 
-# environmental factors?",
-# "Are there bridges on the road?",
-# "Is there a safe area for pedestrians 
-# to cross the road?",
-# "Is there a safe area for pedestrians
-# to in the center of the road?",
-# "Count the number of cars",
-# "Count the number of moto",
-# "Count the number of bike",
-# "Count the number of pedestrians",
-# "Count the number of bus/trucks"
-# )
+# # # network_groups<-list(
+# # Component1=c(1,3,4,5,15,14),
+# # Component2=c(2,16,6,7),
+# # Component3=c(11,12,13,10),
+# # Component4=c(19,20,21,23),
+# # Component5=c(9,17,18,22,8)
+# # )
 
-# creating nodes labels vector
-# node_names<-c("Q1",
-#               "Q2",
-#               "Q3",
-#               "Q4",
-#               "Q5",
-#               "Q6",
-#               "Q7",
-#               "Q8")
+# # creating vectors for labels
+# # node_labels<-c(
+# # "What is the area of the roadway?",
+# # "What type of roadway?",
+# # "Is this point at an intersection/junction?",
+# # "How many lanes in the roadway?",
+# # "Is there an auxiliary/other lane?",
+# # "How is the road surface conditions?",
+# # "Is there space on the side of the road 
+# # for any reason or use?",
+# # "Are there pedestrian pathways?",
+# # "Is there a Bus Stop?",
+# # "Is there a Speed bump?",
+# # "Is there a traffic light at this location?",
+# # "Are there road traffic signs at this hotspot?",
+# # "Is there a sign for speed limit of road?",
+# # "Road visibility is influenced by curves?",
+# # "Is the visibility influenced by 
+# # environmental factors?",
+# # "Are there bridges on the road?",
+# # "Is there a safe area for pedestrians 
+# # to cross the road?",
+# # "Is there a safe area for pedestrians
+# # to in the center of the road?",
+# # "Count the number of cars",
+# # "Count the number of moto",
+# # "Count the number of bike",
+# # "Count the number of pedestrians",
+# # "Count the number of bus/trucks"
+# # )
 
-node_names<-rownames(cor)
+# # creating nodes labels vector
+# # node_names<-c("Q1",
+# #               "Q2",
+# #               "Q3",
+# #               "Q4",
+# #               "Q5",
+# #               "Q6",
+# #               "Q7",
+# #               "Q8")
 
-# creating vector with mean values for each node
-#mean_data<-sapply(network_data,mean)
+# node_names<-rownames(cor)
 
-#creating vector with mean values adjusted to proportional sizes to be plotted
-#importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
+# # creating vector with mean values for each node
+# #mean_data<-sapply(network_data,mean)
 
-#building network figures 
-# 3 types are created to get an avarege position and layout
-#GLASSO NETWORK
-# network_glasso<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,graph="glasso",
-#   sampleSize=nrow(bea_data),
-#   legend.cex = 0.5,GLratio=1.5)
+# #creating vector with mean values adjusted to proportional sizes to be plotted
+# #importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
 
-# #PARTIAL CORRELATION NETWORK
-# network_pcor<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,graph="pcor",threshold="holm",
-#   sampleSize=nrow(bea_data),
-#   legend.cex = 0.5,GLratio=1.5)
+# #building network figures 
+# # 3 types are created to get an avarege position and layout
+# #GLASSO NETWORK
+# # network_glasso<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,graph="glasso",
+# #   sampleSize=nrow(bea_data),
+# #   legend.cex = 0.5,GLratio=1.5)
 
-# #CORRELATION NETWORK
-# network_cor<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
-# #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
+# # #PARTIAL CORRELATION NETWORK
+# # network_pcor<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,graph="pcor",threshold="holm",
+# #   sampleSize=nrow(bea_data),
+# #   legend.cex = 0.5,GLratio=1.5)
 
-# # Organizing both figures to be with the same layout
-# layout_final<-averageLayout(network_glasso,
-#   network_pcor,
-#   network_cor)
+# # #CORRELATION NETWORK
+# # network_cor<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
+# # #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
 
-# word_freq<-car::recode(word_freq,"17=15")
+# # # Organizing both figures to be with the same layout
+# # layout_final<-averageLayout(network_glasso,
+# #   network_pcor,
+# #   network_cor)
 
-# postscript("/home/joao/Desktop/info_consent_figure2.eps",
-#   width = 1500, height = 1200,horizontal = FALSE, 
-#   onefile = FALSE)
-# postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
-#   width = 1500, height = 1200,horizontal = FALSE, 
-#   onefile = FALSE)
-tiff("/Users/joaovissoci/Desktop/ana_vivencia.tiff", width = 1200,
- height = 700,compression = 'lzw')
-  network_glasso<-qgraph(cor,
-  layout='spring',
-  # esize=20,
-  # graph="glasso",
-  # sampleSize=nrow(sf8_data),
-  legend.cex = 0.5,
-  cut = 0.6,
-  # maximum = 1, 
-  minimum = 0.4,
-  # esize = 20,
-  vsize = word_freq/3, 
-  # repulsion = 0.8,
-  # nodeNames=
-  # shape="square",
-  borders=FALSE,
-  # border.width=5,
-  # groups=network_groups,
-  color=c("grey80"),
-  labels=rownames(cor),
-  label.scale=FALSE,
-  label.cex=word_freq/6,
-  gray=T
-  )
-dev.off()
-#legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
+# # word_freq<-car::recode(word_freq,"17=15")
 
-#Directed Acyclic Graph / require package bnlearn
-# dag_data <- data.frame(apply(sf8_data, 2, as.factor))
-dag_data<-as.data.frame(dataMatrix)
-res<-rsmax2(dag_data,
-            restrict = "si.hiton.pc",
-            maximize = "tabu")
-res2<-(res$arcs)
-qgraph(res2)
+# # postscript("/home/joao/Desktop/info_consent_figure2.eps",
+# #   width = 1500, height = 1200,horizontal = FALSE, 
+# #   onefile = FALSE)
+# # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
+# #   width = 1500, height = 1200,horizontal = FALSE, 
+# #   onefile = FALSE)
+# tiff("/Users/joaovissoci/Desktop/ana_vivencia.tiff", width = 1200,
+#  height = 700,compression = 'lzw')
+#   network_glasso<-qgraph(cor,
+#   layout='spring',
+#   # esize=20,
+#   # graph="glasso",
+#   # sampleSize=nrow(sf8_data),
+#   legend.cex = 0.5,
+#   cut = 0.6,
+#   # maximum = 1, 
+#   minimum = 0.4,
+#   # esize = 20,
+#   vsize = word_freq/3, 
+#   # repulsion = 0.8,
+#   # nodeNames=
+#   # shape="square",
+#   borders=FALSE,
+#   # border.width=5,
+#   # groups=network_groups,
+#   color=c("grey80"),
+#   labels=rownames(cor),
+#   label.scale=FALSE,
+#   label.cex=word_freq/6,
+#   gray=T
+#   )
+# dev.off()
+# #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
-#### THEME 5 ################################################
-#fazendo a mineração de texto:
-corpus = Corpus(VectorSource(dados_theme5$Text))
-#plot(h,g)#corpus<- tm_map(corpus, function(x) iconv(enc2utf8(x), sub = "byte"))
-corpus <- tm_map(corpus, content_transformer(tolower))
-corpus <- tm_map(corpus, removePunctuation)
-corpus <- tm_map(corpus, function(x) removeWords(x, stopwords("portuguese")))
-corpus <- tm_map(corpus, stemDocument)
+# #Directed Acyclic Graph / require package bnlearn
+# # dag_data <- data.frame(apply(sf8_data, 2, as.factor))
+# dag_data<-as.data.frame(dataMatrix)
+# res<-rsmax2(dag_data,
+#             restrict = "si.hiton.pc",
+#             maximize = "tabu")
+# res2<-(res$arcs)
+# qgraph(res2)
+
+# #### THEME 5 ################################################
+# #fazendo a mineração de texto:
+# corpus = Corpus(VectorSource(dados_theme5$Text))
+# #plot(h,g)#corpus<- tm_map(corpus, function(x) iconv(enc2utf8(x), sub = "byte"))
+# corpus <- tm_map(corpus, content_transformer(tolower))
+# corpus <- tm_map(corpus, removePunctuation)
+# corpus <- tm_map(corpus, function(x) removeWords(x, stopwords("portuguese")))
+# corpus <- tm_map(corpus, stemDocument)
 
 
-# olhando o primeiro conteudo das entrevistas
-corpus[[1]]
+# # olhando o primeiro conteudo das entrevistas
+# corpus[[1]]
 
-#transformando em matriz
-dtm <- DocumentTermMatrix(corpus)
-dtm
+# #transformando em matriz
+# dtm <- DocumentTermMatrix(corpus)
+# dtm
 
-# removendo "sparse terms": vai fazer cair de 3 mil e cacetada termos para menos termos
-dtm <- removeSparseTerms(dtm, 0.80)
-dtm
+# # removendo "sparse terms": vai fazer cair de 3 mil e cacetada termos para menos termos
+# dtm <- removeSparseTerms(dtm, 0.80)
+# dtm
 
-#findFreqTerms(dtm, 5)
-#findAssocs(dtm, "vencer", 0.5)
+# #findFreqTerms(dtm, 5)
+# #findAssocs(dtm, "vencer", 0.5)
 
-#fazendo um plot da relação entre as palavras novamente
-#plot(dtm, corThreshold = 0.3, weighting = TRUE)
+# #fazendo um plot da relação entre as palavras novamente
+# #plot(dtm, corThreshold = 0.3, weighting = TRUE)
 
-data<-as.matrix(dtm)
-word_freq<-colSums(data)
+# data<-as.matrix(dtm)
+# word_freq<-colSums(data)
 
-#data[data>=1] <- 1
-dataMatrix <- t(data) %*% data
+# #data[data>=1] <- 1
+# dataMatrix <- t(data) %*% data
 
-cor <- cor(data,method="spearman")
-names<-rownames(cor)
+# cor <- cor(data,method="spearman")
+# names<-rownames(cor)
 
-#Q1_atleta1 <- qgraph(dataMatrix, borders = FALSE, cut=20, 
-#  minimum = 5, labels=rownames(dataMatrix),label.cex = 0.60, label.color="black",
-#  layout = "spring",directed=FALSE,label.scale=FALSE,
-#  posCol=c("#BF0000","red"),
-#  gray=FALSE)
+# #Q1_atleta1 <- qgraph(dataMatrix, borders = FALSE, cut=20, 
+# #  minimum = 5, labels=rownames(dataMatrix),label.cex = 0.60, label.color="black",
+# #  layout = "spring",directed=FALSE,label.scale=FALSE,
+# #  posCol=c("#BF0000","red"),
+# #  gray=FALSE)
 
-Q2_atleta2 <- qgraph(cor, borders = FALSE, cut=0.6, minimum = 0.4, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
+# Q2_atleta2 <- qgraph(cor, borders = FALSE, cut=0.6, minimum = 0.4, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
-# Q2_atleta2 <- qgraph(cor$correlations, borders = TRUE, cut=0.8, minimum = 0.4, labels=names,label.cex = 1, vsize=word_freq,label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
-
-g<-as.igraph(Q2_atleta2)
-h<-spinglass.community(g)
-plot(h,g)
-h$membership
-
-# Q2_atleta2 <- qgraph(dataMatrix, borders = FALSE, cut=10, minimum = 3, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
+# # Q2_atleta2 <- qgraph(cor$correlations, borders = TRUE, cut=0.8, minimum = 0.4, labels=names,label.cex = 1, vsize=word_freq,label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
 # g<-as.igraph(Q2_atleta2)
 # h<-spinglass.community(g)
 # plot(h,g)
 # h$membership
 
-# #Calculating Community measures
-# g<-as.igraph(network_glasso) #creating igraph object
-# h<-walktrap.community(g) #creatin community object
-# h<-spinglass.community(g, weights=NA) #creatin community object
-# # h<-fastgreedy.community(g, weights=NA) #creatin community object
-# # h<-edge.betweenness.community(g, weights=NA) #creatin community object
-# h<-cluster_leading_eigen(g,weights=NA) #creatin community object
-# plot(h,g) #plotting community network
-# h$membership #extracting community membership for each node on the network
-community<-data.frame(h$membership,
-	rownames(cor))
+# # Q2_atleta2 <- qgraph(dataMatrix, borders = FALSE, cut=10, minimum = 3, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
-#listing grouping variables in the network resulting from the community analysis
-network_groups<-list(
-Component1=as.numeric(rownames(community)
-	[community[,1]==1]),
-Component2=as.numeric(rownames(community)
-	[community[,1]==2]),
-Component3=as.numeric(rownames(community)
-	[community[,1]==3])
-# Component4=as.numeric(rownames(community)
-# 	[community[,1]==4])
-)
+# # g<-as.igraph(Q2_atleta2)
+# # h<-spinglass.community(g)
+# # plot(h,g)
+# # h$membership
 
-# # network_groups<-list(
-# Component1=c(1,3,4,5,15,14),
-# Component2=c(2,16,6,7),
-# Component3=c(11,12,13,10),
-# Component4=c(19,20,21,23),
-# Component5=c(9,17,18,22,8)
+# # #Calculating Community measures
+# # g<-as.igraph(network_glasso) #creating igraph object
+# # h<-walktrap.community(g) #creatin community object
+# # h<-spinglass.community(g, weights=NA) #creatin community object
+# # # h<-fastgreedy.community(g, weights=NA) #creatin community object
+# # # h<-edge.betweenness.community(g, weights=NA) #creatin community object
+# # h<-cluster_leading_eigen(g,weights=NA) #creatin community object
+# # plot(h,g) #plotting community network
+# # h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,
+# 	rownames(cor))
+
+# #listing grouping variables in the network resulting from the community analysis
+# network_groups<-list(
+# Component1=as.numeric(rownames(community)
+# 	[community[,1]==1]),
+# Component2=as.numeric(rownames(community)
+# 	[community[,1]==2]),
+# Component3=as.numeric(rownames(community)
+# 	[community[,1]==3])
+# # Component4=as.numeric(rownames(community)
+# # 	[community[,1]==4])
 # )
 
-# creating vectors for labels
-# node_labels<-c(
-# "What is the area of the roadway?",
-# "What type of roadway?",
-# "Is this point at an intersection/junction?",
-# "How many lanes in the roadway?",
-# "Is there an auxiliary/other lane?",
-# "How is the road surface conditions?",
-# "Is there space on the side of the road 
-# for any reason or use?",
-# "Are there pedestrian pathways?",
-# "Is there a Bus Stop?",
-# "Is there a Speed bump?",
-# "Is there a traffic light at this location?",
-# "Are there road traffic signs at this hotspot?",
-# "Is there a sign for speed limit of road?",
-# "Road visibility is influenced by curves?",
-# "Is the visibility influenced by 
-# environmental factors?",
-# "Are there bridges on the road?",
-# "Is there a safe area for pedestrians 
-# to cross the road?",
-# "Is there a safe area for pedestrians
-# to in the center of the road?",
-# "Count the number of cars",
-# "Count the number of moto",
-# "Count the number of bike",
-# "Count the number of pedestrians",
-# "Count the number of bus/trucks"
-# )
+# # # network_groups<-list(
+# # Component1=c(1,3,4,5,15,14),
+# # Component2=c(2,16,6,7),
+# # Component3=c(11,12,13,10),
+# # Component4=c(19,20,21,23),
+# # Component5=c(9,17,18,22,8)
+# # )
 
-# creating nodes labels vector
-# node_names<-c("Q1",
-#               "Q2",
-#               "Q3",
-#               "Q4",
-#               "Q5",
-#               "Q6",
-#               "Q7",
-#               "Q8")
+# # creating vectors for labels
+# # node_labels<-c(
+# # "What is the area of the roadway?",
+# # "What type of roadway?",
+# # "Is this point at an intersection/junction?",
+# # "How many lanes in the roadway?",
+# # "Is there an auxiliary/other lane?",
+# # "How is the road surface conditions?",
+# # "Is there space on the side of the road 
+# # for any reason or use?",
+# # "Are there pedestrian pathways?",
+# # "Is there a Bus Stop?",
+# # "Is there a Speed bump?",
+# # "Is there a traffic light at this location?",
+# # "Are there road traffic signs at this hotspot?",
+# # "Is there a sign for speed limit of road?",
+# # "Road visibility is influenced by curves?",
+# # "Is the visibility influenced by 
+# # environmental factors?",
+# # "Are there bridges on the road?",
+# # "Is there a safe area for pedestrians 
+# # to cross the road?",
+# # "Is there a safe area for pedestrians
+# # to in the center of the road?",
+# # "Count the number of cars",
+# # "Count the number of moto",
+# # "Count the number of bike",
+# # "Count the number of pedestrians",
+# # "Count the number of bus/trucks"
+# # )
 
-node_names<-rownames(cor)
+# # creating nodes labels vector
+# # node_names<-c("Q1",
+# #               "Q2",
+# #               "Q3",
+# #               "Q4",
+# #               "Q5",
+# #               "Q6",
+# #               "Q7",
+# #               "Q8")
 
-# creating vector with mean values for each node
-#mean_data<-sapply(network_data,mean)
+# node_names<-rownames(cor)
 
-#creating vector with mean values adjusted to proportional sizes to be plotted
-#importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
+# # creating vector with mean values for each node
+# #mean_data<-sapply(network_data,mean)
 
-#building network figures 
-# 3 types are created to get an avarege position and layout
-#GLASSO NETWORK
-# network_glasso<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,graph="glasso",
-#   sampleSize=nrow(bea_data),
-#   legend.cex = 0.5,GLratio=1.5)
+# #creating vector with mean values adjusted to proportional sizes to be plotted
+# #importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
 
-# #PARTIAL CORRELATION NETWORK
-# network_pcor<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,graph="pcor",threshold="holm",
-#   sampleSize=nrow(bea_data),
-#   legend.cex = 0.5,GLratio=1.5)
+# #building network figures 
+# # 3 types are created to get an avarege position and layout
+# #GLASSO NETWORK
+# # network_glasso<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,graph="glasso",
+# #   sampleSize=nrow(bea_data),
+# #   legend.cex = 0.5,GLratio=1.5)
 
-# #CORRELATION NETWORK
-# network_cor<-qgraph(cor_data,layout="spring",
-#   vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
-# #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
+# # #PARTIAL CORRELATION NETWORK
+# # network_pcor<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,graph="pcor",threshold="holm",
+# #   sampleSize=nrow(bea_data),
+# #   legend.cex = 0.5,GLratio=1.5)
 
-# # Organizing both figures to be with the same layout
-# layout_final<-averageLayout(network_glasso,
-#   network_pcor,
-#   network_cor)
+# # #CORRELATION NETWORK
+# # network_cor<-qgraph(cor_data,layout="spring",
+# #   vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
+# # #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
 
-word_freq<-car::recode(word_freq,"15=8")
+# # # Organizing both figures to be with the same layout
+# # layout_final<-averageLayout(network_glasso,
+# #   network_pcor,
+# #   network_cor)
 
-# postscript("/home/joao/Desktop/info_consent_figure2.eps",
-#   width = 1500, height = 1200,horizontal = FALSE, 
-#   onefile = FALSE)
-# postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
-#   width = 1500, height = 1200,horizontal = FALSE, 
-#   onefile = FALSE)
-tiff("/Users/joaovissoci/Desktop/ana_vivenciafamiliar.tiff", width = 1200,
- height = 700,compression = 'lzw')
-  network_glasso<-qgraph(cor,
-  layout='spring',
-  # esize=20,
-  # graph="glasso",
-  # sampleSize=nrow(sf8_data),
-  legend.cex = 0.5,
-  cut = 0.6,
-  # maximum = 1, 
-  minimum = 0.4,
-  # esize = 20,
-  vsize = word_freq*2, 
-  # repulsion = 0.8,
-  # nodeNames=
-  # shape="square",
-  borders=FALSE,
-  # border.width=5,
-  # groups=network_groups,
-  color=c("grey80"),
-  labels=node_names,
-  label.cex=word_freq/2,
-  label.scale=FALSE,
-  gray=T
-  )
-dev.off()
-#legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
+# word_freq<-car::recode(word_freq,"15=8")
 
-#Directed Acyclic Graph / require package bnlearn
-# dag_data <- data.frame(apply(sf8_data, 2, as.factor))
-dag_data<-as.data.frame(dataMatrix)
-res<-rsmax2(dag_data,
-            restrict = "si.hiton.pc",
-            maximize = "tabu")
-res2<-(res$arcs)
-qgraph(res2)
+# # postscript("/home/joao/Desktop/info_consent_figure2.eps",
+# #   width = 1500, height = 1200,horizontal = FALSE, 
+# #   onefile = FALSE)
+# # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
+# #   width = 1500, height = 1200,horizontal = FALSE, 
+# #   onefile = FALSE)
+# tiff("/Users/joaovissoci/Desktop/ana_vivenciafamiliar.tiff", width = 1200,
+#  height = 700,compression = 'lzw')
+#   network_glasso<-qgraph(cor,
+#   layout='spring',
+#   # esize=20,
+#   # graph="glasso",
+#   # sampleSize=nrow(sf8_data),
+#   legend.cex = 0.5,
+#   cut = 0.6,
+#   # maximum = 1, 
+#   minimum = 0.4,
+#   # esize = 20,
+#   vsize = word_freq*2, 
+#   # repulsion = 0.8,
+#   # nodeNames=
+#   # shape="square",
+#   borders=FALSE,
+#   # border.width=5,
+#   # groups=network_groups,
+#   color=c("grey80"),
+#   labels=node_names,
+#   label.cex=word_freq/2,
+#   label.scale=FALSE,
+#   gray=T
+#   )
+# dev.off()
+# #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
+
+# #Directed Acyclic Graph / require package bnlearn
+# # dag_data <- data.frame(apply(sf8_data, 2, as.factor))
+# dag_data<-as.data.frame(dataMatrix)
+# res<-rsmax2(dag_data,
+#             restrict = "si.hiton.pc",
+#             maximize = "tabu")
+# res2<-(res$arcs)
+# qgraph(res2)
 
 #### THEME 6 ################################################
 #fazendo a mineração de texto:
@@ -1118,7 +1228,35 @@ word_freq<-colSums(data)
 dataMatrix <- t(data) %*% data
 
 cor <- cor(data,method="spearman")
-names<-rownames(cor)
+node_names<-c("learn",
+         "contact",
+         "talking",
+         "talk",
+         "crime",
+         "course",
+         "develop",
+         "educator",
+         "teach",
+          "involved",
+         "school",
+         "murder",
+         "detention centre",
+         "incarceration",
+         "better",
+         " (a) change",
+        "(to) change",
+        "thinking",
+         "worse",
+         "arrested",
+         "report",
+         "respect",
+         "missing",
+         "suffer",
+         "time",
+         "Exchange",
+         "life",
+         "return")
+
 
 #Q1_atleta1 <- qgraph(dataMatrix, borders = FALSE, cut=20, 
 #  minimum = 5, labels=rownames(dataMatrix),label.cex = 0.60, label.color="black",
@@ -1126,14 +1264,14 @@ names<-rownames(cor)
 #  posCol=c("#BF0000","red"),
 #  gray=FALSE)
 
-Q2_atleta2 <- qgraph(cor, borders = FALSE, cut=0.6, minimum = 0.4, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
+# Q2_atleta2 <- qgraph(cor, borders = FALSE, cut=0.6, minimum = 0.4, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
 # Q2_atleta2 <- qgraph(cor$correlations, borders = TRUE, cut=0.8, minimum = 0.4, labels=names,label.cex = 1, vsize=word_freq,label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
-g<-as.igraph(Q2_atleta2)
-h<-spinglass.community(g)
-plot(h,g)
-h$membership
+# g<-as.igraph(Q2_atleta2)
+# h<-spinglass.community(g)
+# plot(h,g)
+# h$membership
 
 # Q2_atleta2 <- qgraph(dataMatrix, borders = FALSE, cut=10, minimum = 3, labels=names,label.cex = 0.80, label.color="black",layout = "spring",directed=FALSE,label.scale=FALSE,gray=FALSE,posCol=c("gray","gray"))
 
@@ -1150,21 +1288,21 @@ h$membership
 # # h<-edge.betweenness.community(g, weights=NA) #creatin community object
 # h<-cluster_leading_eigen(g,weights=NA) #creatin community object
 # plot(h,g) #plotting community network
-# h$membership #extracting community membership for each node on the network
-community<-data.frame(h$membership,
-	rownames(cor))
+# # h$membership #extracting community membership for each node on the network
+# community<-data.frame(h$membership,
+# 	rownames(cor))
 
-#listing grouping variables in the network resulting from the community analysis
-network_groups<-list(
-Component1=as.numeric(rownames(community)
-	[community[,1]==1]),
-Component2=as.numeric(rownames(community)
-	[community[,1]==2]),
-Component3=as.numeric(rownames(community)
-	[community[,1]==3])
-# Component4=as.numeric(rownames(community)
-# 	[community[,1]==4])
-)
+# #listing grouping variables in the network resulting from the community analysis
+# network_groups<-list(
+# Component1=as.numeric(rownames(community)
+# 	[community[,1]==1]),
+# Component2=as.numeric(rownames(community)
+# 	[community[,1]==2]),
+# Component3=as.numeric(rownames(community)
+# 	[community[,1]==3])
+# # Component4=as.numeric(rownames(community)
+# # 	[community[,1]==4])
+# )
 
 # # network_groups<-list(
 # Component1=c(1,3,4,5,15,14),
@@ -1215,7 +1353,7 @@ Component3=as.numeric(rownames(community)
 #               "Q7",
 #               "Q8")
 
-node_names<-rownames(cor)
+# node_names<-rownames(cor)
 
 # creating vector with mean values for each node
 #mean_data<-sapply(network_data,mean)
@@ -1255,7 +1393,7 @@ word_freq<-car::recode(word_freq,"13=8")
 # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
 #   width = 1500, height = 1200,horizontal = FALSE, 
 #   onefile = FALSE)
-tiff("/Users/joaovissoci/Desktop/ana_medidasocioeducativa.tiff", width = 1200,
+tiff("/Users/jnv4/Desktop/ana_medidasocioeducativa.tiff", width = 1200,
  height = 700,compression = 'lzw')
   network_glasso<-qgraph(cor,
   layout='spring',
@@ -1284,13 +1422,13 @@ dev.off()
 #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
 
 #Directed Acyclic Graph / require package bnlearn
-# dag_data <- data.frame(apply(sf8_data, 2, as.factor))
-dag_data<-as.data.frame(dataMatrix)
-res<-rsmax2(dag_data,
-            restrict = "si.hiton.pc",
-            maximize = "tabu")
-res2<-(res$arcs)
-qgraph(res2)
+# # dag_data <- data.frame(apply(sf8_data, 2, as.factor))
+# dag_data<-as.data.frame(dataMatrix)
+# res<-rsmax2(dag_data,
+#             restrict = "si.hiton.pc",
+#             maximize = "tabu")
+# res2<-(res$arcs)
+# qgraph(res2)
 
 
 
