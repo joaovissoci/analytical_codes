@@ -83,3 +83,4 @@ res = gs(learning.test, optimized = FALSE, strict = TRUE, debug = TRUE)
 res = gs(learning.test, optimized = FALSE, strict = FALSE, debug = TRUE)
 
 ## End(Not run)
+

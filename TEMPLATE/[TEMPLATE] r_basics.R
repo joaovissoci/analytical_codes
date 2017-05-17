@@ -25,15 +25,17 @@
 #library(Hmisc)
 
 #All packages must be installes with install.packages() function
-lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis",
-	"mvnormtest","polycor"), 
+lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments",
+	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
+	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust",
+	"foreign","survival","memisc","foreign","mice","MissMech"), 
 library, character.only=T)
 
 ######################################################################
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("",sep=",")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/AMPED/US_AMPEDPain_data.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -59,53 +61,101 @@ data<-read.csv("",sep=",")
 
 data <- base::merge(data1,data2,by=c("nome"))
 
+#######################################################
+#ANALYZING MISSING DATA
+#######################################################
+#Studying missing data
+#Calculating frequency of missing data per variable
+propmiss <- function(dataframe) lapply(dataframe,function(x) data.frame(nmiss=sum(is.na(x)), n=length(x), propmiss=sum(is.na(x))/length(x)))
+
+propmiss(data_epi)
+
+#inspecting measure random of missing data
+#Inspectif Weather Conditions
+#weather_missing<-car::recode(data_epi$weather_condition,"NA=0;else=1")
+#logmodel<-glm(weather_missing ~  data_epi$day_crash,family=binomial)
+#summary(logmodel)
+#logmodel<-glm(weather_missing ~  data_epi$hour_crash,family=binomial)
+#summary(logmodel)
+#logmodel<-glm(weather_missing ~  data_epi$road_type,family=binomial)
+#summary(logmodel)
+#logmodel<-glm(weather_missing ~  data_epi$road_condition,family=binomial)
+#summary(logmodel)
+#logmodel<-glm(weather_missing ~  data_epi$visibility,family=binomial)
+#summary(logmodel)
+#logmodel<-glm(weather_missing ~  data_epi$type_vehicle,family=binomial)
+#summary(logmodel)
+#logmodel<-glm(weather_missing ~  data_epi$type_vehicle2,family=binomial)
+#summary(logmodel)
+#logmodel<-glm(weather_missing ~  data_epi$gender,family=binomial)
+#summary(logmodel)
+#logmodel<-glm(weather_missing ~  data_epi$crash_type,family=binomial)
+#summary(logmodel)
+
+#out <- TestMCARNormality(data_epi)
+#missing.pattern.plot(data_epi)
+#MICE framework for imputation
+# describing the pattern of missingnesss
+md.pattern(data_epi)
+
+# showing pairs of missingines
+md.pairs(data_epi)
+
+# plots impact of missing data for a set of pairs - works better for numerical data
+marginplot(data.frame(data_epi$outcome,data_epi$visibility), col = mdc(1:2), cex = 1.2, cex.lab = 1.2, cex.numbers = 1.3, pch = 19)
+
+# generate imputations
+
+# organize data set to be imputed
+data_tobeimp<-with(data_epi,data.frame(hour_crash,urban_location,outcome,
+	holiday,day_week,crash_type,rd_condition,weather,light_condition,
+	type_location,traffic_control,speed_limit_sign,type_vehicle,
+	human_crash_factor,ped_precrash,alcohol_tested,victim_classification,
+	rd_size))
+
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+imp <- mice(data_tobeimp, seed = 2222, m=50)
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+data_imputed<-complete(imp,4)
+
+#Plost the distrbution of each of the 5 possibilities of imputations
+#stripplot(imp,pch=20,cex=1.2)
+
+#plots a scatter plot of pairs of variables
+#xyplot(imp, outcome ~ visibility | .imp, pch = 20, cex = 1.4)
+
+#returns the matrix specifying each variable used to -predict imputation - columns 1=predictor 0=not predictor. rows are the variables of interest
+#imp$predictorMatrix
+#pred <- imp$predictorMatrix #if you want to exclude  variable from the prediction model for imputation then assign an obect to pred
+#pred[, "bmi"] <- 0 #transform the column values into 0's for not predictiong
+#imp <- mice(nhanes, pred = pred, pri = FALSE) # rerun the model specifying pred argumento witht eh matriz recoded.
 
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
 ######################################################################
-###Section wih several exploratory data analysis functions
-#Exploratory Data Anlysis
-#dim(data)
-#str (data)
-#head(data)
-#names(data)
-#summary(data)#This comand will provide a whole set of descriptive #results for each variables
-describe(data)
-with(data,by(data,outcome,describe))
-with(data,by(data,outcome,summary))
-#stat.desc(data)
-with(data,by(data,outcome,ad.test)) # Anderson-Darling test for normality
-#skewness(data$Idade) #Will provide skweness analysis
-#kurtosis(data$Idade) - 3 #Will provide kurtosis analysis
-#qplot(data$Idade) # histogram plot
-#boxplot(data$Idade~data$Classificacao) #will provide a boxplot for the #variables to analysis potential outliers
-## Bartlett Test of Homogeneity of Variances
-#bartlett.test(data$Idade~data$Classificacao, data=data)
-## Figner-Killeen Test of Homogeneity of Variances
-#fligner.test(data$Idade~data$Classificacao, data=data)
-#leveneTest(data$Idade~data$Classificacao, data=data)
+
 
 ######################################################################
 #TABLE 1
 ######################################################################
-# 2-Way Frequency Table 
-mytable <- with(data,table(Sexo,Classificacao)) # A will be rows, B will be columns 
-mytable # print table 
 
-margin.table(mytable, 1) # A frequencies (summed over B) 
-margin.table(mytable, 2) # B frequencies (summed over A)
+# Age
+with(data_epi,describe(age))
+with(data_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+with(data_epi,t.test(age ~ class_crash))
 
-prop.table(mytable) # cell percentages
-prop.table(mytable, 1) # row percentages 
-prop.table(mytable, 2) # column percentages
-
-#Teste de associação/Fisher
-assocstats(mytable)
-fisher.test(mytable)
-
-# 3-Way Frequency Table 
-mytable <- with(data,table(Sexo,Classificacao,Faixa_etaria)) # A will be rows, B will be columns 
-ftable(mytable)
+# Gender
+table<-with(data_epi,table(gender))
+table
+prop.table(table)
+table<-with(data_epi,table(gender,outcome))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
 
 #OUTCOME ASSOCIATION AND BIVARIATE ANALYSIS
 ###########################################
@@ -190,6 +240,7 @@ summary(baselineXFUP3)
 #anova(reglogGEU)
 #exp(coef(model1_death)) # exponentiated coefficients
 #exp(confint(model1_death)) # 95% CI for exponentiated coefficients
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 #logistic.display(baselineXFUP3)

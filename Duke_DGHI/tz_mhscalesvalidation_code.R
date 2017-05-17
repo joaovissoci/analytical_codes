@@ -523,6 +523,15 @@ with(subset(Est, op == "|"),
 tau<-as.data.frame(with(subset(Est, op == "|"),
   by(std.all,lhs,mean))[1:9])
 
+
+invariance_data<-data.frame(audit_data,gender=data$female)
+library(semTools)
+measurementInvariance(audit_model,
+				   data = na.omit(invariance_data),
+				   estimator="WLSMV",
+				   ordered=names(audit_data),
+	group="gender")
+
 # 2 factor model ###########
 
 audit_model2 <- '
