@@ -43,7 +43,7 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k award/tz_bnisurveypatients_data.csv")
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k award/tz_bnisurveypatients_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -352,6 +352,7 @@ data_full<-data.frame(age=data_nonabst$age,
 					  audit_alcoholuse=audit_data$audit_score_D1,
 					  audit_alcoholdependence=audit_data$audit_score_D2,
 					  audit_alcoholrisk=audit_data$audit_score_D3,
+					  audit_cat=audit_data$audit_score_cat,
 					  drinc_data_score)
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
@@ -403,6 +404,20 @@ chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
 logmodel<-glm(talked_dr ~ pos_etoh
+			,family=binomial, data=data_full)
+summary(logmodel)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
+#at-risk alcohol Users
+with(data_full,table(audit_cat))
+with(data_full,prop.table(table(audit_cat)))
+table<-with(data_full,table(audit_cat,talked_dr))
+table
+with(data_full,prop.table(table(audit_cat,talked_dr),2))
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+logmodel<-glm(talked_dr ~ audit_cat
 			,family=binomial, data=data_full)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
@@ -582,6 +597,23 @@ logmodel<-glm(talked_dr ~ pos_etoh +
 			,family=binomial, data=data_full)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
+######################################################################
+#TABLE 2
+######################################################################
+
+linearmodel<-glm(pas_score ~ 
+						  age +
+						  pos_etoh +
+						  daily_drink +
+						  drinking_interferes +
+						  drinking_arguments +
+						  could_get_hurt +
+						  audit_total +						
+						  drinc_data_score
+			,family=gaussian, data=data_full)
+summary(linearmodel)
+exp(cbind(Odds=coef(linearmodel),confint(linearmodel,level=0.95))) 
 
 
 ######################################################################
