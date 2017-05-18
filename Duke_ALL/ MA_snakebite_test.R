@@ -6,9 +6,15 @@
 ######################################################################
 #SETTING ENVIRONMENT
 ######################################################################
+
+#If this is the first time using the script, you will need to install the packages:
+install.packages("metafor")
+install.packages("meta")
+install.packages("mada")
+install.packages("RCurl")
+
 #Load packages (after installed) with the library function
-lapply(c("metafor","ggplot2","gridExtra" ,"psych", "irr", "nortest",
-	"moments","GPArotation","nFactors","gdata","meta","mada"),
+lapply(c("metafor","meta","mada","RCurl"),
 library, character.only=T)
 ######################################################################
 #IMPORTING DATA AND RECODING
@@ -16,67 +22,104 @@ library, character.only=T)
 
 ### Diagnostic measures
 
-#notebook
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/snakebites/snakebites_SR/snakesSR_metanalysis_data.csv")
+#Import data from a physical spreasheet
+#information between " " are the path to the directory in your computer where the data is stored
+# data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/snakebites/snakebites_SR/snakesSR_metanalysis_data.csv")
 
-data_level3<-subset(data,data$level==3)
-
-data_level4<-data_level3[-c(9,10),]
+#Another option is to import directly from an opened repository
+data_github<-getURL("https://raw.githubusercontent.com/joaovissoci/Data/master/snakesSR_metanalysis_data.csv")
+data<-read.csv(text = data_github,sep=",")
 
 ### Outcome measures
-#mobile
-data_outcome<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/snakebites_SR/snakesSR_outcome.csv")
+#from Github
+data_outcome_github<-getURL("https://raw.githubusercontent.com/joaovissoci/Data/master/snakesSR_outcome.csv")
+data_outcome<-read.csv(text = data_outcome_github,sep=",")
 
-data_outcome$outcome_cat<-as.character(data_outcome$outcome_cat)
-data_outcome_level3<-data_outcome[data_outcome$level==3,]
+#data from .csv file
+# data_outcome<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/snakebites_SR/snakesSR_outcome.csv")
 
 ######################################################################
 #DATA MANEGEMENT
 ######################################################################
-positive<-as.integer(with(data_level3,rowSums(data.frame(TP,FN))))
-negative<-as.integer(with(data_level3,rowSums(data.frame(TN,FP))))
+#DO NOT RUN
+# positive<-as.integer(with(data_level3,rowSums(data.frame(TP,FN))))
+# negative<-as.integer(with(data_level3,rowSums(data.frame(TN,FP))))
+
+#subsetting the data to use only level 3 studies
+data_level3<-subset(data,data$level==3)
+
+#
+data_level4<-data_level3[-c(9,10),]
+
+#recoding outcome data
+data_outcome$outcome_cat<-as.character(
+	data_outcome$outcome_cat)
+
+#subsetting only studies with level 3 data
+data_outcome_level3<-data_outcome[data_outcome$level==3,]
+
 
 #############################################################################
 #Figure 1: DESCRIPTIVE STATISTICS
 #############################################################################
 
-# CIs
+#organize data.frame
 metal_model<-with(data,data.frame(TP,FP,TN,FN,study_name))
+
+# gettin descriptive diagnostic values and CIs for each study
 descrip<-madad(metal_model, type = "sens",plotci=TRUE,snames=study_name)
+
+#show object and results
 descrip
 
-descriptors<-data.frame(metal_model$study_name,descrip$sens$sens,descrip$sens$sens.ci,descrip$spec$spec,descrip$spec$spec.ci,descrip$negLR$negLR,descrip$negLR$negLR.ci,descrip$posLR$posLR,descrip$posLR$posLR.ci)
-colnames(descriptors)<-c("study","sens","sens_CIlower","sens_CIhigher","spec","spec_CIlower","spec_CIhigher","negLR","negLR_CIlower","negLR_CIhigher","posLR","posLR_lower","posLR_higher")
+#DO NOT RUN - jut used to create the dataset to export and send to co-authors
+# descriptors<-data.frame(metal_model$study_name,descrip$sens$sens,descrip$sens$sens.ci,descrip$spec$spec,descrip$spec$spec.ci,descrip$negLR$negLR,descrip$negLR$negLR.ci,descrip$posLR$posLR,descrip$posLR$posLR.ci)
+# colnames(descriptors)<-c("study","sens","sens_CIlower","sens_CIhigher","spec","spec_CIlower","spec_CIhigher","negLR","negLR_CIlower","negLR_CIhigher","posLR","posLR_lower","posLR_higher")
 #############################################################################
-#METANALYSIS - Snake Bites- Sensitivie and Specificity
+#METANALYSIS - Snake Bites
 #############################################################################
 #attach(data)
 
-#Forest plot by sensitiviy 
-data1<-with(data_level3,data.frame(study_name,positive,TP,factor))
-data_sens<-subset(data1,factor=="large snake")
-m3<-metaprop(TP,positive,study_name, sm="PLN",data=data_sens)
-forest(m3)
+#WRONG - Proportion metanalysis is not accurate for diagnostic testing
+# #Forest plot by sensitiviy 
+# data1<-with(data_level3,data.frame(study_name,positive,TP,factor))
+# data_sens<-subset(data1,factor=="large snake")
+# m3<-metaprop(TP,positive,study_name, sm="PLN",data=data_sens)
+# forest(m3)
 
-#Forest plot by sepecificity
-data1<-with(data_level3,data.frame(study_name,negative,TN,factor))
-data_spec<-subset(data1,factor=="large snake")
-m3<-metaprop(TN,negative,study_name, sm="PLN",data=data_spec)
-forest(m3)
+# #Forest plot by sepecificity
+# data1<-with(data_level3,data.frame(study_name,negative,TN,factor))
+# data_spec<-subset(data1,factor=="large snake")
+# m3<-metaprop(TN,negative,study_name, sm="PLN",data=data_spec)
+# forest(m3)
 
 #Random effects model
+#subsetting data by type of snakebite
 data_sb<-subset(data_level3,factor=="large snake")
+
+#organizing dataset
 metal_model<-with(data_sb,data.frame(TP,FP,TN,FN,study_name))
+
+#extracting descriptives
 descrip<-madad(metal_model, type = "sens",plotci=TRUE,snames=study_name)
+
+#univariate metanalysis for positive LR and negative LR
+#Using DerSimonian-Laird estimator
 unimeta_model<-madauni(data_sb,type="posLR",method="DSL")
 unimeta_model<-madauni(data_sb,type="negLR",method="DSL")
+
+#call for summary - reporting heterogeneity
 summary(unimeta_model)
-#Verdadeiro Negativo/Negativo Total
-#riate approach
-(fit.reitsma <- reitsma(metal_model,correction=0.5))
+
+#bivariate approach by Reitsma et al. 2005
+fit.reitsma <- reitsma(metal_model,correction=0.5)
 summary(fit.reitsma)
+
+#extracting summary estimated using a sampling based approach in the bivariate model
 mcmc_sum <- SummaryPts(fit.reitsma, n.iter = 10^3,FUN=NULL)
 summary(mcmc_sum)
+
+#roc curve plot
 plot<-plot(fit.reitsma, sroclwd = 2,
      main = "SROC curve (bivariate model) for metanalise data")
 points(fpr(metanalise), sens(metanalise), pch = 2)
@@ -85,35 +128,29 @@ legend ("bottomleft", c("SROC", "conf.region"),lwd = c(2,1))
 
 
 #############################################################################
-#METANALYSIS - Time - LP positive and negative
+#METANALYSIS - Time
 #############################################################################
-positive<-as.integer(with(data_level4,rowSums(data.frame(TP,FN))))
-data1<-with(data_level4,data.frame(study_name,positive,TP,factor))
-data_sens<-subset(data1,factor=="time")
-m3<-metaprop(TP,positive,study_name, sm="PLN",data=data_sens)
-forest(m3)
 
-negative<-as.integer(with(data_level3,rowSums(data.frame(TN,FP))))
-data1<-with(data_level3,data.frame(study_name,negative,TN,factor))
-data_spec<-subset(data1,factor=="time")
-m3<-metaprop(TN,negative,study_name, sm="PLN",data=data_spec)
-metainf(m3)
-forest(m3)
-
+#organizing data
 data_sb<-subset(data_level4,factor=="time")
 metal_model<-with(data_sb,data.frame(TP,FP,TN,FN,study_name))
+
+#fitting descriptive data
 descrip<-madad(metal_model, type = "sens",plotci=TRUE,snames=study_name)
+
+#univariate model
 unimeta_model<-madauni(data_sb,type="posLR",method="DSL")
 unimeta_model<-madauni(data_sb,type="negLR",method="DSL")
 summary(unimeta_model)
-#Verdadeiro Negativo/Negativo Total
-#riate approach
-(fit.reitsma <- reitsma(metal_model))
+
+#biriate approach
+fit.reitsma <- reitsma(metal_model)
 summary(fit.reitsma)
-mcmc_sum <- SummaryPts(fit.reitsma, n.iter = 10^3,FUN=list(sens))
-mcmc_sum <- SummaryPts(fit.reitsma, n.iter = 10^3,FUN=fpr)
+
 mcmc_sum <- SummaryPts(fit.reitsma, n.iter = 10^3,FUN=NULL)
 summary(mcmc_sum)
+
+#plotting roc curve
 plot<-plot(fit.reitsma, sroclwd = 2,
      main = "SROC curve (bivariate model) for metanalise data")
 points(fpr(metanalise), sens(metanalise), pch = 2)
@@ -122,11 +159,10 @@ legend ("bottomleft", c("SROC", "conf.region"),lwd = c(2,1))
 
 
 #############################################################################
-#META Model Prevalences
+#METAANALYSIS model for prevalences of snakebite outcome
 #############################################################################
-#attach(data)
 
-#names(data)
+#organizing vectors for plotting the metanalysis
 data_outcome$names<-with(data_outcome,
 	paste(study,year,sep=", "))
 data_outcome_level3$names<-with(data_outcome_level3,
@@ -146,17 +182,21 @@ data_outcome_level3$outcome_cat<-as.factor(data_outcome_level3$outcome_cat)
 #data2<-na.omit(data2)
 
 ### Metanalysis all studies
-tiff("/Users/jnv4/Desktop/pointestimate_MA.tiff",
-	width = 700, height = 200,compression = 'lzw')
+#function to export image in tiff format
+# tiff("/Users/jnv4/Desktop/pointestimate_MA.tiff",
+# 	width = 700, height = 200,compression = 'lzw')
+#run metanalysis model for proportions
 m3<-metaprop(severe,total,names, sm="PLN",
 	data=data_outcome_level3,comb.fixed=FALSE)
 m3
 forest(m3)
-dev.off()
-### Excluding Jorge and Nicoleti
+# dev.off()
+funnel(m3)
 
+### Sensitivity analysis: Excluding Jorge and Nicoleti
 tryout<-data_outcome[-c(3,9),]
 
+#run model
 m3<-metaprop(severe,total,names, sm="PLN",
 	data=tryout,byvar=outcome_cat)
 forest(m3)
@@ -166,7 +206,7 @@ m3<-metaprop(severe,total,names, sm="PLN",
 	data=data_outcome_level3,byvar=outcome_cat)
 forest(m3)
 
-### Metanalysis Nicoleti = Level 4 and Janes = Level 3
+### Metanalysis reshaping Nicoleti = Level 4 and Janes = Level 3
 data_outcome_reshaped<-data_outcome
 data_outcome_reshaped$level[data_outcome_reshaped$study==
 			"Nicoleti et al"]<-4
