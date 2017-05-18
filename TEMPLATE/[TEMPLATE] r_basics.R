@@ -233,9 +233,13 @@ polychor(data)
 
 #GLM
 ############################################
-baselineXFUP3<-glm(ATTEMPT_P ~ Anxiety_presence + AGE + SEX + MARSTAT +
-                            ATTEMPT_baseline + Diagnostic
-                            ,family=binomial, data=FUP3)
+logmodel<-glm(gcs_cat ~ Anxiety_presence + 
+						AGE + 
+						SEX + 
+						MARSTAT +
+                        ATTEMPT_baseline + 
+                        Diagnostic
+                       ,family=binomial, data=analysis_data)
 summary(baselineXFUP3)
 #anova(reglogGEU)
 #exp(coef(model1_death)) # exponentiated coefficients
