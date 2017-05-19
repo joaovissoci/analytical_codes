@@ -234,7 +234,7 @@ analysis_data<-with(data_prehospital,data.frame(age,
 									gcs_tot,
 									# death,
 									gos,
-									# transport_leg1,
+									transport_leg1,
 									transport_cost,            
 									# transport_mode_other_1 ,    
 									# transport_cost_1,            
@@ -290,7 +290,21 @@ analysis_data$alcohol<-as.factor(car::recode(
 
 #recoding gcs
 analysis_data$moi<-as.factor(car::recode(
-	analysis_data$moi,"0='RTI';NA=NA;else='non-RTI'"))
+	analysis_data$moi,"0='yes';NA=NA;else='no'"))
+
+analysis_data$time_to_care_cat<-car::recode(analysis_data$time_to_care,"
+					0:1='0-1hrs';
+					1.01:2='1-2hrs';
+					2.01:3='2-3hrs';
+					3.01:4='3-4hrs';
+					else='more 4hrs'")
+
+analysis_data$transport_legs_cat<-as.factor(car::recode(
+	analysis_data$transport_legs,"
+					0:1='0 to 1';
+					else='1 or more'"))
+
+analysis_data$male<-as.factor(analysis_data$male)
 
 #Imputation
 # analysis_data<-na.omit(analysis_data)
@@ -305,6 +319,23 @@ analysis_data<-complete(imp,4)
 ##############################################################
 #TABLE 1
 #############################################################
+
+#Table 1
+library(bnpa) #have to install from the physical package
+# Show a descritive table to all data
+variables.to.table1 <- c("age", 
+						 "male",
+						 "moi",
+						 "alcohol",
+						 "transport_cost",
+						 "time_transport_recoded",
+						 "time_to_care_cat",
+						 "transport_legs_cat")
+strata <- "gos_cat"
+descritive.table(analysis_data, variables.to.table1)
+descritive.table(analysis_data, variables.to.table1, strata)
+
+
 #gcs
 table<-with(analysis_data,table(gcs_cat))
 table
@@ -443,14 +474,93 @@ data_transport<-with(data_prehospital,data.frame(
 	transport_mode_4,
 	transport_start_4))
 
-data_transport$lat<-car::recode(data_transport$transport_start_1,"
-					1=
-					2=
-					3=
-					4=
-					5=
-					6=
-					7=")
+data_transport$lat_leg1<-car::recode(data_transport$transport_start_1,"
+					1=-3.5286807;
+					2=-3.3227432;
+					3=-3.166825;
+					4=-3.1413061;
+					5=-3.6608888;
+					6=-4.2118703;
+					7=-3.186389;
+					8=NA;
+					NA=NA")
+
+data_transport$long_leg1<-car::recode(data_transport$transport_start_1,"
+					1=37.118976;
+					2=37.3285435;
+					3=36.8856703;
+					4=37.212256;
+					5=37.5662467;
+					6=37.4419273;
+					7=37.068611;
+					8=NA;
+					NA=NA")
+
+data_transport$lat_leg2<-car::recode(data_transport$transport_start_1,"
+					1=-3.5286807;
+					2=-3.3227432;
+					3=-3.166825;
+					4=-3.1413061;
+					5=-3.6608888;
+					6=-4.2118703;
+					7=-3.186389;
+					8=NA;
+					NA=NA")
+
+data_transport$long_leg2<-car::recode(data_transport$transport_start_1,"
+					1=37.118976;
+					2=37.3285435;
+					3=36.8856703;
+					4=37.212256;
+					5=37.5662467;
+					6=37.4419273;
+					7=37.068611;
+					8=NA;
+					NA=NA")
+
+data_transport$lat_leg3<-car::recode(data_transport$transport_start_1,"
+					1=-3.5286807;
+					2=-3.3227432;
+					3=-3.166825;
+					4=-3.1413061;
+					5=-3.6608888;
+					6=-4.2118703;
+					7=-3.186389;
+					8=NA;
+					NA=NA")
+
+data_transport$long_leg3<-car::recode(data_transport$transport_start_1,"
+					1=37.118976;
+					2=37.3285435;
+					3=36.8856703;
+					4=37.212256;
+					5=37.5662467;
+					6=37.4419273;
+					7=37.068611;
+					8=NA;
+					NA=NA")
+
+data_transport$lat_leg4<-car::recode(data_transport$transport_start_1,"
+					1=-3.5286807;
+					2=-3.3227432;
+					3=-3.166825;
+					4=-3.1413061;
+					5=-3.6608888;
+					6=-4.2118703;
+					7=-3.186389;
+					8=NA;
+					NA=NA")
+
+data_transport$long_leg4<-car::recode(data_transport$transport_start_1,"
+					1=37.118976;
+					2=37.3285435;
+					3=36.8856703;
+					4=37.212256;
+					5=37.5662467;
+					6=37.4419273;
+					7=37.068611;
+					8=NA;
+					NA=NA")
 
 #Transport mode Leg 1
 table<-with(data_prehospital,table(transport_leg1))
@@ -474,27 +584,122 @@ chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
 
+library(ggplot2)
+library(ggthemes)
+library(extrafont)
+library(plyr)
+library(scales)
+
+data_bargraph<-with(data_prehospital,data.frame(
+	transport_mode_1,
+	transport_mode_2,
+	transport_mode_3,
+	transport_mode_4))
+
+data_bargraph$transport_mode_1<-car::recode(
+	data_bargraph$transport_mode_1,"
+	3=9;
+	91=NA;
+	99=NA")
+data_bargraph$transport_mode_2<-car::recode(
+	data_bargraph$transport_mode_2,"
+	3=9;
+	91=NA;
+	99=NA")
+data_bargraph$transport_mode_3<-car::recode(
+	data_bargraph$transport_mode_3,"
+	3=9;	
+	91=NA;
+	99=NA")
+
+table1<-count(data_bargraph,'transport_mode_1')
+names(table1)[1]<-"mode"
+table1$cat<-"Leg 1"	
+table2<-count(data_bargraph,'transport_mode_2')
+names(table2)[1]<-"mode"
+table2$cat<-"Leg 2"	
+table3<-count(data_bargraph,'transport_mode_3')
+names(table3)[1]<-"mode"
+table3$cat<-"Leg 3"	
+table4<-count(data_bargraph,'transport_mode_4')
+names(table4)[1]<-"mode"
+table4$cat<-"Leg 4"
+
+table_data<-rbind(table1,table2,table3,table4)	
+table_data<-na.omit(table_data)
+
+table_data$sum<-table_data$cat
+table_data[table_data$cat=='Leg 1',]$sum<-sum(table_data
+	[table_data$cat=='Leg 1',]$freq)
+table_data[table_data$cat=='Leg 2',]$sum<-sum(table_data
+	[table_data$cat=='Leg 2',]$freq)
+table_data[table_data$cat=='Leg 3',]$sum<-sum(table_data
+	[table_data$cat=='Leg 3',]$freq)
+table_data[table_data$cat=='Leg 4',]$sum<-sum(table_data
+	[table_data$cat=='Leg 4',]$freq)
+# table_data[table_data$cat==5,]$sum<-sum(table_data
+# 	[table_data$cat==5,]$freq)
+# table_data[table_data$cat==6,]$sum<-sum(table_data
+# 	[table_data$cat==6,]$freq)
+# table_data[table_data$cat==7,]$sum<-sum(table_data
+# 	[table_data$cat==7,]$freq)
+# table_data[table_data$cat==8,]$sum<-sum(table_data
+# 	[table_data$cat==8,]$freq)
+# table_data[table_data$cat==9,]$sum<-sum(table_data
+# 	[table_data$cat==9,]$freq)
+table_data$sum<-as.numeric(table_data$sum)
+
+table_data$mode<-car::recode(table_data$mode,"
+	1='Car';
+	2='Taxi';
+	4='Boda Boda';
+	5='Dala Dala';
+	6='Police vehicle';
+	7='Ambulance';
+	8='Bus';
+	9='Other'")
+
+table_data$percentage<-round((table_data$freq/as.numeric(table_data$sum))*100,1)
+
+table_data<-table_data[order(table_data$cat,table_data$mode,decreasing = c(FALSE, TRUE),method="radix"),]
+
+table_data <- ddply(table_data, .(cat),
+                    transform, 
+                    pos = cumsum(percentage) - (0.5 * percentage))
+
+ggplot() + 
+# theme_bw() + 
+geom_bar(aes(y = percentage, 
+							  x = cat, 
+							  fill = mode), 
+							  data = table_data,
+                           	  stat="identity") +
+geom_text(data=table_data, aes(x = cat, 
+										   y = pos,
+                                           label = paste0(percentage,"%")), 
+										   size=4) +
+labs(x="Course points", y="Percentage") +
+scale_y_continuous(labels = dollar_format(
+	suffix = "%", prefix = "")) +
+theme_minimal() +
+scale_fill_brewer(palette="Paired") #+
+#coord_flip()
+
+library(rworldmap)
+library(ggmap)
+
+
 ##############################################################
 #Table 2
 #############################################################
 
-analysis_data$time_to_care_cat<-car::recode(analysis_data$time_to_care,"
-					0:1='0-1hrs';
-					1.01:2='1-2hrs';
-					2.01:3='2-3hrs';
-					3.01:4='3-4hrs';
-					else='more 4hrs'")
-
-analysis_data$transport_legs_cat<-car::recode(analysis_data$transport_legs,"
-					0:1='0 to 1';
-					else='more 1'")
-
 logmodel_gcs<-glm(gcs_cat ~ time_to_care_cat + 
-						transport_legs + 
+						transport_legs_cat + 
 						age + 
 						male +
                         moi + 
-                        alcohol
+                        alcohol +
+                        transport_leg1	
                        ,family=binomial, data=analysis_data)
 summary(logmodel_gcs)
 #anova(reglogGEU)
@@ -507,11 +712,13 @@ exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95)))
 
 
 logmodel_gos<-glm(gos_cat ~ time_to_care_cat + 
-						transport_legs + 
+						transport_legs_cat + 
 						age + 
 						male +
                         moi + 
-                        alcohol
+                        alcohol +
+                        transport_leg1 +
+                        gcs_cat
                        ,family=binomial, data=analysis_data)
 summary(logmodel_gos)
 #anova(reglogGEU)
@@ -528,21 +735,31 @@ tmp_gcs<-data.frame(cbind(exp(coef(logmodel_gcs)),
 tmp_gos<-data.frame(cbind(exp(coef(logmodel_gos)),
 	exp(confint(logmodel_gos))))
 tmp<-rbind(tmp_gcs,tmp_gos)
-odds<-tmp[-c(1,11),]
+odds<-tmp[-c(1,16,31),]
 names(odds)<-c('OR', 'lower', 'upper')
 odds$vars<-rep(c("1-2 hrs vs. 0-1 hrs",
-			 "2-3 hrs vs. 0-1 hrs",
+			 "2-3 hrs vs. 0-1 thrs",
 			 "3-4 hrs vs. 0-1 hrs",
 			 "4 or more hrs vs. 0-1 hrs",
 			 "# course points",
 			 "Age",
 			 "Male vs. Female",
 			 "RTI vs. non-RTI",
-			 "Alcohol use vc. Abstainer"),2)
-odds$groups<-rep(c(rep("Time to care",4),"Course points",
-	"Age", "Gender","MOI","Alcohol use"),2)
-odds$models<-c(rep("Mild vs. Moderate/Severe",9),
-			   rep("Good vs. Poor outcome",9))
+			 "Alcohol use vc. Abstainer",
+			 "Moshi Rural vs. Moshi Urban",
+			 "Hai vs. Moshi Urban",
+			 "Rombo vs. Moshi Urban",
+			 "Mwanga vs. Moshi Urban",
+			 "Same vs. Moshi Urban"),2)
+odds$groups<-rep(c(rep("Time to care",4),
+					"Course points",
+					"Age", 
+					"Gender",
+					"MOI",
+					"Alcohol use",
+					rep("District",5)),2)
+odds$models<-c(rep("Mild vs. Moderate/Severe",14),
+			   rep("Good vs. Poor outcome",14))
 #ticks<-c(seq(.1, 1, by =.1), seq(0, 10, by =1), seq(10, 100, by =10))
 
 ggplot(odds, aes(y= OR, x = reorder(vars, OR))) +
@@ -550,9 +767,24 @@ geom_point() +
 geom_errorbar(aes(ymin=lower, ymax=upper), width=.2) +
 #scale_y_log10(breaks=ticks, labels = ticks) +
 geom_hline(yintercept = 1, linetype=2) +
-facet_grid(groups~models, scales="free_y") +
+scale_x_discrete(limits=c(
+			 "4 or more hrs vs. 0-1 hrs",
+			 "3-4 hrs vs. 0-1 hrs",
+			 "2-3 hrs vs. 0-1 thrs",
+			 "1-2 hrs vs. 0-1 hrs",
+			 "# course points",
+			 "Age",
+			 "Male vs. Female",
+			 "RTI vs. non-RTI",
+			 "Alcohol use vc. Abstainer",
+			 "Moshi Rural vs. Moshi Urban",
+			 "Hai vs. Moshi Urban",
+			 "Rombo vs. Moshi Urban",
+			 "Mwanga vs. Moshi Urban",
+			 "Same vs. Moshi Urban")) +
+facet_grid(.~models, scales="free_y") +
 coord_flip() +
-labs(x = 'Variables', y = 'OR') +
+labs(x = 'Predictors of TBI outcomes', y = 'OR (CI 95%)') +
 theme_bw()
 # }
 
