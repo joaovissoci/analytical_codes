@@ -44,7 +44,22 @@ library, character.only=T)
 
 data <- read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv", header = TRUE)
 
+data_registry<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/tbi_registry/tz_TBIregistry_data.csv",header=TRUE)
+
 # data_tbi <- read.csv("/Users/jnv4/Desktop/tz_tbiregistry_data.csv", header = TRUE)
+
+#############################################################################
+#MERGING REGISTRY AND MH data
+#############################################################################
+
+data_registry$tbi_reg<-data_registry$study_id
+
+data_mhregistry<-merge(x = data, 
+					   y = data_registry, 
+					   by = "tbi_reg", 
+					   all.x = TRUE)
+
+write.csv(data_mhregistry,"/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/tbi_registry/tz_TBIregistryANDmh_data.csv")
 
 #############################################################################
 #DATA MANAGEMENT

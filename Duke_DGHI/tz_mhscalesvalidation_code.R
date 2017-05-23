@@ -38,9 +38,9 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/tbi_registry/tz_TBIregistryANDmh_data.csv",sep=',')
 
-data2<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tz_bnipatients_data.csv")
+data2<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tz_bnipatients_data.csv")
 
 ######################################################
 #DATA MANAGEMENT
@@ -66,17 +66,29 @@ data_validation$education_cat<-car::recode(data_validation$education,"
      0:7='Some primary';8:13='Some secondary';
      14:16='Some university';89=NA")
 
-# #recoding education varibLE
+# #recoding ocupation varibLE
 data_validation$occupation_cat<-car::recode(
 	data_validation$occupation,"
      0='Business';1='Farming';
      3='Paid worker';4='Skilled worker';
      5='Paid worker';6='Other';8='Other';89=NA")
 
-#recoding education varibLE
+#recoding age varibLE
 data_validation$age_cat<-car::recode(
-	data_validation$age,"
+	data_validation$age.x,"
      0:35='<35';36:100='>35'")
+
+#recoding GCS varibLE
+data_validation$gcs_cat<-car::recode(
+	data_validation$gcs_tot,"
+     0:8='Severe';
+     9:12='Moderate';
+     13:15='Mild'")
+
+#recoding gos
+data_validation$gos_cat<-as.factor(car::recode(
+	data_validation$gos,"1:4='Death';
+					   5='Alive'"))
 
 #Organize scale datasets
 #AUDIT
@@ -205,6 +217,26 @@ prop.table(table)
 
 # Categorical Descriptives
 table<-with(data_validation,table(education_cat))
+table
+prop.table(table)
+
+#GCS
+table<-with(data_validation,table(gcs_tot))
+table
+prop.table(table)
+
+#Frequency of alcohol use
+table<-with(data_validation,table(h1))
+table
+prop.table(table)
+
+#Frequency of alcohol use
+table<-with(data_validation,table(h2))
+table
+prop.table(table)
+
+#Frequency of alcohol use
+table<-with(data_validation,table(alcohol))
 table
 prop.table(table)
 
@@ -526,8 +558,22 @@ tau<-as.data.frame(with(subset(Est, op == "|"),
 
 invariance_data<-data.frame(audit_data,gender=data$female)
 library(semTools)
+
+invariance_data$h2<-car::recode(invariance_data$h2,"
+	2:4=1")
+
+invariance_data$h3<-car::recode(invariance_data$h3,"
+	2:4=1")
+
+invariance_data$h5<-car::recode(invariance_data$h5,"
+	0:4=1")
+
+audit_model <- '
+Audit =~  h1 + h2 + h3 + h4 + h6 + h7 + h8 + h9 + h10'
+
+
 measurementInvariance(audit_model,
-				   data = na.omit(invariance_data),
+				   data = na.omit(invariance_data[,-5]),
 				   estimator="WLSMV",
 				   ordered=names(audit_data),
 	group="gender")
