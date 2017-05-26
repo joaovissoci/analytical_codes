@@ -38,7 +38,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/tbi_registry/tz_TBIregistry_data.csv")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistry_data.csv")
 
 ######################################################
 #DATA MANAGEMENT
@@ -314,7 +314,7 @@ analysis_data$male<-as.factor(analysis_data$male)
 imp <- mice(analysis_data, seed = 2222, m=5)
 
 # # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-analysis_data<-complete(imp,4)
+analysis_data<-mice::complete(imp,4)
 
 ##############################################################
 #TABLE 1

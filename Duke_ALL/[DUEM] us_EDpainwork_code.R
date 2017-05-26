@@ -51,10 +51,16 @@ data<-with(data_raw,data.frame(
 					PainScore,
 					PainScoreDischarge,
 					treatreg,
-					day2_PhysVisit,
-					day3_PhysVisit,
-					day4_PhysVisit,
-					day5_PhysVisit))
+					# day2_Back2Work,
+					# day3_Back2Work,
+					# day4_Back2Work,
+					# day5_Back2Work,
+					# day2_WEffectiveness,
+					# day3_WEffectiveness,
+					# day4_WEffectiveness,
+					# day5_WEffectiveness,
+					WorkStatus,
+					retWrkDate))
 
 data$gender<-car::recode(data$gender,"'F'='F';'M'='M';else=NA")
 
@@ -64,6 +70,15 @@ data$race<-car::recode(data$race,"'A'='A';
 									  'H'='H';
 									  'Other'='Other';
 									  'U'='U';	
+									  else=NA")
+
+data$WorkStatus<-car::recode(data$WorkStatus,"'Disabled'='Not-employed';
+									  'PartTimeG50'='Part time';
+									  'PartTimeL50'='Part time';
+									  'Retired'='Not-employed';
+									  'Student'='Not-employed';
+									  'Unemployed'='Not-employed';
+									  'FullTime'='Full time';	
 									  else=NA")
 
 
@@ -137,52 +152,86 @@ data_imputed<-complete(imp,4)
 # #imp <- mice(nhanes, pred = pred, pri = FALSE) # rerun the model specifying pred argumento witht eh matriz recoded.
 
 
+## Adding working variable
+data_full<-data.frame(data_imputed,
+					day2_Back2Work=data_raw$day2_Back2Work,
+					day3_Back2Work=data_raw$day3_Back2Work,
+					day4_Back2Work=data_raw$day4_Back2Work,
+					day5_Back2Work=data_raw$day5_Back2Work,
+					day2_WEffectiveness=data_raw$day2_WEffectiveness,
+					day3_WEffectiveness=data_raw$day3_WEffectiveness,
+					day4_WEffectiveness=data_raw$day4_WEffectiveness,
+					day5_WEffectiveness=data_raw$day5_WEffectiveness,
+					day2_MaxPainScore=data_raw$day2_MaxPainScore,
+					day3_MaxPainScore=data_raw$day3_MaxPainScore,
+					day4_MaxPainScore=data_raw$day4_MaxPainScore,
+					day5_MaxPainScore=data_raw$day5_MaxPainScore,
+					day2_MinPainScore=data_raw$day2_MinPainScore,
+					day3_MinPainScore=data_raw$day3_MinPainScore,
+					day4_MinPainScore=data_raw$day4_MinPainScore,
+					day5_MinPainScore=data_raw$day5_MinPainScore)
+
+NAto0<-function(x){
+	car::recode(x,"NA=0")
+	}
+
+data_full_NAto0<-lapply(data_full,NAto0)
+
+
+Neg1toNA<-function(x){
+	car::recode(x,"-1=NA")
+	}
+
+data_full<-lapply(data_full,Neg1toNA)
+
+data_full<-as.data.frame(data_full)
+
 #Unscheduled visits
 #######################################################
 
-for (i in 1:nrow(data_imputed))
-{
- if (data_imputed$day2_PhysVisit[i] == 1 || 
- 	 data_imputed$day3_PhysVisit[i] == 1 || 
- 	 data_imputed$day4_PhysVisit[i] == 1 || 
- 	 data_imputed$day5_PhysVisit[i] == 1)
+# for (i in 1:nrow(data_imputed))
+# {
+#  if (data_imputed$day2_PhysVisit[i] == 1 || 
+#  	 data_imputed$day3_PhysVisit[i] == 1 || 
+#  	 data_imputed$day4_PhysVisit[i] == 1 || 
+#  	 data_imputed$day5_PhysVisit[i] == 1)
      
-     {
-       data_imputed$unscheduled_visits[i] <- "yes"
-     } else # if (v1[i] == "Sim" || 
-     {
-       data_imputed$unscheduled_visits[i] <-"no"
-     } # else if (v1[i] == "Sim" || 
-} # for (i in 1:nrow(dataframe)
+#      {
+#        data_imputed$unscheduled_visits[i] <- "yes"
+#      } else # if (v1[i] == "Sim" || 
+#      {
+#        data_imputed$unscheduled_visits[i] <-"no"
+#      } # else if (v1[i] == "Sim" || 
+# } # for (i in 1:nrow(dataframe)
 
-
-for (i in 1:nrow(data_imputed))
+for (i in 1:nrow(data_full))
 {
- if (data_imputed$day2_PhysVisit[i] == 1)
+ if (data_full_NAto0$day2_Back2Work[i] == 1)
  	{ 
-       data_imputed$unscheduled_visits_day[i] <- 2
+       data_full$return_to_work_day[i] <- 2
 
- 	} else if (data_imputed$day3_PhysVisit[i] == 1)
-
- 	{
-        data_imputed$unscheduled_visits_day[i] <- 3
-
- 	} else if (data_imputed$day4_PhysVisit[i] == 1)
+ 	} else if (data_full_NAto0$day3_Back2Work[i] == 1)
 
  	{
-        data_imputed$unscheduled_visits_day[i] <- 4
+        data_full$return_to_work_day[i] <- 3
+
+ 	} else if (data_full_NAto0$day4_Back2Work[i] == 1)
+
+ 	{
+        data_full$return_to_work_day[i] <- 4
  	
- 	} else if (data_imputed$day5_PhysVisit[i] == 1)
+ 	} else if (data_full_NAto0$day5_Back2Work[i] == 1)
 
  	{
-        data_imputed$unscheduled_visits_day[i] <- 5
+        data_full$return_to_work_day[i] <- 5
 
      } else # if (v1[i] == "Sim" || 
      {
-       data_imputed$unscheduled_visits_day[i] <- NA
+       data_full$return_to_work_day[i] <- NA
      } # else if (v1[i] == "Sim" || 
 } # for (i in 1:nrow(dataframe)
 
+data_returntowork<-subset(data_full,data_full$WorkStatus != "Not-employed")
 
 ######################################################################
 #TABLE 1
@@ -221,6 +270,11 @@ prop.table(table,2)
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
+
+#Employment
+table<-with(data_full,table(WorkStatus))
+table
+prop.table(table)
 
 # Primary Diag
 table<-with(data_imputed,table(eDx_Primary))
@@ -276,18 +330,32 @@ with(data_imputed,describeBy(unscheduled_visits_day,treatreg))
 anova<-with(data_imputed,aov(unscheduled_visits_day ~ treatreg))
 summary(anova)
 
+# Days to work
+with(data_full,describe(return_to_work_day))
+
 ######################################################################
 #Figure 1
 ######################################################################
 
- tblFun <- function(x,y){
-    tbl <- table(x,y)
-    res <- cbind(tbl,round(prop.table(tbl,2)*100,2))
-    rownames(res) <- c('yes','no')
-    res[,4:6]
+ tblFun <- function(x){
+    tbl <- table(x)
+    res <- cbind(tbl,round(prop.table(tbl)*100,2))
+    # rownames(res) <- c('yes','no')
+    # res[,4:6]
 }
 
-plot_data<-do.call(rbind,lapply(data_imputed[8:11],tblFun,y=data_imputed[,7]))
+ summaryFun<- function(x){ 
+ 	sum<-summary(x)
+ 	sum[4]
+ }
+
+
+plot_data<-do.call(rbind,lapply(data_full[10:13],tblFun))
+
+max_pain<-do.call(rbind,lapply(data_full[18:21],summaryFun))
+
+min_pain<-do.call(rbind,lapply(data_full[22:25],summaryFun))
+
 rownames(plot_data)<-c("day2yes","day2no",
 				 "day3yes","day3no",
 				 "day4yes","day4no",
@@ -306,21 +374,69 @@ plot_data$outcome<-c("yes","no",
 				 "yes","no",
 				 "yes","no")
 
-plot_data2<-NULL
-plot_data2$prop<-c(plot_data[,1],plot_data[,2],plot_data[,3])
-plot_data2$med<-c(rep("OPO",8),rep("SPO",8),rep("SPP",8))
-plot_data2$out<-c(plot_data$outcome,plot_data$outcome,plot_data$outcome)
-plot_data2$fup<-c(plot_data$FUP,plot_data$FUP,plot_data$FUP)
-plot_data2<-as.data.frame(plot_data2)
+barplot<-data.frame(value=c(min_pain,max_pain),
+					FUP=as.factor(c("day2","day3","day4","day5")),
+					Pain=c(rep("Min Pain",4),rep("Max Pain",4)))
 
 library(ggplot2)
 # Basic line plot with points
-ggplot(data=plot_data2[plot_data2$out=="no",], 
-	aes(x=fup, y=prop,group=med,color=med)) +
-  geom_line()+
-  geom_point() +
-  scale_color_brewer(palette="Paired")+
-  theme_minimal()
+P <- ggplot() +
+	geom_bar(data=barplot,aes(x=FUP,y=value*10,group=Pain,fill=Pain),
+		stat="identity",
+		alpha=0.5,
+		position=position_dodge()) + 
+	scale_fill_brewer(palette="Paired")
+  
+P
+
+P <- P + geom_line(data=plot_data[plot_data$outcome=="yes",], 
+	aes(x=FUP, y=V2,group=outcome,color=outcome),size=2) +
+  	geom_point(size=3)
+
+P
+
+P <- P + theme_minimal()
+
+P
+
+library(lsr)
+
+with(data_full,describeBy(day2_MaxPainScore,day2_Back2Work))
+with(data_full,t.test(day2_MaxPainScore~day2_Back2Work))
+with(data_full,cohensD(day2_MaxPainScore~day2_Back2Work))
+
+with(data_full,describeBy(day2_MinPainScore,day2_Back2Work))
+with(data_full,t.test(day2_MinPainScore~day2_Back2Work))
+with(data_full,cohensD(day2_MinPainScore~day2_Back2Work))
+
+with(data_full,describeBy(day3_MaxPainScore,day3_Back2Work))
+with(data_full,t.test(day3_MaxPainScore~day3_Back2Work))
+with(data_full,cohensD(day3_MaxPainScore~day3_Back2Work))
+
+with(data_full,describeBy(day3_MinPainScore,day3_Back2Work))
+with(data_full,t.test(day3_MinPainScore~day3_Back2Work))
+with(data_full,cohensD(day3_MinPainScore~day3_Back2Work))
+
+with(data_full,describeBy(day4_MaxPainScore,day4_Back2Work))
+with(data_full,t.test(day4_MaxPainScore~day4_Back2Work))
+with(data_full,cohensD(day4_MaxPainScore~day4_Back2Work))
+
+with(data_full,describeBy(day4_MinPainScore,day4_Back2Work))
+with(data_full,t.test(day4_MinPainScore~day4_Back2Work))
+with(data_full,cohensD(day4_MinPainScore~day4_Back2Work))
+
+with(data_full,describeBy(day5_MaxPainScore,day5_Back2Work))
+with(data_full,t.test(day5_MaxPainScore~day5_Back2Work))
+with(data_full,cohensD(day5_MaxPainScore~day5_Back2Work))
+
+with(data_full,describeBy(day5_MinPainScore,day5_Back2Work))
+with(data_full,t.test(day5_MinPainScore~day5_Back2Work))
+with(data_full,cohensD(day5_MinPainScore~day5_Back2Work))
+
+
+aov()
+
+
 
 # # Change the line type
 # ggplot(data=df, aes(x=dose, y=len, group=1)) +
@@ -342,26 +458,61 @@ ggplot(data=plot_data2[plot_data2$out=="no",],
   scale_color_brewer(palette="Paired")+
   theme_minimal()
 ######################################################################
-#Table 2
+#Figure 2
 ######################################################################
 
-reg_model<-glm(as.factor(unscheduled_visits) ~ treatreg + 
-									gender + 
-									age + 
-									# race +
-                            		eDx_Primary + 
-                            		PainScore
-                            ,family=binomial, data=data_imputed)
-summary(reg_model)
-#anova(reglogGEU)
-#exp(coef(model1_death)) # exponentiated coefficients
-#exp(confint(model1_death)) # 95% CI for exponentiated coefficients
-exp(cbind(Odds=coef(reg_model),confint(reg_model,level=0.95))) 
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-#logistic.display(baselineXFUP3)
+plot_data_fig2<-NULL
+
+plot_data_fig2$xvar<-with(data_full,c(
+				day2_WEffectiveness,
+				day3_WEffectiveness,
+				day4_WEffectiveness,
+				day5_WEffectiveness))
+
+plot_data_fig2$yvar1<-with(data_full,c(
+				day2_MaxPainScore,
+				day3_MaxPainScore,
+				day4_MaxPainScore,
+				day5_MaxPainScore))
+
+plot_data_fig2$yvar2<-with(data_full,c(
+				day2_MinPainScore,
+				day3_MinPainScore,
+				day4_MinPainScore,
+				day5_MinPainScore))
+
+plot_data_fig2$cond<-with(data_full,c(
+				rep("day2",length(day2_MinPainScore)),
+				rep("day3",length(day3_MinPainScore)),
+				rep("day4",length(day4_MinPainScore)),
+				rep("day5",length(day5_MinPainScore))))
 
 
+plot_data_fig2<-as.data.frame(plot_data_fig2)
+
+# Same, but with different colors and add regression lines
+ggplot(plot_data_fig2, aes(x=yvar2, y=xvar, color=cond)) +
+    geom_point() + geom_jitter() +
+    scale_colour_hue(l=50) + # Use a slightly darker palette than normal
+    geom_smooth()    # Don't add shaded confidence region
+
+# Same, but with different colors and add regression lines
+ggplot(plot_data_fig2, aes(x=yvar1, y=xvar, color=cond)) +
+    geom_point() + geom_jitter() +
+    scale_colour_hue(l=50) + # Use a slightly darker palette than normal
+    geom_smooth()    # Don't add shaded confidence region
+
+
+lmmodel<-glm(scale(xvar) ~ scale(yvar1) *
+					# yvar2 +
+					cond,
+					family=gaussian(),
+					data=plot_data_fig2)
+
+summary(lmmodel)
+confint(lmmodel, level=0.95)
+library(lm.beta)
+print(lm.beta(lmmodel))
 
 ######################################################################
 #END

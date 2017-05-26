@@ -44,23 +44,18 @@ data_raw<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/
 #Creating a data frame (group of variables)
 
 data<-with(data_raw,data.frame(
-					age=X...age,
-					gender,
-					race,
-					eDx_Primary,
-					PainScore,
-					PainScoreDischarge,
-					treatreg,
-					edvisits,
-					WorkStatus,
-					day2_Back2Work,
-					day3_Back2Work,
-					day4_Back2Work,
-					day5_Back2Work,
-					day2_WEffectiveness,
-					day3_WEffectiveness,
-					day4_WEffectiveness,
-					day5_WEffectiveness))
+ 					age=X...age,
+ 					gender,
+ 					race,
+ 					eDx_Primary,
+ 					PainScore,
+ 					PainScoreDischarge,
+ 					treatreg,
+ 					day2_PhysVisit,
+ 					day3_PhysVisit,
+ 					day4_PhysVisit,
+ 					day5_PhysVisit,
+ 					edvisits))
 
 data$gender<-car::recode(data$gender,"'F'='F';'M'='M';else=NA")
 
@@ -302,10 +297,10 @@ rownames(plot_data)<-c("day2yes","day2no",
 
 plot_data<-as.data.frame(plot_data)
 
-plot_data$FUP<-c("day2","day2",
-				 "day3","day3",
-				 "day4","day4",
-				 "day5","day5")
+plot_data$FUP<-c("Day 2","Day 2",
+				 "Day 3","Day 3",
+				 "Day 4","Day 4",
+				 "Day 5","Day 5")
 
 
 plot_data$outcome<-c("yes","no",
@@ -322,7 +317,7 @@ plot_data2<-as.data.frame(plot_data2)
 
 library(ggplot2)
 # Basic line plot with points
-ggplot(data=plot_data2[plot_data2$out=="no",], 
+ggplot(data=plot_data2[plot_data2$out=="yes",], 
 	aes(x=fup, y=prop,group=med,color=med)) +
   geom_line()+
   geom_point() +
@@ -340,24 +335,42 @@ ggplot(data=plot_data2[plot_data2$out=="no",],
 
 plot_data2$work<-with(data_imputed,c()
 
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/joaovissoci/Desktop/amped_healthcare_fig.eps",
+	width = 8, height = 4)
 library(ggplot2)
 # Basic line plot with points
-ggplot(data=plot_data2[plot_data2$out=="no",], 
-	aes(x=fup, y=prop,group=med,color=med)) +
+ggplot(data=plot_data2[plot_data2$out=="yes",], 
+	aes(x=fup, y=prop,group=med,color=med,shape=med)) +
   geom_line()+
-  geom_point() +
-  scale_color_brewer(palette="Paired")+
-  theme_minimal()
+  geom_point(aes(shape=med),
+  			 size=2) +
+  scale_color_manual(values=c("gray75","gray50","black"),
+  					 labels=c("Opioids","NSAID","Combo"),
+  					 name="Treatment\n regimen")+
+  scale_shape_discrete(name="Treatment\n regimen",
+  			 		   labels=c("Opioids","NSAID","Combo")) +
+  theme_minimal() +
+  xlab("Follow up day") +
+  ylab("% of patients with unscheduled visits") +
+  theme(legend.position=c(.85,.75))
+#Add plot
+dev.off()
 ######################################################################
 #Table 2
 ######################################################################
 
-reg_model<-glm(as.factor(unscheduled_visits) ~ treatreg + 
+# data_imputed$treatreg<-car::recode(data_imputed$treatreg, 
+# 	"'SPP'='ASPP'")
+
+
+reg_model<-glm(as.factor(unscheduled_visits) ~ treatreg*PainScore + 
 									gender + 
 									age + 
 									# race +
-                            		eDx_Primary + 
-                            		PainScore
+                            		eDx_Primary
+                            		# PainScore
                             ,family=binomial, data=data_imputed)
 summary(reg_model)
 #anova(reglogGEU)
