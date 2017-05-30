@@ -3,7 +3,7 @@
 
 #lendo o arquivo "noname"
 #file <- file.choose()
-dados <- read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/CCS/juvenile_offenders/adolecents_prisoners_text_data_coded.csv", header = TRUE)
+dados <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/CCS/juvenile_offenders/adolecents_prisoners_text_data_coded.csv", header = TRUE)
 dados_theme1<-subset(dados,dados$Theme=="perspectiva de futuro")
 dados_theme2<-subset(dados,dados$Theme=="reconhecimento")
 dados_theme3<-subset(dados,dados$Theme=="relacoes e vinculos familiares")
@@ -504,13 +504,13 @@ names<-c("adrenaline",
 word_freq<-word_freq/3
 word_freq<-car::recode(word_freq,"1:5=7;8=9;10:11=15;13:14=20")
 
-# # postscript("/home/joao/Desktop/info_consent_figure2.eps",
-# #   width = 1500, height = 1200,horizontal = FALSE, 
-# #   onefile = FALSE)
+# setEPS()
+# postscript("/Users/joaovissoci/Desktop/ana_reconhecimento_fig2.eps",
+  width = 12, height = 8)
 # # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
-# #   width = 1500, height = 1200,horizontal = FALSE, 
-# #   onefile = FALSE)
-tiff("/Users/jnv4/Desktop/ana_reconhecimento_tiff", width = 1200,
+# #   width = 1200, height = 700,horizontal = FALSE, 
+# # #   onefile = FALSE)
+tiff("/Users/joaovissoci/Desktop/ana_reconhecimento_tiff", width = 1200,
  height = 700,compression = 'lzw')
   network_glasso<-qgraph(cor,
   layout='spring',
