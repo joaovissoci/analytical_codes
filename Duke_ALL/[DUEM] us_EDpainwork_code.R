@@ -502,7 +502,6 @@ ggplot(plot_data_fig2, aes(x=yvar1, y=xvar, color=cond)) +
     scale_colour_hue(l=50) + # Use a slightly darker palette than normal
     geom_smooth()    # Don't add shaded confidence region
 
-
 lmmodel<-glm(scale(xvar) ~ scale(yvar1) *
 					# yvar2 +
 					cond,

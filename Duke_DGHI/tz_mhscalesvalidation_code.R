@@ -38,9 +38,9 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/tbi_registry/tz_TBIregistryANDmh_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistryANDmh_data.csv",sep=',')
 
-data2<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tz_bnipatients_data.csv")
+data2<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tz_bnipatients_data.csv")
 
 ######################################################
 #DATA MANAGEMENT
@@ -286,6 +286,10 @@ psych::alpha(audit_data1,n.iter=1000,check.keys=TRUE)
 psych::alpha(audit_data2,n.iter=1000,check.keys=TRUE)
 psych::alpha(audit_data2_3,n.iter=1000,check.keys=TRUE)
 psych::alpha(audit_data3_3,n.iter=1000,check.keys=TRUE)
+
+X<-psych::omegaSem(audit_data,poly=TRUE)
+summary(X$sem)
+lavaan::fitMeasures(X$sem)
 
 #### INTER-RATER Agreement
 # data_agreement<-with(data,data.frame( ))
@@ -1054,21 +1058,21 @@ plotGOF(lrt,conf=list())
 #GENERATING SCORES
 #############################################################################
 
-alcohol_scores<-data.frame(audit_overall,
-						   audit_2dimension,
-						   audit_3dimension,
-						   cage_overall)
+alcohol_scores<-data.frame(rowSums(audit_data),
+						   # audit_2dimension,
+						   # audit_3dimension,
+						   rowSums(cage_data))
 colnames(alcohol_scores)<-c("audit_overall",
-                            "audit_2dim_d1",
-                            "audit_2dim_d2",
-                            "audit_3dim_d1",
-                            "audit_3dim_d2",
-                            "audit_3dim_d3",
+#                             # "audit_2dim_d1",
+#                             # "audit_2dim_d2",
+#                             # "audit_3dim_d1",
+#                             # "audit_3dim_d2",
+#                             # "audit_3dim_d3",
                             "cage_overall")
 
-rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
-alcohol_scores_scaled<-lapply(alcohol_scores,rescale)
-alcohol_scores_scaled<-as.data.frame(alcohol_scores_scaled)
+# rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+# alcohol_scores_scaled<-lapply(alcohol_scores,rescale)
+# alcohol_scores_scaled<-as.data.frame(alcohol_scores_scaled)
 
 # write.csv(alcohol_scores_scaled,"/Users/jnv4/Desktop/alcohol_scores.csv")
 
@@ -1076,6 +1080,25 @@ Hmisc::rcorr(as.matrix(alcohol_scores),type="spearman")
 
 cor(alcohol_scores,method="spearman")
 
+size<-car::recode(cage_overall,"0=1;1=2;2=3;3=4")
+
+# Same, but with different colors and add regression lines
+plot<- ggplot(alcohol_scores, 
+				  aes(x=cage_overall, 
+				  	  y=audit_overall)) +
+    geom_point(size=size*5) + 
+    geom_jitter(size=size*5) +
+    # scale_colour_hue(l=50) + # Use a slightly darker palette than normal
+    geom_smooth(method=lm,color="grey50") +
+    theme_bw() +
+    ylab("AUDIT") +
+    xlab("CAGE") +
+    geom_text(aes(label="A)", x=0.5, y=32)) +
+    ylim(0, 40)
+    # scale_y_continuous(breaks=seq(0,40,10))
+
+cor_plot
+ # Don't add shaded confidence region
 
 #############################################################################
 #VALIDITY MEASURE
@@ -1089,78 +1112,97 @@ cor(alcohol_scores,method="spearman")
 # 					 depression_scores_scaled[2:3],
 # 					 kessler_scores_scaled[2:5])
 
-# cor_data<-cor_data[data$redcap_event_name=="enrollment_arm_1",]
+cor_data<-cor_data[data$redcap_event_name=="enrollment_arm_1",]
 
 
 # Hmisc::rcorr(as.matrix(cor_data))
-
+cage_score<-as.data.frame(audit_data_cleaned)
 audit2<-as.data.frame(audit_data_cleaned)
 audit_score2<-rowSums(audit2)
-audit_score2_1<-rowSums(audit2[1:3])
-audit_score2_2<-rowSums(audit2[4:10])
-audit_score3_1<-rowSums(audit2[1:3])
-audit_score3_2<-rowSums(audit2[4:6])
-audit_score3_3<-rowSums(audit2[7:10])
+# audit_score2_1<-rowSums(audit2[1:3])
+# audit_score2_2<-rowSums(audit2[4:10])
+# audit_score3_1<-rowSums(audit2[1:3])
+# audit_score3_2<-rowSums(audit2[4:6])
+# audit_score3_3<-rowSums(audit2[7:10])
 
 
 
-rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
-# audit_score2_scaled<-lapply(alcohol_scores,rescale)
-# alcohol_scores_scaled<-as.data.frame(alcohol_scores_scaled)
-audit_score2_scaled<-rescale(scale(rowSums(audit2)))
-audit_score2_1_scaled<-rescale(scale(rowSums(audit2[1:3])))
-audit_score2_2_scaled<-rescale(scale(rowSums(audit2[4:10])))
-audit_score3_1_scaled<-rescale(scale(rowSums(audit2[1:3])))
-audit_score3_2_scaled<-rescale(scale(rowSums(audit2[4:6])))
-audit_score3_3_scaled<-rescale(scale(rowSums(audit2[7:10])))
+# rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+# # audit_score2_scaled<-lapply(alcohol_scores,rescale)
+# # alcohol_scores_scaled<-as.data.frame(alcohol_scores_scaled)
+# audit_score2_scaled<-rescale(scale(rowSums(audit2)))
+# audit_score2_1_scaled<-rescale(scale(rowSums(audit2[1:3])))
+# audit_score2_2_scaled<-rescale(scale(rowSums(audit2[4:10])))
+# audit_score3_1_scaled<-rescale(scale(rowSums(audit2[1:3])))
+# audit_score3_2_scaled<-rescale(scale(rowSums(audit2[4:6])))
+# audit_score3_3_scaled<-rescale(scale(rowSums(audit2[7:10])))
 
-describeBy(audit_score2,audit_data$alcohol_6h_ainjury)
-by(audit_score2_scaled,audit_data2$alcohol_6h_ainjury,summary)
-wilcox.test(audit_score2_scaled~audit_data2$alcohol_6h_ainjury)
+# describeBy(audit_score2,audit_data$alcohol_6h_ainjury)
+# by(audit_score2_scaled,audit_data2$alcohol_6h_ainjury,summary)
+# wilcox.test(audit_score2_scaled~audit_data2$alcohol_6h_ainjury)
 
-# describeBy(audit_score2_1_scaled,audit_data$alcohol_6h_ainjury)
-by(audit_score2_1_scaled,audit_data2$alcohol_6h_ainjury,summary)
-wilcox.test(audit_score2_1_scaled~audit_data2$alcohol_6h_ainjury)
+# # describeBy(audit_score2_1_scaled,audit_data$alcohol_6h_ainjury)
+# by(audit_score2_1_scaled,audit_data2$alcohol_6h_ainjury,summary)
+# wilcox.test(audit_score2_1_scaled~audit_data2$alcohol_6h_ainjury)
 
-# describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
-by(audit_score2_2_scaled,audit_data2$alcohol_6h_ainjury,summary)
-wilcox.test(audit_score2_2_scaled~audit_data2$alcohol_6h_ainjury)
+# # describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
+# by(audit_score2_2_scaled,audit_data2$alcohol_6h_ainjury,summary)
+# wilcox.test(audit_score2_2_scaled~audit_data2$alcohol_6h_ainjury)
 
-# describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
-by(audit_score3_1_scaled,audit_data2$alcohol_6h_ainjury,summary)
-wilcox.test(audit_score2_2_scaled~audit_data2$alcohol_6h_ainjury)
+# # describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
+# by(audit_score3_1_scaled,audit_data2$alcohol_6h_ainjury,summary)
+# wilcox.test(audit_score2_2_scaled~audit_data2$alcohol_6h_ainjury)
 
-# describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
-by(audit_score3_2_scaled,audit_data2$alcohol_6h_ainjury,summary)
-wilcox.test(audit_score3_2_scaled~audit_data2$alcohol_6h_ainjury)
+# # describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
+# by(audit_score3_2_scaled,audit_data2$alcohol_6h_ainjury,summary)
+# wilcox.test(audit_score3_2_scaled~audit_data2$alcohol_6h_ainjury)
 
-# describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
-by(audit_score3_3_scaled,audit_data2$alcohol_6h_ainjury,summary)
-wilcox.test(audit_score3_2_scaled~audit_data2$alcohol_6h_ainjury)
+# # describeBy(audit_score2_2,audit_data$alcohol_6h_ainjury)
+# by(audit_score3_3_scaled,audit_data2$alcohol_6h_ainjury,summary)
+# wilcox.test(audit_score3_2_scaled~audit_data2$alcohol_6h_ainjury)
 
+grop<-car::recode(audit_data2$consumption,"
+	0=0;
+	1=0;
+	2=2")
 
-
-
-
-
-describeBy(audit_score2,audit_data$pos_etoh)
-
-wilcox.test(audit_score2~audit_data$pos_etoh)
-
-boxplot<-data.frame(audit_score2,grop=audit_data$alcohol_6h_ainjury)
+boxplot<-data.frame(audit_score2,grop)
 boxplot<-na.omit(boxplot)
 
 library(ggplot2)
 # Use single color
-p<-ggplot(boxplot, aes(x=as.factor(grop), y=audit_score2)) +
-  geom_boxplot(fill='#A4A4A4', color="black")
-p + theme(legend.position="left")
-# p + scale_fill_grey() + theme_classic()
+p<-ggplot(boxplot, 
+		  aes(x=as.factor(grop), 
+		  y=audit_score2)) +
+  geom_boxplot(fill='white', 
+  			   color="grey20",
+  			   alpha=0.5) +
+  theme_bw() +
+  xlab("Groups") +
+  ylab("AUDIT") +
+  scale_x_discrete(labels=c("Non-drinkers","Drinkers")) +
+  geom_text(aes(label="*P<.05", x=1.5, y=23, label= "boat")) + 
+  geom_segment(aes(x=1.2,
+  				   y=20,
+  				   xend=1.8,
+  				   yend=20)) +
+  geom_segment(aes(x=1.2,
+  				   y=20,
+  				   xend=1.2,
+  				   yend=18)) +
+  geom_segment(aes(x=1.8,
+  				   y=20,
+  				   xend=1.8,
+  				   yend=18)) +
+  geom_text(aes(label="B)", x=0.5, y=32))
 
-# Change box plot colors by groups
-p<-ggplot(ToothGrowth, aes(x=dose, y=len, fill=dose)) +
-  geom_boxplot()
 p
+
+grid.arrange(cor_plot,p,ncol=2)
+
+# p + theme(legend.position="left")
+
+# p + scale_fill_grey() + theme_classic()
 
 
 
