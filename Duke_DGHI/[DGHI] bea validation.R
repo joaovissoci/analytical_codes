@@ -25,7 +25,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
 	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
-	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape"),
+	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape","mice"),
 library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
@@ -37,9 +37,9 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-data_tz<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_tz.csv",sep=',')
-data_sl<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_sl.csv",sep=',')
-data_rw<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_rw.csv",sep=',')
+data_tz<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_tz.csv",sep=',')
+data_sl<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_sl.csv",sep=',')
+data_rw<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/rw_bea_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -60,7 +60,7 @@ bea_data$country<-c(rep("tz",length(data_tz[,1])),
 
 #ROAD AREA
 data_tz$road_area
-data_rw$road_area<-data_rw$road_urban
+data_rw$road_area
 data_sl2$road_area
 
 bea_data$road_area<-c(data_tz$road_area,
@@ -69,9 +69,11 @@ bea_data$road_area<-c(data_tz$road_area,
 
 
 #ROAD DESIGN
-data_tz$road_design
-data_rw$aroad_design
-data_sl2$road_design
+data_tz$road_design<-car::recode(data_tz$road_design,"
+	0=1;1=0;2=0;3=0;99=NA")
+data_rw$aroad_design<-data_rw$X2way
+data_sl2$road_design<-car::recode(data_sl2$road_design,"
+	0=1;1=0;2=0;3=0;99=NA")
 
 bea_data$road_design<-c(data_tz$road_design,
 					  data_rw$aroad_design,
@@ -90,8 +92,7 @@ bea_data$intersections<-c(data_tz$intersections,
 
 data_tz$lane_type_recoded<-car::recode(data_tz$lane_type,"
 	0=0; 1=1; 2=1; 3=0;4=0")
-data_rw$alane_type_recoded<-car::recode(data_rw$alane_type,"
-	0=0;1=1;2=1;3=1")
+data_rw$alane_type_recoded<-data_rw$X4_lanes
 data_sl2$lane_type_recoded<-car::recode(data_sl2$lane_type,"
 	0=0; 1=1; 2=1; 3=0;4=0")
 
@@ -101,18 +102,17 @@ bea_data$lane_type<-c(data_tz$lane_type_recoded,
 
 # auxiliary_lane
 data_tz$auxiliary_lane
-data_rw$aauxiliary_lane
+data_rw$auxiliary_lane
 data_sl2$auxiliary_lane
 
 bea_data$auxiliary_lane<-c(data_tz$auxiliary_lane,
-					  data_rw$aauxiliary_lane,
+					  data_rw$auxiliary_lane,
 					  data_sl2$auxiliary_lane)
 
 # pavement
 data_tz$pavement_recoded<-car::recode(data_tz$pavement,"
 	0=0; 1=1; 2=1; 3=0")
-data_rw$pavement_recoded<-car::recode(data_rw$apavement,"
-	0=0;1=0;2=1")
+data_rw$pavement_recoded<-data_rw$overall_paved
 data_sl2$pavement_recoded<-car::recode(data_sl2$pavement,"
 	0=0; 1=0; 2=1")
 
@@ -122,190 +122,189 @@ bea_data$pavement<-c(data_tz$pavement_recoded,
 
 # road_condition - dry = 1
 data_tz$rd_condition___0
-data_rw$ard_condition___0
+data_rw$rd_condition___0<-data_rw$dry
 data_sl2$rd_condition___0
 
 bea_data$road_condition<-c(data_tz$rd_condition___0,
-					       data_rw$ard_condition___0,
+					       data_rw$rd_condition___0,
 					       data_sl2$rd_condition___0)
 
 #road_narrow - No norrowing - 1
 data_tz$road_narrow___0
-data_rw$aroad_narrow___0
+data_rw$road_narrowing
 data_sl2$road_narrow___0
 
 bea_data$road_narrow<-c(data_tz$road_narrow___0,
-					       data_rw$aroad_narrow___0,
+					       data_rw$road_narrowing,
 					       data_sl2$road_narrow___0)
 
 # roadside
 data_tz$roadside
-data_rw$aroadside
+data_rw$roadside
 data_sl2$roadside
 
 bea_data$roadside<-c(data_tz$roadside,
-					       data_rw$aroadside,
+					       data_rw$roadside,
 					       data_sl2$roadside)
 
 # walkways
 data_tz$walkways<-car::recode(data_tz$walkways,"0=0;1=1;2=1")
-data_rw$awalkways
+data_rw$walkways
 data_sl2$walkways<-car::recode(data_sl2$walkways,"0=0;1=1;2=1")
 
 bea_data$walkways<-c(data_tz$walkways,
-					       data_rw$awalkways,
+					       data_rw$walkways,
 					       data_sl2$walkways)
 
 # bus_stop
 data_tz$bus_stop
-data_rw$abus_stop
+data_rw$bus_stop
 data_sl2$bus_stop
 
 bea_data$bus_stop<-c(data_tz$bus_stop,
-					       data_rw$abus_stop,
+					       data_rw$bus_stop,
 					       data_sl2$bus_stop)
 
 # bump
 data_tz$bump
-data_rw$abump
+data_rw$bump
 data_sl2$bump
 
 bea_data$bump<-c(data_tz$bump,
-					       data_rw$abump,
+					       data_rw$bump,
 					       data_sl2$bump)
 
 # traffic_light
 data_tz$traffic_light<-c(0)
-data_rw$atraffic_light
+data_rw$traffic_light
 data_sl2$traffic_light
 
 bea_data$traffic_light<-c(data_tz$traffic_light,
-					       data_rw$atraffic_light,
+					       data_rw$traffic_light,
 					       data_sl2$traffic_light)
 
 # road_traffic_signs - 1 = no signs
 data_tz$road_traffic_signs___0
-data_rw$aroad_signs_traffic___0
+data_rw$road_signs_traffic
 data_sl2$road_traffic_signs___0
 
 bea_data$road_traffic_signs<-c(data_tz$road_traffic_signs___0,
-					       data_rw$aroad_signs_traffic___0,
+					       data_rw$road_signs_traffic,
 					       data_sl2$road_traffic_signs___0)
 
 # speed_limit
 data_tz$speed_limit
-data_rw$aspeed_limit
+data_rw$speed_limit_signs
 data_sl2$speed_limit<-car::recode(data_sl2$speed_limit,"
 	0=1")
 
 bea_data$speed_limit<-c(data_tz$speed_limit,
-					       data_rw$aspeed_limit,
+					       data_rw$speed_limit_signs,
 					       data_sl2$speed_limit)
 
 # curves_type
 
 data_tz$curves_type___0
-data_rw$acurves_type___0
+data_rw$curves_type___0
 data_sl2$curves_type___0
 
 bea_data$curves_type<-c(data_tz$curves_type___0,
-					       data_rw$acurves_type___0,
+					       data_rw$curves_type___0,
 					       data_sl2$curves_type___0)
 # road_visibility
 data_tz$visibility___0
-data_rw$avisibility___0
+data_rw$overall_visibility
 data_sl2$visibility___0
 
 bea_data$road_visibility<-c(data_tz$visibility___0,
-					       data_rw$avisibility___0,
+					       data_rw$overall_visibility,
 					       data_sl2$visibility___0)
 
 # bridges
 data_tz$bridges
-data_rw$abridges
+data_rw$bridge
 data_sl2$bridges
 
 bea_data$bridges<-c(data_tz$bridges,
-					       data_rw$abridges,
+					       data_rw$bridge,
 					       data_sl2$bridges)
 
 
 #pedestrians_crossing
 data_tz$pedestrians___0
-data_rw$apedestrians___0
+data_rw$pedestrians___safe_road
 data_sl2$pedestrians___0
 
 bea_data$pedestrians_crossing<-c(data_tz$pedestrians___0,
-					      		 data_rw$apedestrians___0,
+					      		 data_rw$pedestrians___safe_road,
 					       		 data_sl2$pedestrians___0)
 
-#pedestrian_centralrestarea
-data_tz$pedestrians___2<-c(0)
-data_rw$apedestrians___2
-data_sl2$pedestrians___2
+# #pedestrian_centralrestarea
+# data_tz$pedestrians___2<-c(0)
+# data_rw$apedestrians___2
+# data_sl2$pedestrians___2
 
-bea_data$pedestrians_center<-c(data_tz$pedestrians___2,
-					      		 data_rw$apedestrians___2,
-					       		 data_sl2$pedestrians___2)
+# bea_data$pedestrians_center<-c(data_tz$pedestrians___2,
+# 					      		 data_rw$apedestrians___2,
+# 					       		 data_sl2$pedestrians___2)
 
 #car_density
 data_tz$ddensity_cars
-data_rw$density_cars
+data_rw$car_avg
 data_sl2$car_density
 
 bea_data$density_car<-c(data_tz$ddensity_cars,
-					      		 data_rw$density_cars,
+					      		 data_rw$car_avg,
 					       		 data_sl2$car_density)
 
 #moto_density
 data_tz$ddensity_motos
-data_rw$density_motos
+data_rw$moto_avg
 data_sl2$motorcycle_density
 
 bea_data$density_moto<-c(data_tz$ddensity_motos,
-					      		 data_rw$density_motos,
+					      		 data_rw$moto_avg,
 					       		 data_sl2$motorcycle_density)
 
 #bike_density
 data_tz$ddensity_bikes
-data_rw$density_bikes
+data_rw$Bike_avg
 data_sl2$bike_density
 
 bea_data$density_bike<-c(data_tz$ddensity_bikes,
-					      		 data_rw$density_bikes,
+					      		 data_rw$Bike_avg,
 					       		 data_sl2$bike_density)
 
 #pedestrian_density
 data_tz$ddensity_peda_crossing
-data_rw$density_peda_crossing
+data_rw$peds_avg
 data_sl2$pedestrian_density
 
 bea_data$density_pedestrian<-c(data_tz$ddensity_peda_crossing,
-					      		 data_rw$density_peda_crossing,
+					      		 data_rw$peds_avg,
 					       		 data_sl2$pedestrian_density)
 
 #bus_truck_density
 data_tz$density_bus_truck<-with(data_tz,ddensity_big_bus+
 	ddensity_trucks+ddensity_daladala)
-data_rw$density_bus_truck<-with(data_rw,density_big_bus+
-	density_taxi_bus+density_trucks)
+data_rw$density_bus_truck<-data_rw$Bus_avg
 data_sl2$bus_truck_density
 
 bea_data$density_bus_truck<-c(data_tz$density_bus_truck,
 					      		 data_rw$density_bus_truck,
 					       		 data_sl2$bus_truck_density)
 
-data_tz$unevenness_roadside
-data_sl$unevenness_roadside
-data_rw$aunevenness_roadside
+# data_tz$unevenness_roadside
+# data_sl$unevenness_roadside
+# data_rw$aunevenness_roadside
 
 # Organizing data set
 
 bea_data<-as.data.frame(bea_data)
 summary(bea_data)
 
-bea_data$road_design<-car::recode(bea_data$road_design,"
-	0=1;1=0;2=0;3=0;99=NA")
+# bea_data$road_design<-car::recode(bea_data$road_design,"
+# 	0=1;1=0;2=0;3=0;99=NA")
 bea_data$intersections<-car::recode(bea_data$intersections,"
 	0=0;1=1;2=1;99=NA")
 bea_data$auxiliary_lane<-car::recode(bea_data$auxiliary_lane,"
@@ -821,7 +820,6 @@ cor_data<-cor_auto(model3_bea)
 model4_bea<-with(bea_data,data.frame(
 			bus_stop,
 			pedestrians_crossing,
-			pedestrians_center,
 			density_pedestrian,
 			walkways))
 
@@ -888,12 +886,17 @@ cor_data<-cor_auto(model4_bea)
 # score<-round(pnorm(sc)*100,2)
 
 #Extracting normalized data
-bea_data$ID<-c(1:227)
+bea_data$ID<-c(1:188)
 pca_scores_data<-data.frame(PCA1a=pca1[,1],PCA1b=pca1[,2],
 							PCA2=pca2[,1],PCA3=pca3[,1],
 							PCA4=pca4[,1],id=bea_data$ID,
 							country=bea_data[,1])
-pca_scores_data<-na.omit(pca_scores_data)
+# pca_scores_data<-na.omit(pca_scores_data)
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+data_imputed <- mice(pca_scores_data, seed = 2222, m=10)
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+pca_scores_data<-mice::complete(data_imputed,4)
 
 rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 pca_score_data_rescaled<-lapply(pca_scores_data[,1:5],rescale)
@@ -929,7 +932,13 @@ x[cl$z[,3]>=0.51]<-c("Lat3")
 
 pca_score_data_rescaled$clusters<-as.factor(x)
 
-# write.csv(pca_score_data_rescaled,"/Users/jnv4/Desktop/bea_PCAscores.csv")
+# write.csv(pca_score_data_rescaled,"/Users/joaovissoci/Desktop/bea_PCAscores.csv")
+
+# pca_score_data_rescaled_sl<-subset(pca_score_data_rescaled,pca_score_data_rescaled[,7]=="sl2")
+# pca_score_data_rescaled_sl$risk_classification<-data_sl$risk_classification
+# bea_data_sl<-cbind(pca_score_data_rescaled_sl,data_sl2)
+
+# write.csv(bea_data_sl,"/Users/joaovissoci/Desktop/sl_bea_data.csv")
 
 with(pca_score_data_rescaled,
 	by(PCA1a,clusters,summary))

@@ -197,7 +197,7 @@ audit_data_cleaned<-lapply(audit_data2[1:10],NAto0)
 
 # Numerical descriptives
 #summary(data)#This comand will provide a whole set of descriptive #results for each variables
-describe(data_validation$age)
+describe(data_validation$age.x)
 describe(data_validation$home_people)
 
 # Categorical Descriptives
@@ -221,7 +221,7 @@ table
 prop.table(table)
 
 #GCS
-table<-with(data_validation,table(gcs_tot))
+table<-with(data_validation,table(gcs_cat))
 table
 prop.table(table)
 

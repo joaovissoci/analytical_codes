@@ -34,17 +34,7 @@ data <- read.spss("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa_D
 data<-as.data.frame(data)
 
 ##### BEA data
-data_bea1<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_sl.csv",sep=',')
-
-#clean data from Sri Lanka
-data_bea<-subset(data_bea1,data_bea1$rater=="e")
-
-##### BEA Scores data
-data_bea_scores<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_PCAscores.csv",sep=',')
-
-#clean data for Sri Lanka only
-data_bea_scoressl<-subset(data_bea_scores,
-	data_bea_scores$pca_scores_data.country=="sl2")
+data_bea1<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/sri lanka/sl_bea_data.csv",sep=',')
 
 #######################################################
 #DATA MANAGEMENT

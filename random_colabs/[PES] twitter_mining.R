@@ -13,42 +13,42 @@ library(polycor)
 
 # library("stringr")
 
-set authentication: Get ID and TOKEN information after registering your 
-application.
-https://apps.twitter.com/
-setup_twitter_oauth("", 
-					"", 
-					"", 
-					"")
+# set authentication: Get ID and TOKEN information after registering your 
+# application.
+# https://apps.twitter.com/
+# setup_twitter_oauth("", 
+# 					"", 
+# 					"", 
+# 					"")
 
 
-#extract tweets bases on:
-#1. A string with searches. you can search more then one 
-# hashtag or user with  + sign. Ex. '@jrvissoci+@R3nza'
-# or '@jrvissoci+#datascience'
-#
-#2. n expresses the amount of tweets to extract. default is 25
-#
-#3. lang restrictis to a tweet languageEl
-#
-#4. since and until gives a flooring and ceiling data
-#
-#5. geocode gives a radius area given by lat and long
-# given a radius size in miles or km Ex. geocode='37.781157,-122.39720,1mi'
-#
-tw = searchTwitter("#UFC202",n=1e5, since="2016-08-22",
-	until="2016-08-23")
-# length(tw)
-# saveRDS(tw, '../../R/MSST_Tweets.RDS')
-# tw = readRDS('../../R/MSST_Tweets.RDS')
-d = twListToDF(tw)
+# #extract tweets bases on:
+# #1. A string with searches. you can search more then one 
+# # hashtag or user with  + sign. Ex. '@jrvissoci+@R3nza'
+# # or '@jrvissoci+#datascience'
+# #
+# #2. n expresses the amount of tweets to extract. default is 25
+# #
+# #3. lang restrictis to a tweet languageEl
+# #
+# #4. since and until gives a flooring and ceiling data
+# #
+# #5. geocode gives a radius area given by lat and long
+# # given a radius size in miles or km Ex. geocode='37.781157,-122.39720,1mi'
+# #
+# tw = searchTwitter("#UFC202",n=1e5, since="2016-08-22",
+# 	until="2016-08-23")
+# # length(tw)
+# # saveRDS(tw, '../../R/MSST_Tweets.RDS')
+# # tw = readRDS('../../R/MSST_Tweets.RDS')
+# d = twListToDF(tw)
 
-tw_text = sapply(tw, function(x) x$getText())
+# tw_text = sapply(tw, function(x) x$getText())
 
-d$get_text<-tw_text
+# d$get_text<-tw_text
 
 # write.csv(d,"/Users/joaovissoci/Desktop/twitter.csv")
-# d<-read.csv("/Users/joaovissoci/Desktop/twitter.csv")
+d<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/personal/twitter.csv")
 
 length(d$get_text)
 
@@ -75,7 +75,7 @@ length(d$get_text)
 #get rid of unnecessary spaces
 clean_tweet <- str_replace_all(clean_tweet," "," ")
 # Get rid of URLs
-clean_tweet <- str_replace_all(clean_tweet, "http://t.co/[a-z,A-Z,0-9]*{8}","")
+# clean_tweet <- str_replace_all(clean_tweet, "http://t.co/[a-z,A-Z,0-9]*{8}","")
 # Take out retweet header, there is only one
 clean_tweet <- str_replace(clean_tweet,"RT @[a-z,A-Z]*: ","")
 # Get rid of hashtags
@@ -130,7 +130,7 @@ dtm <- DocumentTermMatrix(corpus)
 dtm
 
 # removendo "sparse terms": vai fazer cair de 3 mil e cacetada termos para menos termos
-dtm2 <- removeSparseTerms(dtm, 0.93)
+dtm2 <- removeSparseTerms(dtm, 0.3)
 dtm2
 
 # findFreqTerms(dtm, 5)
@@ -184,8 +184,10 @@ orig$text[which(orig$emotionalValence==0)]
 
 pol_data<-subset(orig,orig$emotionalValence!=0)
 
+pol_data$time<-as.POSIXlt(pol_data$created,format='%H:%M:%S')
+str(pol_data$time)
 
-    ggplot(orig, aes(created, emotionalValence)) +
+    ggplot(pol_data, aes(time, emotionalValence)) +
     geom_point() + 
     geom_smooth(span = .5)
 
@@ -348,11 +350,11 @@ dtm
 findFreqTerms(dtm, c(5))
 
 # removendo "sparse terms": vai fazer cair de 3 mil e cacetada termos para menos termos
-dtm2 <- removeSparseTerms(dtm, 0.7)
+dtm2 <- removeSparseTerms(dtm, 0.9)
 dtm2
 
 # Put in local time
-data<-as.matrix(dtm2)
+data<-as.matrix(dtm)
 #data[data>=1] <- 1
 dataMatrix <- t(data) %*% data
 
@@ -366,7 +368,7 @@ Q1_atleta1 <- qgraph(dataMatrix, borders = FALSE, cut=10,
   # posCol=c("#BF0000","red"),
   gray=FALSE)
 
-Q2_atleta2 <- qgraph(cor$correlations, borders = FALSE, cut=1, 
+Q2_atleta2 <- qgraph(cor, borders = FALSE, cut=1, 
   minimum = 0.5, labels=names,label.cex = 0.60, label.color="black",
   layout = "spring",directed=FALSE,label.scale=FALSE,
   posCol=c("steelblue","steelblue"),
