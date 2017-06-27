@@ -38,9 +38,9 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistryANDmh_data.csv",sep=',')
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistryANDmh_data.csv",sep=',')
 
-data2<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tz_bnipatients_data.csv")
+data2<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tz_bnipatients_data.csv")
 
 ######################################################
 #DATA MANAGEMENT
@@ -1080,21 +1080,21 @@ Hmisc::rcorr(as.matrix(alcohol_scores),type="spearman")
 
 cor(alcohol_scores,method="spearman")
 
-size<-car::recode(cage_overall,"0=1;1=2;2=3;3=4")
+size<-car::recode(alcohol_scores$cage_overall,"0=1;1=2;2=3;3=4")
 
 # Same, but with different colors and add regression lines
-plot<- ggplot(alcohol_scores, 
+cor_plot<- ggplot(alcohol_scores, 
 				  aes(x=cage_overall, 
 				  	  y=audit_overall)) +
-    geom_point(size=size*5) + 
-    geom_jitter(size=size*5) +
+    geom_point(size=size) + 
+    geom_jitter(size=size) +
     # scale_colour_hue(l=50) + # Use a slightly darker palette than normal
     geom_smooth(method=lm,color="grey50") +
     theme_bw() +
     ylab("AUDIT") +
     xlab("CAGE") +
-    geom_text(aes(label="A)", x=0.5, y=32)) +
-    ylim(0, 40)
+    geom_text(aes(label="A)", x=0, y=32)) +
+    ylim(0, 35)
     # scale_y_continuous(breaks=seq(0,40,10))
 
 cor_plot
@@ -1180,6 +1180,7 @@ p<-ggplot(boxplot,
   theme_bw() +
   xlab("Groups") +
   ylab("AUDIT") +
+  ylim(0, 35) +
   scale_x_discrete(labels=c("Non-drinkers","Drinkers")) +
   geom_text(aes(label="*P<.05", x=1.5, y=23, label= "boat")) + 
   geom_segment(aes(x=1.2,
@@ -1198,11 +1199,16 @@ p<-ggplot(boxplot,
 
 p
 
-grid.arrange(cor_plot,p,ncol=2)
+bothplots<-grid.arrange(cor_plot,p,ncol=2)
 
 # p + theme(legend.position="left")
 
 # p + scale_fill_grey() + theme_classic()
 
-
+ggsave("figure2.eps", #change .eps to .pdf for different format
+		bothplots, #plot is the name of the fig, but the function assumes the last plot if argument is NULL
+		path="/Users/jnv4/Desktop", #path to save the plot
+		width = 12, 
+		height = 6, 
+		device=cairo_ps) #
 

@@ -20,6 +20,14 @@ postscript("/Users/jnv4/Desktop/figure1B.eps",
 dev.off()
 
 ####################################
+#PDF
+####################################
+
+pdf("Plot3.pdf", width = 4, height = 4)
+plot(x, y) # Make plot
+dev.off()
+
+####################################
 #Save GGPLOT figure in EPS of PDF
 ####################################
 
