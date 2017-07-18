@@ -20,7 +20,7 @@ lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest",
 #IMPORTING DATA
 #################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/acs/br_acsdiagnotic_data.csv",
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/acs/br_acsdiagnotic_data.csv",
 	sep=",")
 
 #############################################################################
@@ -34,13 +34,13 @@ summary(data)
 
 library(tidyverse)
 
-foo <- data.frame(a = 1:100,
-                  b = runif(100, 50, 200),
-                  stringsAsFactors = FALSE)
+# foo <- data.frame(a = 1:100,
+#                   b = runif(100, 50, 200),
+#                   stringsAsFactors = FALSE)
 
 
 data= data %>%
-    mutate(quantile2 = ntile(Indice_acessibilidade, 2))
+    mutate(quantile2 = ntile(Indice_acessibilidade, 5))
 
 #############################################################################
 #POISSON MODEL
@@ -48,7 +48,7 @@ data= data %>%
 
 data_1<-data[data$income_level=="Lower middle income",]
 with(data_1,by(media_mortalidade,quantile2,summary))
-with(data_1,wilcox.test(media_mortalidade~
+with(data_1,kruskal.test(media_mortalidade~
 	quantile2))
 
 data_2<-data[data$income_level=="Upper middle income",]
