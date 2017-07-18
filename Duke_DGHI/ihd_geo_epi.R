@@ -26,7 +26,7 @@ data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Braz
 #############################################################################
 #DATA MANAGEMENT
 #############################################################################
-
+t
 # regdata<-with(data,data.frame(Regio,SMR_IHD,Distance,
 # 	distance75))
 

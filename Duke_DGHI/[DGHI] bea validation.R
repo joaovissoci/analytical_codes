@@ -1127,7 +1127,7 @@ data_sl_temp_model1<-with(data_sl,data.frame(
 	rater,
 	id))
 
-data_sl_agree_model1<-melt(data_sl_temp_model1,id=c("rater","id"))
+data_sl_agree_model1<-cast(data_sl,id=c("rater"),)
 
 #data_sl_agree2<-cast(data_sl_agree_model1,id~rater+variable)
 
