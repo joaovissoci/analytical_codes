@@ -29,12 +29,14 @@ library, character.only=T)
 #######################################################
 
 ##### EPI data
-data <- read.spss("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa_DGHI/sri lanka/sl_epi_data.sav",
+data <- read.spss("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/sl_epi_data.sav",
                        to.data.frame=TRUE)
 data<-as.data.frame(data)
 
 ##### BEA data
-data_bea1<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/sri lanka/sl_bea_data.csv",sep=',')
+data_bea<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/sl_bea_data.csv",sep=',')
+
+data_bea_scoressl<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/sl_bea_data.csv",sep=',')
 
 #######################################################
 #DATA MANAGEMENT
@@ -871,43 +873,43 @@ wilcox.test(data_bea$pedestrian_density~data_bea$risk_classification)
 ########################################################
 
 #PCA1a
-with(data_bea_scoressl,
+with(data_bea,
 	by(PCA1a,clusters,summary))
-with(data_bea_scoressl,
+with(data_bea,
 	kruskal.test(PCA1a,clusters))
 
 #PCA1b
-with(data_bea_scoressl,
+with(data_bea,
 	by(PCA1b,clusters,summary))
-with(data_bea_scoressl,
+with(data_bea,
 	kruskal.test(PCA1b~clusters))
 
 #PCA2
-with(data_bea_scoressl,
+with(data_bea,
 	by(PCA2,clusters,summary))
-with(data_bea_scoressl,
+with(data_bea,
 	kruskal.test(PCA2~clusters))
 
 #PCA3
-with(data_bea_scoressl,
+with(data_bea,
 	by(PCA3,clusters,summary))
-with(data_bea_scoressl,
+with(data_bea,
 	kruskal.test(PCA3~clusters))
 
 #PCA4
-with(data_bea_scoressl,
+with(data_bea,
 	by(PCA4,clusters,summary))
-with(data_bea_scoressl,
+with(data_bea,
 	kruskal.test(PCA4~clusters))
 
 #Outcome
 
 # Road Area
-table<-with(data_bea_scoressl,
+table<-with(data_bea,
 	table(outcome))
 table
 prop.table(table)
-table<-with(data_bea_scoressl,
+table<-with(data_bea,
 	table(outcome,clusters))
 table
 prop.table(table,2)
@@ -916,9 +918,9 @@ fisher.test(table)
 assocstats(table) #vcd package
 
 #data_epi$type_vehicle<-car::recode(data_epi$type_vehicle,"'pedestrian'=NA;'bicycle'=NA")
-logmodel<-glm(outcome ~   clusters,
+logmodel<-glm(Risk ~   clusters,
 						  family=binomial, 
-						  data=data_bea_scoressl)
+						  data=data_bea)
 summary(logmodel)
 #anova(reglogGEU)
 exp(coef(logmodel)) # exponentiated coefficients

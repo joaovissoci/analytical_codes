@@ -57,7 +57,7 @@ doseSpecificOddsRatios <- function(mymatrix,referencerow=1)
 #data<-
 #data<-read.sas7bdat("C:\\Users\\Joao\\Desktop\\tanzclean.sas7bdat")
 #data<-read.sas7bdat("/Users/rpietro/Dropbox/datasets/Africa_DGHI/tanzclean.sas7bdat")
-data<-read.sas7bdat("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/tanzclean.sas7bdat")
+data<-read.sas7bdat("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/tanzclean.sas7bdat")
 data<-as.data.frame(data)
 ###################################################
 #DATA MANAGEMENT
@@ -204,24 +204,23 @@ data_moshi$bottle_alcohol_positive<-car::recode(data_moshi$bottles_drank_1,"0=NA
 data_moshi$bottle24_alcohol_positive<-car::recode(data_moshi$bottles_drank_2,"0=NA;0.001:2.5='1 to 2';2.5001:4.5='3 to 4';4.50001:63.64='5 or more'")
 data_moshi$bottle1week_alcohol_positive<-car::recode(data_moshi$bottles_drank_3,"0=NA;0.001:2.5='1 to 2';2.5001:4.5='3 to 4';4.50001:159.1000='5 or more'")
 
-data_moshi <- within(data_moshi, predictor_FUP1[QG01==9] <- 2)
-data_moshi <- within(data_moshi, predictor_FUP2[QG01==9] <- 2)
-
+# data_moshi <- within(data_moshi, predictor_FUP1[QG01==9] <- 2)
+# data_moshi <- within(data_moshi, predictor_FUP2[QG01==9] <- 2)
 
 ###################################################
-#EXPLORATORY GRAPHICAL ANALYSIS
+#IMPUTING MISSING DATA
 ###################################################
-data_moshi_cleaned<-with(data_moshi,data.frame(breath_level,id))
-data_moshi_cleaned<-na.omit(data_moshi_cleaned)
-data_moshi_cleaned<-sqldf("SELECT * FROM data_moshi_cleaned left JOIN data_moshi USING(id)")
+# data_moshi_cleaned<-with(data_moshi,data.frame(breath_level,id))
+# # data_moshi_cleaned<-na.omit(data_moshi_cleaned)
+# data_moshi_cleaned<-sqldf("SELECT * FROM data_moshi_cleaned left JOIN data_moshi USING(id)")
 
-data_moshi_pred1<-with(data_moshi_cleaned,data.frame(id,predictor_FUP1))
-data_moshi_daybefore<-na.omit(data_moshi_pred1)
-data_moshi_daybefore<-sqldf("SELECT * FROM data_moshi_daybefore left JOIN data_moshi USING(id)")
+# data_moshi_pred1<-with(data_moshi_cleaned,data.frame(id,predictor_FUP1))
+# # data_moshi_daybefore<-na.omit(data_moshi_pred1)
+# data_moshi_daybefore<-sqldf("SELECT * FROM data_moshi_pred1 left JOIN data_moshi USING(id)")
 
-cleaned_data<-subset(data_moshi_daybefore,data_moshi_daybefore$predictor_FUP2!='NA')
+# cleaned_data<-subset(data_moshi_daybefore,data_moshi_daybefore$predictor_FUP2!='NA')
 
-cleaned_data <- kNN(cleaned_data)
+# cleaned_data <- kNN(cleaned_data)
 
 ###################################################
 #SAMPLE SIZE CALCULATION

@@ -27,7 +27,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", "moments","GPArota
 #Linux path
 #data <- read.csv("/home/joao/Dropbox/datasets/DGHI/Africa_DGHI/rwanda/hotspot_epi_rwanda_data.csv")
 
-data <- read.csv("/Users/joaovissoci/Dropbox/datasets/DGHI/Africa_DGHI/Rwanda/hotspot_epi_rwanda_data.csv")
+data <- read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Rwanda/hotspot_epi_rwanda_data.csv")
 
 #data set with information for Hamiton's Anxiety Symptoms
 #data <- repmis::source_DropboxData("epi_sri_lanka_data.csv","5b3k7j4du69tmt2",sep = ",",header = TRUE)
@@ -276,15 +276,15 @@ summary(logmodel)
 
 #out <- TestMCARNormality(data_epi)
 #missing.pattern.plot(data_epi)
-#MICE framework for imputation
-# describing the pattern of missingnesss
-md.pattern(data_epi)
+# #MICE framework for imputation
+# # describing the pattern of missingnesss
+# md.pattern(data_epi)
 
-# showing pairs of missingines
-md.pairs(data_epi)
+# # showing pairs of missingines
+# md.pairs(data_epi)
 
-# plots impact of missing data for a set of pairs - works better for numerical data
-marginplot(data.frame(data_epi$outcome,data_epi$visibility), col = mdc(1:2), cex = 1.2, cex.lab = 1.2, cex.numbers = 1.3, pch = 19)
+# # plots impact of missing data for a set of pairs - works better for numerical data
+# marginplot(data.frame(data_epi$outcome,data_epi$visibility), col = mdc(1:2), cex = 1.2, cex.lab = 1.2, cex.numbers = 1.3, pch = 19)
 
 # generate imputations
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
@@ -294,16 +294,16 @@ imp <- mice(data_epi, seed = 2222, m=50)
 data_imputed<-complete(imp,1)
 
 #Plost the distrbution of each of the 5 possibilities of imputations
-stripplot(imp,pch=20,cex=1.2)
+# stripplot(imp,pch=20,cex=1.2)
 
-#plots a scatter plot of pairs of variables
-xyplot(imp, outcome ~ visibility | .imp, pch = 20, cex = 1.4)
+# #plots a scatter plot of pairs of variables
+# xyplot(imp, outcome ~ visibility | .imp, pch = 20, cex = 1.4)
 
-#returns the matrix specifying each variable used to -predict imputation - columns 1=predictor 0=not predictor. rows are the variables of interest
-imp$predictorMatrix
-pred <- imp$predictorMatrix #if you want to exclude  variable from the prediction model for imputation then assign an obect to pred
-pred[, "bmi"] <- 0 #transform the column values into 0's for not predictiong
-imp <- mice(nhanes, pred = pred, pri = FALSE) # rerun the model specifying pred argumento witht eh matriz recoded.
+# #returns the matrix specifying each variable used to -predict imputation - columns 1=predictor 0=not predictor. rows are the variables of interest
+# imp$predictorMatrix
+# pred <- imp$predictorMatrix #if you want to exclude  variable from the prediction model for imputation then assign an obect to pred
+# pred[, "bmi"] <- 0 #transform the column values into 0's for not predictiong
+# imp <- mice(nhanes, pred = pred, pri = FALSE) # rerun the model specifying pred argumento witht eh matriz recoded.
 
 #######################################################
 #DESCRIPTIVE ANALYSIS
