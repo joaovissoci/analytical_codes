@@ -768,7 +768,7 @@ fit <- glm(outcome~age+
 						data=regression,family=binomial())
 summary(fit) # display results
 exp(cbind(Odds=coef(fit),confint(fit,level=0.90))) 
-#predict(fit, type="response") # predicted values
+ter#predict(fit, type="response") # predicted values
 #residuals(fit, type="deviance") # residuals
 logistic.display(fit)
 
