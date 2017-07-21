@@ -16,12 +16,12 @@
 
 #Load packages (after installed) with the library function
 lapply(c("metafor","ggplot2","gridExtra" ,"psych", 
-	"RCurl", "irr", "nortest", "moments","GPArotation",
-	"nFactors","gdata","meta","metafor","ggplot2",
-	"gridExtra" ,"psych", "RCurl", "irr", "nortest", 
-	"moments","GPArotation","nFactors","gdata",
-	"repmis","sqldf","VIM","survival",
-	"sas7bdat","epicalc","vcd"), library, character.only=T)
+   "RCurl", "irr", "nortest", "moments","GPArotation",
+   "nFactors","gdata","meta","metafor","ggplot2",
+   "gridExtra" ,"psych", "RCurl", "irr", "nortest", 
+   "moments","GPArotation","nFactors","gdata",
+   "repmis","sqldf","VIM","survival",
+   "sas7bdat","epicalc","vcd","mice"), library, character.only=T)
 
 #Dosage specific ODSS function
 #source: http://goo.gl/ETWdZd
@@ -57,7 +57,7 @@ doseSpecificOddsRatios <- function(mymatrix,referencerow=1)
 #data<-
 #data<-read.sas7bdat("C:\\Users\\Joao\\Desktop\\tanzclean.sas7bdat")
 #data<-read.sas7bdat("/Users/rpietro/Dropbox/datasets/Africa_DGHI/tanzclean.sas7bdat")
-data<-read.sas7bdat("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/tanzclean.sas7bdat")
+data<-read.sas7bdat("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/tanzclean.sas7bdat")
 data<-as.data.frame(data)
 ###################################################
 #DATA MANAGEMENT
@@ -65,7 +65,7 @@ data<-as.data.frame(data)
 #### CREATING ETHANOL AMOUT / ml data
 
 c9999toNA<-function(x){
-	car::recode(x,"9999=NA")
+   car::recode(x,"9999=NA")
 }
 data<-lapply(data,c9999toNA)
 
@@ -79,64 +79,91 @@ data<-lapply(data,c9999toNA)
 #Creating GCS score
 #gcs<-with(data,rowSums(data.frame(QL02,QL02a,QL02b)))
 
-
 #Alcohol Dosage - Time 1
-alcohol_amount_1_rowB<-with(data,(as.numeric(QF07B1B)*as.numeric(QF07B2))*as.numeric(QF07B3))
-alcohol_amount_1_rowC<-with(data,(as.numeric(QF07C1B)*as.numeric(QF07C2))*as.numeric(QF07C3))
-alcohol_amount_1_rowD<-with(data,(as.numeric(QF07D1B)*as.numeric(QF07D2))*as.numeric(QF07D3))
-alcohol_amount_1_rowE<-with(data,(as.numeric(QF07E1B)*as.numeric(QF07E2))*as.numeric(QF07E3))
-alcohol_amount_1_rowF<-with(data,(as.numeric(QF07F1B)*as.numeric(QF07F2))*as.numeric(QF07F3))
-alcohol_amount_1_rowG<-with(data,(as.numeric(QF07G1B)*as.numeric(QF07G2))*as.numeric(QF07G3))
-alcohol_amount_1_rowH<-with(data,(as.numeric(QF07H1B)*as.numeric(QF07H2))*as.numeric(QF07H3))
-alcohol_amount_1_rowL1<-with(data,(as.numeric(QF07L11B)*as.numeric(QF07L12))*as.numeric(QF07L13))
-alcohol_amount_1_rowL2<-with(data,(as.numeric(QF07L21B)*as.numeric(QF07L22))*as.numeric(QF07L23))
-alcohol_amount_1_rowL3<-with(data,(as.numeric(QF07L31B)*as.numeric(QF07L32))*as.numeric(QF07L33))
-alcohol_amount_1<-data.frame(alcohol_amount_1_rowB,alcohol_amount_1_rowC,alcohol_amount_1_rowD,alcohol_amount_1_rowE,alcohol_amount_1_rowF,alcohol_amount_1_rowG,alcohol_amount_1_rowH,alcohol_amount_1_rowL1,alcohol_amount_1_rowL2,alcohol_amount_1_rowL3)
+# alcohol_amount_1_rowB<-with(data,(as.numeric(QF07B1B)*as.numeric(QF07B2))*as.numeric(QF07B3))
+# alcohol_amount_1_rowC<-with(data,(as.numeric(QF07C1B)*as.numeric(QF07C2))*as.numeric(QF07C3))
+# alcohol_amount_1_rowD<-with(data,(as.numeric(QF07D1B)*as.numeric(QF07D2))*as.numeric(QF07D3))
+# alcohol_amount_1_rowE<-with(data,(as.numeric(QF07E1B)*as.numeric(QF07E2))*as.numeric(QF07E3))
+# alcohol_amount_1_rowF<-with(data,(as.numeric(QF07F1B)*as.numeric(QF07F2))*as.numeric(QF07F3))
+# alcohol_amount_1_rowG<-with(data,(as.numeric(QF07G1B)*as.numeric(QF07G2))*as.numeric(QF07G3))
+# alcohol_amount_1_rowH<-with(data,(as.numeric(QF07H1B)*as.numeric(QF07H2))*as.numeric(QF07H3))
+# alcohol_amount_1_rowL1<-with(data,(as.numeric(QF07L11B)*as.numeric(QF07L12))*as.numeric(QF07L13))
+# alcohol_amount_1_rowL2<-with(data,(as.numeric(QF07L21B)*as.numeric(QF07L22))*as.numeric(QF07L23))
+# alcohol_amount_1_rowL3<-with(data,(as.numeric(QF07L31B)*as.numeric(QF07L32))*as.numeric(QF07L33))
+alcohol_amount_1<-with(data,data.frame(
+                     QF07B5,
+                     QF07C5,
+                     QF07D5,
+                     QF07E5,
+                     QF07F5,
+                     QF07G5,
+                     QF07H5,
+                     QF07L15,
+                     QF07L25,
+                     QF07L35))
 
 NaNtoNA<-function(x){
-	car::recode(x,"NaN=0")
+   car::recode(x,"NaN=0")
 }
 
 alcohol_amount_1<-lapply(alcohol_amount_1,NaNtoNA)
-alcohol_amount_1<-rowSums(as.data.frame(alcohol_amount_1))/100
+alcohol_amount_1<-rowSums(as.data.frame(alcohol_amount_1))
 
 #Alcohol Dosage - Time 2
-alcohol_amount_2_rowB<-with(data,(as.numeric(QNH05B1B)*as.numeric(QNH05B2))*as.numeric(QNH05B3))
-alcohol_amount_2_rowC<-with(data,(as.numeric(QNH05C1B)*as.numeric(QNH05C2))*as.numeric(QNH05C3))
-alcohol_amount_2_rowD<-with(data,(as.numeric(QNH05D1B)*as.numeric(QNH05D2))*as.numeric(QNH05D3))
-alcohol_amount_2_rowE<-with(data,(as.numeric(QNH05E1B)*as.numeric(QNH05E2))*as.numeric(QNH05E3))
-alcohol_amount_2_rowF<-with(data,(as.numeric(QNH05F1B)*as.numeric(QNH05F2))*as.numeric(QNH05F3))
-alcohol_amount_2_rowG<-with(data,(as.numeric(QNH05G1B)*as.numeric(QNH05G2))*as.numeric(QNH05G3))
-alcohol_amount_2_rowH<-with(data,(as.numeric(QNH05H1B)*as.numeric(QNH05H2))*as.numeric(QNH05H3))
-alcohol_amount_2_rowL1<-with(data,(as.numeric(QNH05L11B)*as.numeric(QNH05L12))*as.numeric(QNH05L13))
-alcohol_amount_2_rowL2<-with(data,(as.numeric(QNH05L21B)*as.numeric(QNH05L22))*as.numeric(QNH05L23))
-alcohol_amount_2_rowL3<-with(data,(as.numeric(QNH05L31B)*as.numeric(QNH05L32))*as.numeric(QNH05L33))
-alcohol_amount_2<-data.frame(alcohol_amount_2_rowB,alcohol_amount_2_rowC,alcohol_amount_2_rowD,alcohol_amount_2_rowE,alcohol_amount_2_rowF,alcohol_amount_2_rowG,alcohol_amount_2_rowH,alcohol_amount_2_rowL1,alcohol_amount_2_rowL2,alcohol_amount_2_rowL3)
+# alcohol_amount_2_rowB<-with(data,(as.numeric(QNH05B1B)*as.numeric(QNH05B2))*as.numeric(QNH05B3))
+# alcohol_amount_2_rowC<-with(data,(as.numeric(QNH05C1B)*as.numeric(QNH05C2))*as.numeric(QNH05C3))
+# alcohol_amount_2_rowD<-with(data,(as.numeric(QNH05D1B)*as.numeric(QNH05D2))*as.numeric(QNH05D3))
+# alcohol_amount_2_rowE<-with(data,(as.numeric(QNH05E1B)*as.numeric(QNH05E2))*as.numeric(QNH05E3))
+# alcohol_amount_2_rowF<-with(data,(as.numeric(QNH05F1B)*as.numeric(QNH05F2))*as.numeric(QNH05F3))
+# alcohol_amount_2_rowG<-with(data,(as.numeric(QNH05G1B)*as.numeric(QNH05G2))*as.numeric(QNH05G3))
+# alcohol_amount_2_rowH<-with(data,(as.numeric(QNH05H1B)*as.numeric(QNH05H2))*as.numeric(QNH05H3))
+# alcohol_amount_2_rowL1<-with(data,(as.numeric(QNH05L11B)*as.numeric(QNH05L12))*as.numeric(QNH05L13))
+# alcohol_amount_2_rowL2<-with(data,(as.numeric(QNH05L21B)*as.numeric(QNH05L22))*as.numeric(QNH05L23))
+# alcohol_amount_2_rowL3<-with(data,(as.numeric(QNH05L31B)*as.numeric(QNH05L32))*as.numeric(QNH05L33))
+alcohol_amount_2<-with(data,data.frame(
+            QNH05B5,
+            QNH05C5,
+            QNH05D5,
+            QNH05E5,
+            QNH05F5,
+            QNH05G5,
+            QNH05H5,
+            QNH05L15,
+            QNH05L25,
+            QNH05L35))
 
 alcohol_amount_2<-lapply(alcohol_amount_2,NaNtoNA)
-alcohol_amount_2<-rowSums(as.data.frame(alcohol_amount_2))/100
+alcohol_amount_2<-rowSums(as.data.frame(alcohol_amount_2))
 
 #Alcohol Dosage - Time 3
 
-alcohol_amount_3_rowB<-with(data,(as.numeric(QG02B1B)*as.numeric(QG02B2))*as.numeric(QG02B3))
-alcohol_amount_3_rowC<-with(data,(as.numeric(QG02C1B)*as.numeric(QG02C2))*as.numeric(QG02C3))
-alcohol_amount_3_rowD<-with(data,(as.numeric(QG02D1B)*as.numeric(QG02D2))*as.numeric(QG02D3))
-alcohol_amount_3_rowE<-with(data,(as.numeric(QG02E1B)*as.numeric(QG02E2))*as.numeric(QG02E3))
-alcohol_amount_3_rowF<-with(data,(as.numeric(QG02F1B)*as.numeric(QG02F2))*as.numeric(QG02F3))
-alcohol_amount_3_rowG<-with(data,(as.numeric(QG02G1B)*as.numeric(QG02G2))*as.numeric(QG02G3))
-alcohol_amount_3_rowH<-with(data,(as.numeric(QG02H1B)*as.numeric(QG02H2))*as.numeric(QG02H3))
-alcohol_amount_3_rowL1<-with(data,(as.numeric(QG02L11B)*as.numeric(QG02L12))*as.numeric(QG02L13))
-alcohol_amount_3_rowL2<-with(data,(as.numeric(QG02L21B)*as.numeric(QG02L22))*as.numeric(QG02L23))
-alcohol_amount_3_rowL3<-with(data,(as.numeric(QG02L31B)*as.numeric(QG02L32))*as.numeric(QG02L33))
-
-alcohol_amount_3<-data.frame(alcohol_amount_3_rowB,alcohol_amount_3_rowC,alcohol_amount_3_rowD,alcohol_amount_3_rowE,alcohol_amount_3_rowF,alcohol_amount_3_rowG,alcohol_amount_3_rowH,alcohol_amount_3_rowL1,alcohol_amount_3_rowL2,alcohol_amount_3_rowL3)
+# alcohol_amount_3_rowB<-with(data,(as.numeric(QG02B1B)*as.numeric(QG02B2))*as.numeric(QG02B3))
+# alcohol_amount_3_rowC<-with(data,(as.numeric(QG02C1B)*as.numeric(QG02C2))*as.numeric(QG02C3))
+# alcohol_amount_3_rowD<-with(data,(as.numeric(QG02D1B)*as.numeric(QG02D2))*as.numeric(QG02D3))
+# alcohol_amount_3_rowE<-with(data,(as.numeric(QG02E1B)*as.numeric(QG02E2))*as.numeric(QG02E3))
+# alcohol_amount_3_rowF<-with(data,(as.numeric(QG02F1B)*as.numeric(QG02F2))*as.numeric(QG02F3))
+# alcohol_amount_3_rowG<-with(data,(as.numeric(QG02G1B)*as.numeric(QG02G2))*as.numeric(QG02G3))
+# alcohol_amount_3_rowH<-with(data,(as.numeric(QG02H1B)*as.numeric(QG02H2))*as.numeric(QG02H3))
+# alcohol_amount_3_rowL1<-with(data,(as.numeric(QG02L11B)*as.numeric(QG02L12))*as.numeric(QG02L13))
+# alcohol_amount_3_rowL2<-with(data,(as.numeric(QG02L21B)*as.numeric(QG02L22))*as.numeric(QG02L23))
+alcohol_amount_3<-with(data,data.frame(
+            QH03B5,
+            QH03C5,
+            QH03D5,
+            QH03E5,
+            QH03F5,
+            QH03G5,
+            QH03H5,
+            QH03L15,
+            QH03L25,
+            QH03L35))
 
 alcohol_amount_3<-lapply(alcohol_amount_3,NaNtoNA)
-alcohol_amount_3<-rowSums(as.data.frame(alcohol_amount_3))/100
+alcohol_amount_3<-rowSums(as.data.frame(alcohol_amount_3))
 
-bottles_drank_1<-alcohol_amount_1/(330*(5.0/100))
-bottles_drank_2<-alcohol_amount_2/(330*(5.0/100))
-bottles_drank_3<-alcohol_amount_3/(330*(5.0/100))
+bottles_drank_1<-alcohol_amount_1/16.5
+bottles_drank_2<-alcohol_amount_2/16.5
+bottles_drank_3<-alcohol_amount_3/16.5
 
 #### CREATING FINAL DATASET
 data_moshi<-NULL
@@ -223,8 +250,12 @@ data_moshi$activity_prior<-car::recode(data_moshi$activity_prior,"99=NA")
 data_moshi$past_alcohol_use<-car::recode(data_moshi$past_alcohol_use,"1:8='yes';9='no';99=NA")
 data_moshi$past_alcohol_use<-as.factor(data_moshi$past_alcohol_use)
 # data_moshi$low_alcohol_use<-car::recode(data_moshi$low_alcohol_use,"99=NA")
-data_moshi$predictor_FUP1<-car::recode(data_moshi$predictor_FUP1,"8=NA;9=NA;99=NA;NaN=2")
-data_moshi$predictor_FUP2<-car::recode(data_moshi$predictor_FUP2,"8=NA;9=NA;99=NA;90=NA;NaN=2")
+data_moshi$predictor_FUP1<-car::recode(data_moshi$predictor_FUP1,"
+            1='yes';2='no';8=NA;9=NA;99=NA;NaN='no'")
+data_moshi$predictor_FUP1<-as.factor(data_moshi$predictor_FUP1)
+data_moshi$predictor_FUP2<-car::recode(data_moshi$predictor_FUP2,"
+            1='yes';2='no';8=NA;9=NA;99=NA;90=NA;NaN='no'")
+data_moshi$predictor_FUP2<-as.factor(data_moshi$predictor_FUP2)
 data_moshi$breath_level<-car::recode(data_moshi$breath_level,"0='no';9=NA;else='yes'")
 data_moshi$breath_level<-as.factor(data_moshi$breath_level)
 data_moshi$id<-c(1:516)
@@ -258,9 +289,9 @@ data_moshi$location<-car::recode(data_moshi$location,"
                99=NA")
 data_moshi$location<-as.factor(data_moshi$location)
 # data_moshi$emergency_need<-car::recode(data_moshi$emergency_need,"9=NA")
-data_moshi$bottle<-car::recode(data_moshi$bottles_drank_1,"0=0;0.001:2.5='1 to 2';2.5001:4.5='3 to 4';4.50001:63.64='5 or more'")
+data_moshi$bottle<-car::recode(data_moshi$bottles_drank_1,"0=0;0.001:2.5='1 to 2';2.5001:4.5='3 to 4';4.50001:72.73='5 or more'")
 data_moshi$bottle24<-car::recode(data_moshi$bottles_drank_2,"0=0;0.001:2.5='1 to 2';2.5001:4.5='3 to 4';4.50001:63.64='5 or more'")
-data_moshi$bottle1week<-car::recode(data_moshi$bottles_drank_3,"0=0;0.001:2.5='1 to 2';2.5001:4.5='3 to 4';4.50001:159.1000='5 or more'")
+data_moshi$bottle1week<-car::recode(data_moshi$bottles_drank_3,"0=0;0.001:2.5='1 to 2';2.5001:4.5='3 to 4';4.50001:79.55='5 or more'")
 # data_moshi$bottle_alcohol_positive<-car::recode(data_moshi$bottles_drank_1,"0=NA;0.001:2.5='1 to 2';2.5001:4.5='3 to 4';4.50001:63.64='5 or more'")
 # data_moshi$bottle24_alcohol_positive<-car::recode(data_moshi$bottles_drank_2,"0=NA;0.001:2.5='1 to 2';2.5001:4.5='3 to 4';4.50001:63.64='5 or more'")
 # data_moshi$bottle1week_alcohol_positive<-car::recode(data_moshi$bottles_drank_3,"0=NA;0.001:2.5='1 to 2';2.5001:4.5='3 to 4';4.50001:159.1000='5 or more'")
@@ -313,7 +344,7 @@ propmiss(data_moshi)
 
 # generate imputations
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-imp <- mice(data_moshi, seed = 2222, m=50)
+imp <- mice(data_moshi, seed = 2222, m=10)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
 data_moshi_imp<-complete(imp,1)
@@ -329,7 +360,6 @@ data_moshi_imp<-complete(imp,1)
 # pred <- imp$predictorMatrix #if you want to exclude  variable from the prediction model for imputation then assign an obect to pred
 # pred[, "bmi"] <- 0 #transform the column values into 0's for not predictiong
 # imp <- mice(nhanes, pred = pred, pri = FALSE) # rerun the model specifying pred argumento witht eh matriz recoded.
-
 
 ###################################################
 #SAMPLE SIZE CALCULATION
@@ -609,21 +639,21 @@ fisher.test(mytable)
 
 # ### DUMMY Variables
 # dummy_data<-with(data_moshi_imp,data.frame(breath_level,
-# 	method_injury,as.factor(type_vehicle),location))
+#  method_injury,as.factor(type_vehicle),location))
 # dummy<-as.data.frame(model.matrix(breath_level~ ., data = dummy_data))
 # names(dummy)<-c("Intercept",
-# 				"injury_fall_trip",
-# 				"injury_other",
-# 				"injury_RIT",
-# 				"injury_violence",
-# 				"vehicle2",
-# 				"vehicle3",
-# 				"vehicle4",
-# 				"location_drinking",
-# 				"home",
-# 				"location_outdoor",
-# 				"location_vehicle",
-# 				"location_workplace")
+#           "injury_fall_trip",
+#           "injury_other",
+#           "injury_RIT",
+#           "injury_violence",
+#           "vehicle2",
+#           "vehicle3",
+#           "vehicle4",
+#           "location_drinking",
+#           "home",
+#           "location_outdoor",
+#           "location_vehicle",
+#           "location_workplace")
 
 # #Fall/TRIP
 # mytable <- table(dummy$injury_fall_trip,data_moshi_imp$breath_level)
@@ -673,49 +703,50 @@ fisher.test(mytable)
 regression<-with(data_moshi_imp,data.frame(
                   age,
                   gender=as.factor(gender),
-						years_education,
-						work=as.factor(work),
+                  years_education,
+                  work=as.factor(work),
                   # gcs,
                   time_to_injury,
-						rts,
+                  rts,
                   kts,
                   fracture=as.factor(fracture),
-						dislocation=as.factor(dislocation),
-						open_wound=as.factor(open_wound),
-						bruise=as.factor(bruise),
-						concussion=as.factor(concussion),
-						organ_injury=as.factor(organ_injury),
-						method_injury,
-						type_vehicle=as.factor(type_vehicle),
-						motive_injury=as.factor(motive_injury),
-						location,
+                  dislocation=as.factor(dislocation),
+                  open_wound=as.factor(open_wound),
+                  bruise=as.factor(bruise),
+                  concussion=as.factor(concussion),
+                  organ_injury=as.factor(organ_injury),
+                  method_injury,
+                  type_vehicle=type_vehicle,
+                  motive_injury=as.factor(motive_injury),
+                  location,
                   outcome=as.factor(breath_level),
                   past_alcohol_use,
                   predictor_FUP1,
                   predictor_FUP2))
+
 regression$method_injury<-car::recode(regression$method_injury,
-	"'aRTI'='ARTI'")
-regression$type_vehicle<-car::recode(regression$type_vehicle,
-	"'3'='2'")
+   "'RTI'='ARTI'")
+# regression$type_vehicle<-car::recode(regression$type_vehicle,
+#  "'3'='2'")
 regression$location<-car::recode(regression$location,
-	"'drinking place'='ZOther';'vehicle'='ZOther';
-	'Other'='ZOther'")
-regression$work<-car::recode(regression$work,
-	"'9'='1'")
-regression$outcome<-car::recode(regression$outcome,
-	"'2'='0';'1'='1'")
+   "'outdoor public place'='Aoutdoor public place'")
+regression$gender<-car::recode(regression$gender,
+   "1='male';
+    2='female'")
+# regression$outcome<-car::recode(regression$outcome,
+#  "'2'='0';'1'='1'")
 regression$fracture<-car::recode(regression$fracture,
-	"'2'='0';'1'='1'")
+   "'2'='0';'1'='1'")
 regression$dislocation<-car::recode(regression$dislocation,
-	"'2'='0';'1'='1'")
+   "'2'='0';'1'='1'")
 regression$open_wound<-car::recode(regression$open_wound,
-	"'2'='0';'1'='1'")
+   "'2'='0';'1'='1'")
 regression$bruise<-car::recode(regression$bruise,
-	"'2'='0';'1'='1'")
+   "'2'='0';'1'='1'")
 regression$concussion<-car::recode(regression$concussion,
-	"'2'='0';'1'='1'")
+   "'2'='0';'1'='1'")
 regression$organ_injury<-car::recode(regression$organ_injury,
-	"'2'='0';'1'='1'")
+   "'2'='0';'1'='1'")
 
 #Method of injury
 # mytable <- with(regression,table(method_injury))
@@ -747,63 +778,63 @@ regression$organ_injury<-car::recode(regression$organ_injury,
 fit <- glm(outcome~age+
                    gender+
                    years_education+
-						 work+
+                   work+
                    # gcs+
                    time_to_injury+
-						 rts+
+                   rts+
                    kts+
                    fracture+
                    dislocation+
-						 open_wound+
+                   open_wound+
                    bruise+
                    concussion+
-						 organ_injury+
+                   organ_injury+
                    method_injury+
-						 type_vehicle+
+                   # type_vehicle+
                    motive_injury+
-						 location+
-                   past_alcohol_use+
-                   predictor_FUP1+
-                   predictor_FUP2,
-						data=regression,family=binomial())
+                   location,
+                   # past_alcohol_use+
+                   # predictor_FUP1+
+                   # predictor_FUP2,
+                  data=regression,family=binomial())
 summary(fit) # display results
-exp(cbind(Odds=coef(fit),confint(fit,level=0.90))) 
-ter#predict(fit, type="response") # predicted values
+cbind(exp(cbind(Odds=coef(fit),confint(fit,level=0.95))))
+# Pvalue=x$coefficients[,4])
+#predict(fit, type="response") # predicted values
 #residuals(fit, type="deviance") # residuals
 logistic.display(fit)
-
 
 ###########################################################
 #Table 2. Alchohl dosage usage
 ###########################################################
 #ALCOHOL POSITIVE
-cleaned_data$bottle_alcohol_positive<-car::recode(cleaned_data$bottle,"0=NA")
-cleaned_data$bottle24_alcohol_positive<-car::recode(cleaned_data$bottle24,"0=NA")
-cleaned_data$bottle1week_alcohol_positive<-car::recode(cleaned_data$bottle1week,"0=NA")
+# cleaned_data$bottle_alcohol_positive<-car::recode(cleaned_data$bottle,"0=NA")
+# cleaned_data$bottle24_alcohol_positive<-car::recode(cleaned_data$bottle24,"0=NA")
+# cleaned_data$bottle1week_alcohol_positive<-car::recode(cleaned_data$bottle1week,"0=NA")
 
 #alcohol usage - time of injury
-mytable <- with(cleaned_data,table(breath_level))
+mytable <- with(data_moshi_imp,table(breath_level))
 mytable
 prop.table(mytable)
-mytable <- with(cleaned_data,table(breath_level,bottle))
+mytable <- with(data_moshi_imp,table(breath_level,bottle))
 mytable
 prop.table(mytable,1)
 assocstats(mytable)
 
 #alcohol usage - 24 hours
-mytable <- with(cleaned_data,table(bottle24))
+mytable <- with(data_moshi_imp,table(bottle24))
 mytable
 prop.table(mytable)
-mytable <- with(cleaned_data,table(breath_level,bottle24))
+mytable <- with(data_moshi_imp,table(breath_level,bottle24))
 mytable
 prop.table(mytable,1)
 assocstats(mytable)
 
 #alcohol usage - 1 week
-mytable <- with(cleaned_data,table(bottle1week))
+mytable <- with(data_moshi_imp,table(bottle1week))
 mytable
 prop.table(mytable)
-mytable <- with(cleaned_data,table(breath_level,bottle1week))
+mytable <- with(data_moshi_imp,table(breath_level,bottle1week))
 mytable
 prop.table(mytable,1)
 assocstats(mytable)
@@ -851,17 +882,32 @@ assocstats(mytable)
 id_1<-c(1)
 id_2<-c(2)
 #id_3<-c(3)
-strata<-c(1:484)
+strata<-c(1:516)
 outcome1<-c(1)
 outcome2<-c(0)
 #outcome3<-c(0)
-fup1<-with(cleaned_data,data.frame(predictor=breath_level,
-	strata,id=id_1,outcome=outcome1,
-	age,years_education,gcs,
-	gender,bottle=bottles_drank_1))
-fup2<-with(cleaned_data,data.frame(predictor=predictor_FUP1,
-	strata,id=id_2,outcome=outcome2,age,
-	years_education,gcs,gender,bottle=bottles_drank_2))
+fup1<-with(data_moshi_imp,data.frame(
+         predictor=breath_level,
+         # predictor2=bottle,
+         strata,
+         id=id_1,
+         outcome=outcome1,
+         age,
+         years_education,
+         gcs,
+         gender,
+         bottle=bottle))
+fup2<-with(data_moshi_imp,data.frame(
+         predictor=predictor_FUP1,
+         # predictor2=bottle24,
+         strata,
+         id=id_2,
+         outcome=outcome2,
+         age,
+         years_education,
+         gcs,
+         gender,
+         bottle=bottle24))
 #fup3<-with(cleaned_data,data.frame(predictor=predictor_FUP2,strata,id=id_3,outcome=outcome3))
 #matched_data<-with(cleaned_data,data.frame(breath_level,id))
 #fup1$predictor<-car::recode(fup1$predictor,"'yes'=1;'no'=2")
@@ -869,10 +915,15 @@ fup2<-with(cleaned_data,data.frame(predictor=predictor_FUP1,
 clogit_data<-rbind(fup1,fup2)#,fup3)
 #clogit_data<-with(cleaned_data,data.frame(predictor1=predictor_FUP1,predictor2=predictor_FUP2,strata,outcome=breath_level))
 #matched_data<-with(cleaned_data,data.frame(breath_level,id))
-clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
-clogit_data$predictor<-as.factor(clogit_data$predictor)
+# clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
+# clogit_data$predictor<-as.factor(clogit_data$predictor)
 x_1<-clogit(outcome ~ predictor + strata(strata),clogit_data, 
-	method="exact")
+   method="exact")
+summary(x_1) 
+clogistic.display(x_1)
+
+x_1<-clogit(outcome ~ bottle + strata(strata),clogit_data, 
+   method="exact")
 summary(x_1) 
 clogistic.display(x_1)
 
@@ -880,52 +931,61 @@ clogistic.display(x_1)
 id_1<-c(1)
 #id_2<-c(2)
 id_3<-c(3)
-strata<-c(1:484)
+strata<-c(1:516)
 outcome1<-c(1)
 #outcome2<-c(0)
 outcome3<-c(0)
-fup1<-with(cleaned_data,data.frame(predictor=breath_level,strata,id=id_1,outcome=outcome1,bottle=bottles_drank_1))
+fup1<-with(data_moshi_imp,data.frame(predictor=breath_level,strata,id=id_1,outcome=outcome1,bottle=bottle))
 #fup2<-with(cleaned_data,data.frame(predictor=predictor_FUP1,strata,id=id_2,outcome=outcome2))
-fup3<-with(cleaned_data,data.frame(predictor=predictor_FUP2,strata,id=id_3,outcome=outcome3,bottle=bottles_drank_3))
+fup3<-with(data_moshi_imp,data.frame(predictor=predictor_FUP2,strata,id=id_3,outcome=outcome3,bottle=bottle1week))
 #matched_data<-with(cleaned_data,data.frame(breath_level,id))
 #fup1$predictor<-car::recode(fup1$predictor,"'yes'=1;'no'=2")
 #fup1$predictor<-as.numeric(as.character(fup1$predictor))
 clogit_data<-rbind(fup1,fup3)#,fup3)
 #clogit_data<-with(cleaned_data,data.frame(predictor1=predictor_FUP1,predictor2=predictor_FUP2,strata,outcome=breath_level))
 #matched_data<-with(cleaned_data,data.frame(breath_level,id))
-clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
-clogit_data$predictor<-as.factor(clogit_data$predictor)
+# clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
+# clogit_data$predictor<-as.factor(clogit_data$predictor)
 x_2<-clogit(outcome ~ predictor + strata(strata),clogit_data, method="exact")
 summary(x_2) 
 clogistic.display(x_2)
+
+x_22<-clogit(outcome ~ bottle + strata(strata),clogit_data, 
+   method="exact")
+summary(x_22) 
+clogistic.display(x_1)
 
 #CLOGIT MODEL 2:1
 id_1<-c(1)
 id_2<-c(2)
 id_3<-c(3)
-strata<-c(1:484)
+strata<-c(1:516)
 outcome1<-c(1)
 outcome2<-c(0)
 outcome3<-c(0)
-fup1<-with(cleaned_data,data.frame(predictor=breath_level,
-	strata,id=id_1,outcome=outcome1,confouder=bottle))
-fup2<-with(cleaned_data,data.frame(predictor=predictor_FUP1,
-	strata,id=id_2,outcome=outcome2,confouder=bottle24))
-fup3<-with(cleaned_data,data.frame(predictor=predictor_FUP2,
-	strata,id=id_3,outcome=outcome3,confouder=bottle1week))
+fup1<-with(data_moshi_imp,data.frame(predictor=breath_level,
+   strata,id=id_1,outcome=outcome1,confouder=bottle))
+fup2<-with(data_moshi_imp,data.frame(predictor=predictor_FUP1,
+   strata,id=id_2,outcome=outcome2,confouder=bottle24))
+fup3<-with(data_moshi_imp,data.frame(predictor=predictor_FUP2,
+   strata,id=id_3,outcome=outcome3,confouder=bottle1week))
 #matched_data<-with(cleaned_data,data.frame(breath_level,id))
 #fup1$predictor<-car::recode(fup1$predictor,"'yes'=1;'no'=2")
 #fup1$predictor<-as.numeric(as.character(fup1$predictor))
 clogit_data<-rbind(fup1,fup2,fup3)
 #clogit_data<-with(cleaned_data,data.frame(predictor1=predictor_FUP1,predictor2=predictor_FUP2,strata,outcome=breath_level))
 #matched_data<-with(cleaned_data,data.frame(breath_level,id))
-clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
-clogit_data$predictor<-as.factor(clogit_data$predictor)
+# clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
+# clogit_data$predictor<-as.factor(clogit_data$predictor)
 x_3<-clogit(outcome ~ predictor + strata(strata),clogit_data, method="exact")
 summary(x_3) 
 clogistic.display(x_3)
 
-#DOSAGE LEVEL
+x_3<-clogit(outcome ~ confouder + strata(strata),clogit_data, method="exact")
+summary(x_3) 
+clogistic.display(x_3)
+
+# #DOSAGE LEVEL
 mytable<-with(clogit_data,table(confouder,outcome))
 dose_matrix<-as.matrix(mytable)
 doseSpecificOddsRatios(dose_matrix)
