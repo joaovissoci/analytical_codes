@@ -25,30 +25,30 @@ lapply(c("metafor","ggplot2","gridExtra" ,"psych",
 
 #Dosage specific ODSS function
 #source: http://goo.gl/ETWdZd
-doseSpecificOddsRatios <- function(mymatrix,referencerow=1)
-{
-   numstrata <- nrow(mymatrix)
-   # calculate the stratum-specific odds ratios, and odds of disease:
-   doses <- as.numeric(rownames(mymatrix))
-   for (i in 1:numstrata)
-   {
-      dose <- doses[i]
-      # calculate the odds ratio:
-      DiseaseExposed <- mymatrix[i,1]
-      DiseaseUnexposed <- mymatrix[i,2]
-      ControlExposed <- mymatrix[referencerow,1]
-      ControlUnexposed <- mymatrix[referencerow,2]
-      totExposed <- DiseaseExposed + ControlExposed
-      totUnexposed <- DiseaseUnexposed + ControlUnexposed
-      probDiseaseGivenExposed <- DiseaseExposed/totExposed
-      probDiseaseGivenUnexposed <- DiseaseUnexposed/totUnexposed
-      probControlGivenExposed <- ControlExposed/totExposed
-      probControlGivenUnexposed <- ControlUnexposed/totUnexposed
-      oddsRatio <- (probDiseaseGivenExposed*probControlGivenUnexposed)/
-                   (probControlGivenExposed*probDiseaseGivenUnexposed)
-      print(paste("dose =", dose, ", odds ratio = ",oddsRatio))
-   }
-}
+# doseSpecificOddsRatios <- function(mymatrix,referencerow=1)
+# {
+#    numstrata <- nrow(mymatrix)
+#    # calculate the stratum-specific odds ratios, and odds of disease:
+#    doses <- as.numeric(rownames(mymatrix))
+#    for (i in 1:numstrata)
+#    {
+#       dose <- doses[i]
+#       # calculate the odds ratio:
+#       DiseaseExposed <- mymatrix[i,1]
+#       DiseaseUnexposed <- mymatrix[i,2]
+#       ControlExposed <- mymatrix[referencerow,1]
+#       ControlUnexposed <- mymatrix[referencerow,2]
+#       totExposed <- DiseaseExposed + ControlExposed
+#       totUnexposed <- DiseaseUnexposed + ControlUnexposed
+#       probDiseaseGivenExposed <- DiseaseExposed/totExposed
+#       probDiseaseGivenUnexposed <- DiseaseUnexposed/totUnexposed
+#       probControlGivenExposed <- ControlExposed/totExposed
+#       probControlGivenUnexposed <- ControlUnexposed/totUnexposed
+#       oddsRatio <- (probDiseaseGivenExposed*probControlGivenUnexposed)/
+#                    (probControlGivenExposed*probDiseaseGivenUnexposed)
+#       print(paste("dose =", dose, ", odds ratio = ",oddsRatio))
+#    }
+# }
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
@@ -394,7 +394,18 @@ summary(data_moshi_imp)
 mytable <- with(data_moshi_imp,table(breath_level))
 mytable
 prop.table(mytable)
+prop.test(156, 516)
 
+#alcohol legal limit
+mytable <- with(data_moshi_imp,table(breath_level_limit))
+mytable
+prop.table(mytable)
+mytable <- with(data_moshi_imp,table(breath_level_limit,breath_level))
+mytable
+prop.table(mytable,2)
+assocstats(mytable)
+
+#TABLE 1
 #Age
 with(data_moshi_imp,describe(age))
 with(data_moshi_imp,by(age,breath_level,ad.test))
@@ -840,37 +851,37 @@ prop.table(mytable,1)
 assocstats(mytable)
 
 #CREATING ABSTAINERS COLUMN
-cleaned_data$abstainers<-car::recode(cleaned_data$QG01,"99=NA;9='yes';else='no'")
+# cleaned_data$abstainers<-car::recode(cleaned_data$QG01,"99=NA;9='yes';else='no'")
 #alcohol usage - time of injury
-mytable <- with(cleaned_data,table(abstainers))
+mytable <- with(data_moshi_imp,table(past_alcohol_use))
 mytable
 prop.table(mytable)
 
 #Abstrainers Vs. Alchool Use
-mytable <- with(data_moshi,table(abstainers,breath_level))
+mytable <- with(data_moshi_imp,table(past_alcohol_use,breath_level))
 mytable
 prop.table(mytable,2)
 fisher.test(mytable)
 
-mytable <- with(data_moshi,table(abstainers,bottle))
+mytable <- with(data_moshi_imp,table(past_alcohol_use,bottle))
 mytable
 prop.table(mytable,1)
-assocstats(mytable)
+59assocstats(mytable)
 
 #alcohol usage - 24 hours
-mytable <- with(data_moshi,table(bottle24))
+mytable <- with(data_moshi_imp,table(bottle24))
 mytable
 prop.table(mytable)
-mytable <- with(data_moshi,table(abstainers,bottle24))
+mytable <- with(data_moshi_imp,table(past_alcohol_use,bottle24))
 mytable
 prop.table(mytable,1)
 assocstats(mytable)
 
 #alcohol usage - 1 week
-mytable <- with(data_moshi,table(bottle1week))
+mytable <- with(data_moshi_imp,table(bottle1week))
 mytable
 prop.table(mytable)
-mytable <- with(data_moshi,table(abstainers,bottle1week))
+mytable <- with(data_moshi_imp,table(past_alcohol_use,bottle1week))
 mytable
 prop.table(mytable,1)
 assocstats(mytable)
@@ -878,6 +889,8 @@ assocstats(mytable)
 ###########################################################
 ##TABLE 4
 ###########################################################
+
+#ALL INJURIES
 #CLOGIT MODEL 1:1 -Control 24 hours
 id_1<-c(1)
 id_2<-c(2)
@@ -986,9 +999,9 @@ summary(x_3)
 clogistic.display(x_3)
 
 # #DOSAGE LEVEL
-mytable<-with(clogit_data,table(confouder,outcome))
-dose_matrix<-as.matrix(mytable)
-doseSpecificOddsRatios(dose_matrix)
+# mytable<-with(clogit_data,table(confouder,outcome))
+# dose_matrix<-as.matrix(mytable)
+# doseSpecificOddsRatios(dose_matrix)
 
 #############################################################
 #CLOGIT MODEL - RTI outcome
@@ -1046,7 +1059,7 @@ clogistic.display(x_2B)
 #create dummy variables to exposure within the clogit stuff
 
 ### MODEL 1:2
-rti_model<-subset(cleaned_data,cleaned_data$method_injury=='RTI')
+rti_model<-subset(data_moshi_imp,data_moshi_imp$method_injury=='RTI')
 id_1<-c(1)
 id_2<-c(2)
 id_3<-c(3)
@@ -1063,16 +1076,20 @@ fup3<-with(rti_model,data.frame(predictor=predictor_FUP2,strata,id=id_3,outcome=
 clogit_data<-rbind(fup1,fup2,fup3)
 #clogit_data<-with(rti_model,data.frame(predictor1=predictor_FUP1,predictor2=predictor_FUP2,strata,outcome=breath_level))
 #matched_data<-with(rti_model,data.frame(breath_level,id))
-clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
-clogit_data$predictor<-as.factor(clogit_data$predictor)
+# clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
+# clogit_data$predictor<-as.factor(clogit_data$predictor)
 x_3B<-clogit(outcome ~ predictor +strata(strata),clogit_data, method="exact")
 summary(x_3B) 
 clogistic.display(x_3B)
 
+x_3B<-clogit(outcome ~ confouder + strata(strata),clogit_data, method="exact")
+summary(x_3B) 
+clogistic.display(x_3B)
+
 #DOSAGE LEVEL
-mytable<-with(clogit_data,table(confouder,outcome))
-dose_matrix<-as.matrix(mytable)
-doseSpecificOddsRatios(dose_matrix)
+# mytable<-with(clogit_data,table(confouder,outcome))
+# dose_matrix<-as.matrix(mytable)
+# doseSpecificOddsRatios(dose_matrix)
 #############################################################
 #CLOGIT MODEL - Violence outcome
 #############################################################
@@ -1129,7 +1146,7 @@ clogistic.display(x_2C)
 #create dummy variables to exposure within the clogit stuff
 
 ### MODEL 1:2
-violence_model<-subset(cleaned_data,cleaned_data$method_injury=='Violence')
+violence_model<-subset(data_moshi_imp,data_moshi_imp$method_injury=='Violence')
 id_1<-c(1)
 id_2<-c(2)
 id_3<-c(3)
@@ -1146,17 +1163,21 @@ fup3<-with(violence_model,data.frame(predictor=predictor_FUP2,strata,id=id_3,out
 clogit_data<-rbind(fup1,fup2,fup3)
 #clogit_data<-with(violence_model,data.frame(predictor1=predictor_FUP1,predictor2=predictor_FUP2,strata,outcome=breath_level))
 #matched_data<-with(violence_model,data.frame(breath_level,id))
-clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
-clogit_data$predictor<-as.factor(clogit_data$predictor)
+# clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
+# clogit_data$predictor<-as.factor(clogit_data$predictor)
 x_3C<-clogit(outcome ~ predictor +strata(strata),clogit_data, method="exact")
 summary(x_3C) 
 #clogistic.display(x)
 
+x_3C<-clogit(outcome ~ confouder + strata(strata),clogit_data, method="exact")
+summary(x_3C) 
+clogistic.display(x_3C)
+
 #DOSAGE LEVEL
-clogit_data$confounder_dosage<-car::recode(clogit_data$confouder,"'5 to 11'='high';'12 or more'='high'")
-mytable<-with(clogit_data,table(confounder_dosage,outcome))
-dose_matrix<-as.matrix(mytable)
-doseSpecificOddsRatios(dose_matrix)
+# clogit_data$confounder_dosage<-car::recode(clogit_data$confouder,"'5 to 11'='high';'12 or more'='high'")
+# mytable<-with(clogit_data,table(confounder_dosage,outcome))
+# dose_matrix<-as.matrix(mytable)
+# doseSpecificOddsRatios(dose_matrix)
 #############################################################
 #Non-violence related
 #############################################################
@@ -1212,7 +1233,7 @@ clogistic.display(x_2C)
 #create dummy variables to exposure within the clogit stuff
 
 ### MODEL 1:2
-violence_model<-subset(cleaned_data,cleaned_data$method_injury!='Violence')
+violence_model<-subset(data_moshi_imp,data_moshi_imp$method_injury!='Violence')
 id_1<-c(1)
 id_2<-c(2)
 id_3<-c(3)
@@ -1220,20 +1241,25 @@ strata<-c(1:length(violence_model$breath_level))
 outcome1<-c(1)
 outcome2<-c(0)
 outcome3<-c(0)
-fup1<-with(violence_model,data.frame(predictor=breath_level,strata,id=id_1,outcome=outcome1,confouder=bottle))
-fup2<-with(violence_model,data.frame(predictor=predictor_FUP1,strata,id=id_2,outcome=outcome2,confouder=bottle24))
-fup3<-with(violence_model,data.frame(predictor=predictor_FUP2,strata,id=id_3,outcome=outcome3,confouder=bottle1week))
+fup1<-with(violence_model,data.frame(predictor=breath_level,strata,id=id_1,outcome=outcome1,confouder=bottle,years_education,age,gender))
+fup2<-with(violence_model,data.frame(predictor=predictor_FUP1,strata,id=id_2,outcome=outcome2,confouder=bottle24,years_education,age,gender))
+fup3<-with(violence_model,data.frame(predictor=predictor_FUP2,strata,id=id_3,outcome=outcome3,confouder=bottle1week,years_education,age,gender))
 #matched_data<-with(violence_model,data.frame(breath_level,id))
 #fup1$predictor<-car::recode(fup1$predictor,"'yes'=2;'no'=1")
 #fup1$predictor<-as.numeric(as.character(fup1$predictor))
 clogit_data<-rbind(fup1,fup2,fup3)
 #clogit_data<-with(violence_model,data.frame(predictor1=predictor_FUP1,predictor2=predictor_FUP2,strata,outcome=breath_level))
 #matched_data<-with(violence_model,data.frame(breath_level,id))
-clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
-clogit_data$predictor<-as.factor(clogit_data$predictor)
-x_3C<-clogit(outcome ~ predictor +strata(strata),clogit_data, method="exact")
+# clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
+# clogit_data$predictor<-as.factor(clogit_data$predictor)
+x_3C<-clogit(outcome ~ predictor + strata(strata),clogit_data, method="exact")
 summary(x_3C) 
 clogistic.display(x)
+
+
+x_3C<-clogit(outcome ~ confouder + strata(strata),clogit_data, method="exact")
+summary(x_3C) 
+clogistic.display(x_3C)
 
 #DOSAGE LEVEL
 clogit_data$confounder_dosage<-car::recode(clogit_data$confouder,"'5 to 11'='high';'12 or more'='high'")

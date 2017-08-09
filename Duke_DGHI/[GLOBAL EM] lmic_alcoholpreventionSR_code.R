@@ -19,7 +19,7 @@ library, character.only=T)
 #IMPORTING DATA
 #################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/jnv4/Desktop/lmic_alcoholpreventionSR_data.csv")
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/US/GIC 2017/lmic_alcoholpreventionSR_data.csv")
 #information between " " are the path to the directory in your computer where the data is stored
 
 #############################################################################

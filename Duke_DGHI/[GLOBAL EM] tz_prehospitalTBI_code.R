@@ -38,7 +38,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistry_data.csv")
+data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistry_data.csv")
 
 ######################################################
 #DATA MANAGEMENT
@@ -335,6 +335,10 @@ strata <- "gos_cat"
 descritive.table(analysis_data, variables.to.table1)
 descritive.table(analysis_data, variables.to.table1, strata)
 
+#gcs
+table<-with(analysis_data,table(gos))
+table
+prop.table(table)
 
 #gcs
 table<-with(analysis_data,table(gcs_cat))
@@ -452,6 +456,8 @@ with(analysis_data,wilcox.test(transport_cost~gos_cat))
 
 #Transport legs
 with(analysis_data,summary(transport_legs))
+with(analysis_data,table(transport_legs))
+with(analysis_data,prop.table(table(transport_legs)))
 #ad.test(bea_data$density_pedestrian)
 #hist(bea_data$density_pedestrian)
 #ci_func(bea_data$density_pedestrian,.95)

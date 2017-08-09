@@ -27,8 +27,8 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"moments","GPArotation","nFactors","boot","psy", "car",
 	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
-	"lmerTest","dplyr","mice"),library, character.only=T)
-library(vcd)
+	"lmerTest","dplyr","mice",
+  "poLCA"),library, character.only=T)
 #Package and codes to pull data from goodle sheets
 #devtools::install_github("jennybc/googlesheets")
 #library(googlesheets)
@@ -165,10 +165,10 @@ ses_data$hour_week<-ses_data$hours_wkvehicle*ses_data$day_wkvehicle
 #Imputing missing data
 
 ses_data_imputed<-mice(data.frame(ses_data,data$crash_lifetime,data$near_miss_month), seed = 2222, m=10)
-ses_data<-complete(ses_data_imputed,4)
+ses_data<-mice::complete(ses_data_imputed,4)
 
 safety_habits_data_imputed<-mice(safety_habits_data, seed = 2222, m=10)
-safety_habits_data<-complete(safety_habits_data_imputed,4)
+safety_habits_data<-mice::complete(safety_habits_data_imputed,4)
 safety_habits_data$helmet_mc<-car::recode(
   safety_habits_data$helmet_mc,"NA=1")
 
@@ -561,32 +561,30 @@ crash_year <- table(outcome_data$crash_year)
 crash_year
 prop.table(crash_year)
 
-
-
 ######################################################
 #TABLE 3.
 ######################################################
 ## OR table ##
-
 reg_data<-data.frame(ses_data,
                      safety_habits_data,
                      outcome_data)
 
 #crashlifetime
-crashlifetime <-glm(as.factor(crash_lifetime) ~ 
+crashlifetime <-glm(as.factor(crash_year) ~ 
                   age + 
 					        years_wkvehicle +                  
 					          # day_wkvehicle +
      #          		# time_start_wk + 
      #          		# time_stop_wk + 
               		# time_motodr + 
-              		hairnets_available +
+              		# hairnets_available +
               		headlights_always + 
               		helmet_damage +
-                  helmet_colleagues +
+                  # helmet_colleagues +
                   helmet_strap_value +
-                  helmet_value
-                  ,family=binomial, data=reg_data)
+                  helmet_value +
+                  crash_opinion___0,
+                  family=binomial, data=reg_data)
 summary(crashlifetime)
 exp(coef(crashlifetime))
 exp(confint(crashlifetime))
@@ -654,6 +652,189 @@ summary(disab)
 exp(coef(disab))
 exp(confint(disab))
 logistic.display(disab)
+
+######################################################
+#Testing a latent variable model
+######################################################
+
+safety_perceptions<-remove.vars(safety_habits_data,
+  c("helmet_mc",
+    "crash_opinion___90",
+    "helmet_strap_use",
+    "hairnets_available",
+    "headlights_night",
+    "helmet_colleagues"))
+
+safety1<-with(safety_perceptions,data.frame(
+      crash_opinion___0,
+      crash_opinion___1,
+      crash_opinion___2,
+      crash_opinion___3,
+      crash_opinion___4,
+      crash_opinion___5,
+      crash_opinion___6))
+      # crash_moto,
+      # crash_bus,
+      # crash_peds))
+
+safety2<-with(safety_perceptions,data.frame(
+      ,
+      crash_car,
+      crash_opinion___2,
+      crash_opinion___3,
+      crash_opinion___4,
+      crash_opinion___5,
+      crash_opinion___6))
+
+fa.parallel(safety_perceptions,cor="poly")
+
+library(qgraph)
+cor<-cor_auto(safety1)
+qgraph(cor,layout="spring")
+
+fa(cor,2,rotate="promax")
+VSS.scree(ses_data)
+
+cfa_model <- '
+good =~  crash_opinion___0 + 
+         crash_opinion___6 + 
+         helmet_damage +
+         helmet_value +
+         helmet_strap_value
+external =~ crash_opinion___1 + 
+            crash_opinion___2 + 
+            crash_opinion___4 +
+            headlights_always +
+            crash_car +
+            glass_helmet +
+            fit_helmet
+bad =~ crash_opinion___3 + 
+       crash_opinion___5 + 
+       crash_moto + 
+       cracks_dhelmet +
+       strap_dhelmet
+       '
+
+fit <- lavaan::cfa(cfa_model,
+           data = safety_perceptions,
+           estimator="WLSM")
+summary(fit,
+    fit.measures=TRUE)
+lavaan::fitMeasures(fit,
+          fit.measures = "all")
+parameterEstimates(fit)
+Est <- lavaan::parameterEstimates(fit,
+                  ci = TRUE,
+                  standardized = TRUE)
+subset(Est, op == "=~")
+subset(Est, op == "~~")
+
+###################################################
+#Latent class analysis
+###################################################
+
+## Questions
+# http://rfunction.com/archives/1499
+# https://drive.google.com/open?id=0B4TReYGK49h_X09ZYno1OG5aUVk
+
+# Correlation
+
+# Building the formula
+# To specify a latent class model, poLCA uses the standard, symbolic R model formula expres- sion. The response variables are the manifest variables of the model. Because latent class models have multiple manifest variables, these variables must be “bound” as cbind(Y1, Y2, Y3, ...) in the model formula. For the basic latent class model with no covariates, the formula definition takes the form
+
+ses_data_cat<-sapply(safety_perceptions,function(x) as.factor(x))
+ses_data_cat<-as.data.frame(ses_data_cat)
+ses_data_cat2<-sapply(ses_data_cat,function(x) as.numeric(x))
+ses_data_cat2<-as.data.frame(ses_data_cat2)
+
+f <- cbind(colleagues_risks,
+           headlights_always,
+           helmet_damage,
+           cracks_dhelmet,
+           scratches_dhelmet,
+           strap_dhelmet,
+           glass_helmet,
+           fit_helmet,
+           helmet_value,
+           helmet_strap_value) ~ 1
+
+# The ~ 1 instructs poLCA to estimate the basic latent class model. For the latent class regres- sion model, replace the ~ 1 with the desired function of covariates, as, for example:
+# f <- cbind(Y1, Y2, Y3) ~ X1 + X2 * X3
+
+# To estimate the specified latent class model, the default poLCA command is:
+# poLCA(formula, data, ncl pass = 2, maxiter = 1000, graphs = FALSE,
+#     tol = 1e-10, na.rm = TRUE, probs.start = NULL, nrep = 1,
+#     verbose = TRUE, calc.se = TRUE)
+
+#========================================================= 
+# Fit for 2 latent classes: 
+#========================================================= 
+set.seed(1988)
+
+# ses_data<-na.omit(ses_data)
+lcamodel <- poLCA(f, ses_data_cat2, nclass = 3)
+
+# Entropy
+entropy<-function (p) sum(-p*log(p))
+error_prior <- entropy(lcamodel$P) # Class proportions
+error_post <- mean(apply(lcamodel$posterior, 1, entropy))
+R2_entropy <- (error_prior - error_post) / error_prior
+R2_entropy
+
+### results
+# number of observations: 245 
+# number of estimated parameters: 27 
+# residual degrees of freedom: 218 
+# maximum log-likelihood: -1243.071 
+ 
+# AIC(2): 2540.142
+# BIC(2): 2634.676
+# G^2(2): 284.7812 (Likelihood ratio/deviance statistic) 
+# X^2(2): 908.1992 (Chi-square goodness of fit)  
+
+# Entropy = [1] 0.7747763
+
+## OR table ##
+reg_data2<-data.frame(ses_data,
+                     safety_habits_data,
+                     outcome_data,
+                     class=lcamodel$predclass)
+reg_data2$class_recoded<-car::recode(
+  reg_data2$class,"1='class1';
+                 2='class2';
+                 3='class3'")
+#crashlifetime
+crashlifetime <-glm(as.factor(crash_year) ~ 
+                  age + 
+                  years_wkvehicle +                  
+                    # day_wkvehicle +
+     #              # time_start_wk + 
+     #              # time_stop_wk + 
+                  # time_motodr + 
+                  # hairnets_available +
+                  class_recoded,
+                  family=binomial, data=reg_data2)
+summary(crashlifetime)
+exp(coef(crashlifetime))
+exp(confint(crashlifetime))
+logistic.display(crashlifetime)
+
+#crashlifetime
+crashlifetime <-glm(as.factor(near_miss_month) ~ 
+                  age + 
+                  years_wkvehicle +                  
+                    # day_wkvehicle +
+     #              # time_start_wk + 
+     #              # time_stop_wk + 
+                  # time_motodr + 
+                  # hairnets_available +
+                  class_recoded,
+                  family=binomial, data=reg_data2)
+summary(crashlifetime)
+exp(coef(crashlifetime))
+exp(confint(crashlifetime))
+logistic.display(crashlifetime)
+
 
 ######################################################
 #PRINCIPAL COMPONENTS
