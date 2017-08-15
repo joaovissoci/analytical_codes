@@ -154,9 +154,9 @@ safety_habits_data$helmet_value<-car::recode(safety_habits_data$helmet_value, "c
 safety_habits_data$helmet_strap_value<-car::recode(safety_habits_data$helmet_strap_value, "c(1,2,3,4)='0'; 5='1'")
 safety_habits_data$colleagues_risks<-car::recode(safety_habits_data$colleagues_risks, "c(0,1,2,3)='0'; 4='1'")
 safety_habits_data$helmet_colleagues<-car::recode(safety_habits_data$helmet_colleagues, "c(0,1,2,3)='0'; 4='1'")
+safety_habits_data$fit_helmet<-car::recode(safety_habits_data$fit_helmet, "0='1'; 1='0'")
 
-
-#recoding outcomes
+#recoding out
 outcome_data$crash_lifetime<-as.factor(outcome_data$crash_lifetime)
 
 #recoding hours worked per week
@@ -564,98 +564,161 @@ prop.table(crash_year)
 ######################################################
 #TABLE 3.
 ######################################################
-## OR table ##
-reg_data<-data.frame(ses_data,
-                     safety_habits_data,
-                     outcome_data)
+# ## OR table ##
+# reg_data<-data.frame(ses_data,
+#                      safety_habits_data,
+#                      outcome_data)
 
-#crashlifetime
-crashlifetime <-glm(as.factor(crash_year) ~ 
-                  age + 
-					        years_wkvehicle +                  
-					          # day_wkvehicle +
-     #          		# time_start_wk + 
-     #          		# time_stop_wk + 
-              		# time_motodr + 
-              		# hairnets_available +
-              		headlights_always + 
-              		helmet_damage +
-                  # helmet_colleagues +
-                  helmet_strap_value +
-                  helmet_value +
-                  crash_opinion___0,
-                  family=binomial, data=reg_data)
-summary(crashlifetime)
-exp(coef(crashlifetime))
-exp(confint(crashlifetime))
-logistic.display(crashlifetime)
+# #crashlifetime
+# crashlifetime <-glm(as.factor(crash_year) ~ 
+#                   age + 
+# 					        years_wkvehicle +                  
+# 					          # day_wkvehicle +
+#      #          		# time_start_wk + 
+#      #          		# time_stop_wk + 
+#               		# time_motodr + 
+#               		# hairnets_available +
+#               		headlights_always + 
+#               		helmet_damage +
+#                   # helmet_colleagues +
+#                   helmet_strap_value +
+#                   helmet_value +
+#                   crash_opinion___0,
+#                   family=binomial, data=reg_data)
+# summary(crashlifetime)
+# exp(coef(crashlifetime))
+# exp(confint(crashlifetime))
+# logistic.display(crashlifetime)
 
-#injured_crash
-num_injuried<-subset(numeric,numeric$crash_lifetime=="1")
-injuredcrash <-glm(as.factor(num_injuried$injured_crash) ~ 
-					num_injuried$age + 
-					# num_injuried$hours_wkvehicle + 
-					# num_injuried$day_wkvehicle +
-              		# num_injuried$time_start_wk + 
-              		# num_injuried$time_stop_wk + 
-              		num_injuried$time_motodr + 
-              		num_injuried$helmet_mc +
-              		num_injuried$belt_driver + 
-              		num_injuried$belt_back + 
-              		num_injuried$belt_passenger +
-            	  	num_injuried$stop_fast + 
-            	  	num_injuried$road_wrongside
-                   ,family=binomial, data=num_injuried)
-summary(injuredcrash)
-exp(coef(injuredcrash))
-exp(confint(injuredcrash))
-logistic.display(injuredcrash)
+# #injured_crash
+# num_injuried<-subset(numeric,numeric$crash_lifetime=="1")
+# injuredcrash <-glm(as.factor(num_injuried$injured_crash) ~ 
+# 					num_injuried$age + 
+# 					# num_injuried$hours_wkvehicle + 
+# 					# num_injuried$day_wkvehicle +
+#               		# num_injuried$time_start_wk + 
+#               		# num_injuried$time_stop_wk + 
+#               		num_injuried$time_motodr + 
+#               		num_injuried$helmet_mc +
+#               		num_injuried$belt_driver + 
+#               		num_injuried$belt_back + 
+#               		num_injuried$belt_passenger +
+#             	  	num_injuried$stop_fast + 
+#             	  	num_injuried$road_wrongside
+#                    ,family=binomial, data=num_injuried)
+# summary(injuredcrash)
+# exp(coef(injuredcrash))
+# exp(confint(injuredcrash))
+# logistic.display(injuredcrash)
 
-#near miss
-# num_nearmiss<-subset(numeric,numeric$crash_lifetime=="1")
-nearmiss <-glm(as.factor(numeric$near_miss_month) ~ 
-					numeric$age + 
-					# numeric$hours_wkvehicle + 
-					# numeric$day_wkvehicle +
-              		# numeric$time_start_wk + 
-              		# numeric$time_stop_wk + 
-              		numeric$time_motodr + 
-              		numeric$helmet_mc +
-              		numeric$belt_driver + 
-              		numeric$belt_back + 
-              		numeric$belt_passenger +
-            	  	numeric$stop_fast + 
-            	  	numeric$road_wrongside
-                   ,family=binomial, data=numeric)
-summary(nearmiss)
-exp(coef(nearmiss))
-exp(confint(nearmiss))
-logistic.display(nearmiss)
+# #near miss
+# # num_nearmiss<-subset(numeric,numeric$crash_lifetime=="1")
+# nearmiss <-glm(as.factor(numeric$near_miss_month) ~ 
+# 					numeric$age + 
+# 					# numeric$hours_wkvehicle + 
+# 					# numeric$day_wkvehicle +
+#               		# numeric$time_start_wk + 
+#               		# numeric$time_stop_wk + 
+#               		numeric$time_motodr + 
+#               		numeric$helmet_mc +
+#               		numeric$belt_driver + 
+#               		numeric$belt_back + 
+#               		numeric$belt_passenger +
+#             	  	numeric$stop_fast + 
+#             	  	numeric$road_wrongside
+#                    ,family=binomial, data=numeric)
+# summary(nearmiss)
+# exp(coef(nearmiss))
+# exp(confint(nearmiss))
+# logistic.display(nearmiss)
 
-#disab
-num_hosp<-subset(data,data$crash_lifetime=="1")
-disab <-glm(as.factor(num_disab$disability_crash) ~ 
-					num_disab$age + 
-					# num_disab$hours_wkvehicle + 
-					# num_disab$day_wkvehicle +
-              		# num_disab$time_start_wk + 
-              		# num_disab$time_stop_wk + 
-              		num_disab$time_motodr + 
-              		num_disab$helmet_mc +
-              		num_disab$belt_driver + 
-              		# num_disab$belt_back + 
-              		num_disab$belt_passenger +
-            	  	num_disab$stop_fast
-            	  	# num_disab$road_wrongside
-                   ,family=binomial, data=num_disab)
-summary(disab)
-exp(coef(disab))
-exp(confint(disab))
-logistic.display(disab)
+# #disab
+# num_hosp<-subset(data,data$crash_lifetime=="1")
+# disab <-glm(as.factor(num_disab$disability_crash) ~ 
+# 					num_disab$age + 
+# 					# num_disab$hours_wkvehicle + 
+# 					# num_disab$day_wkvehicle +
+#               		# num_disab$time_start_wk + 
+#               		# num_disab$time_stop_wk + 
+#               		num_disab$time_motodr + 
+#               		num_disab$helmet_mc +
+#               		num_disab$belt_driver + 
+#               		# num_disab$belt_back + 
+#               		num_disab$belt_passenger +
+#             	  	num_disab$stop_fast
+#             	  	# num_disab$road_wrongside
+#                    ,family=binomial, data=num_disab)
+# summary(disab)
+# exp(coef(disab))
+# exp(confint(disab))
+# logistic.display(disab)
 
 ######################################################
 #Testing a latent variable model
 ######################################################
+# safety2<-with(safety_perceptions,data.frame(
+#       ,
+#       crash_car,
+#       crash_opinion___2,
+#       crash_opinion___3,
+#       crash_opinion___4,
+#       crash_opinion___5,
+#       crash_opinion___6))
+
+# fa.parallel(safety_perceptions,cor="poly")
+
+# library(qgraph)
+# cor<-cor_auto(safety1)
+# qgraph(cor,layout="spring")
+
+# fa(cor,2,rotate="promax")
+# VSS.scree(ses_data)
+
+# cfa_model <- '
+# good =~  crash_opinion___0 + 
+#          crash_opinion___6 + 
+#          helmet_damage +
+#          helmet_value +
+#          helmet_strap_value
+# external =~ crash_opinion___1 + 
+#             crash_opinion___2 + 
+#             crash_opinion___4 +
+#             headlights_always +
+#             crash_car +
+#             glass_helmet +
+#             fit_helmet
+# bad =~ crash_opinion___3 + 
+#        crash_opinion___5 + 
+#        crash_moto + 
+#        cracks_dhelmet +
+#        strap_dhelmet
+#        '
+
+# fit <- lavaan::cfa(cfa_model,
+#            data = safety_perceptions,
+#            estimator="WLSM")
+# summary(fit,
+#     fit.measures=TRUE)
+# lavaan::fitMeasures(fit,
+#           fit.measures = "all")
+# parameterEstimates(fit)
+# Est <- lavaan::parameterEstimates(fit,
+#                   ci = TRUE,
+#                   standardized = TRUE)
+# subset(Est, op == "=~")
+# subset(Est, op == "~~")
+
+###################################################
+#Latent class analysis
+###################################################
+
+## Questions
+# http://rfunction.com/archives/1499
+# https://drive.google.com/open?id=0B4TReYGK49h_X09ZYno1OG5aUVk
+
+# Correlation
+
+# Building the formula
 
 safety_perceptions<-remove.vars(safety_habits_data,
   c("helmet_mc",
@@ -677,69 +740,6 @@ safety1<-with(safety_perceptions,data.frame(
       # crash_bus,
       # crash_peds))
 
-safety2<-with(safety_perceptions,data.frame(
-      ,
-      crash_car,
-      crash_opinion___2,
-      crash_opinion___3,
-      crash_opinion___4,
-      crash_opinion___5,
-      crash_opinion___6))
-
-fa.parallel(safety_perceptions,cor="poly")
-
-library(qgraph)
-cor<-cor_auto(safety1)
-qgraph(cor,layout="spring")
-
-fa(cor,2,rotate="promax")
-VSS.scree(ses_data)
-
-cfa_model <- '
-good =~  crash_opinion___0 + 
-         crash_opinion___6 + 
-         helmet_damage +
-         helmet_value +
-         helmet_strap_value
-external =~ crash_opinion___1 + 
-            crash_opinion___2 + 
-            crash_opinion___4 +
-            headlights_always +
-            crash_car +
-            glass_helmet +
-            fit_helmet
-bad =~ crash_opinion___3 + 
-       crash_opinion___5 + 
-       crash_moto + 
-       cracks_dhelmet +
-       strap_dhelmet
-       '
-
-fit <- lavaan::cfa(cfa_model,
-           data = safety_perceptions,
-           estimator="WLSM")
-summary(fit,
-    fit.measures=TRUE)
-lavaan::fitMeasures(fit,
-          fit.measures = "all")
-parameterEstimates(fit)
-Est <- lavaan::parameterEstimates(fit,
-                  ci = TRUE,
-                  standardized = TRUE)
-subset(Est, op == "=~")
-subset(Est, op == "~~")
-
-###################################################
-#Latent class analysis
-###################################################
-
-## Questions
-# http://rfunction.com/archives/1499
-# https://drive.google.com/open?id=0B4TReYGK49h_X09ZYno1OG5aUVk
-
-# Correlation
-
-# Building the formula
 # To specify a latent class model, poLCA uses the standard, symbolic R model formula expres- sion. The response variables are the manifest variables of the model. Because latent class models have multiple manifest variables, these variables must be “bound” as cbind(Y1, Y2, Y3, ...) in the model formula. For the basic latent class model with no covariates, the formula definition takes the form
 
 ses_data_cat<-sapply(safety_perceptions,function(x) as.factor(x))
@@ -767,7 +767,7 @@ f <- cbind(colleagues_risks,
 #     verbose = TRUE, calc.se = TRUE)
 
 #========================================================= 
-# Fit for 2 latent classes: 
+# Fit for 3 latent classes: 
 #========================================================= 
 set.seed(1988)
 
@@ -794,15 +794,49 @@ R2_entropy
 
 # Entropy = [1] 0.7747763
 
+# Example from https://github.com/ricardo-bion/ggradar
+library(ggplot2)
+library(ggradar)
+library(dplyr)
+library(scales)
+library(tibble)
+
+# configured to work on a Mac, change directory to Unix or Windows
+
+radialplot_data<-as.data.frame(lcamodel$probs)[,c(1,3,5,7,9,11,13,15,17,19)]
+
+rownames(radialplot_data)<-c("Low","High","Mid")
+
+radialplot_data %>%
+     rownames_to_column( var = "group" ) -> radialplot_data2
+
+axis_lables<-c("Peers at risk",
+               "Use headlights",
+               "Demaged\n helmet",
+               "Cracked\n helmet",
+               "Scratched\n helmet",
+               "Strapped helmet",
+               "Clear helmet\n glass",
+               "Good helmet fit",
+               "Values helmet\n use",
+               "Values helmet\n strap use")
+
+ggradar(radialplot_data2,
+        font.radar="sans",
+         grid.label.size=7,
+         axis.label.size=5,
+         axis.labels=axis_lables,
+         legend.text.size=10) 
+
 ## OR table ##
 reg_data2<-data.frame(ses_data,
                      safety_habits_data,
                      outcome_data,
                      class=lcamodel$predclass)
 reg_data2$class_recoded<-car::recode(
-  reg_data2$class,"1='class1';
-                 2='class2';
-                 3='class3'")
+  reg_data2$class,"1='Low';
+                 2='High';
+                 3='Mid'")
 #crashlifetime
 crashlifetime <-glm(as.factor(crash_year) ~ 
                   age + 
@@ -815,12 +849,19 @@ crashlifetime <-glm(as.factor(crash_year) ~
                   class_recoded,
                   family=binomial, data=reg_data2)
 summary(crashlifetime)
-exp(coef(crashlifetime))
-exp(confint(crashlifetime))
-logistic.display(crashlifetime)
+odds_model_1<-exp(cbind(Odds=coef(crashlifetime),
+                confint(crashlifetime,level=0.95))) 
+colnames(odds_model_1)<-c("OR","LowCI","HighCI")
 
-#crashlifetime
-crashlifetime <-glm(as.factor(near_miss_month) ~ 
+#nearmiss
+
+reg_data2$near_miss_month_bin<-car::recode(
+    reg_data2$near_miss_month,"
+    0='no';
+    else='yes'")
+reg_data2$near_miss_month_bin<-as.factor(reg_data2$near_miss_month_bin)
+
+nearmiss <-glm(near_miss_month_bin ~ 
                   age + 
                   years_wkvehicle +                  
                     # day_wkvehicle +
@@ -830,12 +871,46 @@ crashlifetime <-glm(as.factor(near_miss_month) ~
                   # hairnets_available +
                   class_recoded,
                   family=binomial, data=reg_data2)
-summary(crashlifetime)
-exp(coef(crashlifetime))
-exp(confint(crashlifetime))
-logistic.display(crashlifetime)
+summary(nearmiss)
+odds_model_2<-exp(cbind(Odds=coef(nearmiss),
+                confint(nearmiss,level=0.95))) 
+colnames(odds_model_2)<-c("OR","LowCI","HighCI")
+
+odds_all<-rbind(odds_model_1,
+           odds_model_2)
+
+# plot_odds<-function(x, title = NULL){
+odds<-odds_model_1[-c(1,2,3),]
+odds<-as.data.frame(odds)
+colnames(odds)<-c('OR', 'lower', 'upper')
+odds$vars<-c("Low safety","Mid safety")
+
+#ticks<-c(seq(.1, 1, by =.1), seq(0, 10, by
 
 
-######################################################
-#PRINCIPAL COMPONENTS
-######################################################
+ggplot(odds, aes(y= OR, x = reorder(vars, OR))) +
+geom_point() +
+geom_errorbar(aes(ymin=lower, ymax=upper), width=.2) +
+#scale_y_log10(breaks=ticks, labels = ticks) +
+geom_hline(yintercept = 1, linetype=2) +
+# scale_x_discrete(limits=c(
+#        "4 or more hrs vs. 0-1 hrs",
+#        "3-4 hrs vs. 0-1 hrs",
+#        "2-3 hrs vs. 0-1 thrs",
+#        "1-2 hrs vs. 0-1 hrs",
+#        "# course points",
+#        "Age",
+#        "Male vs. Female",
+#        "RTI vs. non-RTI",
+#        "Alcohol use vc. Abstainer",
+#        "Moshi Rural vs. Moshi Urban",
+#        "Hai vs. Moshi Urban",
+#        "Rombo vs. Moshi Urban",
+#        "Mwanga vs. Moshi Urban",
+#        "Same vs. Moshi Urban")) +
+# facet_grid(.~models, scales="free_y") +
+# coord_flip() +
+labs(x = 'Boda boda drivers safety behavior classes', 
+     y = 'OR (CI 95%)') +
+theme_bw()
+# }
