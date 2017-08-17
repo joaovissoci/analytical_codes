@@ -36,7 +36,7 @@ lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis","mvnormtes
 #Import data from Dropbox, in .csv format
 #Instructions here http://goo.gl/Ofa7gQ
 
-data<-read.csv("/home/joao/Dropbox/datasets/DGNN/communication/data_communication.csv")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/DGNN/communication/data_communication.csv")
 
 data_comm<-with(data,data.frame(avg_score,country,com_result=com_result,outcome=overall_result,primary_len=X.1))
 ###########################################################################################
@@ -88,6 +88,14 @@ with(data_comm,by(avg_score,primary_len,describe))
 t.test(data_comm$avg_score~data_comm$primary_len)
 
 with(data_comm,describe(avg_score))
+
+icc_data<-with(data,data.frame(rater1,rater2))
+
+icc_data1<-subset(icc_data,data$X.1=="English")
+icc_data2<-subset(icc_data,data$X.1=="Non-english")
+
+ICC(icc_data2)
+
 #####################################################################################
 #LOGISTIC REGRESSION
 ##############################################################

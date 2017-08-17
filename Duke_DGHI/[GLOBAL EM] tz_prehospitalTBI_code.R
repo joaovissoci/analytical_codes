@@ -38,7 +38,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistry_data.csv")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistry_data.csv")
 
 ######################################################
 #DATA MANAGEMENT
@@ -480,7 +480,7 @@ data_transport<-with(data_prehospital,data.frame(
 	transport_mode_4,
 	transport_start_4))
 
-data_transport$lat_leg1<-car::recode(data_transport$transport_start_1,"
+analysis_data$lat_leg1<-car::recode(data_transport$transport_start_1,"
 					1=-3.5286807;
 					2=-3.3227432;
 					3=-3.166825;
@@ -491,7 +491,7 @@ data_transport$lat_leg1<-car::recode(data_transport$transport_start_1,"
 					8=NA;
 					NA=NA")
 
-data_transport$long_leg1<-car::recode(data_transport$transport_start_1,"
+analysis_data$long_leg1<-car::recode(data_transport$transport_start_1,"
 					1=37.118976;
 					2=37.3285435;
 					3=36.8856703;
@@ -502,7 +502,7 @@ data_transport$long_leg1<-car::recode(data_transport$transport_start_1,"
 					8=NA;
 					NA=NA")
 
-data_transport$lat_leg2<-car::recode(data_transport$transport_start_1,"
+analysis_data$lat_leg2<-car::recode(data_transport$transport_start_2,"
 					1=-3.5286807;
 					2=-3.3227432;
 					3=-3.166825;
@@ -513,7 +513,7 @@ data_transport$lat_leg2<-car::recode(data_transport$transport_start_1,"
 					8=NA;
 					NA=NA")
 
-data_transport$long_leg2<-car::recode(data_transport$transport_start_1,"
+analysis_data$long_leg2<-car::recode(data_transport$transport_start_2,"
 					1=37.118976;
 					2=37.3285435;
 					3=36.8856703;
@@ -524,7 +524,7 @@ data_transport$long_leg2<-car::recode(data_transport$transport_start_1,"
 					8=NA;
 					NA=NA")
 
-data_transport$lat_leg3<-car::recode(data_transport$transport_start_1,"
+analysis_data$lat_leg3<-car::recode(data_transport$transport_start_3,"
 					1=-3.5286807;
 					2=-3.3227432;
 					3=-3.166825;
@@ -535,7 +535,7 @@ data_transport$lat_leg3<-car::recode(data_transport$transport_start_1,"
 					8=NA;
 					NA=NA")
 
-data_transport$long_leg3<-car::recode(data_transport$transport_start_1,"
+analysis_data$long_leg3<-car::recode(data_transport$transport_start_3,"
 					1=37.118976;
 					2=37.3285435;
 					3=36.8856703;
@@ -546,7 +546,7 @@ data_transport$long_leg3<-car::recode(data_transport$transport_start_1,"
 					8=NA;
 					NA=NA")
 
-data_transport$lat_leg4<-car::recode(data_transport$transport_start_1,"
+analysis_data$lat_leg4<-car::recode(data_transport$transport_start_4,"
 					1=-3.5286807;
 					2=-3.3227432;
 					3=-3.166825;
@@ -557,7 +557,7 @@ data_transport$lat_leg4<-car::recode(data_transport$transport_start_1,"
 					8=NA;
 					NA=NA")
 
-data_transport$long_leg4<-car::recode(data_transport$transport_start_1,"
+analysis_data$long_leg4<-car::recode(data_transport$transport_start_4,"
 					1=37.118976;
 					2=37.3285435;
 					3=36.8856703;

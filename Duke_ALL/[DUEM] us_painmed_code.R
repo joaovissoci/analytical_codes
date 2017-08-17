@@ -35,7 +35,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data_raw<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/AMPED/US_AMPEDPain_data.csv",sep=",")
+data_raw<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/AMPED/US_AMPEDPain_data.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -55,7 +55,35 @@ data<-with(data_raw,data.frame(
  					day3_PhysVisit,
  					day4_PhysVisit,
  					day5_PhysVisit,
- 					edvisits))
+ 					edvisits,
+          day2_Nausea,
+          day3_Nausea,
+          day4_Nausea,
+          day5_Nausea,
+          day2_Vomited,
+          day3_Vomited,
+          day4_Vomited,
+          day5_Vomited,
+          day2_Constip,
+          day3_Constip,
+          day4_Constip,
+          day5_Constip,
+          day2_NasalIrrit,
+          day3_NasalIrrit,
+          day4_NasalIrrit,
+          day5_NasalIrrit,
+          day2_RashHives,
+          day3_RashHives,
+          day4_RashHives,
+          day5_RashHives,
+          day2_AbdPain,
+          day3_AbdPain,
+          day4_AbdPain,
+          day5_AbdPain,
+          day2_Drowsiness,
+          day3_Drowsiness,
+          day4_Drowsiness,
+          day5_Drowsiness))
 
 data$gender<-car::recode(data$gender,"'F'='F';'M'='M';else=NA")
 
@@ -185,13 +213,153 @@ for (i in 1:nrow(data_imputed))
      } # else if (v1[i] == "Sim" || 
 } # for (i in 1:nrow(dataframe)
 
+#side effects
+for (i in 1:nrow(data_imputed))
+{
+ if (data_imputed$day2_Nausea[i] == 1 || 
+   data_imputed$day3_Nausea[i] == 1 || 
+   data_imputed$day4_Nausea[i] == 1 || 
+   data_imputed$day5_Nausea[i] == 1)
+     
+     {
+       data_imputed$side_effects_bin_nausea[i] <- "yes"
+     } else # if (v1[i] == "Sim" || 
+     {
+       data_imputed$side_effects_bin_nausea[i] <-"no"
+     } # else if (v1[i] == "Sim" || 
+} # for (i in 1:nrow(dataframe)
+
+#side effects
+for (i in 1:nrow(data_imputed))
+{
+ if (
+   data_imputed$day2_Vomited[i] == 1 || 
+   data_imputed$day3_Vomited[i] == 1 || 
+   data_imputed$day4_Vomited[i] == 1 || 
+   data_imputed$day5_Vomited[i] == 1)
+     
+     {
+       data_imputed$side_effects_bin_vomit[i] <- "yes"
+     } else # if (v1[i] == "Sim" || 
+     {
+       data_imputed$side_effects_bin_vomit[i] <-"no"
+     } # else if (v1[i] == "Sim" || 
+} # for (i in 1:nrow(dataframe)
+
+#side effects
+for (i in 1:nrow(data_imputed))
+{
+ if (
+   data_imputed$day2_Constip[i] == 1 || 
+   data_imputed$day3_Constip[i] == 1 || 
+   data_imputed$day4_Constip[i] == 1 || 
+   data_imputed$day5_Constip[i] == 1)
+     
+     {
+       data_imputed$side_effects_bin_constip[i] <- "yes"
+     } else # if (v1[i] == "Sim" || 
+     {
+       data_imputed$side_effects_bin_constip[i] <-"no"
+     } # else if (v1[i] == "Sim" || 
+} # for (i in 1:nrow(dataframe)
+
+#side effects
+for (i in 1:nrow(data_imputed))
+{
+ if (
+   data_imputed$day2_NasalIrrit[i] == 1 || 
+   data_imputed$day3_NasalIrrit[i] == 1 || 
+   data_imputed$day4_NasalIrrit[i] == 1 || 
+   data_imputed$day5_NasalIrrit[i] == 1)
+     
+     {
+       data_imputed$side_effects_bin_nasalirrit[i] <- "yes"
+     } else # if (v1[i] == "Sim" || 
+     {
+       data_imputed$side_effects_bin_nasalirrit[i] <-"no"
+     } # else if (v1[i] == "Sim" || 
+} # for (i in 1:nrow(dataframe)
+
+#side effects
+for (i in 1:nrow(data_imputed))
+{
+ if (
+   data_imputed$day2_RashHives[i] == 1 || 
+   data_imputed$day3_RashHives[i] == 1 || 
+   data_imputed$day4_RashHives[i] == 1 || 
+   data_imputed$day5_RashHives[i] == 1)
+     
+     {
+       data_imputed$side_effects_bin_rash[i] <- "yes"
+     } else # if (v1[i] == "Sim" || 
+     {
+       data_imputed$side_effects_bin_rash[i] <-"no"
+     } # else if (v1[i] == "Sim" || 
+} # for (i in 1:nrow(dataframe)
+
+#side effects
+for (i in 1:nrow(data_imputed))
+{
+ if (
+   data_imputed$day2_AbdPain[i] == 1 || 
+   data_imputed$day3_AbdPain[i] == 1 || 
+   data_imputed$day4_AbdPain[i] == 1 || 
+   data_imputed$day5_AbdPain[i] == 1)
+     
+     {
+       data_imputed$side_effects_bin_abdpain[i] <- "yes"
+     } else # if (v1[i] == "Sim" || 
+     {
+       data_imputed$side_effects_bin_abdpain[i] <-"no"
+     } # else if (v1[i] == "Sim" || 
+} # for (i in 1:nrow(dataframe)
+
+#side effects
+for (i in 1:nrow(data_imputed))
+{
+ if (
+   data_imputed$day2_Drowsiness[i] == 1 || 
+   data_imputed$day3_Drowsiness[i] == 1 || 
+   data_imputed$day4_Drowsiness[i] == 1 || 
+   data_imputed$day5_Drowsiness[i] == 1)
+     
+     {
+       data_imputed$side_effects_bin_drowsiness[i] <- "yes"
+     } else # if (v1[i] == "Sim" || 
+     {
+       data_imputed$side_effects_bin_drowsiness[i] <-"no"
+     } # else if (v1[i] == "Sim" || 
+} # for (i in 1:nrow(dataframe)
+
+
+#side_effects count
+for (i in 1:nrow(data_imputed))
+{
+ if (
+   data_imputed$side_effects_bin_nausea[i] == "yes" || 
+   data_imputed$side_effects_bin_vomit[i] == "yes" || 
+   data_imputed$side_effects_bin_constip[i] == "yes" || 
+   data_imputed$side_effects_bin_nasalirrit[i] == "yes" || 
+   data_imputed$side_effects_bin_rash[i] == "yes" || 
+   data_imputed$side_effects_bin_abdpain[i] == "yes" || 
+   data_imputed$side_effects_bin_drowsiness[i] == "yes")
+     
+     {
+       data_imputed$side_effects_bin_all[i] <- "yes"
+     } else # if (v1[i] == "Sim" || 
+     {
+       data_imputed$side_effects_bin_all[i] <-"no"
+     } # else if (v1[i] == "Sim" || 
+} # for (i in 1:nrow(dataframe)
+
+
 
 ######################################################################
 #TABLE 1
 ######################################################################
 
 #Treatment Regimin
-table<-with(data_imputed,table(treatreg))
+table<-with(data_imputed,table(unscheduled_visits))
 table
 prop.table(table)
 
@@ -199,7 +367,7 @@ prop.table(table)
 table<-with(data_imputed,table(gender))
 table
 prop.table(table)
-table<-with(data_imputed,table(gender,treatreg))
+table<-with(data_imputed,table(gender,unscheduled_visits))
 table
 prop.table(table,2)
 chisq.test(table)
@@ -208,16 +376,15 @@ assocstats(table) #vcd package
 
 # Age
 with(data_imputed,describe(age))
-with(data_imputed,describeBy(age,treatreg))
-# t-test: # independent 2-group, 2 level IV
-anova<-with(data_imputed,aov(age ~ treatreg))
-summary(anova)
+with(data_imputed,describeBy(age,unscheduled_visits))
+with(data_imputed,t.test(age ~ unscheduled_visits))
+# summary(anova)
 
 # Race
 table<-with(data_imputed,table(race))
 table
 prop.table(table)
-table<-with(data_imputed,table(race,treatreg))
+table<-with(data_imputed,table(race,unscheduled_visits))
 table
 prop.table(table,2)
 chisq.test(table)
@@ -228,7 +395,7 @@ assocstats(table) #vcd package
 table<-with(data_imputed,table(eDx_Primary))
 table
 prop.table(table)
-table<-with(data_imputed,table(eDx_Primary,treatreg))
+table<-with(data_imputed,table(eDx_Primary,unscheduled_visits))
 table
 prop.table(table,2)
 chisq.test(table)
@@ -237,34 +404,23 @@ assocstats(table) #vcd package
 
 # Pain at Arrival
 with(data_imputed,describe(PainScore))
-with(data_imputed,describeBy(PainScore,treatreg))
-# t-test: # independent 2-group, 2 level IV
-anova<-with(data_imputed,aov(PainScore ~ treatreg))
-summary(anova)
+with(data_imputed,describeBy(PainScore,unscheduled_visits))
+with(data_imputed,t.test(PainScore ~ unscheduled_visits))
+# anova<-with(data_imputed,aov(PainScore ~ unscheduled_visits))
+# summary(anova)
 
 # Pain at DIscharge
 with(data_imputed,describe(PainScoreDischarge))
-with(data_imputed,describeBy(PainScoreDischarge,treatreg))
-# t-test: # independent 2-group, 2 level IV
-anova<-with(data_imputed,aov(PainScoreDischarge ~ treatreg))
-summary(anova)
-
-# Primary Diag
-table<-with(data_imputed,table(eDx_Primary))
-table
-prop.table(table)
-table<-with(data_imputed,table(eDx_Primary,treatreg))
-table
-prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
+with(data_imputed,describeBy(PainScoreDischarge,unscheduled_visits))
+with(data_imputed,t.test(PainScoreDischarge ~ unscheduled_visits))
+# anova<-with(data_imputed,aov(PainScoreDischarge ~ unscheduled_visits))
+# summary(anova)
 
 # Primary Diag
 table<-with(data_imputed,table(unscheduled_visits))
 table
 prop.table(table)
-table<-with(data_imputed,table(unscheduled_visits,treatreg))
+table<-with(data_imputed,table(unscheduled_visits,unscheduled_visits))
 table
 prop.table(table,2)
 chisq.test(table)
@@ -273,10 +429,32 @@ assocstats(table) #vcd package
 
 # Pain at DIscharge
 with(data_imputed,describe(unscheduled_visits_day))
-with(data_imputed,describeBy(unscheduled_visits_day,treatreg))
-# t-test: # independent 2-group, 2 level IV
-anova<-with(data_imputed,aov(unscheduled_visits_day ~ treatreg))
-summary(anova)
+with(data_imputed,describeBy(unscheduled_visits_day,unscheduled_visits))
+with(data_imputed,t.test(unscheduled_visits_day ~ unscheduled_visits))
+# anova<-with(data_imputed,aov(unscheduled_visits_day ~ unscheduled_visits))
+# summary(anova)
+
+# Primary Diag
+table<-with(data_imputed,table(side_effects_bin_all))
+table
+prop.table(table)
+table<-with(data_imputed,table(side_effects_bin_all,unscheduled_visits))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# treatment regimen
+table<-with(data_imputed,table(treatreg))
+table
+prop.table(table)
+table<-with(data_imputed,table(side_effects_bin_all,treatreg))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
 
 ######################################################################
 #Figure 1
@@ -368,8 +546,9 @@ dev.off()
 reg_model<-glm(as.factor(unscheduled_visits) ~ treatreg*PainScore + 
 									gender + 
 									age + 
+                  side_effects_bin_all +
 									# race +
-                            		eDx_Primary
+                  eDx_Primary
                             		# PainScore
                             ,family=binomial, data=data_imputed)
 summary(reg_model)
@@ -380,6 +559,113 @@ exp(cbind(Odds=coef(reg_model),confint(reg_model,level=0.95)))
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 #logistic.display(baselineXFUP3)
+
+######################################################################
+#Figure 2 - Survival
+######################################################################
+
+
+for (i in 1:nrow(data_imputed))
+{
+ if (data_imputed$day2_PhysVisit[i] == 1) {
+
+     data_imputed$timetoevent1[i] <- 1
+      data_imputed$timetoevent2[i] <- 0
+       data_imputed$timetoevent3[i] <- 0
+        data_imputed$timetoevent4[i] <- 0
+ } else 
+
+  if (data_imputed$day3_PhysVisit[i] == 1) {
+
+     data_imputed$timetoevent1[i] <- 0
+      data_imputed$timetoevent2[i] <- 1
+       data_imputed$timetoevent3[i] <- 0
+        data_imputed$timetoevent4[i] <- 0
+ } else 
+
+  if (data_imputed$day4_PhysVisit[i] == 1) {
+
+     data_imputed$timetoevent1[i] <- 0
+      data_imputed$timetoevent2[i] <- 0
+       data_imputed$timetoevent3[i] <- 1
+        data_imputed$timetoevent4[i] <- 0
+ } else 
+
+  if (data_imputed$day5_PhysVisit[i] == 1) {
+
+     data_imputed$timetoevent1[i] <- 0
+      data_imputed$timetoevent2[i] <- 0
+       data_imputed$timetoevent3[i] <- 0
+        data_imputed$timetoevent4[i] <- 1
+
+ } else # if (v1[i] == "Sim" || 
+     {
+     data_imputed$timetoevent1[i] <- 0
+      data_imputed$timetoevent2[i] <- 0
+       data_imputed$timetoevent3[i] <- 0
+        data_imputed$timetoevent4[i] <- 0
+     } # else if (v1[i] == "Sim" || 
+} # for (i in 1:nrow(dataframe)
+
+data_imputed$id<-c(1:length(data_imputed[,1]))
+
+data_survival_set<-with(data_imputed,data.frame(
+                      age,
+                      gender,
+                      race,
+                      eDx_Primary,
+                      PainScore,
+                      PainScoreDischarge,
+                      treatreg,
+                      edvisits,
+                      unscheduled_visits,
+                      side_effects_bin_all,
+                      id,
+                      timetoevent1,
+                      timetoevent2,
+                      timetoevent3,
+                      timetoevent4))
+
+data_survival <- data_survival_set %>% gather(timefup, status,
+                     timetoevent1:timetoevent4)
+
+data_survival$timetoevent<-car::recode(data_survival$timefup,"
+                        'timetoevent1'=1;
+                        'timetoevent2'=2;
+                        'timetoevent3'=3;
+                        'timetoevent4'=4")
+
+with(subset(data_survival,data_survival$status==1),
+  by(timetoevent,treatreg,summary))
+
+library(survival)
+library(GGally)
+data(lung)
+lung.surv <- survfit(Surv(timetoevent,status) ~ 1, data = data_survival)
+ggsurv(lung.surv)
+
+lung.surv2 <- survfit(Surv(timetoevent,status) ~ treatreg, data = data_survival)
+(pl2 <- ggsurv(lung.surv2))
+
+(pl2 <- pl2 + guides(linetype = F) +
+ scale_colour_discrete(name = 'Treatment Regimen', 
+        breaks = c('SPO','SPP','OPO'), labels=c('Sprix', 'Sprix+Opioid','Opioid')))
+
+lung.surv2
+med.surv <- data.frame(time = c(270,270, 426,426), quant = c(.5,0,.5,0),
+                       sex = c('M', 'M', 'F', 'F'))
+pl2 + geom_line(data = med.surv, aes(time, quant, group = sex),
+      col = 'darkblue', linetype = 3) +
+      geom_point(data = med.surv, aes(time, quant, group =sex), col = 'darkblue')
+
+
+lung.surv2 <- survfit(Surv(timetoevent,status) ~ treatreg, 
+  data = subset(data_survival,data_survival$side_effects_bin_all=="yes"))
+(pl2 <- ggsurv(lung.surv2))
+
+lung.surv2 <- survfit(Surv(timetoevent,status) ~ treatreg, 
+  data = subset(data_survival,data_survival$side_effects_bin_all=="no"))
+(pl2 <- ggsurv(lung.surv2))
 
 
 

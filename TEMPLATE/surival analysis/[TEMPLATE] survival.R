@@ -2,6 +2,35 @@
 #Survival analysis
 #############################################################
 
+
+
+library(survival)
+library(GGally)
+data(lung)
+lung.surv <- survfit(Surv(time,status) ~ 1, data = lung)
+ggsurv(lung.surv)
+
+lung.surv2 <- survfit(Surv(time,status) ~ sex, data = lung)
+(pl2 <- ggsurv(lung.surv2))
+
+(pl2 <- pl2 + guides(linetype = F) +
+ scale_colour_discrete(name = 'Sex', breaks = c(1,2), labels=c('Male', 'Female')))
+
+lung.surv2
+med.surv <- data.frame(time = c(270,270, 426,426), quant = c(.5,0,.5,0),
+                       sex = c('M', 'M', 'F', 'F'))
+pl2 + geom_line(data = med.surv, aes(time, quant, group = sex),
+      col = 'darkblue', linetype = 3) +
+      geom_point(data = med.surv, aes(time, quant, group =sex), col = 'darkblue')
+
+
+https://www.r-statistics.com/2013/07/creating-good-looking-survival-curves-the-ggsurv-function/
+
+
+
+
+
+
 surv_data<-read.csv("")
 
 surv_data<-remove.vars(surv_data,c("transport_mode_1",

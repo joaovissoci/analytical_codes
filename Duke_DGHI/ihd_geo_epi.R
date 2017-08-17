@@ -75,7 +75,7 @@ logmodel<-data.frame(mortality,population,year,region,income,accessibility=scale
 #############################################################################
 #DATA MANAGEMENT
 #############################################################################
-t
+
 # regdata<-with(data,data.frame(Regio,SMR_IHD,Distance,
 # 	distance75))
 
@@ -92,7 +92,7 @@ data= data %>%
     mutate(quantile2 = ntile(Indice_acessibilidade, 3))
 
 #############################################################################
-#POISSON MODEL
+#PAPER Stress testing
 #############################################################################
 library(PMCMR)
 

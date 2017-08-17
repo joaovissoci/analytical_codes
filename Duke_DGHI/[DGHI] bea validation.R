@@ -37,9 +37,9 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-data_tz<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_tz.csv",sep=',')
-data_sl<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/bea_sl.csv",sep=',')
-data_rw<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/bea validation/rw_bea_data.csv",sep=',')
+data_tz<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Multi_country/bea validation/bea_tz.csv",sep=',')
+data_sl<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Multi_country/bea validation/bea_sl.csv",sep=',')
+data_rw<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Multi_country/bea validation/rw_bea_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -317,27 +317,80 @@ bea_data$speed_limit<-car::recode(bea_data$speed_limit,"
 	99=0")
 
 ## INTERRATER AGREEMENT dataset#
-data_sl$id<-rep(1:127, each = 3)
 
-data_sl$lane_type_recoded<-car::recode(data_sl$lane_type,"
-	0=0; 1=1; 2=1; 3=0;4=0")
-data_sl$pavement_recoded<-car::recode(data_sl$pavement,"
-	0=0; 1=0; 2=1")
-data_sl$walkways<-car::recode(data_sl$walkways,"0=0;1=1;2=1")
-data_sl$speed_limit<-car::recode(data_sl$speed_limit,"
-	0=1")
-data_sl$road_design<-car::recode(data_sl$road_design,"
+data_agreement<-with(data_sl,data.frame(
+				road_area,
+				road_design,
+				intersections,
+				lane_type,
+				auxiliary_lane,
+				bridges,
+				pavement,
+				visibility___0,
+				curves_type___0,
+				rd_condition___0,
+				roadside,
+				traffic_light,
+				road_traffic_signs___0,
+				speed_limit,
+				bump,
+				car_density,
+				motorcycle_density,
+				bike_density,
+				bus_truck_density,
+				bus_stop,
+				pedestrians___0,
+				pedestrian_density,
+				walkways,
+				rater))
+
+data_agreement$road_design<-car::recode(data_agreement$road_design,"
 	0=1;1=0;2=0;3=0;99=NA")
-data_sl$intersections<-car::recode(data_sl$intersections,"
+
+data_agreement$lane_type<-car::recode(data_agreement$lane_type,"
+	0=0; 1=1; 2=1; 3=0;4=0;99=0")
+
+data_agreement$pavement<-car::recode(data_agreement$pavement,"
+	0=0; 1=0; 2=1")
+
+data_agreement$walkways<-car::recode(data_agreement$walkways,"0=0;1=1;2=1")
+
+data_agreement$speed_limit<-car::recode(data_agreement$speed_limit,"
+	0=1")
+
+data_agreement$intersections<-car::recode(data_agreement$intersections,"
 	0=0;1=1;2=1;99=NA")
-data_sl$auxiliary_lane<-car::recode(data_sl$auxiliary_lane,"
+
+data_agreement$auxiliary_lane<-car::recode(data_agreement$auxiliary_lane,"
 	99=NA")
-data_sl$pavement<-car::recode(data_sl$pavement,"
+
+data_agreement$pavement<-car::recode(data_agreement$pavement,"
 	99=NA")
-data_sl$bus_stop<-car::recode(data_sl$bus_stop,"
+
+data_agreement$bus_stop<-car::recode(data_agreement$bus_stop,"
 	99=NA")
-data_sl$speed_limit<-car::recode(data_sl$speed_limit,"
+
+data_agreement$speed_limit<-car::recode(data_agreement$speed_limit,"
 	99=0")
+
+data_agreement$roadside<-car::recode(data_agreement$roadside,"
+	99=NA")
+
+data_agreement$bridges<-car::recode(data_agreement$bridges,"
+	99=NA")
+
+data_agreement$lane_type<-car::recode(data_agreement$lane_type,"
+	99=NA")
+
+data_agreement$road_area<-car::recode(data_agreement$road_area,"
+	99=NA")
+
+data_agreement$id<-rep(1:127, times=1, each=3)
+
+agreement_tidy<- data_agreement %>% 
+					gather(key,value,-rater,-id) %>%
+					unite(items,rater,key,sep='.') %>%
+					spread(items,value)
 
 ##############################################################
 #Descriptives
@@ -605,6 +658,98 @@ ad.test(bea_data$density_pedestrian)
 by(bea_data$density_pedestrian,bea_data$country,summary)
 wilcox.test(bea_data$density_pedestrian~bea_data$country)
 
+# Bike density
+summary(bea_data$density_bus_truck)
+ad.test(bea_data$density_bus_truck)
+#hist(bea_data$density_bus_truck)
+#ci_func(bea_data$density_bus_truck,.95)
+by(bea_data$density_bus_truck,bea_data$country,summary)
+wilcox.test(bea_data$density_bus_truck~bea_data$country)
+
+
+##############################################################
+#Agreement
+#############################################################
+
+#road design - All 0
+cohen.kappa(na.omit(agreement_tidy[,c(18,64)]),
+	w=NULL,n.obs=127,alpha=.05)  
+
+#intersections
+cohen.kappa(na.omit(agreement_tidy[,c(10,56)]),
+	w=NULL,n.obs=127,alpha=.05) 
+
+#lane type
+cohen.kappa(na.omit(agreement_tidy[,c(11,57)]),
+	w=NULL,n.obs=127,alpha=.05) 
+
+#auxilliary lane
+cohen.kappa(na.omit(agreement_tidy[,c(2,48)]),
+	w=NULL,n.obs=127,alpha=.05) 
+
+#visibility
+cohen.kappa(na.omit(agreement_tidy[,c(23,69)]),
+	w=NULL,n.obs=127,alpha=.05) 
+
+#rcurve type
+cohen.kappa(na.omit(agreement_tidy[,c(9,55)]),
+	w=NULL,n.obs=127,alpha=.05) 
+
+#bridges
+cohen.kappa(na.omit(agreement_tidy[,c(4,50)]),
+	w=NULL,n.obs=127,alpha=.05) 
+
+#road condition
+cohen.kappa(na.omit(agreement_tidy[,c(15,62)]),
+	w=NULL,n.obs=127,alpha=.05) 
+
+#roadside
+cohen.kappa(na.omit(agreement_tidy[,c(20,66)]),
+	w=NULL,n.obs=127,alpha=.05) 
+
+#traffic light
+cohen.kappa(na.omit(agreement_tidy[,c(22,68)]),
+	w=NULL,n.obs=127,alpha=.05) 
+
+#traffic signs
+cohen.kappa(na.omit(agreement_tidy[,c(19,65)]),
+	w=NULL,n.obs=127,alpha=.05) 
+
+#speed limit
+cohen.kappa(na.omit(agreement_tidy[,c(21,67)]),
+	w=NULL,n.obs=127,alpha=.05)
+
+#speed bump
+cohen.kappa(na.omit(agreement_tidy[,c(5,51)]),
+	w=NULL,n.obs=127,alpha=.05)
+
+#bus stop
+cohen.kappa(na.omit(agreement_tidy[,c(6,52)]),
+	w=NULL,n.obs=127,alpha=.05)
+
+#pedestrian crossing
+cohen.kappa(na.omit(agreement_tidy[,c(15,61)]),
+	w=NULL,n.obs=127,alpha=.05)
+
+#walkways
+cohen.kappa(na.omit(agreement_tidy[,c(24,70)]),
+	w=NULL,n.obs=127,alpha=.05)
+
+#pedestrian_density
+ICC(na.omit(agreement_tidy[,c(14,60)]))
+
+#car density
+ICC(na.omit(agreement_tidy[,c(8,54)]))
+
+#moto density
+ICC(na.omit(agreement_tidy[,c(12,58)]))
+
+#bike density
+ICC(na.omit(agreement_tidy[,c(3,49)]))
+
+#bus_truck_density
+ICC(na.omit(agreement_tidy[,c(7,53)]))
+
 ##############################################################
 #PCA Score comparisons
 #############################################################
@@ -804,7 +949,7 @@ cor_data<-cor_auto(model3_bea)
 # wilcox.test(scores$scores[,3]~data_bea$risk_classification)
 # #wilcox.test(scores$scores[,4]~data_bea$risk_classification)
 
- model <- principal(cor_data ,nfactors=1, rotate='none', scores=T, cov=T)
+ model <- principal(cor_data ,nfactors=1, rotate='oblimin', scores=T, cov=T)
  L <- model$loadings            # Just get the loadings matrix
  S <- model$scores              # This gives an incorrect answer in the current version
 
