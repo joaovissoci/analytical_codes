@@ -26,7 +26,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
 	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
 	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
-  "mice","ROCR","pROC"),
+  "mice"),
 library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
@@ -39,7 +39,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -64,8 +64,8 @@ data$time_2measures<-car::recode(data$time,"
             '17days'='T2phone';
             '21days'='T3paper';
             '24days'='T3phone';
-            '28days'='Tnothin2';
-            else='Tnithin3'")
+            '28days'='Tnothing';
+            else='Tnothing'")
 
 #Kessler
 psfs_questions<-with(data,data.frame(q1,q2,q3))
@@ -1010,4 +1010,138 @@ p
 # ggplot(ToothGrowth, aes(x=dose, y=len)) + 
 #   geom_boxplot(outlier.colour="red", outlier.shape=8,
 #                 outlier.size=4)
+
+
+#############################################################
+# MDC - Minimal Detectable Change
+#############################################################
+
+clinimetric_data<-subset(data,data$time=="3days" | data$time=="7days")
+
+clinimetric_data_cast1<-with(clinimetric_data,data.frame(X...id,time,score))
+icc_clinimetric_data<-cast(clinimetric_data_cast1,
+                          X...id~time)
+
+colnames(icc_clinimetric_data)<-c("id","t1","t2")
+
+# Value of one unit above the standard error of a measurement
+# if the SE is 2, a 3 indicates the MDC
+# Can be calculated based on the standard error of measurement
+
+# SDD – minimum amount of an observed change in a single measure 
+# that represents a real change, as distinct from noise. 
+# (1.96 × SD of observation difference).
+# (http://www.sciencedirect.com/science/article/pii/S1063458406000677)
+
+# The MDC is calculated by multiplying
+# the standard error of measurement by the z score associated
+# with the desired confidence level and the square root of 2,
+# adjusting for sampling from 2 different measures.
+
+# The standard error of measurement is estimated as the pooled standard
+# deviation (SDpooled) of pre- and posttreatment assessments multiplied
+# by the square root of (1r), where r is the intraclass
+# correlation coefficient. 
+
+# The MDC is estimated based on the
+# 90% confidence interval (CI) (z1.65). The MDC90 is the most
+# common standard used in the literature47 and means that one
+# can be 90% confident that a change score at this threshold or
+# higher is true and reliable rather than measurement error.
+
+#SEM = SD * sqrt(1-ICC) ~ SD=standard deviation; ICC=intraclass correlation
+#MDC = 1.96 * sqrt(2) * SEM ~ 1.96=zscore for 5% sig;
+#sqrt2=diff for 2 dependent samples
+
+
+# Calculate SEM
+
+# Pooled SD Pre
+# sqrt(sum(var/(sum(N-1)-nrow(dd))))
+mean_diff<-icc_clinimetric_data$t2-icc_clinimetric_data$t1
+
+mean_diff_pos<-mean_diff[which(mean_diff > -0.1)]
+
+pooled_sd<-sd(mean_diff_pos)
+pooled_mean<-mean(mean_diff_pos)
+
+# SD difference
+# sd1<-sd(icc_clinimetric_data$t1)
+# sd2<-sd(icc_clinimetric_data$t2)
+# sd3<-sqrt((sd1^2+sd2^2) - 2*cov(icc_clinimetric_data$t1,icc_clinimetric_data$t2))
+
+# ICC
+icc<-ICC(cbind(icc_clinimetric_data$t1,icc_clinimetric_data$t2))$results$ICC[3]
+
+# Formula for the SEM
+SEM<-pooled_sd*sqrt(1-icc)
+
+# MDC
+MDC<-1.96*sqrt(2)*SEM
+MDC
+#############################################################
+# MCID - Minimal Clinical Important Change
+#############################################################
+
+#ANCHOR Based
+
+# The anchor-based approach applying a relevant external
+# criterion provides meaningful estimates of the measure’s
+# MCID18; that is, relating change scores in an instrument to an
+# external standard of clinical change (eg, patients’ global ratings
+# of change in health) to establish the MCID
+
+# Therefore,
+# the anchor-based MCID estimate was calculated as mean
+# change score on the NEADL, corresponding to patients defined
+# as having MCID; that is, those with a perceived overall change
+# score of 5 to 7.5 points (10%–15% of the total scale score
+# range) on the ADL/IADL domain of the SIS.
+
+# https://cran.r-project.org/web/packages/MRQoL/MRQoL.pdf
+install.packages("MRQoL")
+library(MRQoL)
+
+# The amount of change that is enough to detect a change in the 
+#patient health status
+#calculated based on anchors
+
+#Example 1:
+#Example to calculate the MCID without effect of Response Sift:
+MCID(dataghs$GHS1, dataghs$GHS0, dataghs$anchor1)
+
+
+#Example 2:
+#Example to calculate the MCID with effect of Response Sift:
+MCID(dataghs$GHS1, dataghs$GHSr1, dataghs$anchor1)
+
+
+# Distribution based
+
+CohenD<-pooled_mean/pooled_sd
+
+MICD<-0.2*pooled_sd
+MICD
+# Cohen suggested
+# that score differences of 0.2SD units correspond to
+# small but important changes in treatment-effectiveness research
+#############################################################
+#SRM - Standardized Response Mean - Cohen's D
+#############################################################
+
+# The SRM provided measurements of responsiveness
+# and was calculated by dividing the mean difference
+# in scores of participants by the SD of the change scores.
+
+# Therefore, it was recommended to calculate responsiveness
+# for only the improved patients.
+
+# According to the criteria of Cohen,42 SRM
+# values of 0.2, 0.5, and 0.8 represent small, moderate, and large
+# values for responsiveness, respectively. Bootstrap 1000 samples
+# with replacement were used to estimate 95% confidence
+# intervals (CIs) for the SRMs.43 R software (Version 2.9.1)a was
+# used for statistical computing.
+
+CohenD<-pooled_mean/pooled_sd
 
