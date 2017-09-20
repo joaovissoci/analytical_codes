@@ -25,9 +25,15 @@
 #library(Hmisc)
 
 #All packages must be installes with install.packages() function
-lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis",
-	"polycor","nortest"), 
-library, character.only=T)
+lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", 
+         "moments","GPArotation","nFactors","boot","psy", "car",
+         "vcd", "gridExtra","mi","VIM","gdata","sqldf",
+         "reshape2","mclust","foreign","survival","memisc","lme4",
+         "lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
+         "ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
+         "mice"),
+       library, character.only=T)
+
 #############################################################################
 #IMPORTING DATA
 #############################################################################
@@ -61,9 +67,7 @@ data_mhregistry1<-merge(x = data,
 
 # write.csv(data_mhregistry,"/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/tbi_registry/tz_TBIregistryANDmh_data.csv")
 
-#subsetting data set to keep only baseline data
-data_mhregistry<-data_mhregistry1[
-			data_mhregistry1$redcap_event_name=="enrollment_arm_1",]
+data_mhregistry<-subset(data_mhregistry1,data_mhregistry1$study_id.x != "NA")
 
 #############################################################################
 #DATA MANAGEMENT
@@ -78,52 +82,6 @@ data_mhregistry$occupation_recoded<-car::recode(data_mhregistry$occupation,
 data_mhregistry$education_recoded<-car::recode(data_mhregistry$education,"
 	1:7='Primary';8:13='Form';14:16='University';")
 
-#
-sf8_PCS<-with(data_mhregistry,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5))
-data_mhregistry$sf8_mcs<-rowSums(sf8_PCS)
-
-sf8_MCS<-with(data_mhregistry,data.frame(sf8_b6,sf8_b7,sf8_b8))
-data_mhregistry$sf8_pcs<-rowSums(sf8_MCS)
-
-phq9<-with(data_mhregistry,data.frame(phq9_b11,phq9_b12,phq9_b13,phq9_b14,
-	phq9_b15,phq9_b16,phq9_b17,phq9_b18,phq9_b19))
-data_mhregistry$phq9score<-rowSums(phq9)
-
-audit<-with(data_mhregistry,data.frame(h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
-data_mhregistry$auditscore<-rowSums(audit)
-
-cage<-with(data_mhregistry,data.frame(h11,h12,h13,h14))
-data_mhregistry$cagescore<-rowSums(cage)
-
-fim_physical<-with(data_mhregistry,data.frame(g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
-	g11,g12,g13,g14,g15,g16))
-data_mhregistry$fim_physical_score<-rowSums(fim_physical)/16
-
-fim_mental<-with(data_mhregistry,data.frame(g17,g18,g19,g20,g21,g22,g23,g24,g25,g26,
-	g27,g28,g29,g30))
-data_mhregistry$fim_mental_score<-rowSums(fim_mental)/14
-
-# mental<-with(data_mhregistry,data.frame(f1a,f1b,f1c,f1d,f1e,f2a,f2b,f2c,f2d,f2e,f3,
-	# f4,f5,f6,f7,f8,f9,f10,f11,f12___0,f12___1,f12___2))
-# data_mhregistry$mental<-rowSums(mental)
-
-moca<-with(data_mhregistry,data.frame(f17,f18,f19,f20,f21,f21b,f22,f23))
-data_mhregistry$moca_score<-rowSums(moca)
-
-kessler<-with(data_mhregistry,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,
-	d10))
-data_mhregistry$kessler_scpre<-rowSums(kessler)
-
-#classifying variables
-data_mhregistry$phq9_cat<-car::recode(data_mhregistry$phq9score,"0:4.9='no';5:21='yes'")
-# ces_score_cat<-car::recode(data$ces_score,"0:15.9='no';16:45='yes'")
-data_mhregistry$kes_score_cat<-car::recode(data_mhregistry$kes_score,"0:19.9='no';20:50='yes'")
-data_mhregistry$auditscore_cat<-car::recode(data_mhregistry$auditscore,"0:7.9='no';8:32='yes'")
-# fimphysical_cat<-car::recode(data$fim_physical,"0:5.99='yes';else='no'")
-# fim_mental_cat<-car::recode(data$fim_mental,"0:5.99='yes';else='no'")
-# mental_cat<-car::recode(data$mental,"0:24='yes';25:30='no'")
-# data_mhregistry$cage_cat<-car::recode(data$cagescore,"0:1='no';2:4='yes'")
-
 #recoding gos
 data_mhregistry$gos<-as.factor(car::recode(
 	data_mhregistry$gos,"1:4='Death';
@@ -134,52 +92,640 @@ data_mhregistry$gcs<-as.factor(car::recode(
 	data_mhregistry$gcs_tot,"1:12='Severe';
 					   13:15='Non-severe'"))
 
-mhealth_scales<-cbind(sf8_PCS,
-					  sf8_MCS,
-					  phq9,
-					  audit,
-					  cage,
-					  fim_physical,
-					  fim_mental,
-					  moca,
-					  kessler,
-					  gcs=data_mhregistry$gcs_tot,
-					  moi=data_mhregistry$moi,
-					  gos=data_mhregistry$gos)
+#Imputing 0 to audit
+audit_data<-with(data_baseline,data.frame(h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
+
+for(i in 1:length(data_mhregistry$h1)){ 
+
+if(is.na(data_mhregistry$h1[i])==FALSE) {
+
+	if(data_mhregistry$h1[i] == 0){
+
+		data_mhregistry$h2[i] = 0
+		data_mhregistry$h3[i] = 0
+		data_mhregistry$h4[i] = 0
+		data_mhregistry$h5[i] = 0
+		data_mhregistry$h6[i] = 0
+		data_mhregistry$h7[i] = 0
+		data_mhregistry$h8[i] = 0
+		data_mhregistry$h9[i] = 0
+		data_mhregistry$h10[i] = 0
+
+	}
+
+}
+} 
 
 #Recoding clinical conditionMessage
 # data_tbi$registry_year<-as.Date(as.character(data_tbi$date_arrival),
 #   format = "%m/%d/%y")
 
+#subsetting data set to keep only baseline data
+data_baseline<-data_mhregistry[
+			data_mhregistry$redcap_event_name=="enrollment_arm_1",]
+
+#subsetting data set to keep only baseline data
+data_3fup<-data_mhregistry[
+			data_mhregistry$redcap_event_name=="month_3_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+data_6fup<-data_mhregistry[
+			data_mhregistry$redcap_event_name=="month_6_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+data_9fup<-data_mhregistry[
+			data_mhregistry$redcap_event_name=="month_9_followup_arm_1",]
+
+#CALCULATING FACTOR SCORES
 #############################################################################
-#BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
+#CONFIRMATORY FACTOR ANALYSIS
+
+#FIM 30 items
+###############
+FIM_data30<-with(data_mhregistry,data.frame(g1,g2,g3,g4,g5,g6,g8,g9,g10,g11,g12,g13,g14,g15,g16,g17,g18,g19,g20,g21,g22,g23,g24,g25,g26,g27,g28,g29,g30))
+data_imputed <- mice(FIM_data30, seed = 2222, m=10)
+FIM_data30<-mice::complete(data_imputed,4)
+#FIM Motor
+# FIM_Motor30<-with(FIM_data30,data.frame(g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,g11,g12,g13,g14,g15,g16))
+# #FIM Cognitive
+# FIM_Cognitive30<-with(FIM_data30,data.frame(g17,g18,g19,g20,g21,g22,g23,g24,g25,g26,g27,g28,g29,g30))
+#subsetting data set to keep only baseline data
+fim_data_baseline<-FIM_data30[
+			data_mhregistry$redcap_event_name=="enrollment_arm_1",]
+
+#subsetting data set to keep only baseline data
+fim_data_3fup<-FIM_data30[
+			data_mhregistry$redcap_event_name=="month_3_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+fim_data_6fup<-FIM_data30[
+			data_mhregistry$redcap_event_name=="month_6_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+fim_data_9fup<-FIM_data30[
+			data_mhregistry$redcap_event_name=="month_9_followup_arm_1",]
+
+cfa_model <- '
+MF =~ g1 + g2 + g3 + g4 + g5 + g6 + g8 + g9 + g10 + g11 + g12 + g13 + g14 + g15 + g16 + g20 + g25
+CF =~ g1 + g8 + g17 + g18 + g19 + g20 + g21 + g22 + g23 + g24 + g25 + g26 + g27 + g28 + g29 + g30
+g19 ~~ g20
+'
+
+fit <- lavaan::cfa(cfa_model,
+                   data = FIM_data30,
+                   estimator="WLSMV",
+                   ordered=colnames(FIM_data30)
+)
+summary(fit, fit.measures=TRUE)
+lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
+                                          "rmsea.ci.lower.scaled",
+                                          "rmsea.ci.upper.scaled",
+                                          "cfi.scaled",
+                                          "tli.scaled",
+                                          "nnfi.scaled",
+                                          "chisq.scaled",
+                                          "pvalue.scaled"
+)
+)
+# AIC(fit)
+# Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+# subset(Est, op == "=~")
+# subset(Est, op == "~~")
+
+fim_scores_raw_baseline<-lavaan::lavPredict(fit,newdata=fim_data_baseline,method="EBM")
+fim_scores_raw_3fup<-lavaan::lavPredict(fit,newdata=fim_data_3fup,method="EBM")
+fim_scores_raw_6fup<-lavaan::lavPredict(fit,newdata=fim_data_6fup,method="EBM")
+fim_scores_raw_9fup<-lavaan::lavPredict(fit,newdata=fim_data_9fup,method="EBM")
+
+fim_scores_raw<-rbind(fim_scores_raw_baseline,
+				  fim_scores_raw_3fup,
+				  fim_scores_raw_6fup,
+				  fim_scores_raw_9fup)
+
+data_mhregistry$fim_scores_MF<-scales::rescale(as.data.frame(fim_scores_raw)[,1], 
+		to = c(0, 100))
+data_mhregistry$fim_scores_CF<-scales::rescale(as.data.frame(fim_scores_raw)[,2], 
+		to = c(0, 100))
+
+#MOCA
+#baseline data
+MOCA_data1<-with(data_mhregistry,data.frame(f1a,f1c,f1d,f1e,f2c,f2d,f15,f16,f17,f18,f19,f20,f21,f21b,f22,f23))
+#SUM f1+f2, f21 item
+MOCA_data1$f1 <- rowSums(MOCA_data1[ , 1:5]) 
+#MOCA_data1$f21 <- rowSums(MOCA_data1[ , 13:14]) 
+MOCA_data1$f17 <- rowSums(MOCA_data1[ , 9:10]) 
+MOCA_data1<-with(MOCA_data1,data.frame(f1,f15,f16,f17,f19,f20,f21,f21b,f22,f23))
+data_imputed1 <- mice(MOCA_data1, seed = 2222, m=10)
+MOCA_data<-mice::complete(data_imputed1,4)
+
+#followupdata
+moca_data_baseline<-MOCA_data[
+			data_mhregistry$redcap_event_name=="enrollment_arm_1",]
+
+#subsetting data set to keep only baseline data
+moca_data_3fup<-MOCA_data[
+			data_mhregistry$redcap_event_name=="month_3_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+moca_data_6fup<-MOCA_data[
+			data_mhregistry$redcap_event_name=="month_6_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+moca_data_9fup<-MOCA_data[
+			data_mhregistry$redcap_event_name=="month_9_followup_arm_1",]
+
+cfa_model <- '
+MOCA =~ f1 + f15 + f16 + f17 + f19 + f20 + f21 + f21b + f22 + f23
+#f17 ~~ f21
+'
+
+fit <- lavaan::cfa(cfa_model,
+                   data = MOCA_data,
+                   estimator="WLSMV",
+                   ordered=colnames(MOCA_data)
+)
+summary(fit, fit.measures=TRUE)
+lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
+                                          "rmsea.ci.lower.scaled",
+                                          "rmsea.ci.upper.scaled",
+                                          "cfi.scaled",
+                                          "tli.scaled",
+                                          "nnfi.scaled",
+                                          "chisq.scaled",
+                                          "pvalue.scaled"
+)
+)
+# AIC(fit)
+# Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+# subset(Est, op == "=~")
+# subset(Est, op == "~~")
+#lavInspect(fit,what="th") 
+
+moca_scores_raw_baseline<-lavaan::lavPredict(fit,newdata=moca_data_baseline,method="EBM")
+moca_scores_raw_3fup<-lavaan::lavPredict(fit,newdata=moca_data_3fup,method="EBM")
+moca_scores_raw_6fup<-lavaan::lavPredict(fit,newdata=moca_data_6fup,method="EBM")
+moca_scores_raw_9fup<-lavaan::lavPredict(fit,newdata=moca_data_9fup,method="EBM")
+
+moca_scores_raw<-rbind(moca_scores_raw_baseline,
+				  moca_scores_raw_3fup,
+				  moca_scores_raw_6fup,
+				  moca_scores_raw_9fup)
+
+data_mhregistry$moca_scores<-scales::rescale(as.data.frame(moca_scores_raw)[,1], 
+		to = c(0, 100))
+
+#KESSLER
+###############
+#baseline data
+kessler_data1<-with(data_mhregistry,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,d10))
+data_imputed1 <- mice(kessler_data1, seed = 2222, m=10)
+kessler_data<-mice::complete(data_imputed1,4)
+
+#followup data
+kessler_data_baseline<-kessler_data[
+			data_mhregistry$redcap_event_name=="enrollment_arm_1",]
+
+#subsetting data set to keep only baseline data
+kessler_data_3fup<-kessler_data[
+			data_mhregistry$redcap_event_name=="month_3_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+kessler_data_6fup<-kessler_data[
+			data_mhregistry$redcap_event_name=="month_6_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+kessler_data_9fup<-kessler_data[
+			data_mhregistry$redcap_event_name=="month_9_followup_arm_1",]
+
+cfa_model <- '
+Kessler =~  d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10
+#
+Kessler ~~ Kessler
+#cov
+# d2 ~~  d9
+d5 ~~  d6
+# d8 ~~  d10
+'
+
+fit <- lavaan::cfa(cfa_model,
+                   data = kessler_data,
+                   estimator="WLSMV",
+                   ordered=colnames(kessler_data)
+                   )
+summary(fit, fit.measures=TRUE)
+lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
+                                          "rmsea.ci.lower.scaled",
+                                          "rmsea.ci.upper.scaled",
+                                          "cfi.scaled",
+                                          "tli.scaled",
+                                          "nnfi.scaled",
+                                          "chisq.scaled",
+                                          "pvalue.scaled"
+                                          )
+                    )
+# AIC(fit)
+# parameterEstimates(fit)
+# Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+# subset(Est, op == "=~")
+# subset(Est, op == "~~")
+# lavInspect(fit,what="th")
+
+kessler_scores_raw_baseline<-lavaan::lavPredict(fit,newdata=kessler_data_baseline,method="EBM")
+kessler_scores_raw_3fup<-lavaan::lavPredict(fit,newdata=kessler_data_3fup,method="EBM")
+kessler_scores_raw_6fup<-lavaan::lavPredict(fit,newdata=kessler_data_6fup,method="EBM")
+kessler_scores_raw_9fup<-lavaan::lavPredict(fit,newdata=kessler_data_9fup,method="EBM")
+
+kessler_scores_raw<-rbind(kessler_scores_raw_baseline,
+				  kessler_scores_raw_3fup,
+				  kessler_scores_raw_6fup,
+				  kessler_scores_raw_9fup)
+
+data_mhregistry$kessler_scores<-scales::rescale(as.data.frame(kessler_scores_raw)[,1], 
+		to = c(0, 100))
+
+# #KESSLER
+# # 2 factors model ###########################
+# cfa_model <- '
+# Depression =~  d1 + d4 + d7 + d8 + d9 + d10
+# Anxiety =~ d2 + d3 + d5 + d6
+# #
+# # Depression ~~ Depression
+# # Anxiety ~~ Anxiety
+# #cov
+# # d2 ~~  d9
+# # d5 ~~  d6
+# # d7 ~~  d8
+# '
+
+# fit <- lavaan::cfa(cfa_model,
+#                    data = kessler_data,
+#                    estimator="WLSMV",
+#                    ordered=colnames(kessler_data))
+# summary(fit, fit.measures=TRUE)
+# lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
+#                                           "rmsea.ci.lower.scaled",
+#                                           "rmsea.ci.upper.scaled",
+#                                           "cfi.scaled",
+#                                           "tli.scaled",
+#                                           "nnfi.scaled",
+#                                           "chisq.scaled",
+#                                           "pvalue.scaled",
+#                                           "df.scaled"
+# ))
+# parameterEstimates(fit)
+# Est <- lavaan::parameterEstimates(fit,
+#                                   ci = TRUE,
+#                                   standardized = TRUE)
+# subset(Est, op == "=~")
+# lavInspect(fit,what="th")
+
+
+#SF8
+##############
+#baseline
+sf8_data1<-with(data_mhregistry,data.frame(sf8_b1,
+                                           sf8_b2,
+                                           sf8_b3,
+                                           sf8_b4,
+                                           sf8_b5,
+                                           sf8_b6,
+                                           sf8_b7,
+                                           sf8_b8))
+data_imputed1 <- mice(sf8_data1, seed = 2222, m=10)
+sf8_data<-complete(data_imputed1,4)
+
+#followup
+sf8_data_baseline<-sf8_data[
+			data_mhregistry$redcap_event_name=="enrollment_arm_1",]
+
+#subsetting data set to keep only baseline data
+sf8_data_3fup<-sf8_data[
+			data_mhregistry$redcap_event_name=="month_3_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+sf8_data_6fup<-sf8_data[
+			data_mhregistry$redcap_event_name=="month_6_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+sf8_data_9fup<-sf8_data[
+			data_mhregistry$redcap_event_name=="month_9_followup_arm_1",]
+
+# cfa_model <- '
+# SF8 =~  sf8_b1 + sf8_b2 + sf8_b3 + 
+# sf8_b4 + sf8_b5 + sf8_b6 + sf8_b7 + sf8_b8
+# #
+# #cov
+# sf8_b2 ~~ sf8_b8
+# sf8_b1 ~~ sf8_b5
+# '
+
+# fit <- lavaan::cfa(cfa_model,
+#                    data = sf8_data,
+#                    estimator="WLSMV",
+#                    ordered=colnames(sf8_data)
+# )
+# summary(fit, fit.measures=TRUE)
+# lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
+#                                           "rmsea.ci.lower.scaled",
+#                                           "rmsea.ci.upper.scaled",
+#                                           "cfi.scaled",
+#                                           "tli.scaled",
+#                                           "nnfi.scaled",
+#                                           "chisq.scaled",
+#                                           "pvalue.scaled"
+# ))
+# # AIC(fit)
+# parameterEstimates(fit)
+# Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+# subset(Est, op == "=~")
+# subset(Est, op == "~~")
+# lavInspect(fit,what="th")
+
+#SF8
+# 2 factors model ###########################
+cfa_model <- '
+PHC =~  sf8_b1 + sf8_b2 + sf8_b3 + sf8_b4 + sf8_b5
+MHC =~  sf8_b6 + sf8_b7 + sf8_b8
+#
+#cov
+# sf8_b2 ~~ sf8_b8
+sf8_b1 ~~ sf8_b5
+'
+
+fit <- lavaan::cfa(cfa_model,
+                   data = sf8_data,
+                   estimator="WLSMV",
+                   ordered=colnames(sf8_data)
+                   )
+summary(fit, fit.measures=TRUE)
+lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
+                                          "rmsea.ci.lower.scaled",
+                                          "rmsea.ci.upper.scaled",
+                                          "cfi.scaled",
+                                          "tli.scaled",
+                                          "nnfi.scaled",
+                                          "chisq.scaled",
+                                          "pvalue.scaled"
+                                          ))
+# AIC(fit)
+# parameterEstimates(fit)
+# Est <- lavaan::parameterEstimates(fit,
+#                                   ci = TRUE,
+#                                   standardized = TRUE)
+# subset(Est, op == "=~")
+# lavInspect(fit,what="th")
+
+sf8_scores_raw_baseline<-lavaan::lavPredict(fit,newdata=sf8_data_baseline,method="EBM")
+sf8_scores_raw_3fup<-lavaan::lavPredict(fit,newdata=sf8_data_3fup,method="EBM")
+sf8_scores_raw_6fup<-lavaan::lavPredict(fit,newdata=sf8_data_6fup,method="EBM")
+sf8_scores_raw_9fup<-lavaan::lavPredict(fit,newdata=sf8_data_9fup,method="EBM")
+
+sf8_scores_raw<-rbind(sf8_scores_raw_baseline,
+				  sf8_scores_raw_3fup,
+				  sf8_scores_raw_6fup,
+				  sf8_scores_raw_9fup)
+
+data_mhregistry$sf8_scores_MF<-scales::rescale(as.data.frame(sf8_scores_raw)[,1], 
+		to = c(0, 100))
+data_mhregistry$sf8_scores_CF<-scales::rescale(as.data.frame(sf8_scores_raw)[,2], 
+		to = c(0, 100))
+
+#PHQ9
+#############
+#baseline
+phq9_data1<-with(data_mhregistry,data.frame(phq9_b11,
+                                            phq9_b12,
+                                            phq9_b13,
+                                            phq9_b14,
+                                            phq9_b15,
+                                            phq9_b16,
+                                            phq9_b17,
+                                            phq9_b18,
+                                            phq9_b19
+))
+data_imputed1 <- mice(phq9_data1, seed = 2222, m=10)
+phq9_data<-mice::complete(data_imputed1,4)
+
+#followup
+phq9_data_baseline<-phq9_data[
+			data_mhregistry$redcap_event_name=="enrollment_arm_1",]
+
+#subsetting data set to keep only baseline data
+phq9_data_3fup<-phq9_data[
+			data_mhregistry$redcap_event_name=="month_3_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+phq9_data_6fup<-phq9_data[
+			data_mhregistry$redcap_event_name=="month_6_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+phq9_data_9fup<-phq9_data[
+			data_mhregistry$redcap_event_name=="month_9_followup_arm_1",]
+
+# 1 factor model
+cfa_model <- '
+PHQ9 =~  phq9_b11 + phq9_b12 + phq9_b13 + phq9_b14 + 
+phq9_b15 + phq9_b16 + phq9_b17 + phq9_b18 + phq9_b19
+'
+
+fit <- lavaan::cfa(cfa_model,
+                   data = phq9_data,
+                   estimator="WLSMV",
+                   ordered=colnames(phq9_data)
+                   )
+summary(fit, fit.measures=TRUE)
+lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
+                                          "rmsea.ci.lower.scaled",
+                                          "rmsea.ci.upper.scaled",
+                                          "cfi.scaled",
+                                          "tli.scaled",
+                                          "nnfi.scaled",
+                                          "chisq.scaled",
+                                          "pvalue.scaled"
+                                          ))
+# AIC(fit)
+# parameterEstimates(fit)
+# Est <- lavaan::parameterEstimates(fit,
+#                                   ci = TRUE,
+#                                   standardized = TRUE)
+# subset(Est, op == "=~")
+# subset(Est, op == "~~")
+
+
+phq9_scores_raw_baseline<-lavaan::lavPredict(fit,newdata=phq9_data_baseline,method="EBM")
+phq9_scores_raw_3fup<-lavaan::lavPredict(fit,newdata=phq9_data_3fup,method="EBM")
+phq9_scores_raw_6fup<-lavaan::lavPredict(fit,newdata=phq9_data_6fup,method="EBM")
+phq9_scores_raw_9fup<-lavaan::lavPredict(fit,newdata=phq9_data_9fup,method="EBM")
+
+phq9_scores_raw<-rbind(phq9_scores_raw_baseline,
+				  phq9_scores_raw_3fup,
+				  phq9_scores_raw_6fup,
+				  phq9_scores_raw_9fup)
+
+data_mhregistry$phq9_scores<-scales::rescale(as.data.frame(phq9_scores_raw)[,1], 
+		to = c(0, 100))
+
+#AUDIT
+#baseline
+audit_data<-with(data_mhregistry,data.frame(h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
+# audit_data1<-with(data_baseline,data.frame(
+# 	h1,h2,h3))
+# audit_data2<-with(data_baseline,data.frame(
+# 	h4,h5,h6,h7,h8,h9,h10))
+# audit_data2_3<-with(data_baseline,data.frame(
+# 	h4,h5,h6))
+# audit_data3_3<-with(data_baseline,data.frame(
+# 	h7,h8,h9,h10))
+data_imputed1 <- mice(audit_data, seed = 2222, m=10)
+audit_data<-mice::complete(data_imputed1,4)
+
+#followuip
+audit_data_baseline<-audit_data[
+			data_mhregistry$redcap_event_name=="enrollment_arm_1",]
+
+#subsetting data set to keep only baseline data
+audit_data_3fup<-audit_data[
+			data_mhregistry$redcap_event_name=="month_3_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+audit_data_6fup<-audit_data[
+			data_mhregistry$redcap_event_name=="month_6_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+audit_data_9fup<-audit_data[
+			data_mhregistry$redcap_event_name=="month_9_followup_arm_1",]
+
+audit_model <- '
+Audit =~  h1 + h2 + h3 + h4 + h5 + h6 + h7 + h8 + h9 + h10
+			 '
+fit <- lavaan::cfa(audit_model,
+                   data = audit_data,
+                   estimator="WLSMV",
+                   ordered=names(audit_data))
+summary(fit,
+        fit.measures=TRUE)
+lavaan::fitMeasures(fit,
+                    fit.measures = "all")
+# parameterEstimates(fit)
+# Est <- lavaan::parameterEstimates(fit,
+#                                   ci = TRUE,
+#                                   standardized = TRUE)
+# subset(Est, op == "=~")
+# subset(Est, op == "~~")
+
+# #AUDIT
+# # 2 factor model ###########
+# audit_model2 <- '
+# Audit =~  h1 + h2 + h3
+# Audit2 =~ h4 + h5 + h6 + h7 + h8 + h9 + h10
+# '
+
+# fit <- lavaan::cfa(audit_model2,
+#                    data = audit_data,
+#                    estimator="WLSM",
+#                    ordered=names(audit_data))
+# summary(fit,
+#         fit.measures=TRUE)
+# lavaan::fitMeasures(fit,
+#                     fit.measures = "all")
+# parameterEstimates(fit)
+# Est <- lavaan::parameterEstimates(fit,
+#                                   ci = TRUE,
+#                                   standardized = TRUE)
+# subset(Est, op == "=~")
+# subset(Est, op == "~~")
+
+audit_scores_raw_baseline<-lavaan::lavPredict(fit,newdata=audit_data_baseline,method="EBM")
+audit_scores_raw_3fup<-lavaan::lavPredict(fit,newdata=audit_data_3fup,method="EBM")
+audit_scores_raw_6fup<-lavaan::lavPredict(fit,newdata=audit_data_6fup,method="EBM")
+audit_scores_raw_9fup<-lavaan::lavPredict(fit,newdata=audit_data_9fup,method="EBM")
+
+audit_scores_raw<-rbind(audit_scores_raw_baseline,
+				  audit_scores_raw_3fup,
+				  audit_scores_raw_6fup,
+				  audit_scores_raw_9fup)
+
+data_mhregistry$audit_scores<-scales::rescale(as.data.frame(audit_scores_raw)[,1], 
+		to = c(0, 100))
+
+#CATEGORICAL VARIABLES
+##########################################################################################
+
+# sf8_PCS<-with(data_mhregistry,data.frame(sf8_b1,sf8_b2,sf8_b3,sf8_b4,sf8_b5))
+# data_mhregistry$sf8_mcs<-rowSums(sf8_PCS)
+
+# sf8_MCS<-with(data_mhregistry,data.frame(sf8_b6,sf8_b7,sf8_b8))
+# data_mhregistry$sf8_pcs<-rowSums(sf8_MCS)
+
+phq9<-with(data_mhregistry,data.frame(phq9_b11,phq9_b12,phq9_b13,phq9_b14,
+	phq9_b15,phq9_b16,phq9_b17,phq9_b18,phq9_b19))
+data_mhregistry$phq9_sum<-rowSums(phq9)
+
+audit<-with(data_mhregistry,data.frame(h1,h2,h3,h4,h5,h6,h7,h8,h9,h10))
+data_mhregistry$audit_sum<-rowSums(audit)
+
+cage<-with(data_mhregistry,data.frame(h11,h12,h13,h14))
+data_mhregistry$cage_sum<-rowSums(cage)
+
+# fim_physical<-with(data_mhregistry,data.frame(g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,
+# 	g11,g12,g13,g14,g15,g16))
+# data_mhregistry$fim_physical_score<-rowSums(fim_physical)/16
+
+# fim_mental<-with(data_mhregistry,data.frame(g17,g18,g19,g20,g21,g22,g23,g24,g25,g26,
+# 	g27,g28,g29,g30))
+# data_mhregistry$fim_mental_score<-rowSums(fim_mental)/14
+
+# mental<-with(data_mhregistry,data.frame(f1a,f1b,f1c,f1d,f1e,f2a,f2b,f2c,f2d,f2e,f3,
+	# f4,f5,f6,f7,f8,f9,f10,f11,f12___0,f12___1,f12___2))
+# data_mhregistry$mental<-rowSums(mental)
+
+#baseline data
+data_mhregistry$moca_sum<-rowSums(MOCA_data)
+
+# kessler<-with(data_mhregistry,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,
+# 	d10))
+kessler<-with(data_mhregistry,data.frame(d2,d5,d4,d8,d9,d10))
+data_mhregistry$kessler_sum<-rowSums(kessler)
+
+#classifying variables
+data_mhregistry$phq9_cat<-car::recode(data_mhregistry$phq9_sum,"0:7.9='no';8:21='yes'")
+data_mhregistry$kessler_score_cat<-car::recode(data_mhregistry$kessler_sum,"0:17.9='no';18='yes'")
+data_mhregistry$audit_cat<-car::recode(data_mhregistry$audit_sum,"0:7.9='no';8:32='yes'")
+data_mhregistry$fimPC_cat<-car::recode(data_mhregistry$fim_scores_CF,"0:49='no';50:100='yes'")
+data_mhregistry$fimMC_cat<-car::recode(data_mhregistry$fim_scores_MF,"0:49='no';50:100='yes'")
+data_mhregistry$sf8MC_cat<-car::recode(data_mhregistry$sf8_scores_MF,"0:49='no';50:100='yes'")
+data_mhregistry$sf8PC_cat<-car::recode(data_mhregistry$sf8_scores_CF,"0:49='no';50:100='yes'")
+data_mhregistry$moca_cat<-car::recode(data_mhregistry$moca_sum,"0:25.9='yes';26:30='no'")
+
+#subsetting data set to keep only baseline data
+data_baseline<-data_mhregistry[
+			data_mhregistry$redcap_event_name=="enrollment_arm_1",]
+
+#subsetting data set to keep only baseline data
+data_3fup<-data_mhregistry[
+			data_mhregistry$redcap_event_name=="month_3_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+data_6fup<-data_mhregistry[
+			data_mhregistry$redcap_event_name=="month_6_followup_arm_1",]
+
+#subsetting data set to keep only baseline data
+data_9fup<-data_mhregistry[
+			data_mhregistry$redcap_event_name=="month_9_followup_arm_1",]
+
 #############################################################################
-###Section wih several exploratory data analysis functions
-#Exploratory Data Anlysis
-#dim(data)
-#str (data)
-#head(data)
-#names(data)
-#summary(data)#This comand will provide a whole set of descriptive #results for each variables
-describe(data)
-with(data,by(data,outcome,describe))
-with(data,by(data,outcome,summary))
-#stat.desc(data)
-with(data,by(data,outcome,ad.test)) # Anderson-Darling test for normality
-#skewness(data$Idade) #Will provide skweness analysis
-#kurtosis(data$Idade) - 3 #Will provide kurtosis analysis
-#qplot(data$Idade) # histogram plot
-#boxplot(data$Idade~data$Classificacao) #will provide a boxplot for the #variables to analysis potential outliers
-## Bartlett Test of Homogeneity of Variances
-#bartlett.test(data$Idade~data$Classificacao, data=data)
-## Figner-Killeen Test of Homogeneity of Variances
-#fligner.test(data$Idade~data$Classificacao, data=data)
-#leveneTest(data$Idade~data$Classificacao, data=data)
+#
+#PAPER 1 - BASELINE CHARACtERIStiCS
+#
+#############################################################################
 #############################################################################
 #DESCRIPTIVES
 #############################################################################
+table(data_mhregistry$redcap_event_name)
+prop.table(table(data_mhregistry$redcap_event_name))
+
 # Gender 0=male 1=female
-table<-with(data_mhregistry,table(female))
+table<-with(data_baseline,table(female))
 table
 prop.table(table)
 # table<-with(data_mhregistry,table(female,gcs))
@@ -190,10 +736,10 @@ prop.table(table)
 # assocstats(table) #vcd package
 
 # Marital 0=not_married 1=married
-table<-with(data_mhregistry,table(married_recoded))
+table<-with(data_baseline,table(married_recoded))
 table
 prop.table(table)
-# table<-with(data_mhregistry,table(married_recoded,gcs))
+# table<-with(data_baseline,table(married_recoded,gcs))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -201,7 +747,7 @@ prop.table(table)
 # assocstats(table) #vcd package
 
 # Ocupation
-table<-with(data_mhregistry,table(occupation_recoded))
+table<-with(data_baseline,table(occupation_recoded))
 table
 prop.table(table)
 #table<-with(data,table(female,))
@@ -212,7 +758,7 @@ prop.table(table)
 #assocstats(table) #vcd package
 
 # Education
-table<-with(data_mhregistry,table(education_recoded))
+table<-with(data_baseline,table(education_recoded))
 table
 prop.table(table)
 #table<-with(data,table(female,))
@@ -223,66 +769,16 @@ prop.table(table)
 #assocstats(table) #vcd package
 
 # Home people residing in the house
-with(data_mhregistry,summary(age.x))
+with(data_baseline,summary(age.x))
 # ad.test(data$age)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
 #by(data$home_people,data$risk_classification,summary)
 #wilcox.test(data$home_people~data$risk_classification)
 
-# Home people residing in the house
-with(data,by(home_people,redcap_event_name,summary))
-# summary(data$home_people)
-ad.test(data$home_people)
-#hist(data$home_people)
-#ci_func(data$home_people,.95)
-#by(data$home_people,data$risk_classification,describe)
-#wilcox.test(data$home_people~data$risk_classification)
-
-# Minors residing in the house
-summary(data$minors_home)
-ad.test(data$minors_home)
-#hist(data$home_people)
-#ci_func(data$home_people,.95)
-#by(data$home_people,data$risk_classification,describe)
-#wilcox.test(data$home_people~data$risk_classification)
-
-# Minors supporting financially in the house
-summary(data$minors_finan)
-ad.test(data$minors_finan)
-#hist(data$home_people)
-#ci_func(data$home_people,.95)
-#by(data$home_people,data$risk_classification,describe)
-#wilcox.test(data$home_people~data$risk_classification)
-
-# Adult supporting financially
-summary(data$adult_finan)
-ad.test(data$adult_finan)
-#hist(data$home_people)
-#ci_func(data$home_people,.95)
-#by(data$home_people,data$risk_classification,describe)
-#wilcox.test(data$home_people~data$risk_classification)
-
-# Personal income
-with(data_mhregistry,summary(personal_income))
-# summary(data$personal_income)
-ad.test(data$personal_income)
-#hist(data$home_people)
-#ci_func(data$home_people,.95)
-#by(data$home_people,data$risk_classification,describe)
-#wilcox.test(data$home_people~data$risk_classification)
-
-# Family income
-with(data,by(fam_income,redcap_event_name,summary))
-ad.test(data$fam_income)
-#hist(data$home_people)
-#ci_func(data$home_people,.95)
-#by(data$home_people,data$risk_classification,describe)
-#wilcox.test(data$home_people~data$risk_classification)
-
 ######## CLINICAL INDICATORS
 # GCS
-with(data_mhregistry,summary(gcs_tot))
+with(data_baseline,summary(gcs_tot))
 ad.test(data$fam_income)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
@@ -290,7 +786,7 @@ ad.test(data$fam_income)
 #wilcox.test(data$home_people~data$risk_classification)
 
 # GOS
-with(data_mhregistry,summary(gose))
+with(data_baseline,summary(gose))
 ad.test(data$fam_income)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
@@ -298,145 +794,126 @@ ad.test(data$fam_income)
 #wilcox.test(data$home_people~data$risk_classification)
 
 # MOI
-table<-with(data_mhregistry,table(moi))
+table<-with(data_baseline,table(moi))
 table
 prop.table(table)
 
 ######## MENTAL HEALTH SCALES
 
 #SF8
+summary(sf8_scores_CF)
+summary(sf8_scores_MF)
+# ad.test(phq9score)
+# One Way Anova (Completely Randomized Design)
+# kruskal.test(data$phq9score ~ data$redcap_event_name, data=data)
+# posthoc.kruskal.nemenyi.test(x=data$phq9score, g=data$redcap_event_name,
+#  method="Chisq")
+# # summary(fit)
+# #hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_clas0sification,describe)
+#wilcox.test(data$home_people~data$risk_classification)
+table<-with(data_baseline,table(sf8PC_cat))
+table
+prop.table(table)
+table<-with(data_baseline,table(sf8MC_cat))
+table
+prop.table(table)
 
 # PHQ9
-with(data_mhregistry,by(phq9score,redcap_event_name,summary))
-summary(phq9score)
-ad.test(phq9score)
+summary(data_baseline$phq9_sum)
+# ad.test(phq9score)
 # One Way Anova (Completely Randomized Design)
-kruskal.test(data$phq9score ~ data$redcap_event_name, data=data)
-posthoc.kruskal.nemenyi.test(x=data$phq9score, g=data$redcap_event_name,
- method="Chisq")
+# kruskal.test(data$phq9score ~ data$redcap_event_name, data=data)
+# posthoc.kruskal.nemenyi.test(x=data$phq9score, g=data$redcap_event_name,
+#  method="Chisq")
 # summary(fit)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
 #by(data$home_people,data$risk_clas0sification,describe)
 #wilcox.test(data$home_people~data$risk_classification)
-table<-with(data_mhregistry,table(phq9_cat))
+table<-with(data_baseline,table(phq9_cat))
 table
 prop.table(table)
 
 # KESSLER
-with(data,by(kes_score,redcap_event_name,summary))
-# 1summary(kes_score)
-ad.test(kes_score)
-# One Way Anova (Completely Randomized Design)
-kruskal.test(data$kes_score ~ data$redcap_event_name, data=data)
-posthoc.kruskal.nemenyi.test(x=data$kes_score, g=data$redcap_event_name,
- method="Chisq")
+summary(data_baseline$kessler_sum)
+# ad.test(data_baseline$kessler_scores)
+# # One Way Anova (Completely Randomized Design)
+# kruskal.test(data$kes_score ~ data$redcap_event_name, data=data)
+# posthoc.kruskal.nemenyi.test(x=data$kes_score, g=data$redcap_event_name,
+#  method="Chisq")
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
 #by(data$home_people,data$risk_classification,describe)
 #wilcox.test(data$home_people~data$risk_classification)
-table<-with(data_mhregistry,table(kes_score_cat))
+table<-with(data_baseline,table(kessler_score_cat))
 table
 prop.table(table)
 
-# CES
-# with(data,by(ces_score,redcap_event_name,summary))
-# # 1summary(ces_score)
-# ad.test(ces_score)
-# # One Way Anova (Completely Randomized Design)
-# kruskal.test(data$ces_score ~ data$redcap_event_name, data=data)
-# posthoc.kruskal.nemenyi.test(x=data$ces_score, g=data$redcap_event_name,
-#  method="Chisq")
-# #hist(data$home_people)
-# #ci_func(data$home_people,.95)
-# #by(data$home_people,data$risk_classification,describe)
-# #wilcox.test(data$home_people~data$risk_classification)
-# table<-with(data,table(ces_score_cat))
-# table
-# prop.table(table)
-
 # AUDIT
-summary(auditscore)
+summary(data_baseline$audit_sum)
+# ad.test(auditscore)
+#hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_classification,describe)
+#wilcox.test(data$home_people~data$risk_classification)
+table<-with(data_baseline,table(audit_cat))
+table
+prop.table(table)
+
+# MOCA
+summary(data_baseline$moca_sum)
 ad.test(auditscore)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
 #by(data$home_people,data$risk_classification,describe)
 #wilcox.test(data$home_people~data$risk_classification)
-table<-with(data_mhregistry,table(auditscore_cat))
+table<-with(data_baseline,table(moca_cat))
 table
 prop.table(table)
 
-#############################################################################
-#ANALYSIS OF VARIANCE
-#############################################################################
-# One Way Anova (Completely Randomized Design)
-fit <- aov(Idade ~ Classificacao, data=data)
-summary(fit)
-
-# Randomized Block Design (B is the blocking factor) 
-fit <- aov(Idade ~ Classificacao+Sexo, data=data)
-summary(fit)
-
-# Two Way Factorial Design 
-fit <- aov(Idade ~ Classificacao*Sexo, data=data)
-summary(fit)
-
-# Tukey Honestly Significant Differences
-TukeyHSD(fit) # where fit comes from aov()
-
-# Analysis of Covariance 
-fit <- aov(Idade ~ Classificacao + IMC, data=data)
-summary(fit)
-
-# Kruskal Wallis Test One Way Anova by Ranks 
-kruskal.test(Idade ~ Classificacao, data=data) # where y1 is numeric and A is a factor
-
-#####################################################################################
-#CORRELATIONS
-#####################################################################################
-#Pearson
-cor(numeric, use="complete.obs", method="pearson") 
-#Spearman
-cor(numeric, use="complete.obs", method="spearman") 
-#Kendall
-cor(numeric, use="complete.obs", method="kendall")
-
-#Significance testing
-rcorr(as.matrix(numeric), type="pearson") # type can be pearson or spearman
-
-cor.test(numeric$Peso,numeric$Altura) #Used for a single test of significance
-
-# heterogeneous correlations in one matrix 
-# pearson (numeric-numeric), 
-# polyserial (numeric-ordinal), 
-# and polychoric (ordinal-ordinal)
-# x is a data frame with ordered factors 
-# and numeric variables
-hetcor(data) 
-
-# polychoric correlation
-# x is a contingency table of counts
-polychor(data) 
+# FIM
+summary(data_baseline$fim_scores_CF)
+summary(data_baseline$fim_scores_MF)
+ad.test(auditscore)
+#hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_classification,describe)
+#wilcox.test(data$home_people~data$risk_classification)
+table<-with(data_baseline,table(fimPC_cat))
+table
+prop.table(table)
+table<-with(data_baseline,table(fimMC_cat))
+table
+prop.table(table)
 
 #############################################################################
 #GRAPH
 #############################################################################
 
 library(qgraph)
+
+mhealth_scales<-with(data_baseline,data.frame(fim_data_baseline,
+moca_data_baseline,
+kessler_data_baseline,
+sf8_data_baseline,
+phq9_data_baseline,
+audit_data_baseline))
+
 cor<-cor_auto(mhealth_scales)
 
 #qsgc<-qsgc$rho
 
 #listing grouping variables in the network resulting from the community analysis
-network_groups<-list(QOL_Mental=c(1:5),
-								QOL_Physical=c(6:8),
-								Depression=c(9:17),
-								Alcohol_use=c(18:31),
-								Funct_Physical=c(32:46),
-								Funct_Cog=c(47:60),
-								Cognition=c(61:69),
-								Distress=c(70:79),
-								Clinicals=c(80:81))
+network_groups<-list(Funct_Motor=c(1:15),
+					 Funct_Cog=c(16:29),
+					 Cognition=c(30:39),
+					 Distress=c(40:49),
+					 QOL_Mental=c(50:52),
+					 QOL_Physical=c(53:57),
+					 Depression=c(58:66),
+					 Alcohol_use=c(67:76))
 
 # # creating vectors for labels
 # importance_node_labels<-c("Why is this study being done?", 
@@ -513,26 +990,17 @@ node_names<-paste("Q ",c(1:81),sep="")
   # shape="square",
   border.width=5,
 	groups=network_groups,
-	# color=c("gold","steelblue","red","grey80","green"),borders = FALSE,
-	labels=node_names
+	# color=c("gold","steelblue","red","grey80","green"),
+  borders = FALSE
+	# labels=node_names
   #gray=T,
   )
 
-#conducting logitic regression with variables showing direct path in the network
-log_model<-data.frame(Respo,Import$Q36_1,Import$Q36_2,
-	Import$Q36_3,Import$Q36_10,Import$Q36_13)#,reading_scores$scores)
-
-#fitting the model
-fit <- glm(as.factor(Respo)~Import$Q36_1+Import$Q36_2
-	+Import$Q36_3+Import$Q36_10+Import$Q36_13,
-	data=log_model,family=binomial)
 
 
-
-
-
-
-
+#############################################################################
+#DO NOT RUN - ARCHIVE
+#############################################################################
 
 
 
