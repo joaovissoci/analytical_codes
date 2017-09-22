@@ -61,6 +61,7 @@ install.packages("haven")
 install.packages("pcalg")
 install.packages("semPlot")
 install.packages("GGally")
+install.packages("tidyverse")
 
 
 devtools::install_github("jennybc/googlesheets")

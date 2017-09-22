@@ -39,7 +39,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -1016,7 +1016,7 @@ p
 # MDC - Minimal Detectable Change
 #############################################################
 
-clinimetric_data<-subset(data,data$time=="3days" | data$time=="7days")
+clinimetric_data<-subset(data,data$time=="21days" | data$time=="28days")
 
 clinimetric_data_cast1<-with(clinimetric_data,data.frame(X...id,time,score))
 icc_clinimetric_data<-cast(clinimetric_data_cast1,
@@ -1075,9 +1075,10 @@ icc<-ICC(cbind(icc_clinimetric_data$t1,icc_clinimetric_data$t2))$results$ICC[3]
 
 # Formula for the SEM
 SEM<-pooled_sd*sqrt(1-icc)
+SEM
 
 # MDC
-MDC<-1.96*sqrt(2)*SEM
+MDC<-1.65*sqrt(2)*SEM
 MDC
 #############################################################
 # MCID - Minimal Clinical Important Change
@@ -1120,7 +1121,7 @@ MCID(dataghs$GHS1, dataghs$GHSr1, dataghs$anchor1)
 
 CohenD<-pooled_mean/pooled_sd
 
-MICD<-0.2*pooled_sd
+MICD<-0.5*pooled_sd
 MICD
 # Cohen suggested
 # that score differences of 0.2SD units correspond to
@@ -1144,4 +1145,4 @@ MICD
 # used for statistical computing.
 
 CohenD<-pooled_mean/pooled_sd
-
+CohenD

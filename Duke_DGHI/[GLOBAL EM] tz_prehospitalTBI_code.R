@@ -38,7 +38,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistry_data.csv")
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistry_data.csv")
 
 ######################################################
 #DATA MANAGEMENT
@@ -292,13 +292,6 @@ analysis_data$alcohol<-as.factor(car::recode(
 analysis_data$moi<-as.factor(car::recode(
 	analysis_data$moi,"0='yes';NA=NA;else='no'"))
 
-analysis_data$time_to_care_cat<-car::recode(analysis_data$time_to_care,"
-					0:1='0-1hrs';
-					1.01:2='1-2hrs';
-					2.01:3='2-3hrs';
-					3.01:4='3-4hrs';
-					else='more 4hrs'")
-
 analysis_data$transport_legs_cat<-as.factor(car::recode(
 	analysis_data$transport_legs,"
 					0:1='0 to 1';
@@ -315,6 +308,13 @@ imp <- mice(analysis_data, seed = 2222, m=5)
 
 # # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
 analysis_data<-mice::complete(imp,4)
+
+analysis_data$time_to_care_cat<-car::recode(analysis_data$time_to_care,"
+					0:1='0-1hrs';
+					1.01:2='1-2hrs';
+					2.01:3='2-3hrs';
+					3.000001:4='3-4hrs';
+					else='more 4hrs'")
 
 ##############################################################
 #TABLE 1
@@ -336,7 +336,7 @@ descritive.table(analysis_data, variables.to.table1)
 descritive.table(analysis_data, variables.to.table1, strata)
 
 #gcs
-table<-with(analysis_data,table(gos))
+table<-with(analysis_data,table(time_to_care_cat))
 table
 prop.table(table)
 
@@ -673,6 +673,11 @@ table_data <- ddply(table_data, .(cat),
                     transform, 
                     pos = cumsum(percentage) - (0.5 * percentage))
 
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/[GLOBAL EM] tz_prehospitalTBI_figure1.eps",
+	width = 8, height = 12)
+#Add plot
 ggplot() + 
 # theme_bw() + 
 geom_bar(aes(y = percentage, 
@@ -684,15 +689,16 @@ geom_text(data=table_data, aes(x = cat,
 										   y = pos,
                                            label = paste0(percentage,"%")), 
 										   size=4) +
-labs(x="Course points", y="Percentage") +
+labs(x="Journey legs", y="Percentage") +
 scale_y_continuous(labels = dollar_format(
 	suffix = "%", prefix = "")) +
 theme_minimal() +
 scale_fill_brewer(palette="Paired") #+
 #coord_flip()
+dev.off()
 
-library(rworldmap)
-library(ggmap)
+# library(rworldmap)
+# library(ggmap)
 
 
 ##############################################################
@@ -747,7 +753,7 @@ odds$vars<-rep(c("1-2 hrs vs. 0-1 hrs",
 			 "2-3 hrs vs. 0-1 thrs",
 			 "3-4 hrs vs. 0-1 hrs",
 			 "4 or more hrs vs. 0-1 hrs",
-			 "# course points",
+			 "# Journey legs",
 			 "Age",
 			 "Male vs. Female",
 			 "RTI vs. non-RTI",
@@ -764,10 +770,14 @@ odds$groups<-rep(c(rep("Time to care",4),
 					"MOI",
 					"Alcohol use",
 					rep("District",5)),2)
-odds$models<-c(rep("Mild vs. Moderate/Severe",14),
-			   rep("Good vs. Poor outcome",14))
+odds$models<-c(rep("Mild vs. Moderate/Severe TBI",14),
+			   rep("Good vs. Poor Outcome",14))
 #ticks<-c(seq(.1, 1, by =.1), seq(0, 10, by =1), seq(10, 100, by =10))
 
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/[GLOBAL EM] tz_prehospitalTBI_figure2.eps",
+	width = 8, height = 6)
 ggplot(odds, aes(y= OR, x = reorder(vars, OR))) +
 geom_point() +
 geom_errorbar(aes(ymin=lower, ymax=upper), width=.2) +
@@ -778,7 +788,7 @@ scale_x_discrete(limits=c(
 			 "3-4 hrs vs. 0-1 hrs",
 			 "2-3 hrs vs. 0-1 thrs",
 			 "1-2 hrs vs. 0-1 hrs",
-			 "# course points",
+			 "# Journer legs",
 			 "Age",
 			 "Male vs. Female",
 			 "RTI vs. non-RTI",
@@ -790,8 +800,9 @@ scale_x_discrete(limits=c(
 			 "Same vs. Moshi Urban")) +
 facet_grid(.~models, scales="free_y") +
 coord_flip() +
-labs(x = 'Predictors of TBI outcomes', y = 'OR (CI 95%)') +
+labs(x = 'Predictors of TBI Outcomes', y = 'OR (CI 95%)') +
 theme_bw()
 # }
-
+dev.off()
+	
 # plot_odds(logmodel)
