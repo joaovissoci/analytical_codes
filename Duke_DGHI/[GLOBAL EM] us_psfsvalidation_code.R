@@ -26,7 +26,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 	"reshape2","mclust","foreign","survival","memisc","lme4",
 	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
 	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
-  "mice"),
+  "mice","haven"),
 library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
@@ -39,7 +39,27 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
+
+data2<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_sdtmdata/qs.sas7bdat"))
+
+data_2_subset1<-subset(data2,data2$QSCAT=="Patient Global Impression of Change" &
+                             data2$VISIT=="Envenomation +14 Days")
+
+data_globalchange<-with(data_2_subset1,data.frame(USUBJID,
+                                                  QSTESTCD,
+                                                  QSSTRESN,
+                                                  QSORRES))
+
+id<-with(data_globalchange,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+data_globalchange$id<-id2
+
+
 
 ######################################################
 #DATA MANAGEMENT
