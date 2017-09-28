@@ -29,14 +29,14 @@ library, character.only=T)
 #######################################################
 
 ##### EPI data
-data <- read.spss("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/sl_epi_data.sav",
+data <- read.spss("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/sl_epi_data.sav",
                        to.data.frame=TRUE)
 data<-as.data.frame(data)
 
 ##### BEA data
-data_bea<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/sl_bea_data.csv",sep=',')
+data_bea<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/sl_bea_data.csv",sep=',')
 
-data_bea_scoressl<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/sl_bea_data.csv",sep=',')
+data_bea_scoressl<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/sl_bea_data.csv",sep=',')
 
 #######################################################
 #DATA MANAGEMENT
@@ -906,11 +906,11 @@ with(data_bea,
 
 # Road Area
 table<-with(data_bea,
-	table(outcome))
+	table(Risk))
 table
 prop.table(table)
 table<-with(data_bea,
-	table(outcome,clusters))
+	table(Risk,clusters))
 table
 prop.table(table,2)
 chisq.test(table)
@@ -918,6 +918,9 @@ fisher.test(table)
 assocstats(table) #vcd package
 
 #data_epi$type_vehicle<-car::recode(data_epi$type_vehicle,"'pedestrian'=NA;'bicycle'=NA")
+
+data_bea$clusters2<-car::recode(data_bea$clusters,"'Lat3'='ALat3'")
+
 logmodel<-glm(Risk ~   clusters,
 						  family=binomial, 
 						  data=data_bea)

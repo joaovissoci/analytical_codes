@@ -58,7 +58,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 
 #data_cp<-read.csv("/home/joao/Desktop/data_cp.csv",sep=',')
 #data_rs<-read.csv("/home/joao/Desktop/data_rs.csv",sep=',')
-data <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/safe_habits_srilanka_data.csv")
+data <- read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/safe_habits_srilanka_data.csv")
 
 ######################################################
 #DATA MANAGEMENT
@@ -197,7 +197,6 @@ stop_fasttable <- table(numeric$stop_fast ,numeric$crash_lifetime)
 fisher.test(stop_fasttable)
 road_wrongsidetable <- table(numeric$road_wrongside ,numeric$crash_lifetime)
 fisher.test(road_wrongsidetable)
-
 
 ######################################################
 #TABLE 3.
