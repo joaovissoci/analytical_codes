@@ -42,7 +42,7 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data1<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k award/tz_bnisurveypatients_data.csv")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -50,7 +50,7 @@ data1<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/
 
 names(data)
 
-data<-subset(data1,data1$audit_complete==2)
+# data<-subset(data1,data1$audit_complete==2)
 
 audit_data<-with(data,data.frame(
 				consumption,
@@ -68,7 +68,7 @@ audit_data<-with(data,data.frame(
 				age_1st_drink,drink_drive))
 
 
-audit_data_questions<-audit_data[-c(1:2,13)]
+audit_data_questions<-audit_data[-c(1:2,13:14)]
 
 NAto0<-function(x){
 	car::recode(x,"NA=0")
@@ -77,11 +77,11 @@ NAto0<-function(x){
 audit_data_NAto0<-lapply(audit_data_questions,NAto0)
 audit_data_NAto0<-as.data.frame(audit_data_NAto0)
 audit_data_questions$audit_score<-rowSums(audit_data_NAto0)
-audit_data_questions$audit_score_D1<-rowSums(audit_data_NAto0[,1:3])
-audit_data_questions$audit_score_D2<-rowSums(audit_data_NAto0[,4:10])
+# audit_data_questions$audit_score_D1<-rowSums(audit_data_NAto0[,1:3])
+# audit_data_questions$audit_score_D2<-rowSums(audit_data_NAto0[,4:10])
 # audit_data_questions$audit_score_D3<-rowSums(audit_data_NAto0[,7:])
 
-audit_data_questions$audit_score_cat<-car::recode(
+data$audit_score_cat<-car::recode(
 	audit_data_questions$audit_score,
 	"0:8='No';else='Yes'")
 
@@ -309,6 +309,33 @@ imp2 <- mice(data_full1, seed = 2222, m=5)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
 data_full<-complete(imp2,4)
+
+######################################################################
+#DATA MANAGEMENT
+######################################################################
+table(data$audit_score_cat)
+prop.table(table(data$audit_score_cat))
+
+summary(data$alcohol_6h_ainjury)
+table(data$alcohol_6h_ainjury)
+prop.table(table(data$alcohol_6h_ainjury))
+
+summary(data$pos_etoh)
+table(data$pos_etoh)
+prop.table(table(data$pos_etoh))
+
+test<-with(data,data.frame(audit_score_cat,alcohol_6h_ainjury,pos_etoh))
+
+data %>%
+  mutate(elegible = if_else(audit_score_cat == "Yes" |  #conditions
+  							alcohol_6h_ainjury == 1 | 
+  							pos_etoh == 1, 
+  							"Yes", # if then
+  							"No")) -> data# else 
+
+summary(data$elegible)
+table(data$elegible)
+prop.table(table(data$elegible))
 
 ######################################################################
 #TABLE 1

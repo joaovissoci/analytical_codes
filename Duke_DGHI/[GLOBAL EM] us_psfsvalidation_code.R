@@ -43,23 +43,7 @@ data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/s
 
 data2<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_sdtmdata/qs.sas7bdat"))
 
-data_2_subset1<-subset(data2,data2$QSCAT=="Patient Global Impression of Change" &
-                             data2$VISIT=="Envenomation +14 Days")
-
-data_globalchange<-with(data_2_subset1,data.frame(USUBJID,
-                                                  QSTESTCD,
-                                                  QSSTRESN,
-                                                  QSORRES))
-
-id<-with(data_globalchange,
-              strsplit(as.character(USUBJID),"-"))
-id<-as.data.frame(t(as.data.frame(id)))
-
-id2<-apply(id[,4:5],1,paste, collapse="-")
-
-data_globalchange$id<-id2
-
-
+data3<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
 
 ######################################################
 #DATA MANAGEMENT
@@ -159,6 +143,70 @@ descriptive_data<-subset(data,data$time_2measures=="T1paper" |
                               data$time_2measures=="T3paper" |
                               data$time_2measures=="T3phone"
                               )
+
+#MCID
+data_2_subset1<-subset(data2,data2$QSCAT=="Patient Global Impression of Change" &
+                             data2$VISIT=="Envenomation +14 Days")
+
+data_globalchange<-with(data_2_subset1,data.frame(USUBJID,
+                                                  QSTESTCD,
+                                                  QSSTRESN))
+
+id<-with(data_globalchange,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+data_globalchange$id<-id2
+
+data_globalchange_casted <- dcast(data_globalchange, 
+                                  id+USUBJID ~ QSTESTCD,
+                                  value.var="QSSTRESN")
+
+data_3_subset0<-subset(data3,data3$AVISIT=="Envenomation +14 Days" |
+                             data3$AVISIT=="Envenomation +3 Days")
+
+data_3_subset1<-subset(data_3_subset0,data_3_subset0$PARAM=="PSFS Total Score")
+
+data_psfs<-with(data_3_subset1,data.frame(USUBJID,
+                                                  TRTP,
+                                                  AVAL,
+                                                  AVISIT))
+
+id<-with(data_psfs,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+data_psfs$id<-id2
+
+data_psfs_casted <- dcast(data_psfs, 
+                          id+USUBJID+TRTP ~ AVISIT,
+                                  value.var="AVAL")
+
+data_mcid<-merge(x = data_psfs_casted, 
+             y = data_globalchange_casted, 
+             by = "id", 
+             all.x = TRUE)
+
+data_mcid$change_score<-data_mcid[,4]-data_mcid[,5]
+
+data_mcid$change_cat_PGIC1_mild<-car::recode(data_mcid$PGIC1,"1:4='stable';
+                                                    5:7='improved'")
+
+data_mcid$change_cat_PGIC1_moderate<-car::recode(data_mcid$PGIC1,"1:5='stable';
+                                                    6:7='improved'")
+
+data_mcid$change_cat_PGIC1_severe<-car::recode(data_mcid$PGIC1,"1:6='stable';
+                                                    7='improved'")
+
+data_mcid$change_cat_PGIC2<-car::recode(data_mcid$PGIC2,"0:3='improved';
+                                                    4:6='stable';
+                                                    7:10='stable'")
+
+data_mcid<-data_mcid[which(data_mcid$change_score > -0.1)]
 
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -295,8 +343,6 @@ roc1 <- roc(icc_data[,2],
             # arguments for plot
             plot=TRUE, auc.polygon=FALSE, max.auc.polygon=FALSE, grid=TRUE,
             print.auc=TRUE, show.thres=TRUE,col=c("black"),print.thres=T,print.auc.x=39, print.auc.y=60)
-
-
 
 #NETWORK 
 ##############################################################
@@ -1136,6 +1182,59 @@ MCID(dataghs$GHS1, dataghs$GHS0, dataghs$anchor1)
 #Example to calculate the MCID with effect of Response Sift:
 MCID(dataghs$GHS1, dataghs$GHSr1, dataghs$anchor1)
 
+
+fit_glm <- glm(as.factor(change_cat_PGIC1_moderate) ~ change_score, 
+              data_mcid, family=binomial())
+
+test_data<-with(data_mcid,data.frame(change_cat_PGIC1_moderate,change_score))
+
+glm_response_scores <- predict(fit_glm, test_data, type="response")
+
+library(pROC)
+roc_curve<-roc(data_mcid$change_cat_PGIC1_moderate, 
+                                 glm_response_scores, 
+  direction="<")#,
+     # col="yellow", lwd=3, main="The turtle finds its way")
+
+plot(roc_curve)
+
+coords(roc_curve, "best", ret = "threshold")
+
+roc_curve$thresholds[which.max(roc_curve$sensitivities + roc_curve$specificities)]
+
+library(ROCR)
+pred <- prediction(glm_response_scores,as.factor(data_mcid$change_cat_PGIC1_moderate))
+
+perf <- performance(pred, "tpr", "fpr")
+
+plot(perf, avg="threshold",spread.estimate="boxplot")
+
+cutoffs <- data.frame(cut=perf@alpha.values[[1]], fpr=perf@x.values[[1]], 
+                      tpr=perf@y.values[[1]])
+
+head(cutoffs)
+
+cutoffs[findInterval(0.5, cutoffs$tpr), 'cut']
+
+cutoffs <- cutoffs[order(cutoffs$tpr, decreasing=TRUE),]
+head(subset(cutoffs, fpr < 0.2))
+
+auc = performance(pred, "auc")
+
+
+library(pROC)
+library(Epi)
+
+data_mcid$change_cat_PGIC2<-as.factor(data_mcid$change_cat_PGIC2)
+data_mcid$change_cat_PGIC1_mild<-as.factor(data_mcid$change_cat_PGIC1_mild)
+data_mcid$change_cat_PGIC1_moderate<-as.factor(data_mcid$change_cat_PGIC1_moderate)
+data_mcid$change_cat_PGIC1_severe<-as.factor(data_mcid$change_cat_PGIC1_severe)
+
+ROC(form=change_cat_PGIC1_mild~change_score, data=na.omit(data_mcid))
+ROC(form=change_cat_PGIC1_moderate~change_score, data=na.omit(data_mcid))
+ROC(form=change_cat_PGIC1_severe~change_score, data=na.omit(data_mcid))
+
+# ROC(form=outcome~ndka, data=data_mcid)
 
 # Distribution based
 

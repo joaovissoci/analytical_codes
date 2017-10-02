@@ -167,7 +167,7 @@ fim_data_9fup<-FIM_data30[
 
 cfa_model <- '
 MF =~ g1 + g2 + g3 + g4 + g5 + g6 + g8 + g9 + g10 + g11 + g12 + g13 + g14 + g15 + g16 + g20 + g25
-CF =~ g1 + g8 + g17 + g18 + g19 + g20 + g21 + g22 + g23 + g24 + g25 + g26 + g27 + g28 + g29 + g30
+CF =~ g1 + g8 + g17 + g18 + g19 + g20 + g21 + g22 + g23 + g24 + g25 + g26 + g27
 g19 ~~ g20
 '
 
@@ -503,7 +503,7 @@ phq9_data1<-with(data_mhregistry,data.frame(phq9_b11,
                                             phq9_b18,
                                             phq9_b19
 ))
-data_imputed1 <- mice(phq9_data1, seed = 2222, m=10)
+data_imputed1 <- mice(phq9_data1, seed = 22221, m=10)
 phq9_data<-mice::complete(data_imputed1,4)
 
 #followup
@@ -557,7 +557,12 @@ phq9_scores_raw_3fup<-lavaan::lavPredict(fit,newdata=phq9_data_3fup,method="EBM"
 phq9_scores_raw_6fup<-lavaan::lavPredict(fit,newdata=phq9_data_6fup,method="EBM")
 phq9_scores_raw_9fup<-lavaan::lavPredict(fit,newdata=phq9_data_9fup,method="EBM")
 
-phq9_scores_raw<-rbind(phq9_scores_raw_baseline,
+phq9_scores_raw_baseline<-rowSums(phq9_data_baseline)
+phq9_scores_raw_3fup<-rowSums(phq9_data_3fup)
+phq9_scores_raw_6fup<-rowSums(phq9_data_6fup)
+phq9_scores_raw_9fup<-rowSums(phq9_data_9fup)
+
+phq9_scores_raw<-c(phq9_scores_raw_baseline,
 				  phq9_scores_raw_3fup,
 				  phq9_scores_raw_6fup,
 				  phq9_scores_raw_9fup)
@@ -684,17 +689,17 @@ data_mhregistry$moca_sum<-rowSums(MOCA_data)
 
 # kessler<-with(data_mhregistry,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,
 # 	d10))
-kessler<-with(data_mhregistry,data.frame(d2,d5,d4,d8,d9,d10))
+kessler<-with(data_mhregistry,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,d10))
 data_mhregistry$kessler_sum<-rowSums(kessler)
 
 #classifying variables
 data_mhregistry$phq9_cat<-car::recode(data_mhregistry$phq9_sum,"0:7.9='no';8:21='yes'")
-data_mhregistry$kessler_score_cat<-car::recode(data_mhregistry$kessler_sum,"0:17.9='no';18='yes'")
-data_mhregistry$audit_cat<-car::recode(data_mhregistry$audit_sum,"0:7.9='no';8:32='yes'")
-data_mhregistry$fimPC_cat<-car::recode(data_mhregistry$fim_scores_CF,"0:49='no';50:100='yes'")
-data_mhregistry$fimMC_cat<-car::recode(data_mhregistry$fim_scores_MF,"0:49='no';50:100='yes'")
-data_mhregistry$sf8MC_cat<-car::recode(data_mhregistry$sf8_scores_MF,"0:49='no';50:100='yes'")
-data_mhregistry$sf8PC_cat<-car::recode(data_mhregistry$sf8_scores_CF,"0:49='no';50:100='yes'")
+data_mhregistry$kessler_score_cat<-car::recode(data_mhregistry$kessler_sum,"10:20='no';21:50='yes'")
+data_mhregistry$audit_cat<-car::recode(data_mhregistry$audit_sum,"0:7.9='no';8:35='yes'")
+data_mhregistry$fimPC_cat<-car::recode(data_mhregistry$fim_scores_CF,"0:49.999='yes';50:100='no'")
+data_mhregistry$fimMC_cat<-car::recode(data_mhregistry$fim_scores_MF,"0:49.999='yes';50:100='no'")
+data_mhregistry$sf8MC_cat<-car::recode(data_mhregistry$sf8_scores_MF,"0:49.9='no';50:100='yes'")
+data_mhregistry$sf8PC_cat<-car::recode(data_mhregistry$sf8_scores_CF,"0:49.9='no';50:100='yes'")
 data_mhregistry$moca_cat<-car::recode(data_mhregistry$moca_sum,"0:25.9='yes';26:30='no'")
 
 #subsetting data set to keep only baseline data
@@ -718,6 +723,7 @@ data_9fup<-data_mhregistry[
 #PAPER 1 - BASELINE CHARACtERIStiCS
 #
 #############################################################################
+
 #############################################################################
 #DESCRIPTIVES
 #############################################################################
@@ -801,8 +807,8 @@ prop.table(table)
 ######## MENTAL HEALTH SCALES
 
 #SF8
-summary(sf8_scores_CF)
-summary(sf8_scores_MF)
+summary(100-data_baseline$sf8_scores_CF)
+summary(100-data_baseline$sf8_scores_MF)
 # ad.test(phq9score)
 # One Way Anova (Completely Randomized Design)
 # kruskal.test(data$phq9score ~ data$redcap_event_name, data=data)
@@ -822,6 +828,10 @@ prop.table(table)
 
 # PHQ9
 summary(data_baseline$phq9_sum)
+by(data_mhregistry$phq9_sum,
+	data_mhregistry$redcap_event_name,
+	summary)
+
 # ad.test(phq9score)
 # One Way Anova (Completely Randomized Design)
 # kruskal.test(data$phq9score ~ data$redcap_event_name, data=data)
@@ -838,6 +848,9 @@ prop.table(table)
 
 # KESSLER
 summary(data_baseline$kessler_sum)
+by(data_mhregistry$kessler_sum,
+	data_mhregistry$redcap_event_name,
+	summary)
 # ad.test(data_baseline$kessler_scores)
 # # One Way Anova (Completely Randomized Design)
 # kruskal.test(data$kes_score ~ data$redcap_event_name, data=data)
@@ -853,6 +866,9 @@ prop.table(table)
 
 # AUDIT
 summary(data_baseline$audit_sum)
+by(data_mhregistry$audit_sum,
+	data_mhregistry$redcap_event_name,
+	summary)
 # ad.test(auditscore)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
@@ -864,6 +880,10 @@ prop.table(table)
 
 # MOCA
 summary(data_baseline$moca_sum)
+by(data_mhregistry$moca_sum,
+	data_mhregistry$redcap_event_name,
+	summary)
+
 ad.test(auditscore)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
@@ -876,6 +896,10 @@ prop.table(table)
 # FIM
 summary(data_baseline$fim_scores_CF)
 summary(data_baseline$fim_scores_MF)
+
+by(data_mhregistry$fim_scores_MF,
+	data_mhregistry$redcap_event_name,
+	summary)
 ad.test(auditscore)
 #hist(data$home_people)
 #ci_func(data$home_people,.95)
@@ -997,82 +1021,301 @@ node_names<-paste("Q ",c(1:81),sep="")
   #gray=T,
   )
 
+#############################################################################
+#
+#PAPER 2 - LONGITUDINAL STUDY CHARACtERIStiCS
+#
+#############################################################################
+
+#DESCRIPTIVES
+#############################################################################
+
+#Figure
+library(RColorBrewer)
+library(ggplot2)
+
+#
+with(data_mhregistry,table(phq9_cat,redcap_event_name))
+x<-with(data_mhregistry,prop.table(table(phq9_cat,redcap_event_name),2))
+t(x)
+
+with(data_mhregistry,table(kessler_score_cat,redcap_event_name))
+z<-with(data_mhregistry,prop.table(table(kessler_score_cat,redcap_event_name),2))
+t(z)
+
+with(data_mhregistry,table(audit_cat,redcap_event_name))
+a<-with(data_mhregistry,prop.table(table(audit_cat,redcap_event_name),2))
+t(a)
+
+with(data_mhregistry,table(fimPC_cat,redcap_event_name))
+b<-with(data_mhregistry,prop.table(table(fimPC_cat,redcap_event_name),2))
+t(b)
+
+with(data_mhregistry,table(fimMC_cat,redcap_event_name))
+c<-with(data_mhregistry,prop.table(table(fimMC_cat,redcap_event_name),2))
+t(c)
+
+with(data_mhregistry,table(sf8MC_cat,redcap_event_name))
+d<-with(data_mhregistry,prop.table(table(sf8MC_cat,redcap_event_name),2))
+t(d)
+
+with(data_mhregistry,table(sf8PC_cat,redcap_event_name))
+e<-with(data_mhregistry,prop.table(table(sf8PC_cat,redcap_event_name),2))
+t(e)
+
+with(data_mhregistry,table(moca_cat,redcap_event_name))
+f<-with(data_mhregistry,prop.table(table(moca_cat,redcap_event_name),2))
+t(f)
+
+scales <- rep(c("Depression","Depression",
+				"Distress","Distress",
+				"Alcohol Use","Alcohol Use",
+				"FIM Physical","FIM Physical",
+				"FIM Mental","FIM Mental",
+				"QoL Physical","QoL Physical",
+				"QoL Mental","QoL Mental",
+				"Cognition","Cognition"),4)
+
+times <- c(rep("Admission",16),rep("FUP 3",16),rep("FUP 6",16),rep("FUP 9",16))
+
+Prevalence <- rep(c("no","yes","no","yes","no","yes","no","yes",
+	"no","yes","no","yes","no","yes","no","yes"),4)
+
+df <- data.frame(scales,times,Prevalence)
+df
+
+df$value<-c(x[,1],z[,1],a[,1],b[,1],c[,1],d[,1],e[,1],f[,1],
+			x[,2],z[,2],a[,2],b[,2],c[,2],d[,2],e[,2],f[,2],
+			x[,3],z[,3],a[,3],b[,3],c[,3],d[,3],e[,3],f[,3],
+			x[,4],z[,4],a[,4],b[,4],c[,4],d[,4],e[,4],f[,4])
+
+plot the stacked bar plot
+tiff("/Users/jnv4/Desktop/menta_health1.tiff",
+	width = 800, height = 300,compression = 'lzw')
+ggplot(df, aes(x = times)) + geom_bar(aes(weight=value, fill = Prevalence),
+		 position = 'fill') + scale_y_continuous("", breaks=NULL) +
+	scale_fill_manual(values=c("lightblue","darkblue")) +
+	facet_grid(.~scales)+
+	xlab("Follow up Times")
+	# geom_text(aes(y=,x=,label=df$value))
+dev.off()
+
+#plot the stacked bar plot with polar coordinates
+ggplot(df, aes(x = project)) + 
+geom_bar(aes(weight=numbers, fill = component), position = 'fill') + 
+scale_y_continuous("", breaks=NA) + 
+scale_fill_manual(values = rev(brewer.pal(6, "Purples"))) + 
+coord_polar()
+
+
+
+#DESCRIPTIVE Data
+table(data_mhregistry$redcap_event_name)
+prop.table(table(data_mhregistry$redcap_event_name))
+
+# Gender 0=male 1=female
+table<-with(data_baseline,table(female))
+table
+prop.table(table)
+# table<-with(data_mhregistry,table(female,gcs))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Marital 0=not_married 1=married
+table<-with(data_baseline,table(married_recoded))
+table
+prop.table(table)
+# table<-with(data_baseline,table(married_recoded,gcs))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Ocupation
+table<-with(data_baseline,table(occupation_recoded))
+table
+prop.table(table)
+#table<-with(data,table(female,))
+#table
+#prop.table(table,2)
+#chisq.test(table)
+#fisher.test(table)
+#assocstats(table) #vcd package
+
+# Education
+table<-with(data_baseline,table(education_recoded))
+table
+prop.table(table)
+#table<-with(data,table(female,))
+#table
+#prop.table(table,2)
+#chisq.test(table)
+#fisher.test(table)
+#assocstats(table) #vcd package
+
+# Home people residing in the house
+with(data_baseline,summary(age.x))
+# ad.test(data$age)
+#hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_classification,summary)
+#wilcox.test(data$home_people~data$risk_classification)
+
+######## CLINICAL INDICATORS
+# GCS
+with(data_baseline,summary(gcs_tot))
+ad.test(data$fam_income)
+#hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_classification,describe)
+#wilcox.test(data$home_people~data$risk_classification)
+
+# GOS
+with(data_baseline,summary(gose))
+ad.test(data$fam_income)
+#hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_classification,describe)
+#wilcox.test(data$home_people~data$risk_classification)
+
+# MOI
+table<-with(data_baseline,table(moi))
+table
+prop.table(table)
+
+######## MENTAL HEALTH SCALES
+
+#SF8
+summary(100-data_baseline$sf8_scores_CF)
+summary(100-data_baseline$sf8_scores_MF)
+# ad.test(phq9score)
+# One Way Anova (Completely Randomized Design)
+# kruskal.test(data$phq9score ~ data$redcap_event_name, data=data)
+# posthoc.kruskal.nemenyi.test(x=data$phq9score, g=data$redcap_event_name,
+#  method="Chisq")
+# # summary(fit)
+# #hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_clas0sification,describe)
+#wilcox.test(data$home_people~data$risk_classification)
+table<-with(data_baseline,table(sf8PC_cat))
+table
+prop.table(table)
+table<-with(data_baseline,table(sf8MC_cat))
+table
+prop.table(table)
+
+# PHQ9
+summary(data_baseline$phq9_sum)
+# ad.test(phq9score)
+# One Way Anova (Completely Randomized Design)
+# kruskal.test(data$phq9score ~ data$redcap_event_name, data=data)
+# posthoc.kruskal.nemenyi.test(x=data$phq9score, g=data$redcap_event_name,
+#  method="Chisq")
+# summary(fit)
+#hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_clas0sification,describe)
+#wilcox.test(data$home_people~data$risk_classification)
+table<-with(data_baseline,table(phq9_cat))
+table
+prop.table(table)
+
+# KESSLER
+summary(data_baseline$kessler_sum)
+# ad.test(data_baseline$kessler_scores)
+# # One Way Anova (Completely Randomized Design)
+# kruskal.test(data$kes_score ~ data$redcap_event_name, data=data)
+# posthoc.kruskal.nemenyi.test(x=data$kes_score, g=data$redcap_event_name,
+#  method="Chisq")
+#hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_classification,describe)
+#wilcox.test(data$home_people~data$risk_classification)
+table<-with(data_baseline,table(kessler_score_cat))
+table
+prop.table(table)
+
+# AUDIT
+summary(data_baseline$audit_sum)
+# ad.test(auditscore)
+#hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_classification,describe)
+#wilcox.test(data$home_people~data$risk_classification)
+table<-with(data_baseline,table(audit_cat))
+table
+prop.table(table)
+
+# MOCA
+summary(data_baseline$moca_sum)
+ad.test(auditscore)
+#hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_classification,describe)
+#wilcox.test(data$home_people~data$risk_classification)
+table<-with(data_baseline,table(moca_cat))
+table
+prop.table(table)
+
+# FIM
+summary(data_baseline$fim_scores_CF)
+summary(data_baseline$fim_scores_MF)
+ad.test(auditscore)
+#hist(data$home_people)
+#ci_func(data$home_people,.95)
+#by(data$home_people,data$risk_classification,describe)
+#wilcox.test(data$home_people~data$risk_classification)
+table<-with(data_baseline,table(fimPC_cat))
+table
+prop.table(table)
+table<-with(data_baseline,table(fimMC_cat))
+table
+prop.table(table)
 
 
 #############################################################################
 #DO NOT RUN - ARCHIVE
 #############################################################################
 
+scales<-with(data_mhregistry,c(fim_scores_CF,
+							   fim_scores_MF,
+							   moca_scores,
+							   kessler_scores,
+							   sf8_scores_MF,
+							   sf8_scores_CF,
+							   audit_scores,
+							   phq9_scores))
+
+event<-rep(data_mhregistry$redcap_event_name,8)
+
+names<-c(rep("FIM Physical",530),
+		 rep("FIM Mental",530),
+		 rep("Cognition",530),
+		 rep("Distress",530),
+		 rep("QoL Mental",530),
+		 rep("QoL Physical",530),
+		 rep("Alcohol Use",530),
+		 rep("Depression",530))
+
+lineplotdata<-data.frame(scales,event,names)
+
+lineplotdata1<-with(lineplotdata, tapply(scales, list("FUP"=event, "Scales"=names), mean))
+subjmeans <- melt(lineplotdata1,id="FUP")
+
+# Use thicker lines and larger points, and hollow white-filled points
+ggplot(data=subjmeans, aes(x=FUP,
+								 y=value,
+								 group=Scales)) + 
+	geom_point(size=3, fill="white") +
+    geom_line(size=1.5) + 
+    scale_shape_manual(values=c(22,21))
 
 
-library(RColorBrewer)
-library(ggplot2)
-
-#
-with(data,table(phq9_cat,redcap_event_name))
-x<-with(data,prop.table(table(phq9_cat,redcap_event_name),2))
-t(x)
-
-with(data,table(ces_score_cat,redcap_event_name))
-y<-with(data,prop.table(table(ces_score_cat,redcap_event_name),2))
-t(y)
-
-with(data,table(kes_score_cat,redcap_event_name))
-z<-with(data,prop.table(table(kes_score_cat,redcap_event_name),2))
-t(z)
-
-with(data,table(auditscore_cat,redcap_event_name))
-a<-with(data,prop.table(table(auditscore_cat,redcap_event_name),2))
-t(a)
-
-with(data,table(fimphysical_cat,redcap_event_name))
-b<-with(data,prop.table(table(fimphysical_cat,redcap_event_name),2))
-t(b)
-
-with(data,table(fim_mental_cat,redcap_event_name))
-c<-with(data,prop.table(table(fim_mental_cat,redcap_event_name),2))
-t(c)
-
-with(data,table(mental_cat,redcap_event_name))
-c<-with(data,prop.table(table(mental_cat,redcap_event_name),2))
-t(c)
-
-with(data,table(cage_cat,redcap_event_name))
-c<-with(data,prop.table(table(cage_cat,redcap_event_name),2))
-t(c)
-
-scales <- rep(c("Depression","Depression",
-				"Depression2","Depression2",
-				"Stress","Stress",
-				"Alcohol Use","Alcohol Use",
-				"FIM Physical","FIM Physical",
-				"FIM Cognitive","FIM Cognitive"),3)
-
-times <- c(rep("Admission",12),rep("FUP 3",12),rep("FUP 6",12))
-
-Prevalence <- rep(c("no","yes","no","yes","no","yes","no","yes",
-	"no","yes","no","yes"),3)
-
-df <- data.frame(scales,times,Prevalence)
-df
-
-df$value<-c(x[,1],y[,1],z[,1],a[,1],b[,1],c[,1],x[,2],y[,2],z[,2],a[,2],
-	b[,2],c[,2],x[,3],y[,3],z[,3],a[,3],b[,3],c[,3])
-
-#plot the stacked bar plot
-tiff("/Users/jnv4/Desktop/menta_health1.tiff",
-	width = 800, height = 300,compression = 'lzw')
-ggplot(cor, aes(x = times)) + geom_bar(aes(weight=value, fill = Prevalence),
-		 position = 'fill') + scale_y_continuous("", breaks=NULL) +
-	scale_fill_manual(values=c("lightblue","darkblue")) +
-	facet_grid(.~scales)+
-	xlab("Follow up Times") +
-	# geom_text(aes(y=,x=,label=df$value))
-dev.off()
-
-#plot the stacked bar plot with polar coordinates
-ggplot(df, aes(x = project)) + geom_bar(aes(weight=numbers, fill = component), position = 'fill') + scale_y_continuous("", breaks=NA) + scale_fill_manual(values = rev(brewer.pal(6, "Purples"))) + 
-coord_polar()
 
 
 
