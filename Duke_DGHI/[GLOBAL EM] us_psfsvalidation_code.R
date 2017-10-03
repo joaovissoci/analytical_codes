@@ -206,7 +206,9 @@ data_mcid$change_cat_PGIC2<-car::recode(data_mcid$PGIC2,"0:3='improved';
                                                     4:6='stable';
                                                     7:10='stable'")
 
-data_mcid<-data_mcid[which(data_mcid$change_score > -0.1)]
+data_mcid2<-na.omit(data_mcid[-60,])
+
+data_mcid_control<-subset(data_mcid2,data_mcid2$TRTP=='Placebo')
 
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -1168,6 +1170,7 @@ MDC
 # https://cran.r-project.org/web/packages/MRQoL/MRQoL.pdf
 install.packages("MRQoL")
 library(MRQoL)
+data(dataghs)
 
 # The amount of change that is enough to detect a change in the 
 #patient health status
@@ -1180,18 +1183,17 @@ MCID(dataghs$GHS1, dataghs$GHS0, dataghs$anchor1)
 
 #Example 2:
 #Example to calculate the MCID with effect of Response Sift:
-MCID(dataghs$GHS1, dataghs$GHSr1, dataghs$anchor1)
+MCID(data_mcid[4], data_mcid[5], data_mcid$change_cat_PGIC1_mild)
 
-
-fit_glm <- glm(as.factor(change_cat_PGIC1_moderate) ~ change_score, 
+fit_glm <- glm(as.factor(change_cat_PGIC1_severe) ~ data_mcid[,4], 
               data_mcid, family=binomial())
 
-test_data<-with(data_mcid,data.frame(change_cat_PGIC1_moderate,change_score))
+test_data<-with(data_mcid,data.frame(change_cat_PGIC1_severe,change_score))
 
 glm_response_scores <- predict(fit_glm, test_data, type="response")
 
 library(pROC)
-roc_curve<-roc(data_mcid$change_cat_PGIC1_moderate, 
+roc_curve<-roc(data_mcid$change_cat_PGIC1_severe, 
                                  glm_response_scores, 
   direction="<")#,
      # col="yellow", lwd=3, main="The turtle finds its way")
@@ -1203,9 +1205,9 @@ coords(roc_curve, "best", ret = "threshold")
 roc_curve$thresholds[which.max(roc_curve$sensitivities + roc_curve$specificities)]
 
 library(ROCR)
-pred <- prediction(glm_response_scores,as.factor(data_mcid$change_cat_PGIC1_moderate))
+pred <- prediction(glm_response_scores,as.factor(data_mcid$change_cat_PGIC1_severe))
 
-perf <- performance(pred, "tpr", "fpr")
+perf <- performance(pred, "sens", "spec")
 
 plot(perf, avg="threshold",spread.estimate="boxplot")
 
@@ -1221,20 +1223,75 @@ head(subset(cutoffs, fpr < 0.2))
 
 auc = performance(pred, "auc")
 
-
 library(pROC)
 library(Epi)
 
-data_mcid$change_cat_PGIC2<-as.factor(data_mcid$change_cat_PGIC2)
-data_mcid$change_cat_PGIC1_mild<-as.factor(data_mcid$change_cat_PGIC1_mild)
-data_mcid$change_cat_PGIC1_moderate<-as.factor(data_mcid$change_cat_PGIC1_moderate)
-data_mcid$change_cat_PGIC1_severe<-as.factor(data_mcid$change_cat_PGIC1_severe)
+with(data_mcid2,by(change_score,change_cat_PGIC1_mild,summary))
+with(data_mcid2,by(data_mcid2[,4],change_cat_PGIC1_mild,summary))
+with(data_mcid2,by(change_score,change_cat_PGIC1_moderate,summary))
+with(data_mcid2,by(data_mcid2[,4],change_cat_PGIC1_moderate,summary))
+with(data_mcid2,by(change_score,change_cat_PGIC1_severe,summary))
+with(data_mcid2,by(data_mcid2[,4],change_cat_PGIC1_severe,summary))
+with(data_mcid2,by(change_score,change_cat_PGIC2,summary))
+with(data_mcid2,by(data_mcid2[,4],change_cat_PGIC2,summary))
 
-ROC(form=change_cat_PGIC1_mild~change_score, data=na.omit(data_mcid))
-ROC(form=change_cat_PGIC1_moderate~change_score, data=na.omit(data_mcid))
-ROC(form=change_cat_PGIC1_severe~change_score, data=na.omit(data_mcid))
+data_mcid2$change_cat_PGIC2<-as.factor(data_mcid2$change_cat_PGIC2)
+data_mcid2$change_cat_PGIC1_mild<-as.factor(data_mcid2$change_cat_PGIC1_mild)
+data_mcid2$change_cat_PGIC1_moderate<-as.factor(data_mcid2$change_cat_PGIC1_moderate)
+data_mcid2$change_cat_PGIC1_severe<-as.factor(data_mcid2$change_cat_PGIC1_severe)
 
-# ROC(form=outcome~ndka, data=data_mcid)
+ROC(form=change_cat_PGIC1_mild~data_mcid2[,4], data=data_mcid2)
+ROC(form=change_cat_PGIC1_moderate~data_mcid2[,4], data=data_mcid2)
+ROC(form=change_cat_PGIC1_severe~data_mcid2[,4], data=data_mcid2)
+test<-ROC(form=change_cat_PGIC2~data_mcid2[,4], data=data_mcid2, 
+  cuts=c(1))
+
+ROC(form=change_cat_PGIC1_mild~change_score, data=data_mcid_control)
+ROC(form=change_cat_PGIC1_moderate~change_score, data=data_mcid_control)
+ROC(form=change_cat_PGIC1_severe~data_mcid2[,5], data=data_mcid2)
+ROC(form=change_cat_PGIC2~change_score, data=data_mcid_control)
+
+install.packages("OptimalCutpoints")
+
+library(OptimalCutpoints)
+data(elas)
+
+optimal.cutpoint.Youden <- optimal.cutpoints(X = "Envenomation +3 Days", 
+                                             status = "change_cat_PGIC1_severe", 
+                                             tag.healthy = "stable",
+                                             methods = "Youden", 
+                                             data = data_mcid2, 
+                                             pop.prev = NULL, 
+                                             categorical.cov = NULL, #"gender",
+                                             control = control.cutpoints(), 
+                                             ci.fit = FALSE, 
+                                             conf.level = 0.95, 
+                                             trace = FALSE)
+
+optimal.cutpoint.Youden <- optimal.cutpoints(X = "change_score", 
+                                             status = "change_cat_PGIC1_mild", 
+                                             tag.healthy = "stable",
+                                             methods = "Youden", 
+                                             data = data_mcid_control, 
+                                             pop.prev = NULL, 
+                                             categorical.cov = NULL, #"gender",
+                                             control = control.cutpoints(), 
+                                             ci.fit = FALSE, 
+                                             conf.level = 0.95, 
+                                             trace = FALSE)
+
+summary(optimal.cutpoint.Youden)
+
+plot(optimal.cutpoint.Youden)
+
+# ROC
+
+# https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3068975/
+# https://www.ncbi.nlm.nih.gov/pubmed/2509379/
+# http://rpsychologist.com/d3/cohend/
+# https://cran.r-project.org/web/packages/OptimalCutpoints/OptimalCutpoints.pdf
+# https://stats.stackexchange.com/questions/29719/how-to-determine-best-cutoff-point-and-its-confidence-interval-using-roc-curve-i
+# https://ccrma.stanford.edu/workshops/mir2009/references/ROCintro.pdf
 
 # Distribution based
 
