@@ -15,7 +15,7 @@ library, character.only=T)
 #data<-
 #data<-read.sas7bdat("C:\\Users\\Joao\\Desktop\\tanzclean.sas7bdat")
 #data<-read.sas7bdat("/Users/rpietro/Dropbox/datasets/Africa_DGHI/tanzclean.sas7bdat")
-data<-read.sas7bdat("/Users/joaovissoci/OneDrive - Duke University/datasets/Global EM/Africa/tanzclean.sas7bdat")
+data<-read.sas7bdat("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/tanzclean.sas7bdat")
 data<-as.data.frame(data)
 ###################################################
 #DATA MANAGEMENT
@@ -236,7 +236,7 @@ rti_moshi<-data_moshi[data_moshi$method_injury == "RTI", ]
 
 
 ##### EPI data
-data2 <- read.spss("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Multi_country/Tz, SA, Mz alcohol use in ED/whoer_mozambique_southafrica.sav",
+data2 <- read.spss("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Multi_country/Tz, SA, Mz alcohol use in ED/whoer_mozambique_southafrica.sav",
                        to.data.frame=TRUE)
 data2<-as.data.frame(data2)
 

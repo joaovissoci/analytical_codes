@@ -39,11 +39,11 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
 
-data2<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_sdtmdata/qs.sas7bdat"))
+data2<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_sdtmdata/qs.sas7bdat"))
 
-data3<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
+data3<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
 
 ######################################################
 #DATA MANAGEMENT
@@ -208,7 +208,9 @@ data_mcid$change_cat_PGIC2<-car::recode(data_mcid$PGIC2,"0:3='improved';
 
 data_mcid2<-na.omit(data_mcid[-60,])
 
-data_mcid_control<-subset(data_mcid2,data_mcid2$TRTP=='Placebo')
+data_mcid_stable<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='stable')
+data_mcid_improved<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='improved')
+
 
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -1084,7 +1086,7 @@ p
 # MDC - Minimal Detectable Change
 #############################################################
 
-clinimetric_data<-subset(data,data$time=="21days" | data$time=="28days")
+clinimetric_data<-subset(data,data$time=="3days" | data$time=="7days")
 
 clinimetric_data_cast1<-with(clinimetric_data,data.frame(X...id,time,score))
 icc_clinimetric_data<-cast(clinimetric_data_cast1,
@@ -1123,15 +1125,40 @@ colnames(icc_clinimetric_data)<-c("id","t1","t2")
 
 
 # Calculate SEM
+install.packages("effsize")
+library(effsize)
+treatment = rnorm(100,mean=10)
+control = rnorm(100,mean=12)
+d = (c(treatment,control))
+f = rep(c("Treatment","Control"),each=100)
+## compute Cohen's d
+## treatment and control
+cohen.d(treatment,control)
+## data and factor
+cohen.d(d,f)
+## formula interface
+cohen.d(d ~ f)
+## compute Hedges' g
+cohen.d(d,f,hedges.correction=TRUE)
 
 # Pooled SD Pre
 # sqrt(sum(var/(sum(N-1)-nrow(dd))))
-mean_diff<-icc_clinimetric_data$t2-icc_clinimetric_data$t1
+clinimetric_data2<-icc_clinimetric_data[-23,]
+mean_diff_numeric<-clinimetric_data2$t2-clinimetric_data2$t1
 
-mean_diff_pos<-mean_diff[which(mean_diff > -0.1)]
+# mean_diff_numeric<-c(clinimetric_data2$t2,clinimetric_data2$t1)
+# mean_diff_cat<-c(rep("T1",70),
+#                  rep("T2",70))
 
-pooled_sd<-sd(mean_diff_pos)
-pooled_mean<-mean(mean_diff_pos)
+D<-cohen.d(clinimetric_data2$t2,clinimetric_data2$t1,paired=TRUE)
+
+sd_baseline<-sd(clinimetric_data2$t1)
+sd_pooled<-sd(mean_diff_numeric)
+
+# mean_diff_pos<-mean_diff[which(mean_diff > -0.1)]
+
+# pooled_sd<-sd(mean_diff_pos)
+# pooled_mean<-mean(mean_diff_pos)
 
 # SD difference
 # sd1<-sd(icc_clinimetric_data$t1)
@@ -1139,14 +1166,14 @@ pooled_mean<-mean(mean_diff_pos)
 # sd3<-sqrt((sd1^2+sd2^2) - 2*cov(icc_clinimetric_data$t1,icc_clinimetric_data$t2))
 
 # ICC
-icc<-ICC(cbind(icc_clinimetric_data$t1,icc_clinimetric_data$t2))$results$ICC[3]
+icc<-ICC(cbind(clinimetric_data2$t1,clinimetric_data2$t2))$results$ICC[3]
 
 # Formula for the SEM
-SEM<-pooled_sd*sqrt(1-icc)
-SEM
+SEM<-sd_pooled*sqrt(1-icc)
+SEM*1.96
 
 # MDC
-MDC<-1.65*sqrt(2)*SEM
+MDC<-1.68*sqrt(2)*SEM
 MDC
 #############################################################
 # MCID - Minimal Clinical Important Change
@@ -1297,8 +1324,25 @@ plot(optimal.cutpoint.Youden)
 
 CohenD<-pooled_mean/pooled_sd
 
-MICD<-0.5*pooled_sd
+MICD<-0.5*sd_pooled
 MICD
+MICD<-0.5*sd_baseline
+MICD
+
+RCI<-sd_pooled*(sqrt(2*(1-icc)))
+RCI
+
+SD_based<-0.5*sd_polled
+
+D_based<-0.5*sd_baseline
+
+
+t.test(clinimetric_data2$t2,clinimetric_data2$t1,paired=TRUE)
+2.609/SEM
+
+
+mean(data_mcid_improved$change_score)-mean(data_mcid_stable$change_score)
+
 # Cohen suggested
 # that score differences of 0.2SD units correspond to
 # small but important changes in treatment-effectiveness research
