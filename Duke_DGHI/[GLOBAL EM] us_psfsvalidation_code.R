@@ -45,6 +45,9 @@ data2<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/s
 
 data3<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
 
+data4<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
+
+data5<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/pgic.sas7bdat"))
 ######################################################
 #DATA MANAGEMENT
 ######################################################
@@ -145,6 +148,7 @@ descriptive_data<-subset(data,data$time_2measures=="T1paper" |
                               )
 
 #MCID
+#Organizing PGIC data
 data_2_subset1<-subset(data2,data2$QSCAT=="Patient Global Impression of Change" &
                              data2$VISIT=="Envenomation +14 Days")
 
@@ -160,10 +164,24 @@ id2<-apply(id[,4:5],1,paste, collapse="-")
 
 data_globalchange$id<-id2
 
-data_globalchange_casted <- dcast(data_globalchange, 
+data_globalchange_casted1 <- dcast(data_globalchange, 
                                   id+USUBJID ~ QSTESTCD,
                                   value.var="QSSTRESN")
 
+#Organizing PGIC data from the pilot study
+data5$redcap_event_name<-as.factor(data5$redcap_event_name)
+data_5_subset<-subset(data5,data5$redcap_event_name=="Env  +14 Days")
+
+data_pgic_pilot<-with(data_5_subset,data.frame(id=subjid,
+                                               PGIC1=scorres_pgic_1,
+                                               PGIC2=scorres_pgic_2,
+                                               USUBJID=subjid))
+
+#merging pilot and rct data
+
+data_globalchange_casted<-rbind(data_globalchange_casted1,data_pgic_pilot)
+
+#Organizing PSFS data
 data_3_subset0<-subset(data3,data3$AVISIT=="Envenomation +14 Days" |
                              data3$AVISIT=="Envenomation +3 Days")
 
@@ -182,15 +200,43 @@ id2<-apply(id[,4:5],1,paste, collapse="-")
 
 data_psfs$id<-id2
 
-data_psfs_casted <- dcast(data_psfs, 
+data_psfs_casted1 <- dcast(data_psfs, 
                           id+USUBJID+TRTP ~ AVISIT,
                                   value.var="AVAL")
 
+colnames(data_psfs_casted1)[4]<-"psfs_FUP_14"
+colnames(data_psfs_casted1)[5]<-"psfs_FUP_3"
+
+#organizing data from the pilos study
+#Organizing PSFS data
+data4$redcap_event_name<-as.factor(data4$redcap_event_name)
+data_4_subset<-subset(data4,data4$redcap_event_name=="Env + 14 Days" |
+                             data4$redcap_event_name=="Env + 3 Days")
+
+data_psfs_pilot<-with(data_4_subset,data.frame(id=subjid,
+                                               AVISIT=redcap_event_name,
+                                               AVAL=scorres_psfs_total,
+                                               USUBJID=subjid))
+
+data_psfs_pilot_casted <- dcast(data_psfs_pilot, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(data_psfs_pilot_casted)[3]<-"psfs_FUP_14"
+colnames(data_psfs_pilot_casted)[4]<-"psfs_FUP_3"
+data_psfs_pilot_casted$TRTP<-"pilot"
+
+#merging pilot and rct data
+
+data_psfs_casted<-rbind(data_psfs_casted1,data_psfs_pilot_casted)
+
+#merging PSFS and PGIC data for the clinimetrics assessment
 data_mcid<-merge(x = data_psfs_casted, 
              y = data_globalchange_casted, 
              by = "id", 
              all.x = TRUE)
 
+#Calculating changes over time
 data_mcid$change_score<-data_mcid[,4]-data_mcid[,5]
 
 data_mcid$change_cat_PGIC1_mild<-car::recode(data_mcid$PGIC1,"1:4='stable';
@@ -206,11 +252,10 @@ data_mcid$change_cat_PGIC2<-car::recode(data_mcid$PGIC2,"0:3='improved';
                                                     4:6='stable';
                                                     7:10='stable'")
 
-data_mcid2<-na.omit(data_mcid[-60,])
+data_mcid2<-na.omit(data_mcid[-c(22,79),])
 
 data_mcid_stable<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='stable')
 data_mcid_improved<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='improved')
-
 
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
@@ -1267,23 +1312,22 @@ data_mcid2$change_cat_PGIC1_mild<-as.factor(data_mcid2$change_cat_PGIC1_mild)
 data_mcid2$change_cat_PGIC1_moderate<-as.factor(data_mcid2$change_cat_PGIC1_moderate)
 data_mcid2$change_cat_PGIC1_severe<-as.factor(data_mcid2$change_cat_PGIC1_severe)
 
-ROC(form=change_cat_PGIC1_mild~data_mcid2[,4], data=data_mcid2)
-ROC(form=change_cat_PGIC1_moderate~data_mcid2[,4], data=data_mcid2)
-ROC(form=change_cat_PGIC1_severe~data_mcid2[,4], data=data_mcid2)
-test<-ROC(form=change_cat_PGIC2~data_mcid2[,4], data=data_mcid2, 
-  cuts=c(1))
-
-ROC(form=change_cat_PGIC1_mild~change_score, data=data_mcid_control)
-ROC(form=change_cat_PGIC1_moderate~change_score, data=data_mcid_control)
+ROC(form=change_cat_PGIC1_mild~data_mcid2[,5], data=data_mcid2)
+ROC(form=change_cat_PGIC1_moderate~data_mcid2[,5], data=data_mcid2)
 ROC(form=change_cat_PGIC1_severe~data_mcid2[,5], data=data_mcid2)
-ROC(form=change_cat_PGIC2~change_score, data=data_mcid_control)
+ROC(form=change_cat_PGIC2~data_mcid2[,5], data=data_mcid2)
+
+ROC(form=change_cat_PGIC1_mild~change_score, data=data_mcid2)
+ROC(form=change_cat_PGIC1_moderate~change_score, data=data_mcid2)
+ROC(form=change_cat_PGIC1_severe~change_score, data=data_mcid2)
+ROC(form=change_cat_PGIC2~change_score, data=data_mcid2)
 
 install.packages("OptimalCutpoints")
 
 library(OptimalCutpoints)
 data(elas)
 
-optimal.cutpoint.Youden <- optimal.cutpoints(X = "Envenomation +3 Days", 
+optimal.cutpoint.Youden <- optimal.cutpoints(X = "psfs_FUP_3", 
                                              status = "change_cat_PGIC1_severe", 
                                              tag.healthy = "stable",
                                              methods = "Youden", 
@@ -1295,17 +1339,17 @@ optimal.cutpoint.Youden <- optimal.cutpoints(X = "Envenomation +3 Days",
                                              conf.level = 0.95, 
                                              trace = FALSE)
 
-optimal.cutpoint.Youden <- optimal.cutpoints(X = "change_score", 
-                                             status = "change_cat_PGIC1_mild", 
-                                             tag.healthy = "stable",
-                                             methods = "Youden", 
-                                             data = data_mcid_control, 
-                                             pop.prev = NULL, 
-                                             categorical.cov = NULL, #"gender",
-                                             control = control.cutpoints(), 
-                                             ci.fit = FALSE, 
-                                             conf.level = 0.95, 
-                                             trace = FALSE)
+# optimal.cutpoint.Youden <- optimal.cutpoints(X = "change_score", 
+#                                              status = "change_cat_PGIC1_mild", 
+#                                              tag.healthy = "stable",
+#                                              methods = "Youden", 
+#                                              data = data_mcid_control, 
+#                                              pop.prev = NULL, 
+#                                              categorical.cov = NULL, #"gender",
+#                                              control = control.cutpoints(), 
+#                                              ci.fit = FALSE, 
+#                                              conf.level = 0.95, 
+#                                              trace = FALSE)
 
 summary(optimal.cutpoint.Youden)
 

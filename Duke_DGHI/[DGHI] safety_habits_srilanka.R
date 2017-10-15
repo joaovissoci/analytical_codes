@@ -58,7 +58,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 
 #data_cp<-read.csv("/home/joao/Desktop/data_cp.csv",sep=',')
 #data_rs<-read.csv("/home/joao/Desktop/data_rs.csv",sep=',')
-data <- read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/safe_habits_srilanka_data.csv")
+data <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Asia/Sri lanka/safe_habits_srilanka_data.csv")
 
 ######################################################
 #DATA MANAGEMENT
@@ -84,21 +84,22 @@ numeric <- with(data, data.frame(age, hours_wkvehicle, day_wkvehicle,
                                  type_disability_crash, missed_work_crash, rehabrec_crash, rehab_crash, 
                                  crash_year))
 
-#sub-sets for numeric
-numeric
-numericRTC <- subset(numeric,numeric$crash_lifetime=="1")
-summary(numericRTC)
-numericNRTC <- subset(numeric, numeric$crash_lifetime=="0")
-summary(numericNRTC)
+numeric$vehicle_home<-car::recode(data$vehicle_home,"1=1;else=2")
+# #sub-sets for numeric
+# numeric
+# numericRTC <- subset(numeric,numeric$crash_lifetime=="1")
+# summary(numericRTC)
+# numericNRTC <- subset(numeric, numeric$crash_lifetime=="0")
+# summary(numericNRTC)
 
 #recoding safe hab to N/A NR and A
-numeric$helmet_mc<-car::recode(numeric$helmet_mc, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$helmet_bike<-car::recode(numeric$helmet_bike, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$belt_driver<-car::recode(numeric$belt_driver, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$belt_back<-car::recode(numeric$belt_back, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$belt_passenger<-car::recode(numeric$belt_passenger, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$stop_fast<-car::recode(numeric$stop_fast, "c(0,1,2,3)='0'; 4='1'; NA='2'")
-numeric$road_wrongside<-car::recode(numeric$road_wrongside, "c(0,1,2,3)='0'; 4='1'; NA='2'")
+numeric$helmet_mc<-car::recode(numeric$helmet_mc, "c(0,1,2,3)='2'; 4='1'; NA='2'")
+numeric$helmet_bike<-car::recode(numeric$helmet_bike, "c(0,1,2,3)='2'; 4='1'; NA='2'")
+numeric$belt_driver<-car::recode(numeric$belt_driver, "c(0,1,2,3)='2'; 4='1'; NA='2'")
+numeric$belt_back<-car::recode(numeric$belt_back, "c(0,1,2,3)='2'; 4='1'; NA='2'")
+numeric$belt_passenger<-car::recode(numeric$belt_passenger, "c(0,1,2,3)='2'; 4='1'; NA='2'")
+numeric$stop_fast<-car::recode(numeric$stop_fast, "c(0,1,2)='2'; 3:4='1'; NA='2'")
+numeric$road_wrongside<-car::recode(numeric$road_wrongside, "c(0,1,2)='2'; 3:4='1'; NA='2'")
 
 #recoding outcomes
 numeric$crash_lifetime<-as.factor(numeric$crash_lifetime)
@@ -336,43 +337,25 @@ exp(confint(dayswork))
 
 # Building the formula
 
-safety_perceptions<-remove.vars(safety_habits_data,
-  c("helmet_mc",
-    "crash_opinion___90",
-    "helmet_strap_use",
-    "hairnets_available",
-    "headlights_night",
-    "helmet_colleagues"))
+safety_perceptions<-with(numeric,data.frame(helmet_mc,
+    belt_driver,
+    belt_passenger,
+    stop_fast,
+    road_wrongside,
+    vehicle_home))
 
-safety1<-with(safety_perceptions,data.frame(
-      crash_opinion___0,
-      crash_opinion___1,
-      crash_opinion___2,
-      crash_opinion___3,
-      crash_opinion___4,
-      crash_opinion___5,
-      crash_opinion___6))
-      # crash_moto,
-      # crash_bus,
-      # crash_peds))
+#To specify a latent class model, poLCA uses the standard, symbolic R model formula expres- sion. The response variables are the manifest variables of the model. Because latent class models have multiple manifest variables, these variables must be “bound” as cbind(Y1, Y2, Y3, ...) in the model formula. For the basic latent class model with no covariates, the formula definition takes the form
 
-# To specify a latent class model, poLCA uses the standard, symbolic R model formula expres- sion. The response variables are the manifest variables of the model. Because latent class models have multiple manifest variables, these variables must be “bound” as cbind(Y1, Y2, Y3, ...) in the model formula. For the basic latent class model with no covariates, the formula definition takes the form
+# ses_data_cat<-sapply(safety_perceptions,function(x) as.factor(x))
+# ses_data_cat<-as.data.frame(ses_data_cat)
+# ses_data_cat2<-sapply(ses_data_cat,function(x) as.numeric(x))
+# ses_data_cat2<-as.data.frame(ses_data_cat2)
 
-ses_data_cat<-sapply(safety_perceptions,function(x) as.factor(x))
-ses_data_cat<-as.data.frame(ses_data_cat)
-ses_data_cat2<-sapply(ses_data_cat,function(x) as.numeric(x))
-ses_data_cat2<-as.data.frame(ses_data_cat2)
-
-f <- cbind(colleagues_risks,
-           headlights_always,
-           helmet_damage,
-           cracks_dhelmet,
-           scratches_dhelmet,
-           strap_dhelmet,
-           glass_helmet,
-           fit_helmet,
-           helmet_value,
-           helmet_strap_value) ~ 1
+f <- cbind(helmet_mc,
+           belt_driver,
+           belt_passenger,
+           stop_fast,
+           road_wrongside) ~ 1
 
 # The ~ 1 instructs poLCA to estimate the basic latent class model. For the latent class regres- sion model, replace the ~ 1 with the desired function of covariates, as, for example:
 # f <- cbind(Y1, Y2, Y3) ~ X1 + X2 * X3
@@ -385,10 +368,13 @@ f <- cbind(colleagues_risks,
 #========================================================= 
 # Fit for 3 latent classes: 
 #========================================================= 
-set.seed(1988)
+set.seed(198833333333333333333)
+
+# install.packages("poLCA")
+# library(poLCA)
 
 # ses_data<-na.omit(ses_data)
-lcamodel <- poLCA(f, ses_data_cat2, nclass = 3)
+lcamodel <- poLCA(f, safety_perceptions, nclass = 4)
 
 # Entropy
 entropy<-function (p) sum(-p*log(p))
@@ -419,23 +405,19 @@ library(tibble)
 
 # configured to work on a Mac, change directory to Unix or Windows
 
-radialplot_data<-as.data.frame(lcamodel$probs)[,c(1,3,5,7,9,11,13,15,17,19)]
+radialplot_data<-as.data.frame(lcamodel$probs)[,c(1,3,5,7,9)]
 
-rownames(radialplot_data)<-c("Low","High","Mid")
+rownames(radialplot_data)<-c("Driving poor","Overall low","Overall 
+  good","Personal good")
 
 radialplot_data %>%
      rownames_to_column( var = "group" ) -> radialplot_data2
 
-axis_lables<-c("Peers at risk",
-               "Use headlights",
-               "Demaged\n helmet",
-               "Cracked\n helmet",
-               "Scratched\n helmet",
-               "Strapped helmet",
-               "Clear helmet\n glass",
-               "Good helmet fit",
-               "Values helmet\n use",
-               "Values helmet\n strap use")
+axis_lables<-c("Helmet use",
+               "Seat belt use\n as driver",
+               "Seat belt use\n as passenger",
+               "Believe drivers\n stop fast",
+               "Believe drivers\n use wrong road\n side")
 
 ggradar(radialplot_data2,
         font.radar="sans",
@@ -445,68 +427,83 @@ ggradar(radialplot_data2,
          legend.text.size=10) 
 
 ## OR table ##
-reg_data2<-data.frame(ses_data,
-                     safety_habits_data,
-                     outcome_data,
-                     class=lcamodel$predclass)
-reg_data2$class_recoded<-car::recode(
-  reg_data2$class,"1='Low';
-                 2='High';
-                 3='Mid'")
-#crashlifetime
-crashlifetime <-glm(as.factor(crash_year) ~ 
-                  age + 
-                  years_wkvehicle +                  
+numeric$classes<-lcamodel$predclass
+numeric$classes_recoded<-car::recode(
+  numeric$classes,"1='Driver poor';
+                   2='AOverall low';
+                   3='Overall good';
+                   4='Personal good'")
+#nearmiss
+crashlifetime <-glm(as.factor(crash_lifetime) ~ 
+                  # age + 
+                  # time_motodr +                  
                     # day_wkvehicle +
      #              # time_start_wk + 
      #              # time_stop_wk + 
                   # time_motodr + 
                   # hairnets_available +
-                  class_recoded,
-                  family=binomial, data=reg_data2)
+                  classes_recoded,
+                  family=binomial, data=numeric)
 summary(crashlifetime)
 odds_model_1<-exp(cbind(Odds=coef(crashlifetime),
                 confint(crashlifetime,level=0.95))) 
 colnames(odds_model_1)<-c("OR","LowCI","HighCI")
 
-#nearmiss
-
-reg_data2$near_miss_month_bin<-car::recode(
-    reg_data2$near_miss_month,"
-    0='no';
-    else='yes'")
-reg_data2$near_miss_month_bin<-as.factor(reg_data2$near_miss_month_bin)
-
-nearmiss <-glm(near_miss_month_bin ~ 
-                  age + 
-                  years_wkvehicle +                  
+#crashlifetime
+numeric$injured_crash_bin<-car::recode(
+  numeric$injured_crash,"NA=0")
+crashlifetime <-glm(as.factor(injured_crash_bin) ~ 
+                  # age + 
+                  # time_motodr +                  
                     # day_wkvehicle +
      #              # time_start_wk + 
      #              # time_stop_wk + 
                   # time_motodr + 
                   # hairnets_available +
-                  class_recoded,
-                  family=binomial, data=reg_data2)
-summary(nearmiss)
-odds_model_2<-exp(cbind(Odds=coef(nearmiss),
-                confint(nearmiss,level=0.95))) 
+                  classes_recoded,
+                  family=binomial, data=numeric)
+summary(crashlifetime)
+odds_model_2<-exp(cbind(Odds=coef(crashlifetime),
+                confint(crashlifetime,level=0.95))) 
 colnames(odds_model_2)<-c("OR","LowCI","HighCI")
 
+#nearmiss
+numeric$near_miss_month_bin<-car::recode(
+  numeric$near_miss_month,"0=0;1:4=1")
+crashlifetime <-glm(as.factor(near_miss_month) ~ 
+                  # age + 
+                  # time_motodr +                  
+                  # day_wkvehicle +
+                  # time_start_wk + 
+                  # time_stop_wk + 
+                  # time_motodr + 
+                  # hairnets_available +
+                  classes_recoded,
+                  family=binomial, data=numeric)
+summary(crashlifetime)
+odds_model_3<-exp(cbind(Odds=coef(crashlifetime),
+                confint(crashlifetime,level=0.95))) 
+colnames(odds_model_3)<-c("OR","LowCI","HighCI")
+
 odds_all<-rbind(odds_model_1,
-           odds_model_2)
+           odds_model_2,
+           odds_model_3)
 
 # plot_odds<-function(x, title = NULL){
-odds<-odds_model_1[-c(1,2,3),]
+odds<-odds_all[-c(1,5,9),]
+rownames(odds)<-c(1:12)
 odds<-as.data.frame(odds)
-colnames(odds)<-c('OR', 'lower', 'upper')
-odds$vars<-c("Low safety","Mid safety")
-
+colnames(odds)<-c('OR', 'Lower', 'Upper')
+odds$vars<-c("Driver poor","Overall good","Personal good")
+odds$models<-c(rep("Lifetime crash",3),
+               rep("RTI",3),
+               rep("Near miss",3))
 #ticks<-c(seq(.1, 1, by =.1), seq(0, 10, by
 
 
 ggplot(odds, aes(y= OR, x = reorder(vars, OR))) +
 geom_point() +
-geom_errorbar(aes(ymin=lower, ymax=upper), width=.2) +
+geom_errorbar(aes(ymin=Lower, ymax=Upper), width=.2) +
 #scale_y_log10(breaks=ticks, labels = ticks) +
 geom_hline(yintercept = 1, linetype=2) +
 # scale_x_discrete(limits=c(
@@ -524,8 +521,8 @@ geom_hline(yintercept = 1, linetype=2) +
 #        "Rombo vs. Moshi Urban",
 #        "Mwanga vs. Moshi Urban",
 #        "Same vs. Moshi Urban")) +
-# facet_grid(.~models, scales="free_y") +
+facet_grid(.~models, scales="free_y") +
 # coord_flip() +
-labs(x = 'Boda boda drivers safety behavior classes', 
+labs(x = 'Tuk Tuk drivers safety behavior classes', 
      y = 'OR (CI 95%)') +
 theme_bw()
