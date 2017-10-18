@@ -116,25 +116,25 @@ if(is.na(data_mhregistry$h1[i])==FALSE) {
 }
 } 
 
-#Recoding clinical conditionMessage
-# data_tbi$registry_year<-as.Date(as.character(data_tbi$date_arrival),
-#   format = "%m/%d/%y")
+# #Recoding clinical conditionMessage
+# # data_tbi$registry_year<-as.Date(as.character(data_tbi$date_arrival),
+# #   format = "%m/%d/%y")
 
-#subsetting data set to keep only baseline data
-data_baseline<-data_mhregistry[
-			data_mhregistry$redcap_event_name=="enrollment_arm_1",]
+# #subsetting data set to keep only baseline data
+# data_baseline<-data_mhregistry[
+# 			data_mhregistry$redcap_event_name=="enrollment_arm_1",]
 
-#subsetting data set to keep only baseline data
-data_3fup<-data_mhregistry[
-			data_mhregistry$redcap_event_name=="month_3_followup_arm_1",]
+# #subsetting data set to keep only baseline data
+# data_3fup<-data_mhregistry[
+# 			data_mhregistry$redcap_event_name=="month_3_followup_arm_1",]
 
-#subsetting data set to keep only baseline data
-data_6fup<-data_mhregistry[
-			data_mhregistry$redcap_event_name=="month_6_followup_arm_1",]
+# #subsetting data set to keep only baseline data
+# data_6fup<-data_mhregistry[
+# 			data_mhregistry$redcap_event_name=="month_6_followup_arm_1",]
 
-#subsetting data set to keep only baseline data
-data_9fup<-data_mhregistry[
-			data_mhregistry$redcap_event_name=="month_9_followup_arm_1",]
+# #subsetting data set to keep only baseline data
+# data_9fup<-data_mhregistry[
+# 			data_mhregistry$redcap_event_name=="month_9_followup_arm_1",]
 
 #CALCULATING FACTOR SCORES
 #############################################################################
@@ -696,10 +696,10 @@ data_mhregistry$kessler_sum<-rowSums(kessler)
 data_mhregistry$phq9_cat<-car::recode(data_mhregistry$phq9_sum,"0:7.9='no';8:21='yes'")
 data_mhregistry$kessler_score_cat<-car::recode(data_mhregistry$kessler_sum,"10:20='no';21:50='yes'")
 data_mhregistry$audit_cat<-car::recode(data_mhregistry$audit_sum,"0:7.9='no';8:35='yes'")
-data_mhregistry$fimPC_cat<-car::recode(data_mhregistry$fim_scores_CF,"0:49.999='yes';50:100='no'")
-data_mhregistry$fimMC_cat<-car::recode(data_mhregistry$fim_scores_MF,"0:49.999='yes';50:100='no'")
-data_mhregistry$sf8MC_cat<-car::recode(data_mhregistry$sf8_scores_MF,"0:49.9='no';50:100='yes'")
-data_mhregistry$sf8PC_cat<-car::recode(data_mhregistry$sf8_scores_CF,"0:49.9='no';50:100='yes'")
+# data_mhregistry$fimPC_cat<-car::recode(data_mhregistry$fim_scores_CF,"0:49.999='yes';50:100='no'")
+# data_mhregistry$fimMC_cat<-car::recode(data_mhregistry$fim_scores_MF,"0:49.999='yes';50:100='no'")
+# data_mhregistry$sf8MC_cat<-car::recode(data_mhregistry$sf8_scores_MF,"0:49.9='no';50:100='yes'")
+# data_mhregistry$sf8PC_cat<-car::recode(data_mhregistry$sf8_scores_CF,"0:49.9='no';50:100='yes'")
 data_mhregistry$moca_cat<-car::recode(data_mhregistry$moca_sum,"0:25.9='yes';26:30='no'")
 
 #subsetting data set to keep only baseline data
@@ -1277,6 +1277,74 @@ table<-with(data_baseline,table(fimMC_cat))
 table
 prop.table(table)
 
+#############################################################################
+#MLVAR model
+#############################################################################
+
+mlvar_data_baseline<-with(data_baseline,data.frame(fim_data_baseline,
+											  moca_data_baseline,
+											  kessler_data_baseline,
+											  sf8_data_baseline,
+											  phq9_data_baseline,
+											  audit_data_baseline,
+											  tbi_reg))
+
+mlvar_data_data_3fup<-with(data_3fup,data.frame(fim_data_3fup,
+											  moca_data_3fup,
+											  kessler_data_3fup,
+											  sf8_data_3fup,
+											  phq9_data_3fup,
+											  audit_data_3fup,
+											  tbi_reg))
+
+mlvar_data_data_6fup<-with(data_6fup,data.frame(fim_data_6fup,
+											  moca_data_6fup,
+											  kessler_data_6fup,
+											  sf8_data_6fup,
+											  phq9_data_6fup,
+											  audit_data_6fup,
+											  tbi_reg))
+
+mlvar_data_data_9fup<-with(data_9fup,data.frame(fim_data_9fup,
+											  moca_data_9fup,
+											  kessler_data_9fup,
+											  sf8_data_9fup,
+											  phq9_data_9fup,
+											  audit_data_9fup,
+											  tbi_reg))
+
+
+
+# mlvar_data_baseline_matched<-mlvar_data_baseline[which(mlvar_data_baseline$tbi_reg %in% mlvar_data_data_3fup$tbi_reg),] 
+
+mlvar_data<-rbind(mlvar_data_baseline_matched,
+				  mlvar_data_data_3fup,
+				  mlvar_data_data_6fup,
+				  mlvar_data_data_9fup)
+
+
+mlvar_data[mlvar_data$tbi_reg %in% 
+		   mlvar_data$tbi_reg[duplicated(mlvar_data$tbi_reg)],]
+
+
+library(mlVAR)
+fit4 <- mlVAR(mlvar_data, vars = names(mlvar_data[,c(58:66)]), 
+						  idvar = "tbi_reg", 
+						  lags = 1,
+						  contemporaneous= "orthogonal",
+						  temporal = "fixed")
+
+# Compare temporal relationships:
+layout(t(1:3))
+plot(fit4, "between", 
+	 title = "Estimated between-subjects relationships", 
+	 layout = "spring")
+plot(fit4, "contemporaneous", 
+	 title = "Estimated contemporaneous relationships",
+	 layout = "spring")
+plot(fit4, "temporal", 
+	 title = "Estimated temporal relationships",
+	 layout = "spring")
 
 #############################################################################
 #DO NOT RUN - ARCHIVE
@@ -1289,7 +1357,8 @@ scales<-with(data_mhregistry,c(fim_scores_CF,
 							   sf8_scores_MF,
 							   sf8_scores_CF,
 							   audit_scores,
-							   phq9_scores))
+							   phq9_scores,
+							   tbi_reg))
 
 event<-rep(data_mhregistry$redcap_event_name,8)
 
@@ -1314,6 +1383,7 @@ ggplot(data=subjmeans, aes(x=FUP,
 	geom_point(size=3, fill="white") +
     geom_line(size=1.5) + 
     scale_shape_manual(values=c(22,21))
+
 
 
 
