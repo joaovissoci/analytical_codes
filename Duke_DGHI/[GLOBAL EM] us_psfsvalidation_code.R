@@ -39,11 +39,11 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
 
-data2<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_sdtmdata/qs.sas7bdat"))
+data2<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_sdtmdata/qs.sas7bdat"))
 
-data3<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
+data3<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
 
 data4<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
 
@@ -135,9 +135,9 @@ icc_temporal_phone<-cast(icc_temporal_phone1,
 
 icc<-subset(data,data$time=="14days" | data$time=="17days")
 
-icc_data1<-with(icc,data.frame(X...id,time,score))
+icc_data1<-with(icc,data.frame(id,time,score))
 icc_data<-cast(icc_data1,
-                          X...id~time)
+                          id~time)
 
 descriptive_data<-subset(data,data$time_2measures=="T1paper" | 
                               data$time_2measures=="T1phone" |
@@ -361,21 +361,37 @@ bland.altman.plot(icc_data[,2], icc_data[,3], main="This is a Bland Altman Plot"
 pl <- bland.altman.plot(icc_data[,2], icc_data[,3], graph.sys = "ggplot2")
 print(pl)
 
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/joaovissoci/Desktop/figure1.eps",
+  width = 8, height = 6)
+bland.altman.plot(icc_data[,2], icc_data[,3], conf.int=.95, pch=19,
+                  xlab="Average measurements over time", ylab="Difference in measurement over time")
+#Add plot
+dev.off()
 
-bland.altman.plot(icc_data[,2], icc_data[,3], conf.int=.95, pch=19)
-
-
-SEM<-()
+# SEM<-()
 
 ########################################################
 #ROC Plot with Sensitivity and Specificity
 ########################################################
 cor(na.omit(icc_data[,c(2,3)]))
 
-ggplot(icc_data, aes(icc_data[,2],icc_data[,3])) +
-    geom_point(shape=1) +    # Use hollow circles
-    geom_smooth()            # Add a loess smoothed fit curve with confidence region
+plot<-ggplot(icc_data, aes(icc_data[,2],icc_data[,3])) +
+    geom_point() +    # Use hollow circles
+    geom_smooth() +
+    xlab("PSFS Score at T1") +
+    ylab("PSFS Score at T2")
+              # Add a loess smoothed fit curve with confidence region
 #> `geom_smooth()` using method = 'loess'
+
+#save figure
+ggsave("figure2.eps", #change .eps to .pdf for different format
+    plot, #plot is the name of the fig, but the function assumes the last plot if argument is NULL
+    path="/Users/joaovissoci/Desktop", #path to save the plot
+    width = 8, 
+    height = 6, 
+    device=cairo_ps) #cairo_ps is a device to save eps with transparecy
 
 #Initial ROC analysis
 x<-roc(psfs_data_phone[,2],psfs_data_paper[,1]) #first argument = outcome; second = predictor
