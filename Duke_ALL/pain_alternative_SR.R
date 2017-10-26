@@ -19,7 +19,7 @@ library, character.only=T)
 #IMPORTING DATA
 #################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Pain_SR/pain outcome_SR.csv")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/Pain_SR/pain_outcome_SR_v2.csv")
 #information between " " are the path to the directory in your computer where the data is stored
 
 #############################################################################
@@ -31,56 +31,53 @@ meta_model_var<-with(data,data.frame(
 									 intervention_cat,
 									 year,
 									 country,
-									 sample_size,
-									 intervention_1,
-									 control_1,
-									 mean_pre_intervention_adj,
-									 sd_pre_intervention_adj,
+									 total_sample,
+									 intervention_1=intervention_sample_T1,
+									 control_1=control_sample_size_T1,
+									 # mean_pre_intervention_adj,
+									 # sd_pre_intervention_adj,
 									 mean_post_intervention_adj,
 									 sd_post_intervention_adj,
-									 mean_pre_control_adj,
-									 sd_pre_control_adj,
+									 # mean_pre_control_adj,
+									 # sd_pre_control_adj,
 									 mean_post_control_adj,
 									 sd_post_control_adj,
-									 Immediate))
+									 pain_outcome_time_cat,
+									 first_fup,
+									 metanalysis))
 
 # #extracting only studies with enough information for metanalysis
-# meta_model<-subset(meta_model_var,
-# 	meta_model_var$metanalysis=="Yes")
+meta_model<-subset(meta_model_var,
+	meta_model_var$metanalysis=="yes")
 
 #############################################################################
 #Figure. 2
 #############################################################################
 ## Suicide ideation metanalysis model
 # #extracting studies with suicide ideation measures
-# meta_bssi<-subset(meta_model,
-# 	meta_model$measure=="100mm VAS")
-
-#exclude variables for prevalences instead of scale results
-# meta_bssi<-remove.vars(meta_bssi,c(
-# 	"proportion_FUP1_experimental_group",
-# 	"proportion_FUP1_control_group"))
+meta_first_fup<-subset(meta_model,
+	meta_model$first_fup=="yes")
 
 #excluding missing information
-# meta_bssi<-na.omit(meta_bssi)
+meta_first_fup<-na.omit(meta_first_fup)
 
 # #Adjusting to avoind the error of a missing category in
 # #the byvar analysis
-# meta_bssi<-as.matrix(meta_bssi)
-# meta_bssi<-as.data.frame(meta_bssi)
+meta_first_fup<-as.matrix(meta_first_fup)
+meta_first_fup<-as.data.frame(meta_first_fup)
 
-# meta_bssi$intervention_1<-as.numeric(
-# 	as.character(meta_bssi$intervention_1)) 
-# meta_bssi$mean_post_1<-as.numeric(
-# 	as.character(meta_bssi$mean_post_1))
-# meta_bssi$sd_post_1<-as.numeric(
-# 	as.character(meta_bssi$sd_post_1))
-# meta_bssi$contro_1<-as.numeric(
-# 	as.character(meta_bssi$contro_1))
-# meta_bssi$mean_post_1_control<-as.numeric(
-# 	as.character(meta_bssi$mean_post_1_control))
-# meta_bssi$sd_post_1_control<-as.numeric(
-# 	as.character(meta_bssi$sd_post_1_control))
+meta_first_fup$intervention_1<-as.numeric(
+	as.character(meta_first_fup$intervention_1)) 
+meta_first_fup$mean_post_intervention_adj<-as.numeric(
+	as.character(meta_first_fup$mean_post_intervention_adj))
+meta_first_fup$sd_post_intervention_adj<-as.numeric(
+	as.character(meta_first_fup$sd_post_intervention_adj))
+meta_first_fup$control_1<-as.numeric(
+	as.character(meta_first_fup$control_1))
+meta_first_fup$mean_post_control_adj<-as.numeric(
+	as.character(meta_first_fup$mean_post_control_adj))
+meta_first_fup$sd_post_control_adj<-as.numeric(
+	as.character(meta_first_fup$sd_post_control_adj))
 
 
 # #recoding metanalysis groups
@@ -96,7 +93,7 @@ meta1 <- metacont(intervention_1,
 	control_1,
 	mean_post_control_adj,
 	sd_post_control_adj, 
-  data=meta_model_var[-c(7,20),], sm="SMD",
+  data=meta_first_fup, sm="SMD",
   byvar=intervention_cat,print.byvar=FALSE,
   comb.fixed=FALSE,studlab=study)
 summary(meta1)
@@ -111,21 +108,21 @@ metainf(meta1)
 metainf(meta1, pooled="random")
 
 #run metanalysis model by follow up time (immediate or not)
-meta1 <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_model_var[-c(7),], sm="SMD",
-  byvar=Immediate,print.byvar=FALSE,
-  comb.fixed=FALSE,studlab=study)
-summary(meta1)
+# meta1 <- metacont(intervention_1, 
+# 	mean_post_intervention_adj,
+# 	sd_post_intervention_adj,
+# 	control_1,
+# 	mean_post_control_adj,
+# 	sd_post_control_adj, 
+#   data=meta_model_var[-c(7),], sm="SMD",
+#   byvar=Immediate,print.byvar=FALSE,
+#   comb.fixed=FALSE,studlab=study)
+# summary(meta1)
 
-tiff("/Users/jnv4/Desktop/painSR_figure3.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1)
-dev.off()
+# tiff("/Users/jnv4/Desktop/painSR_figure3.tiff",
+#   width = 1200, height = 600,compression = 'lzw')
+# forest(meta1)
+# dev.off()
 
 # funnel(meta1)
 # metainf(meta1)
@@ -139,8 +136,8 @@ dev.off()
 #############################################################################
 
 # modeling only DIRECT intervention results
- meta_model_direct<-subset(meta_model_var,
- 	meta_model_var$intervention_cat=="Direct")
+ meta_model_direct<-subset(meta_model,
+ 	meta_model$intervention_cat=="Direct")
 
 #running by=group analysis for time of FUP
 #NO BYGROUP - All studies are immidiatly after the intervention
@@ -171,8 +168,8 @@ meta1 <- metacont(intervention_1,
 	control_1,
 	mean_post_control_adj,
 	sd_post_control_adj, 
-  data=meta_model_direct[-c(1),], sm="SMD",
-  print.byvar=FALSE,byvar=Immediate,
+  data=meta_model_direct, sm="SMD",
+  print.byvar=FALSE,byvar=pain_outcome_time_cat,
   comb.fixed=FALSE,studlab=study)
 summary(meta1)
 
@@ -185,8 +182,8 @@ dev.off()
 #Figure. 3 - Models for INDIRECT interventions
 #############################################################################
 # modeling only DIRECT intervention results
- meta_model_indirect<-subset(meta_model_var,
- 	meta_model_var$intervention_cat=="Indirect")
+ meta_model_indirect<-subset(meta_model,
+ 	meta_model$intervention_cat=="Indirect")
 
 #running by=group analysis for time of FUP
 #NO BYGROUP - All studies are immidiatly after the intervention
@@ -219,7 +216,7 @@ meta3c <- metacont(intervention_1,
 	mean_post_control_adj,
 	sd_post_control_adj, 
   data=meta_model_indirect, sm="SMD",
-  byvar=Immediate,print.byvar=FALSE,
+  byvar=pain_outcome_time_cat,print.byvar=FALSE,
   comb.fixed=FALSE,studlab=study)
 summary(meta3c)
 
@@ -232,8 +229,8 @@ dev.off()
 #Figure. 4 - Models for PHYSICAL interventions
 #############################################################################
 # modeling only DIRECT intervention results
- meta_model_physical<-subset(meta_model_var,
- 	meta_model_var$intervention_cat=="Physical")
+ meta_model_physical<-subset(meta_model,
+ 	meta_model$intervention_cat=="Physical")
 
 #Adjusting to avoind the error of a missing category in
 #the byvar analysis
@@ -263,7 +260,7 @@ meta3c <- metacont(intervention_1,
 	mean_post_control_adj,
 	sd_post_control_adj, 
   data=meta_model_physical, sm="SMD",
-  byvar=Immediate,print.byvar=FALSE,
+  byvar=pain_outcome_time_cat,print.byvar=FALSE,
   comb.fixed=FALSE,studlab=study)
 summary(meta3c)
 
