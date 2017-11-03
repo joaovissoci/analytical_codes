@@ -86,6 +86,9 @@ meta_first_fup$sd_post_control_adj<-as.numeric(
 # 	'brief intervention and contact'='TEA or BI';
 # 	'psychotherapy'='Psychotherapy'")
 
+meta_first_fup$intervention_cat <- relevel(
+	meta_first_fup$intervention_cat, "Physical")
+
 #run metanalysis model for type of intervention
 meta1 <- metacont(intervention_1, 
 	mean_post_intervention_adj,
@@ -93,43 +96,99 @@ meta1 <- metacont(intervention_1,
 	control_1,
 	mean_post_control_adj,
 	sd_post_control_adj, 
-  data=meta_first_fup, sm="SMD",
-  byvar=intervention_cat,print.byvar=FALSE,
-  comb.fixed=FALSE,studlab=study)
+  data=meta_first_fup, 
+  sm="SMD",
+  byvar=intervention_cat,
+  print.byvar=FALSE,
+  comb.fixed=FALSE,
+  studlab=study)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
   width = 1200, height = 600,compression = 'lzw')
-forest(meta1)
+forest(meta1,bysort=FALSE)
 dev.off()
 
 funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
 
-#run metanalysis model by follow up time (immediate or not)
-# meta1 <- metacont(intervention_1, 
-# 	mean_post_intervention_adj,
-# 	sd_post_intervention_adj,
-# 	control_1,
-# 	mean_post_control_adj,
-# 	sd_post_control_adj, 
-#   data=meta_model_var[-c(7),], sm="SMD",
-#   byvar=Immediate,print.byvar=FALSE,
-#   comb.fixed=FALSE,studlab=study)
-# summary(meta1)
+#Excluding the study by Mealy 1986 reduces Hˆ2 to 80% and the estimate to -0.44
+#run metanalysis model for type of intervention
+meta1 <- metacont(intervention_1, 
+	mean_post_intervention_adj,
+	sd_post_intervention_adj,
+	control_1,
+	mean_post_control_adj,
+	sd_post_control_adj, 
+  data=meta_first_fup[-11,], 
+  sm="SMD",
+  byvar=intervention_cat,
+  print.byvar=FALSE,
+  comb.fixed=FALSE,
+  studlab=study)
+summary(meta1)
 
-# tiff("/Users/jnv4/Desktop/painSR_figure3.tiff",
-#   width = 1200, height = 600,compression = 'lzw')
-# forest(meta1)
-# dev.off()
+tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
+  width = 1200, height = 600,compression = 'lzw')
+forest(meta1,bysort=FALSE)
+dev.off()
 
-# funnel(meta1)
-# metainf(meta1)
-# metainf(meta1, pooled="random")
-# meta::metareg( ~ intervention_cat +
-# 				 Immediate,
-# 				 x=meta1)
+funnel(meta1)
+metainf(meta1)
+metainf(meta1, pooled="random")
+
+#Excluding the study by Goertz 1986 reduces Hˆ2 to 69.6%% and the estimate to -0.33 
+#run metanalysis model for type of intervention
+meta1 <- metacont(intervention_1, 
+	mean_post_intervention_adj,
+	sd_post_intervention_adj,
+	control_1,
+	mean_post_control_adj,
+	sd_post_control_adj, 
+  data=meta_first_fup[-c(7,11),], 
+  sm="SMD",
+  byvar=intervention_cat,
+  print.byvar=FALSE,
+  comb.fixed=FALSE,
+  studlab=study)
+summary(meta1)
+
+tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
+  width = 1200, height = 600,compression = 'lzw')
+forest(meta1,bysort=FALSE)
+dev.off()
+
+funnel(meta1)
+metainf(meta1)
+metainf(meta1, pooled="random")
+
+#Excluding the study by Shamloo 2015 reduces Hˆ2 to 61.4%% and the estimate to -0.29 
+#run metanalysis model for type of intervention
+meta1 <- metacont(intervention_1, 
+	mean_post_intervention_adj,
+	sd_post_intervention_adj,
+	control_1,
+	mean_post_control_adj,
+	sd_post_control_adj, 
+  data=meta_first_fup[-c(7,11,19),], 
+  sm="SMD",
+  byvar=intervention_cat,
+  print.byvar=FALSE,
+  comb.fixed=FALSE,
+  studlab=study)
+summary(meta1)
+
+tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
+  width = 1200, height = 600,compression = 'lzw')
+forest(meta1,bysort=FALSE)
+dev.off()
+
+funnel(meta1)
+metainf(meta1)
+metainf(meta1, pooled="random")
+
+#discuss Lau 2008 or Borchgrevik 1998
 
 #############################################################################
 #Figure. 2 - Models for DIRECT interventions
@@ -162,6 +221,12 @@ meta_model_direct$mean_post_control_adj<-as.numeric(
 meta_model_direct$sd_post_control_adj<-as.numeric(
 	as.character(meta_model_direct$sd_post_control_adj))
 
+meta_model_direct$pain_outcome_time_cat <- factor(
+	meta_model_direct$pain_outcome_time_cat, 
+	levels=c("Immediate",
+			 "Acute",
+			 "SubAcute"))
+
 meta1 <- metacont(intervention_1, 
 	mean_post_intervention_adj,
 	sd_post_intervention_adj,
@@ -175,8 +240,34 @@ summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3a.tiff",
   width = 800, height = 400,compression = 'lzw')
-forest(meta1)
+forest(meta1,bysort=FALSE)
 dev.off()
+
+funnel(meta1)
+metainf(meta1)
+metainf(meta1, pooled="random")
+
+#excluding Goertz 2006 reduces Hˆ2 to 61.4% and the estimate to -0.276
+meta1 <- metacont(intervention_1, 
+	mean_post_intervention_adj,
+	sd_post_intervention_adj,
+	control_1,
+	mean_post_control_adj,
+	sd_post_control_adj, 
+  data=meta_model_direct[-3,], sm="SMD",
+  print.byvar=FALSE,byvar=pain_outcome_time_cat,
+  comb.fixed=FALSE,studlab=study)
+summary(meta1)
+
+tiff("/Users/jnv4/Desktop/painSR_figure3a.tiff",
+  width = 800, height = 400,compression = 'lzw')
+forest(meta1,bysort=FALSE,
+	   overall=FALSE)
+dev.off()
+
+funnel(meta1)
+metainf(meta1)
+metainf(meta1, pooled="random")
 
 #############################################################################
 #Figure. 3 - Models for INDIRECT interventions
@@ -208,6 +299,13 @@ meta_model_indirect$mean_post_control_adj<-as.numeric(
 meta_model_indirect$sd_post_control_adj<-as.numeric(
 	as.character(meta_model_indirect$sd_post_control_adj))
 
+meta_model_indirect$pain_outcome_time_cat <- factor(
+	meta_model_indirect$pain_outcome_time_cat, 
+	levels=c("Immediate",
+			 "Acute",
+			 "SubAcute",
+			 "Prolonged"))
+
 #run metanalysis model for continuous data
 meta3c <- metacont(intervention_1, 
 	mean_post_intervention_adj,
@@ -222,8 +320,14 @@ summary(meta3c)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3b.tiff",
   width = 800, height = 400,compression = 'lzw')
-forest(meta3c)
+forest(meta3c,
+	   bysort=FALSE,
+	   overall=FALSE)
 dev.off()
+
+funnel(meta3c)
+metainf(meta3c)
+metainf(meta3c, pooled="random")
 
 #############################################################################
 #Figure. 4 - Models for PHYSICAL interventions
@@ -252,6 +356,13 @@ meta_model_physical$mean_post_control_adj<-as.numeric(
 meta_model_physical$sd_post_control_adj<-as.numeric(
 	as.character(meta_model_physical$sd_post_control_adj))
 
+meta_model_physical$pain_outcome_time_cat <- factor(
+	meta_model_physical$pain_outcome_time_cat, 
+	levels=c("Immediate",
+			 "Acute",
+			 "SubAcute",
+			 "Prolonged"))
+
 #run metanalysis model for continuous data
 meta3c <- metacont(intervention_1, 
 	mean_post_intervention_adj,
@@ -266,8 +377,37 @@ summary(meta3c)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",
   width = 800, height = 400,compression = 'lzw')
-forest(meta3c)
+forest(meta3c,
+	   bysort=FALSE,
+	   overall=FALSE)
 dev.off()
+
+funnel(meta3c)
+metainf(meta3c)
+metainf(meta3c, pooled="random")
+
+#run metanalysis model for continuous data
+meta3c <- metacont(intervention_1, 
+	mean_post_intervention_adj,
+	sd_post_intervention_adj,
+	control_1,
+	mean_post_control_adj,
+	sd_post_control_adj, 
+  data=meta_model_physical[-9,], sm="SMD",
+  byvar=pain_outcome_time_cat,print.byvar=FALSE,
+  comb.fixed=FALSE,studlab=study)
+summary(meta3c)
+
+tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",
+  width = 800, height = 400,compression = 'lzw')
+forest(meta3c,
+	   bysort=FALSE,
+	   overall=FALSE)
+dev.off()
+
+funnel(meta3c)
+metainf(meta3c)
+metainf(meta3c, pooled="random")
 
 
 
