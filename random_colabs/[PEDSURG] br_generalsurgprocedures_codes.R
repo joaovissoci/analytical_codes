@@ -44,7 +44,9 @@
 #library(Hmisc)
 
 #All packages must be installes with install.packages() function
-lapply(c("tidyverse","Hmisc","car","psych","nortest","ggplot2","repmis","polycor","MASS"), 
+lapply(c("tidyverse","Hmisc","car",
+		 "psych","nortest","ggplot2",
+		 "repmis","polycor","MASS"), 
 library, character.only=T)
 
 ######################################################################
@@ -53,9 +55,46 @@ library, character.only=T)
 # load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/novas analises - pediatria 15 anos/jovens_sia.RData")
 # data_sia<-apendectomy
 
+procedimento <- read.table("/Users/Joao/Downloads/tb_procedimento.txt", header = F, sep = ";",
+                           colClasses = c("character","character","character","character"
+                                          ,"character","character","character","character"
+                                          ,"character","character","character","character"
+                                          ,"character","character","character"))
+procedimento$V3 <- NULL
+procedimento$V4 <- NULL
+procedimento$V5 <- NULL
+procedimento$V6 <- NULL
+procedimento$V7 <- NULL
+procedimento$V8 <- NULL
+procedimento$V9 <- NULL
+procedimento$V10 <- NULL
+procedimento$V11<- NULL
+procedimento$V12 <- NULL
+procedimento$V13 <- NULL
+procedimento$V14 <- NULL
+procedimento$V15 <- NULL
+procedimento$V2 <- trimws(procedimento$V2)
+
 #data with procedures information
-load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/novas analises - pediatria 15 anos/jovens_sih_rotulado.RData")
-data_sih<-apendectomy
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2010.Rdata")
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2011.Rdata")
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2012.Rdata")
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2013.Rdata")
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2014.Rdata")
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2015.Rdata")
+
+data_sih<-rbind(ped_2010,
+				ped_2011[,c(1:87)][,-45],
+				ped_2012[,c(1:87)][,-45],
+				ped_2013[,c(1:87)][,-45],
+				ped_2014[,c(1:87)][,-45],
+				ped_2015[,c(1:87)][,-45])
+
+#merge procedimento
+procedimento$V1 <- as.numeric(procedimento$V1)
+data_sih <- merge(data_sih, procedimento, by.x = "PROC_REA", by.y = "V1", all.x = TRUE)
+data_sih$PROC_SOLIC_nome <- data_sih$V2
+data_sih$V2 <- NULL
 
 #data with socioneconomic classification by income level
 income_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/acs/br_acsdiagnotic_data.csv")
@@ -273,7 +312,16 @@ data_sih_full_by_municipality <- merge(
 
 data_sih_full_by_municipality$Regio<-car::recode(data_sih_full_by_municipality$Regio,"NA='Centro-Oeste'")
 
-# write.csv(data_sih_full_by_municipality,"/Users/Joao/Desktop/data_sih_full.csv")
+NAto0<-function(x){
+	car::recode(x,"NA=0")
+	}
+
+data_sih_full_by_municipality$Regio<-car::recode(data_sih_full_by_municipality$Regio,"NA='Centro-Oeste'")
+
+data_sih_full_by_municipalityNAto01<-lapply(data_sih_full_by_municipality,NAto0)
+data_sih_full_by_municipality<-as.data.frame(data_sih_full_by_municipalityNAto01)
+
+write.csv(data_sih_full_by_municipality,"/Users/Joao/Desktop/data_sih_full.csv")
 
 
 ######################################################################

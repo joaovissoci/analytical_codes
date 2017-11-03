@@ -57,7 +57,7 @@ lapply(c("metafor","ggplot2","gridExtra" ,"psych",
 #data<-
 #data<-read.sas7bdat("C:\\Users\\Joao\\Desktop\\tanzclean.sas7bdat")
 #data<-read.sas7bdat("/Users/rpietro/Dropbox/datasets/Africa_DGHI/tanzclean.sas7bdat")
-data<-read.sas7bdat("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/Africa/tanzclean.sas7bdat")
+data<-read.sas7bdat("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/tanzclean.sas7bdat")
 data<-as.data.frame(data)
 ###################################################
 #DATA MANAGEMENT
@@ -347,7 +347,7 @@ propmiss(data_moshi)
 imp <- mice(data_moshi, seed = 2222, m=10)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-data_moshi_imp<-complete(imp,1)
+data_moshi_imp<-mice::complete(imp,1)
 
 #Plost the distrbution of each of the 5 possibilities of imputations
 # stripplot(imp,pch=20,cex=1.2)
@@ -1060,6 +1060,7 @@ clogistic.display(x_2B)
 
 ### MODEL 1:2
 rti_model<-subset(data_moshi_imp,data_moshi_imp$method_injury=='RTI')
+rti_model<-subset(data_moshi_imp,data_moshi_imp$method_injury=='RTI')
 id_1<-c(1)
 id_2<-c(2)
 id_3<-c(3)
@@ -1078,7 +1079,7 @@ clogit_data<-rbind(fup1,fup2,fup3)
 #matched_data<-with(rti_model,data.frame(breath_level,id))
 # clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
 # clogit_data$predictor<-as.factor(clogit_data$predictor)
-x_3B<-clogit(outcome ~ predictor +strata(strata),clogit_data, method="exact")
+x_3B<-clogit(outcome ~ predictor  +strata(strata),clogit_data, method="exact")
 summary(x_3B) 
 clogistic.display(x_3B)
 
@@ -1306,6 +1307,39 @@ coord_flip() +
 labs(title = "", x = 'Variables', y = 'OR') + 
 theme_bw() +
 facet_wrap(~ facet,ncol=1) 
+
+
+
+
+### MODEL 1:2
+rti_model$predictor_vehicle<-car::recode(rti_model)
+
+vru_model<-subset(rti_model,rti_model$method_injury=='RTI')
+id_1<-c(1)
+id_2<-c(2)
+id_3<-c(3)
+strata<-c(1:length(rti_model$breath_level))
+outcome1<-c(1)
+outcome2<-c(0)
+outcome3<-c(0)
+fup1<-with(rti_model,data.frame(predictor=breath_level,strata,id=id_1,outcome=outcome1,confouder=bottle))
+fup2<-with(rti_model,data.frame(predictor=predictor_FUP1,strata,id=id_2,outcome=outcome2,confouder=bottle24))
+fup3<-with(rti_model,data.frame(predictor=predictor_FUP2,strata,id=id_3,outcome=outcome3,confouder=bottle1week))
+#matched_data<-with(rti_model,data.frame(breath_level,id))
+#fup1$predictor<-car::recode(fup1$predictor,"'yes'=2;'no'=1")
+#fup1$predictor<-as.numeric(as.character(fup1$predictor))
+clogit_data<-rbind(fup1,fup2,fup3)
+#clogit_data<-with(rti_model,data.frame(predictor1=predictor_FUP1,predictor2=predictor_FUP2,strata,outcome=breath_level))
+#matched_data<-with(rti_model,data.frame(breath_level,id))
+# clogit_data$predictor<-car::recode(clogit_data$predictor,"2=1;1=2")
+# clogit_data$predictor<-as.factor(clogit_data$predictor)
+x_3B<-clogit(outcome ~ predictor  +strata(strata),clogit_data, method="exact")
+summary(x_3B) 
+clogistic.display(x_3B)
+
+x_3B<-clogit(outcome ~ confouder + strata(strata),clogit_data, method="exact")
+summary(x_3B) 
+clogistic.display(x_3B)
 
 
 

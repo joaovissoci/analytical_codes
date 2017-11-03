@@ -15,9 +15,9 @@
 #devtools::install_github("BioStatMatt/sas7bdat")
 
 #Load packages (after installed) with the library function
-lapply(c("metafor","ggplot2","gridExtra" ,"psych", 
+lapply(c("ggplot2","gridExtra" ,"psych", 
    "RCurl", "irr", "nortest", "moments","GPArotation",
-   "nFactors","gdata","meta","metafor","ggplot2",
+   "nFactors","gdata","meta","ggplot2",
    "gridExtra" ,"psych", "RCurl", "irr", "nortest", 
    "moments","GPArotation","nFactors","gdata",
    "repmis","sqldf","VIM","survival",
@@ -79,6 +79,11 @@ data_mzsa<-as.data.frame(data_mzsa)
 # #Creating GCS score
 # #gcs<-with(data,rowSums(data.frame(QL02,QL02a,QL02b)))
 
+
+NaNtoNA<-function(x){
+  car::recode(x,"NaN=NA")
+  }
+
 #Alcohol Dosage - Time 1
 # alcohol_amount_1_rowB<-with(data,(as.numeric(QF07B1B)*as.numeric(QF07B2))*as.numeric(QF07B3))
 # alcohol_amount_1_rowC<-with(data,(as.numeric(QF07C1B)*as.numeric(QF07C2))*as.numeric(QF07C3))
@@ -111,7 +116,7 @@ data_tz$bottles_drank_tz<-alcohol_amount_1/16.5
 
 #Merging datasets
 
-data_tz$country<-c("Tz")
+data_tz$country<-c("ATz")
 
 data_tz2<-with(data_tz,data.frame(current_alcohol_use=QF04,
                                  breath_level=QD04,

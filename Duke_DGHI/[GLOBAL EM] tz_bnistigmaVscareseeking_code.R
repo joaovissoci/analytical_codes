@@ -30,7 +30,7 @@ lapply(c("Hmisc",
 		 "psych",
 		 "nortest",
 		 "ggplot2",
-		 "pastecs",
+		 # "pastecs",
 		 "repmis",
 		 # "mvnormtest",
 		 "polycor",
@@ -43,7 +43,7 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k award/tz_bnisurveypatients_data.csv")
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/k award/tz_bnisurveypatients_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -353,7 +353,10 @@ data_full<-data.frame(age=data_nonabst$age,
 					  audit_alcoholdependence=audit_data$audit_score_D2,
 					  audit_alcoholrisk=audit_data$audit_score_D3,
 					  audit_cat=audit_data$audit_score_cat,
-					  drinc_data_score)
+					  drinc_data_score,
+					  age_1st_drink=data_nonabst$age_1st_drink,
+					  age_12ormore_drinks_yr=data_nonabst$age_12ormore_drinks_yr
+					  )
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
 imp <- mice(data_full, seed = 2222, m=5)
@@ -364,6 +367,21 @@ data_full<-mice::complete(imp,4)
 ######################################################################
 #TABLE 1
 ######################################################################
+
+describe(data_full$age_1st_drink)
+describe(data_full$age_12ormore_drinks_yr)
+
+
+cost_study<-with(data_full,data.frame(age_12ormore_drinks_yr,
+									  age_1st_drink,
+									  audit_total))
+
+cor(cost_study,method="spearman")
+
+#non abstainers?
+#cost?
+#availability
+
 
 with(data_full,table(talked_dr))
 

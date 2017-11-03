@@ -40,7 +40,7 @@ library, character.only=T)
 
 # install.packages("jsonlite")
 library(jsonlite)
-file <- file("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/consultation/UCB/exported_data.txt",
+file <- file("/Users/Joao/Downloads/export_data.txt",
              open="r",
              encoding="UTF-8-BOM")
 
