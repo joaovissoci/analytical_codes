@@ -240,7 +240,8 @@ summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3a.tiff",
   width = 800, height = 400,compression = 'lzw')
-forest(meta1,bysort=FALSE)
+forest(meta1,bysort=FALSE,
+	   overall=FALSE)
 dev.off()
 
 funnel(meta1)

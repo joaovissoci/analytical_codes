@@ -39,7 +39,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -77,7 +77,7 @@ data_validation$age_cat<-car::recode(
 #Organize scale datasets
 
 #Kessler
-kessler_data1<-with(data,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,
+kessler_data1<-with(data_validation,data.frame(d1,d2,d3,d4,d5,d6,d7,d8,d9,
 	d10))
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
@@ -85,6 +85,32 @@ data_imputed <- mice(kessler_data1, seed = 2222, m=10)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
 kessler_data<-mice::complete(data_imputed,4)
+
+## DIAGNOSTIC ability
+
+#PHQ9
+phq9<-with(data_validation,data.frame(phq9_b11,
+                                 phq9_b12,
+                                 phq9_b13,
+                                 phq9_b14,
+                                 phq9_b15,
+                                 phq9_b16,
+                                 phq9_b17,
+                                 phq9_b18,
+                                 phq9_b19
+                                 ))
+
+#imputing missing data
+phq9data_imputed <- mice(phq9, seed = 2222, m=10)
+
+phq9_data<-mice::complete(phq9data_imputed,4)
+
+#PHQ9 recoding
+
+phq9_sum<-rowSums(phq9_data)
+
+phq9_cat<-car::recode(phq9_sum,"0:9='No';
+                               else='Yes'")
 
 ######################################################################
 #BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
