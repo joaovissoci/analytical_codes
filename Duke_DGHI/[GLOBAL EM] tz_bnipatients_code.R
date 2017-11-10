@@ -30,9 +30,9 @@ lapply(c("Hmisc",
 		 "psych",
 		 "nortest",
 		 "ggplot2",
-		 "pastecs",
+		 # "pastecs",
 		 "repmis",
-		 "mvnormtest",
+		 # "mvnormtest",
 		 "polycor",
 		 "mice"), 
 library, character.only=T)
@@ -42,7 +42,7 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -208,9 +208,9 @@ pas_score<-rowSums(figure3_data_PAS)/ncol(figure3_data_PAS)
 summary(pas_score)
 describe(pas_score)
 # discrimination<-na.omit(discrimination)
-rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+# rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 # discrimination_scaled<-lapply(pas_score,rescale)
-pas_score_scaled<-rescale(pas_score)
+# pas_score_scaled<-rescale(pas_score)
 # summary(x)
 # sd(x)
 pas_score_cat<-car::recode(pas_score,"0:3='low';else='high'")
@@ -234,7 +234,7 @@ discrimination<-rowSums(figure3_data_PDis)/ncol(figure3_data_PDis)
 # discrimination<-na.omit(discrimination)
 # rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 # discrimination_scaled<-lapply(discrimination,rescale)
-discrimination_scaled<-rescale(discrimination)
+# discrimination_scaled<-rescale(discrimination)
 # summary(discrimination)
 # describe(discrimination)
 discrimination_cat<-car::recode(discrimination,"0:3='low';else='high'")
@@ -257,7 +257,7 @@ devaluation<-rowSums(figure3_data_PDev)/ncol(figure3_data_PDev)
 # devaluation<-na.omit(devaluation)
 # rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 # devaluation_scaled<-lapply(devaluation,rescale)
-devaluation_scaled<-rescale(devaluation)
+# devaluation_scaled<-rescale(devaluation)
 summary(devaluation)
 describe(devaluation)
 devaluation_cat<-car::recode(devaluation,"0:3='low';else='high'")
@@ -267,42 +267,45 @@ data_nonabst<-subset(data.frame(age=data$age,
 							gender=data$female,
 							alcohol=data$alcohol_6h_ainjury,
 							positive_breath=data$pos_etoh,
-							mvc=data$mvc,
+							mvc=data$ibc_10,
 							audit_data_cleaned,
 								pas_score,
 								pas_score_cat,
-								devaluation_scaled,
+								# devaluation_scaled,
 								devaluation,
 								devaluation_cat,
-								discrimination_scaled,
+								# discrimination_scaled,
 								discrimination,
 								drinc_data_score,
-								drinc_data_score_cat),							
+								drinc_data_score_cat,
+							drink_drive=data$drink_drive),							
 								data$consumption!=0)
 
-data_nonabst$groups<-data_nonabst$drink_drive
+data_nonabst$groups<-data_nonabst$talked_dr
 
 data_abst<-subset(data.frame(age=data$age,
 							gender=data$female,
 							alcohol=data$alcohol_6h_ainjury,
 							positive_breath=data$pos_etoh,
-							mvc=data$mvc,
+							mvc=data$ibc_10,
 							audit_data_cleaned,
-							pas_score,
-							pas_score_cat,
-							devaluation_scaled,
-							devaluation_cat,
-							devaluation,
-							discrimination_scaled,
-							discrimination,
-							drinc_data_score,
-							drinc_data_score_cat),							
+								pas_score,
+								pas_score_cat,
+								# devaluation_scaled,
+								devaluation,
+								devaluation_cat,
+								# discrimination_scaled,
+								discrimination,
+								drinc_data_score,
+								drinc_data_score_cat,
+							drink_drive=data$drink_drive),							
 							data$consumption==0)
 
 data_abst$groups<-c(3)
 
 
 data_full1<-rbind(data_nonabst,data_abst)
+
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
 imp2 <- mice(data_full1, seed = 2222, m=5)
 
@@ -313,29 +316,29 @@ data_full<-complete(imp2,4)
 ######################################################################
 #DATA MANAGEMENT
 ######################################################################
-table(data$audit_score_cat)
-prop.table(table(data$audit_score_cat))
+# table(data$audit_score_cat)
+# prop.table(table(data$audit_score_cat))
 
-summary(data$alcohol_6h_ainjury)
-table(data$alcohol_6h_ainjury)
-prop.table(table(data$alcohol_6h_ainjury))
+# summary(data$alcohol_6h_ainjury)
+# table(data$alcohol_6h_ainjury)
+# prop.table(table(data$alcohol_6h_ainjury))
 
-summary(data$pos_etoh)
-table(data$pos_etoh)
-prop.table(table(data$pos_etoh))
+# summary(data$pos_etoh)
+# table(data$pos_etoh)
+# prop.table(table(data$pos_etoh))
 
-test<-with(data,data.frame(audit_score_cat,alcohol_6h_ainjury,pos_etoh))
+# test<-with(data,data.frame(audit_score_cat,alcohol_6h_ainjury,pos_etoh))
 
-data %>%
-  mutate(elegible = if_else(audit_score_cat == "Yes" |  #conditions
-  							alcohol_6h_ainjury == 1 | 
-  							pos_etoh == 1, 
-  							"Yes", # if then
-  							"No")) -> data# else 
+# data %>%
+#   mutate(elegible = if_else(audit_score_cat == "Yes" |  #conditions
+#   							alcohol_6h_ainjury == 1 | 
+#   							pos_etoh == 1, 
+#   							"Yes", # if then
+#   							"No")) -> data# else 
 
-summary(data$elegible)
-table(data$elegible)
-prop.table(table(data$elegible))
+# summary(data$elegible)
+# table(data$elegible)
+# prop.table(table(data$elegible))
 
 ######################################################################
 #TABLE 1

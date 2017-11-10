@@ -7,7 +7,7 @@ power.diagnostic.test(spec = 0.95,
 					  delta = 0.1,
 					  power = 0.95, 
 					  sig.level=0.01,
-					  prev=0.1) # 40
+					  prev=0.07) # 40
 
 ## see n2 on page 1202 of Chu and Cole (2007)
 power.diagnostic.test(spec = 0.95,

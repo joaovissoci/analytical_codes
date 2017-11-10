@@ -61,7 +61,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/consultation/UCB/rw_hdrs_roc_data.csv",sep=',')
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/consultation/UCB/rw_hdrs_roc_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -73,7 +73,7 @@ data$gold_standard<-as.factor(data$gold_standard)
 #calculating HDRS scores
 # experimental group
 
-data$HDRS_experimental<-rowSums(with(data,data.frame(
+data$HDRS_experimental_17items<-rowSums(with(data,data.frame(
                                 it1,
                                 it2,
                                 it3,
@@ -98,7 +98,32 @@ data$HDRS_experimental<-rowSums(with(data,data.frame(
                                 # it21
                                 )))
 
-data$HDRS_controle<-rowSums(with(data,data.frame(
+data$HDRS_experimental_16items<-rowSums(with(data,data.frame(
+                                it1,
+                                it2,
+                                it3,
+                                it4,
+                                it5,
+                                it6,
+                                it7,
+                                it8,
+                                it9,
+                                it10,
+                                it11,
+                                it12,
+                                it13,
+                                it14,
+                                it15,
+                                it16
+                                # it17
+                                # it18a,
+                                # it18b,
+                                # it19,
+                                # it20,
+                                # it21
+                                )))
+
+data$HDRS_controle17items<-rowSums(with(data,data.frame(
                                 it1_2,
                                 it2_2,
                                 it3_2,
@@ -123,44 +148,75 @@ data$HDRS_controle<-rowSums(with(data,data.frame(
                                 # it21_2
                                 )))
 
+data$HDRS_controle16items<-rowSums(with(data,data.frame(
+                                it1_2,
+                                it2_2,
+                                it3_2,
+                                it4_2,
+                                it5_2,
+                                it6_2,
+                                it7_2,
+                                it8_2,
+                                it9_2,
+                                it10_2,
+                                it11_2,
+                                it12_2,
+                                it13_2,
+                                it14_2,
+                                it15_2,
+                                it16_2
+                                # it17_2
+                                # it18a_2,
+                                # it18b_2,
+                                # it19_2,
+                                # it20_2,
+                                # it21_2
+                                )))
 
-hdrs_exp<-with(data,data.frame(value=HDRS_experimental,gold_standard))
 
-hdrs_ctl<-with(data,data.frame(value=HDRS_controle,gold_standard=as.factor(c(0))))
+hdrs_exp16items<-with(data,data.frame(value=HDRS_experimental_16items,gold_standard))
 
-youden_data<-rbind(hdrs_exp,hdrs_ctl)
+hdrs_exp17items<-with(data,data.frame(value=HDRS_experimental_17items,gold_standard))
+
+hdrs_ctl17items<-with(data,data.frame(value=HDRS_controle17items,gold_standard=as.factor(c(0))))
+
+hdrs_ctl16items<-with(data,data.frame(value=HDRS_controle16items,gold_standard=as.factor(c(0))))
+
+youden_data17items<-rbind(hdrs_exp17items,hdrs_ctl17items)
+
+youden_data16items<-rbind(hdrs_exp16items,hdrs_ctl16items)
 
 
-hdrs_17question1<-with(data,data.frame(
-                                it1,
-                                it2,
-                                it3,
-                                it4,
-                                it5,
-                                it6,
-                                it7,
-                                it8,
-                                it9,
-                                it10,
-                                it11,
-                                it12,
-                                it13,
-                                it14,
-                                it15,
-                                it16,
-                                it17
-                                # it18a,
-                                # it18b,
-                                # it19,
-                                # it20,
-                                # it21
-                                ))
+# hdrs_17question1<-with(data,data.frame(
+#                                 it1,
+#                                 it2,
+#                                 it3,
+#                                 it4,
+#                                 it5,
+#                                 it6,
+#                                 it7,
+#                                 it8,
+#                                 it9,
+#                                 it10,
+#                                 it11,
+#                                 it12,
+#                                 it13,
+#                                 it14,
+#                                 it15,
+#                                 it16,
+#                                 it17
+#                                 # it18a,
+#                                 # it18b,
+#                                 # it19,
+#                                 # it20,
+#                                 # it21
+#                                 ))
 
-# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-data_imputed <- mice(hdrs_17question1, seed = 2222, m=10)
+# # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+# data_imputed <- mice(hdrs_17question1, seed = 2222, m=10)
 
-# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-hdrs_17question<-mice::complete(data_imputed,4)
+# # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+# hdrs_17question<-mice::complete(data_imputed,4)
 
 ######################################################################
 #PRE-PROCESSING
@@ -184,15 +240,14 @@ psych::alpha(hdrs_17question,n.iter=1000,check.keys=TRUE)
 # 1 factor model
 cfa_model <- '
 HDRS =~  it1 + it2 + it3 + it4 + it5 + it6 + it7 + it8 + it9 + it10 +
-         it11 + it12 + it13 + it14 + it15 + it16 + it17
+         it11 + it12 + it13 + it14 + it15 + it16
 
 #cov
 it5 ~~  it6
-it14 ~~  it17
+# it14 ~~  it17
 it12 ~~  it16
-it1 ~~  it17
+# it1 ~~  it17
 it1 ~~  it14
-
 '
 
 fit <- lavaan::cfa(cfa_model,
@@ -296,25 +351,65 @@ youden_data$mild<-car::recode(youden_data$gold_standard,"
     '0'=0;
     else=1")
 
-youden_data$severe<-car::recode(youden_data$gold_standard,"
+youden_data16items$severe<-car::recode(youden_data16items$gold_standard,"
     '0'=0;
     '1'=0;
      else=1")
 
-
-#Roc curve for the experimental group
-ROC(form=gold_standard~value, data=youden_data)
-
-
+#Roc curve for the experimental group - 16 items
+ROC(form=severe~value, data=youden_data16items)
 
 optimal.cutpoint.Youden <- optimal.cutpoints(X = "value", 
-                                             status = "gold_standard", 
+                                             status = "severe", 
                                              tag.healthy = "0",
                                              methods = "Youden", 
-                                             data = youden_data, 
+                                             data = youden_data16items, 
                                              pop.prev = NULL, 
                                              categorical.cov = NULL, #"gender",
                                              control = control.cutpoints(), 
+                                             ci.fit = FALSE, 
+                                             conf.level = 0.95, 
+                                             trace = FALSE)
+
+# optimal.cutpoint.Youden <- optimal.cutpoints(X = "change_score", 
+#                                              status = "change_cat_PGIC1_mild", 
+#                                              tag.healthy = "stable",
+#                                              methods = "Youden", 
+#                                              data = data_mcid_control, 
+#                                              pop.prev = NULL, 
+#                                              categorical.cov = NULL, #"gender",
+#                                              control = control.cutpoints(), 
+#                                              ci.fit = FALSE, 
+#                                              conf.level = 0.95, 
+#                                              trace = FALSE)
+
+summary(optimal.cutpoint.Youden)
+
+plot(optimal.cutpoint.Youden)
+
+#Roc curve for the experimental group - 17 items
+
+# with(data_mcid2,by(data_mcid2[,4],change_cat_PGIC2,summary))
+
+# youden_data$mild<-car::recode(youden_data$gold_standard,"
+#     '0'=0;
+#     else=1")
+
+youden_data17items$severe<-car::recode(youden_data17items$gold_standard,"
+    '0'=0;
+    '1'=0;
+     else=1")
+
+ROC(form=severe~value, data=youden_data17items)
+
+optimal.cutpoint.Youden <- optimal.cutpoints(X = "value", 
+                                             status = "severe", 
+                                             tag.healthy = "0",
+                                             methods = "Youden", 
+                                             data = youden_data17items, 
+                                             pop.prev = NULL, 
+                                             categorical.cov = NULL, #"gender",
+                                             # control = control.cutpoints(valueSp=0.85), 
                                              ci.fit = FALSE, 
                                              conf.level = 0.95, 
                                              trace = FALSE)
