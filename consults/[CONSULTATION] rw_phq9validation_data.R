@@ -1,13 +1,9 @@
 ######################################################
-#suicide_anxiety.R is licensed under a Creative Commons Attribution - Non commercial 3.0 Unported License. see full license at the end of this file.
+#rw_phq9validation_data.R is licensed under a Creative Commons Attribution - Non commercial 3.0 Unported License. see full license at the end of this file.
 ######################################################
 #this script follows a combination of the guidelines proposed by Hadley Wickham http://goo.gl/c04kq as well as using the formatR package http://goo.gl/ri6ky
 #if this is the first time you are conducting an analysis using this protocol, please watch http://goo.gl/DajIN while following step by step
-
-#link to manuscript
-
- #The general plan is to compare the fibrinogen and platelet curves of RS vs Copperhead snakes.  The times points are Baseline, nadir during hospitalization, day 5, day 8, day 15.  There is some missing mess.   I am hoping we can get it done in time for an abstract deadline soon.  Let me know what is best.
-
+#
 ######################################################
 #SETTING ENVIRONMENT
 ######################################################
@@ -20,13 +16,12 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", 
+lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest", 
   "moments","GPArotation","nFactors","boot","psy", "car",
-  "vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
+  "vcd", "gridExtra","mi","VIM","gdata",
   "reshape2","mclust","foreign","survival","memisc","lme4",
-  "lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
-  "ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
-  "mice"),
+  "lmerTest","dplyr","eRm","mirt","dplyr","devtools","reshape",
+  "mice","jsonlite","tidyverse","pROC","Epi"),
 library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
@@ -38,9 +33,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-# install.packages("jsonlite")
-library(jsonlite)
-file <- file("/Users/Joao/Downloads/export_data.txt",
+file <- file("/Users/joaovissoci/Downloads/exported_data.txt",
              open="r",
              encoding="UTF-8-BOM")
 
@@ -48,6 +41,7 @@ df <- read.delim(file=file,
                  header=FALSE,
                  fill=FALSE,
                  stringsAsFactors=FALSE,
+                 fileEncoding="UTF-8-BOM",
                  na.strings=c("NULL", ""),
                  quote="",
                  colClasses=c("integer", "character", "factor", "POSIXct", "POSIXct", "integer", "integer", "character"))
@@ -89,13 +83,13 @@ rm(dataTransform)
 ######################################################
 
 str(df_hdrs)
-write.csv(df_short_questionnaire[,1],"/Users/joaovissoci/Desktop/deleteme1.csv")
+# write.csv(df_short_questionnaire[,1],"/Users/joaovissoci/Desktop/deleteme1.csv")
 dim(df_short_questionnaire)
 View(df_short_questionnaire)
 names(df_phq9)
 
 #Organizing PHQ9 data
- colnames(df_phq9)<-c("id",
+colnames(df_phq9)<-c("id",
                       "deleteme1",
                       "scale",
                       "T1",
@@ -216,7 +210,7 @@ phq9_data$phq9_sum<-with(phq9_data,rowSums(data.frame(phq1_num,
                             phq8_num,
                             phq9_num)))
 
-data.frame(phq9_data$phq9_sum,phq9_data$phq9_score)
+# data.frame(phq9_data$phq9_sum,phq9_data$phq9_score)
 
 phq9_data2 <- phq9_data[!duplicated(phq9_data$id), ]
 
@@ -264,7 +258,7 @@ hdrs_data<-remove.vars(df_hdrs,c(
                                 "deleteme3",
                                 "deleteme4"))
 
-str(hdrs_data)
+# str(hdrs_data)
 
 hdrs_data$hdrs1_num<-car::recode(hdrs_data$hdrs1,"
                     'Ntabyo'=0;
@@ -406,7 +400,7 @@ hdrs_data$hdrs_sum<-with(hdrs_data,rowSums(data.frame(hdrs1_num,
                             hdrs16_num,
                             hdrs17_num)))
 
-data.frame(hdrs_data$hdrs_sum,hdrs_data$hrds_score)
+# data.frame(hdrs_data$hdrs_sum,hdrs_data$hrds_score)
 
 hdrs_data2 <- hdrs_data[!duplicated(hdrs_data$id), ]
 
@@ -414,10 +408,7 @@ hdrs_data2 <- hdrs_data[!duplicated(hdrs_data$id), ]
 
 socio_data<-df_questionnaire[,c(9,14,15,16,17,30,32,33,34,36,39,40:47,50,51)]
 
-colnames(# Categorical Descriptives
-table<-with(data_validation,table(occupation_cat))
-table
-prop.table(table))<-c("date",
+colnames(socio_data)<-c("date",
                         "birth",
                         "sex",
                         "weight",
@@ -439,33 +430,165 @@ prop.table(table))<-c("date",
                         "date_epilepsy_diag",
                         "age_first_crisis")
 
-str(socio_data)
 
-socio_data$birth_recoded<-as.Date(socio_data$birth,'%d/%m/%Y')
+# str(socio_data)
+
+socio_data$birth_recoded<-as.POSIXct(socio_data$birth,
+                      format='%d-%m-%Y')
+
+socio_data$date_epilepsy_diag_recoded<-as.POSIXct(socio_data$date_epilepsy_diag,
+                      format='%d-%m-%Y')
 # Mergind datasets
 
 # data_merged <- merge(
 #   x=phq9_data2,
 #   y=hdrs_data2, by="id",all.x = TRUE)
 
+library("plyr")
 data_merged<-join(phq9_data2, 
      hdrs_data2,
      type = "inner",by=c("id"))
+
+#creating intervals based on the HDRS
+
+data_merged$hdrs_international_cat<-car::recode(data_merged$hdrs_sum,"
+                                0:6='ab';
+                                7:17='mild';
+                                18:23='severe';
+                                NA=NA;
+                                else='verysevere'")
+
+data_merged$hdrs_international_abscence<-car::recode(data_merged$hdrs_sum,"
+                                0:6=0;
+                                NA=NA;
+                                else=1")
+data_merged$hdrs_international_mild<-car::recode(data_merged$hdrs_sum,"
+                                0:17=0;
+                                NA=NA;
+                                else=1")
+data_merged$hdrs_international_severe<-car::recode(data_merged$hdrs_sum,"
+                                0:23=0;
+                                NA=NA;
+                                else=1")
+data_merged$hdrs_international_verysevere<-car::recode(data_merged$hdrs_sum,"
+                                0:24=0;
+                                NA=NA;
+                                else=1")
+
+data_merged$hdrs_international_rwandan<-car::recode(data_merged$hdrs_sum,"
+                                0:17=0;
+                                NA=NA;
+                                else=1")
 
 ######################################################################
 #Table 1
 ######################################################################
 
-#Numeric
+# a.                   Demographic data (age, gender, marital status, employment by categories, …)
+# b.                   Disease related data (duration of epilepsy since diagnosis and since first seizure, EEG, MRI, CT,…)
+# c.                   Past AEDs (by number, by type (CBZ, PHT, VPA, LEV))
+# d.                   Concomitant AEDs (by number of AEDs (1-2-3 or more, by type (CBZ, PHT, VPA, LEV))
+# e.                   Number of seizures since last visit
+# f.                    AE reports in two weeks between test and retest
+# g.                   Traditional healing methods by category
+# h.                   Other medications (yes/no, number of medications)
 
-with(socio_data,describe())
+#Age
 
-# Categorical Descriptives
-table<-with(data_validation,table(occupation_cat))
-table
-prop.table(table)
+library(eeptools)
+
+socio_data$today_data<-Sys.Date()
+
+socio_data$age<-floor(difftime(socio_data$birth_recoded, socio_data$today_data,
+         units = c("days"))*-1)
+
+socio_data$age<-as.numeric(round(socio_data$age/365,digits=0))
+
+socio_data$age<-car::recode(socio_data$age,"100:2000=NA")
+
+with(socio_data,describe(age))
+
+#Gender
+
+table(socio_data$sex)
+prop.table(table(socio_data$sex))
+
+#Marital Status
+
+socio_data$marital_status<-car::recode(socio_data$marital_status,"
+                      'Choose'='autre'")
+
+table(socio_data$marital_status)
+prop.table(table(socio_data$marital_status))
+
+#Empolyment
+
+table(socio_data$occupation)
+prop.table(table(socio_data$occupation))
+
+#health_insurance
+
+table(socio_data$health_insurance)
+prop.table(table(socio_data$health_insurance))
+
+#Household size
+
+table(socio_data$household_size)
+
+#education
+
+#mental_health_issue
+
+#mental_handicap
+
+#diabetes
+
+#ihd
+
+#infectious_disease
+
+#renal
+
+#malnutrition
+
+#tbi
+
+#perinatal_suffering
+
+#date_epilepsy_diag_recoded
+
+#age_first_crisis
 
 
+
+#Duration of epilepsy since first diagnosis
+
+#Duration of epilepsy since first seizures
+
+#EEG
+
+#MRI
+
+#CT
+
+#AED by number
+
+#AED by type (CBZ, PHT, VPA, LEV)
+
+# number of seizures since last visit
+
+#AE reports in the two weeks between test and retest
+
+#Traditional healing methods by category
+
+#Other medication (yes/no)
+
+#number of medication
+
+# Depression severity
+
+table(data_merged$hdrs_international_cat)
+prop.table(table(data_merged$hdrs_international_cat))
 
 ######################################################################
 #FLOORING,AND CEILING EFFECT
@@ -723,54 +846,17 @@ by(Est$std.all[13:50],Est$lhs[13:50],mean)
 # with(data_mcid2,by(change_score,change_cat_PGIC2,summary))
 # with(data_mcid2,by(data_mcid2[,4],change_cat_PGIC2,summary))
 
-#creating intervals based on the HDRS
-
-data_merged$hdrs_international_cat<-car::recode(data_merged$hdrs_sum,"
-                                0:6='ab';
-                                7:17='mild';
-                                18:23='severe';
-                                NA=NA;
-                                else='verysevere'")
-
-prop.table(table(data_merged$hdrs_international_cat))
-
-data_merged$hdrs_international_abscence<-car::recode(data_merged$hdrs_sum,"
-                                0:6=0;
-                                NA=NA;
-                                else=1")
-data_merged$hdrs_international_mild<-car::recode(data_merged$hdrs_sum,"
-                                0:17=0;
-                                NA=NA;
-                                else=1")
-data_merged$hdrs_international_severe<-car::recode(data_merged$hdrs_sum,"
-                                0:23=0;
-                                NA=NA;
-                                else=1")
-data_merged$hdrs_international_verysevere<-car::recode(data_merged$hdrs_sum,"
-                                0:24=0;
-                                NA=NA;
-                                else=1")
-
-data_merged$hdrs_international_verysevere<-car::recode(data_merged$hdrs_sum,"
-                                0:15=0;
-                                NA=NA;
-                                else=1")
-
-#Roc curve for the experimental group
-library(Epi)
-library(pROC)
-
 ROC(form=hdrs_international_verysevere~phq9_sum, data=data_merged)
 
 library(OptimalCutpoints)
 optimal.cutpoint.Youden <- optimal.cutpoints(X = "phq9_sum", 
-                                             status = "hdrs_international_verysevere", 
+                                             status = "hdrs_international_rwandan", 
                                              tag.healthy = "0",
                                              methods = "Youden", 
                                              data = data_merged, 
                                              pop.prev = NULL, 
                                              categorical.cov = NULL, #"gender",
-                                             control = control.cutpoints("generalized.Youden"), 
+                                             control = control.cutpoints("generalized.Youden = TRUE"), 
                                              ci.fit = FALSE, 
                                              conf.level = 0.95, 
                                              trace = FALSE)
