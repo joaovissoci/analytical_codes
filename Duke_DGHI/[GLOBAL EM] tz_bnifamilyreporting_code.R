@@ -51,10 +51,13 @@ data_family<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global 
 
 names(data)
 
+data_patients$group<-c("Patient")
+data_family$group<-c("Family")
+
 #RECODING AUDIT PATIENTS
 # data<-subset(data1,data1$audit_complete==2)
 
-audit_data<-with(data,data.frame(
+audit_data<-with(data_patients,data.frame(
 				consumption,
 				audit_complete,
 				how_often_drink,                  
@@ -83,9 +86,9 @@ audit_data_questions$audit_score<-rowSums(audit_data_NAto0)
 # audit_data_questions$audit_score_D2<-rowSums(audit_data_NAto0[,4:10])
 # audit_data_questions$audit_score_D3<-rowSums(audit_data_NAto0[,7:])
 
-data$audit_score<-audit_data_questions$audit_score
+data_patients$audit_score<-audit_data_questions$audit_score
 
-data$audit_score_cat<-car::recode(
+data_patients$audit_score_cat<-car::recode(
 	audit_data_questions$audit_score,
 	"0:8='No';else='Yes'")
 
@@ -93,105 +96,8 @@ data$audit_score_cat<-car::recode(
 # audit_data_cleaned<-cbind(audit_data_cleaned,
 # 	audit_data_NAto0)
 
-#RECODING FAMILY
-
-colnames(data_family)<-c(
-"id",
-"date_enrollment",
-"female",
-"age",
-"family_member_patient",
-"family_member_patient2",
-"study_id",
-"complaint",
-"improve_health_other",
-"improve_health_other",
-"improve_health_other",
-"improve_health_other",
-"improve_health_other",
-"improve_health_other",
-"improve_health_other",
-"improve_health_other",
-"improve_health_other",
-"improve_health_other",
-"screening_demographics_complete",
-"consumption",
-"how_often_drink",
-"number_drinks_day",
-"how_often_6_more_drinks",
-"how_often_cant_stop_drinking",
-"fail_expectation_bc_drinking",
-"how_often_drink_morning",
-"how_often_guilt_postdrinking",
-"how_often_no_memory_postdrinking",
-"drinking_injured_you_or_someone	others_concerned_your_drinking",
-"audit_total",
-"b11",
-"b12",
-"b13",
-"b13_1",
-"b13_2",
-"b13_3",
-"audit_complete",
-"alc_treatment_intelligent",
-"alcoholic_trustworthy",
-"alc_treatment_failure",
-"think_less_treated_person",
-"less_opinion_trtd_person",
-"alcoholic_close_friend",
-"recovered_alcoholic_teacher",
-"recover_alcoholic_chldrn",
-"recover_alcoholic_hired",
-"non_alcoholic_hired",
-"recovered_alc_treat_same",
-"no_date_hospital_for_alc",
-"stigma_complete")
-
-audit_data_family<-with(data_family,data.frame(
-				consumption,
-				audit_complete,
-				how_often_drink,                  
-				number_drinks_day,
-				how_often_6_more_drinks,
-				how_often_cant_stop_drinking,
-				fail_expectation_bc_drinking,
-				how_often_drink_morning,
-				how_often_guilt_postdrinking,
-				how_often_no_memory_postdrinking,
-				drinking_injured_you_or_someone,
-				others_concerned_your_drinking,
-				age_1st_drink,drink_drive))
-
-
-audit_data_questions_fam<-audit_data_family[-c(1:2,13:14)]
-
-NAto0<-function(x){
-	car::recode(x,"NA=0")
-	}
-
-audit_data_NAto0_fam<-lapply(audit_data_questions_fam,NAto0)
-audit_data_NAto0_fam<-as.data.frame(audit_data_NAto0_fam)
-audit_data_questions_fam$audit_score<-rowSums(audit_data_NAto0_fam)
-# audit_data_questions_fam$audit_score_D1<-rowSums(audit_data_NAto0[,1:3])
-# audit_data_questions_fam$audit_score_D2<-rowSums(audit_data_NAto0[,4:10])
-# audit_data_questions_fam$audit_score_D3<-rowSums(audit_data_NAto0[,7:])
-
-data_family$audit_score<-audit_data_questions_fam$audit_score
-
-data_family$audit_score_cat<-car::recode(
-	audit_data_questions_fam$audit_score,
-	"0:8='No';else='Yes'")
-
-
-
-
-
-
-
-
-
 #Drinc
-drinc_data<-with(data,data.frame(
+patients_drinc_data<-with(data_patients,data.frame(
 				had_hangover,
 				bad_about_self,
 				missed_work_school,
@@ -246,18 +152,17 @@ drinc_data<-with(data,data.frame(
 # drinc_data_questions<-subset(drinc_data,audit_data[2]==2)
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-imp <- mice(drinc_data, seed = 2222, m=5)
+imp <- mice(patients_drinc_data, seed = 2222, m=5)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-drinc_data_questions<-complete(imp,4)
+patients_drinc_data_questions<-complete(imp,4)
 
-drinc_data_score<-rowSums(drinc_data_questions)/2
-drinc_data_score_cat<-car::recode(
-	drinc_data_score,"0:5='Low';else='High'")
-
+data_patients$drinc_data_score<-rowSums(patients_drinc_data_questions)/2
+data_patients$drinc_data_score_cat<-car::recode(
+	data_patients$drinc_data_score,"0:5='Low';else='High'")
 
 #STIGMA
-score_data<-with(data, data.frame(alcoholic_close_friend,
+patients_score_data<-with(data_patients, data.frame(alcoholic_close_friend,
 							recovered_alcoholic_teacher,
 							recover_alcoholic_chldrn,
 							recover_alcoholic_hired,
@@ -272,21 +177,21 @@ score_data<-with(data, data.frame(alcoholic_close_friend,
 
 
 #recoding positive oriented items to ensure a higher score indicates high stigma
-score_data$alcoholic_close_friend<-car::recode(data$alcoholic_close_friend,
+patients_score_data$alcoholic_close_friend<-car::recode(data_patients$alcoholic_close_friend,
 	"1=6;2=5;3=4;4=3;5=2;6=1")
-score_data$alc_treatment_intelligent<-car::recode(data$alc_treatment_intelligent,
+patients_score_data$alc_treatment_intelligent<-car::recode(data_patients$alc_treatment_intelligent,
 	"1=6;2=5;3=4;4=3;5=2;6=1")
-score_data$alcoholic_trustworthy<-car::recode(data$alcoholic_trustworthy,
+patients_score_data$alcoholic_trustworthy<-car::recode(data_patients$alcoholic_trustworthy,
 	"1=6;2=5;3=4;4=3;5=2;6=1")
-score_data$recovered_alcoholic_teacher<-car::recode(data$recovered_alcoholic_teacher,
+patients_score_data$recovered_alcoholic_teacher<-car::recode(data_patients$recovered_alcoholic_teacher,
 	"1=6;2=5;3=4;4=3;5=2;6=1")
-score_data$recover_alcoholic_hired<-car::recode(data$recover_alcoholic_hired,
+patients_score_data$recover_alcoholic_hired<-car::recode(data_patients$recover_alcoholic_hired,
 	"1=6;2=5;3=4;4=3;5=2;6=1")
-score_data$recovered_alc_treat_same<-car::recode(data$recovered_alc_treat_same,
+patients_score_data$recovered_alc_treat_same<-car::recode(data_patients$recovered_alc_treat_same,
 	"1=6;2=5;3=4;4=3;5=2;6=1")
 
 #Calculate PAS
-figure3_data_PAS<-with(score_data,data.frame(alcoholic_close_friend,
+patients_data_PAS<-with(patients_score_data,data.frame(alcoholic_close_friend,
 							recovered_alcoholic_teacher,
 							recover_alcoholic_chldrn,
 							recover_alcoholic_hired,
@@ -300,24 +205,21 @@ figure3_data_PAS<-with(score_data,data.frame(alcoholic_close_friend,
 							less_opinion_trtd_person))
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-imp <- mice(figure3_data_PAS, seed = 2222, m=5)
+imp <- mice(patients_data_PAS, seed = 2222, m=5)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-figure3_data_PAS<-complete(imp,4)
+patients_data_PAS<-complete(imp,4)
 
-pas_score<-rowSums(figure3_data_PAS)/ncol(figure3_data_PAS)
-summary(pas_score)
-describe(pas_score)
+data_patients$pas_score<-rowSums(patients_data_PAS)/ncol(patients_data_PAS)
+
 # discrimination<-na.omit(discrimination)
-rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+# rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 # discrimination_scaled<-lapply(pas_score,rescale)
-pas_score_scaled<-rescale(pas_score)
-# summary(x)
-# sd(x)
-pas_score_cat<-car::recode(pas_score,"0:3='low';else='high'")
+# pas_score_scaled<-rescale(pas_score)
+data_patients$pas_score_cat<-car::recode(data_patients$pas_score,"0:3='low';else='high'")
 
 #Calculate PDiscrimination score
-figure3_data_PDis<-with(score_data,data.frame(alcoholic_close_friend,
+patients_data_PDis<-with(patients_score_data,data.frame(alcoholic_close_friend,
 							recovered_alcoholic_teacher,
 							recover_alcoholic_chldrn,
 							recover_alcoholic_hired,
@@ -326,87 +228,329 @@ figure3_data_PDis<-with(score_data,data.frame(alcoholic_close_friend,
 							no_date_hospital_for_alc))
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-imp <- mice(figure3_data_PDis, seed = 2222, m=5)
+# imp <- mice(data_PDis, seed = 2222, m=5)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-figure3_data_PDis<-complete(imp,4)
+# data_PDis<-complete(imp,4)
 
-discrimination<-rowSums(figure3_data_PDis)/ncol(figure3_data_PDis)
+data_patients$discrimination<-rowSums(patients_data_PDis)/ncol(patients_data_PDis)
 # discrimination<-na.omit(discrimination)
 # rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 # discrimination_scaled<-lapply(discrimination,rescale)
-discrimination_scaled<-rescale(discrimination)
+# discrimination_scaled<-rescale(discrimination)
 # summary(discrimination)
 # describe(discrimination)
-discrimination_cat<-car::recode(discrimination,"0:3='low';else='high'")
+data_patients$discrimination_cat<-car::recode(data_patients$discrimination,"0:3='low';else='high'")
 
 
 #Calculate Perceived Devaluation score
-figure3_data_PDev<-with(score_data,data.frame(alc_treatment_intelligent,
+patients_data_PDev<-with(patients_score_data,data.frame(alc_treatment_intelligent,
 							alcoholic_trustworthy,
 							alc_treatment_failure,
 							think_less_treated_person,
 							less_opinion_trtd_person))
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-imp <- mice(figure3_data_PDev, seed = 2222, m=5)
+imp <- mice(patients_data_PDev, seed = 2222, m=5)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-figure3_data_PDev<-complete(imp,4)
+patients_data_PDev<-complete(imp,4)
 
-devaluation<-rowSums(figure3_data_PDev)/ncol(figure3_data_PDev)
+data_patients$devaluation<-rowSums(patients_data_PDev)/ncol(patients_data_PDev)
 # devaluation<-na.omit(devaluation)
 # rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
 # devaluation_scaled<-lapply(devaluation,rescale)
-devaluation_scaled<-rescale(devaluation)
-summary(devaluation)
-describe(devaluation)
-devaluation_cat<-car::recode(devaluation,"0:3='low';else='high'")
+# devaluation_scaled<-rescale(devaluation)
+data_patients$devaluation_cat<-car::recode(data_patients$devaluation,"0:3='low';else='high'")
 
-#Non-Abstainners = everyone who responded 1 or 2 in the consumption question
-data_nonabst<-subset(data.frame(age=data$age,
-							gender=data$female,
-							alcohol=data$alcohol_6h_ainjury,
-							positive_breath=data$pos_etoh,
-							mvc=data$mvc,
-							audit_data_cleaned,
-								pas_score,
-								pas_score_cat,
-								devaluation_scaled,
-								devaluation,
-								devaluation_cat,
-								discrimination_scaled,
-								discrimination,
-								drinc_data_score,
-								drinc_data_score_cat),							
-								data$consumption!=0)
+#RECODING FAMILY
+colnames(data_family)<-c(
+"id",
+"date_enrollment",
+"female",
+"age",
+"family_member_patient",
+"family_member_patient2",
+"study_id",
+"complaint",
+"improve_health_other",
+"improve_health_other",
+"improve_health_other",
+"improve_health_other",
+"improve_health_other",
+"improve_health_other",
+"improve_health_other",
+"improve_health_other",
+"improve_health_other",
+"improve_health_other",
+"screening_demographics_complete",
+"consumption",
+"how_often_drink",
+"number_drinks_day",
+"how_often_6_more_drinks",
+"how_often_cant_stop_drinking",
+"fail_expectation_bc_drinking",
+"how_often_drink_morning",
+"how_often_guilt_postdrinking",
+"how_often_no_memory_postdrinking",
+"drinking_injured_you_or_someone",
+"others_concerned_your_drinking",
+"audit_total",
+"b11",
+"b12",
+"b13",
+"b13_1",
+"b13_2",
+"b13_3",
+"audit_complete",
+"alc_treatment_intelligent",
+"alcoholic_trustworthy",
+"alc_treatment_failure",
+"think_less_treated_person",
+"less_opinion_trtd_person",
+"alcoholic_close_friend",
+"recovered_alcoholic_teacher",
+"recover_alcoholic_chldrn",
+"recover_alcoholic_hired",
+"non_alcoholic_hired",
+"recovered_alc_treat_same",
+"no_date_hospital_for_alc",
+"stigma_complete")
 
-data_nonabst$groups<-data_nonabst$drink_drive
-
-data_abst<-subset(data.frame(age=data$age,
-							gender=data$female,
-							alcohol=data$alcohol_6h_ainjury,
-							positive_breath=data$pos_etoh,
-							mvc=data$mvc,
-							audit_data_cleaned,
-							pas_score,
-							pas_score_cat,
-							devaluation_scaled,
-							devaluation_cat,
-							devaluation,
-							discrimination_scaled,
-							discrimination,
-							drinc_data_score,
-							drinc_data_score_cat),							
-							data$consumption==0)
-
-data_abst$groups<-c(3)
+audit_data_family<-with(data_family,data.frame(
+				consumption,
+				audit_complete,
+				how_often_drink,                  
+				number_drinks_day,
+				how_often_6_more_drinks,
+				how_often_cant_stop_drinking,
+				fail_expectation_bc_drinking,
+				how_often_drink_morning,
+				how_often_guilt_postdrinking,
+				how_often_no_memory_postdrinking,
+				drinking_injured_you_or_someone,
+				others_concerned_your_drinking
+				))
 
 
-data_full1<-rbind(data_nonabst,data_abst)
+audit_data_questions_fam<-audit_data_family[-c(1:2)]
+
+NAto0<-function(x){
+	as.numeric(car::recode(x,"NA=0"))
+	}
+
+audit_data_NAto0_fam<-lapply(audit_data_questions_fam,NAto0)
+audit_data_NAto0_fam<-as.data.frame(audit_data_NAto0_fam)
+audit_data_questions_fam$audit_score<-rowSums(audit_data_NAto0_fam)
+# audit_data_questions_fam$audit_score_D1<-rowSums(audit_data_NAto0[,1:3])
+# audit_data_questions_fam$audit_score_D2<-rowSums(audit_data_NAto0[,4:10])
+# audit_data_questions_fam$audit_score_D3<-rowSums(audit_data_NAto0[,7:])
+
+data_family$audit_score<-audit_data_questions_fam$audit_score
+
+data_family$audit_score_cat<-car::recode(
+	audit_data_questions_fam$audit_score,
+	"0:8='No';else='Yes'")
+
+#STIGMA
+family_score_data<-with(data_family, data.frame(alcoholic_close_friend,
+							recovered_alcoholic_teacher,
+							recover_alcoholic_chldrn,
+							recover_alcoholic_hired,
+							non_alcoholic_hired,
+							recovered_alc_treat_same,
+							no_date_hospital_for_alc,
+							alc_treatment_intelligent,
+							alcoholic_trustworthy,
+							alc_treatment_failure,
+							think_less_treated_person,
+							less_opinion_trtd_person))
+
+
+#recoding positive oriented items to ensure a higher score indicates high stigma
+family_score_data$alcoholic_close_friend<-car::recode(data_family$alcoholic_close_friend,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+family_score_data$alc_treatment_intelligent<-car::recode(data_family$alc_treatment_intelligent,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+family_score_data$alcoholic_trustworthy<-car::recode(data_family$alcoholic_trustworthy,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+family_score_data$recovered_alcoholic_teacher<-car::recode(data_family$recovered_alcoholic_teacher,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+family_score_data$recover_alcoholic_hired<-car::recode(data_family$recover_alcoholic_hired,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+family_score_data$recovered_alc_treat_same<-car::recode(data_family$recovered_alc_treat_same,
+	"1=6;2=5;3=4;4=3;5=2;6=1")
+
+#Calculate PAS
+family_data_PAS<-with(family_score_data,data.frame(alcoholic_close_friend,
+							recovered_alcoholic_teacher,
+							recover_alcoholic_chldrn,
+							recover_alcoholic_hired,
+							non_alcoholic_hired,
+							recovered_alc_treat_same,
+							no_date_hospital_for_alc,
+							alc_treatment_intelligent,
+							alcoholic_trustworthy,
+							alc_treatment_failure,
+							think_less_treated_person,
+							less_opinion_trtd_person))
+
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-imp2 <- mice(data_full1, seed = 2222, m=5)
-
+imp <- mice(family_data_PAS, seed = 2222, m=5)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-data_full<-complete(imp2,4)
+family_data_PAS<-complete(imp,4)
+
+data_family$pas_score<-rowSums(family_data_PAS)/ncol(family_data_PAS)
+
+# discrimination<-na.omit(discrimination)
+# rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+# discrimination_scaled<-lapply(pas_score,rescale)
+# pas_score_scaled<-rescale(pas_score)
+data_family$pas_score_cat<-car::recode(data_family$pas_score,"0:3='low';else='high'")
+
+#Calculate PDiscrimination score
+family_data_PDis<-with(family_score_data,data.frame(alcoholic_close_friend,
+							recovered_alcoholic_teacher,
+							recover_alcoholic_chldrn,
+							recover_alcoholic_hired,
+							non_alcoholic_hired,
+							recovered_alc_treat_same,
+							no_date_hospital_for_alc))
+
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+# imp <- mice(data_PDis, seed = 2222, m=5)
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+# data_PDis<-complete(imp,4)
+
+data_family$discrimination<-rowSums(family_data_PDis)/ncol(family_data_PDis)
+# discrimination<-na.omit(discrimination)
+# rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+# discrimination_scaled<-lapply(discrimination,rescale)
+# discrimination_scaled<-rescale(discrimination)
+# summary(discrimination)
+# describe(discrimination)
+data_family$discrimination_cat<-car::recode(data_family$discrimination,"0:3='low';else='high'")
+
+
+#Calculate Perceived Devaluation score
+family_data_PDev<-with(family_score_data,data.frame(alc_treatment_intelligent,
+							alcoholic_trustworthy,
+							alc_treatment_failure,
+							think_less_treated_person,
+							less_opinion_trtd_person))
+
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+# imp <- mice(data_PDev, seed = 2222, m=5)
+
+# # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+# data_PDev<-complete(imp,4)
+
+data_family$devaluation<-rowSums(family_data_PDev)/ncol(family_data_PDev)
+# devaluation<-na.omit(devaluation)
+# rescale <- function(x)(x-min(x))/(max(x) - min(x)) * 100
+# devaluation_scaled<-lapply(devaluation,rescale)
+# devaluation_scaled<-rescale(devaluation)
+data_family$devaluation_cat<-car::recode(data_family$devaluation,"0:3='low';else='high'")
+
+#Merging datasets
+merged_data<-merge(x = with(data_patients,data.frame(
+							p_audit_score=audit_score,
+							p_audit_score_cat=audit_score_cat,
+							p_pas_score=pas_score,
+							p_drinc_data_score=drinc_data_score,
+							p_drinc_data_score_cat=drinc_data_score_cat,
+							p_pas_score_cat=pas_score_cat,
+							p_discrimination=discrimination,
+							p_discrimination_cat=discrimination_cat,
+							p_devaluation=devaluation,
+							p_devaluation_cat=devaluation_cat,
+							study_id,
+							p_consumption=consumption,
+							p_groups=group
+							)), 
+					   y = with(data_family,data.frame(
+							f_audit_score=audit_score,
+							f_audit_score_cat=audit_score_cat,
+							f_pas_score=pas_score,
+							f_pas_score_cat=pas_score_cat,
+							f_discrimination=discrimination,
+							f_discrimination_cat=discrimination_cat,
+							f_devaluation=devaluation,
+							f_devaluation_cat=devaluation_cat,
+							study_id,
+							f_consumption=consumption,
+							f_groups=group
+							)), 
+					   by = "study_id", 
+					   all.x = TRUE)
+
+########## Extract non-abstainners
+#Non-Abstainners = everyone who responded 1 or 2 in the consumption question
+data_nonabst<-subset(merged_data,							
+								merged_data$p_consumption!=0)
+
+data_abst<-subset(merged_data,							
+							merged_data$p_consumption==0)
+
+######### STACKING DATA
+stacked_data<-rbind(with(data_nonabst,data.frame(
+							audit_score=p_audit_score,
+							audit_score_cat=p_audit_score_cat,
+							pas_score=p_pas_score,
+							pas_score_cat=p_pas_score_cat,
+							discrimination=p_discrimination,
+							discrimination_cat=p_discrimination_cat,
+							devaluation=p_devaluation,
+							devaluation_cat=p_devaluation_cat,
+							consumption=p_consumption,
+							group=p_groups	
+							)),
+					with(data_nonabst,data.frame(
+							audit_score=f_audit_score,
+							audit_score_cat=f_audit_score_cat,
+							pas_score=f_pas_score,
+							pas_score_cat=f_pas_score_cat,
+							discrimination=f_discrimination,
+							discrimination_cat=f_discrimination_cat,
+							devaluation=f_devaluation,
+							devaluation_cat=f_devaluation_cat,
+							consumption=f_consumption,
+							group=f_groups))
+					)
+
+# #Non-Abstainners = everyone who responded 1 or 2 in the consumption question
+# data_nonabst<-subset(stacked_data,							
+# 								stacked_data$consumption!=0)
+
+# data_full1<-rbind(data_nonabst,data_abst)
+# # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+# imp2 <- mice(data_full1, seed = 2222, m=5)
+
+
+# # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+# data_full<-complete(imp2,4)
+
+###########################################
+
+with(stacked_data,by(audit_score,group,summary))
+with(stacked_data,kruskal.test(audit_score~group))
+
+table<-with(stacked_data,table(audit_score_cat,group))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+with(stacked_data,by(pas_score,group,summary))
+with(stacked_data,kruskal.test(pas_score~group))
+
+with(stacked_data,by(discrimination,group,summary))
+with(stacked_data,kruskal.test(discrimination~group))
+
+with(stacked_data,by(devaluation,group,summary))
+with(stacked_data,kruskal.test(devaluation~group))
+
+
