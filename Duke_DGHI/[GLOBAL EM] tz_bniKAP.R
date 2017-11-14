@@ -203,21 +203,45 @@ prop.table(table)
 #Table 2.
 ######################################################################
 
-# drinking per day / men
-describe(data$risky_drinks_sitting_men)
-ad.test(data$risky_drinks_sitting_men)
-#hist(data$age)
-#ci_func(data$age,.95)
-# by(data$age,outcomes$rtc_involvement,describe)
-# wilcox.test(data$age~outcomes$rtc_involvement)
+# # drinking per day / men
+# describe(data$risky_drinks_sitting_men)
+# ad.test(data$risky_drinks_sitting_men)
+# #hist(data$age)
+# #ci_func(data$age,.95)
+# # by(data$age,outcomes$rtc_involvement,describe)
+# # wilcox.test(data$age~outcomes$rtc_involvement)
 
-# drinking per day / women
-describe(data$risky_drinks_sitting_women)
-ad.test(data$risky_drinks_sitting_women)
-#hist(data$age)
-#ci_func(data$age,.95)
-# by(data$age,outcomes$rtc_involvement,describe)
-# wilcox.test(data$age~outcomes$rtc_involvement)
+# # drinking per day / women
+# describe(data$risky_drinks_sitting_women)
+# ad.test(data$risky_drinks_sitting_women)
+# #hist(data$age)
+# #ci_func(data$age,.95)
+# # by(data$age,outcomes$rtc_involvement,describe)
+# # wilcox.test(data$age~outcomes$rtc_involvement)
+
+
+# drinking per week / women
+table<-with(data,table(risky_drinks_sitting_men))
+table
+prop.table(table)
+#table<-with(data_bea,table(hospitalization,risk_classification))
+#table
+#prop.table(table,2)
+#chisq.test(table)
+#fisher.test(table)
+#assocstats(table) #vcd package
+
+
+# drinking per week / women
+table<-with(data,table(risky_drinks_sitting_women))
+table
+prop.table(table)
+#table<-with(data_bea,table(hospitalization,risk_classification))
+#table
+#prop.table(table,2)
+#chisq.test(table)
+#fisher.test(table)
+#assocstats(table) #vcd package
 
 # drinking per week / women
 table<-with(data,table(risky_drinks_week_men))
@@ -234,7 +258,7 @@ prop.table(table)
 table<-with(data,table(risky_drinks_week_women))
 table
 prop.table(table)
-#table<-with(data_bea,table(hospitalization,risk_classification))
+2#table<-with(data_bea,table(hospitalization,risk_classification))
 #table
 #prop.table(table,2)
 #chisq.test(table)
@@ -1167,18 +1191,31 @@ figure4<-ggplot(plot_data, aes(y=variable, x=value)) +
 ######################################################################
 #Figure 5.
 ######################################################################
+
+factor_to_numeric<-function(x){ 
+
+as.numeric(x)
+
+}
+
+
+
 network_data<-data.frame(likert_data1,
-	figure2_data,figure4_data,pas_score)
+	likert_data2,likert_data3,pas_score)
+
+network_data<-lapply(network_data,factor_to_numeric)
+
+
 colnames(network_data)<-c("Q1","Q2","Q3","Q4","Q5",
 	"Q6","Q7","Q8","Q9","Q10",
 	"Q11","Q12","Q13","Q14","Q15",
 	"Q16","Q17","Q18","Q19","Q20",
 	"Q21","Q22","Q23","PAS")
 
-cor<-cor(na.omit(network_data),method="spearman")
+cor<-cor(na.omit(as.data.frame(network_data)),method="spearman")
 # cor<-cor_auto(na.omit(network_data))
 
-Hmisc::rcorr(as.matrix(network_data),type="spearman")
+Hmisc::rcorr(na.omit(as.matrix(as.data.frame(network_data))),type="spearman")
 
 test<-FDRnetwork(cor, cutoff=0.06,method="pval")
 
