@@ -21,7 +21,8 @@ lapply(c("ggplot2","gridExtra" ,"psych",
    "gridExtra" ,"psych", "RCurl", "irr", "nortest", 
    "moments","GPArotation","nFactors","gdata",
    "repmis","sqldf","VIM","survival",
-   "sas7bdat","epicalc","vcd","mice"), library, character.only=T)
+   "sas7bdat","epicalc","vcd","mice",
+   "tidyverse"), library, character.only=T)
 
 #Dosage specific ODSS function
 #source: http://goo.gl/ETWdZd
@@ -57,10 +58,10 @@ lapply(c("ggplot2","gridExtra" ,"psych",
 #data<-
 #data<-read.sas7bdat("C:\\Users\\Joao\\Desktop\\tanzclean.sas7bdat")
 #data<-read.sas7bdat("/Users/rpietro/Dropbox/datasets/Africa_DGHI/tanzclean.sas7bdat")
-data_tz<-read.sas7bdat("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/tanzclean.sas7bdat")
+data_tz<-read.sas7bdat("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/tanzclean.sas7bdat")
 data_tz<-as.data.frame(data_tz)
 
-data_mzsa <- read.spss("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Multi_country/Tz, SA, Mz alcohol use in ED/whoer_mozambique_southafrica.sav",
+data_mzsa <- read.spss("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Multi_country/Tz, SA, Mz alcohol use in ED/whoer_mozambique_southafrica.sav",
                        to.data.frame=TRUE)
 data_mzsa<-as.data.frame(data_mzsa)
 ###################################################
@@ -117,6 +118,7 @@ data_tz$bottles_drank_tz<-alcohol_amount_1/16.5
 #Merging datasets
 
 data_tz$country<-c("ATz")
+data_tz$weights<-c(1)
 
 data_tz2<-with(data_tz,data.frame(current_alcohol_use=QF04,
                                  breath_level=QD04,
@@ -154,7 +156,8 @@ data_tz2<-with(data_tz,data.frame(current_alcohol_use=QF04,
                                  # alcohol_amount_2,
                                  # alcohol_amount_3,
                                  country=country,
-                                 alcohol_amount=bottles_drank_tz))
+                                 alcohol_amount=bottles_drank_tz,
+                                 weight=weights))
 
 ##############################################
 #Organize data for Mozambique and South Africa
@@ -226,9 +229,16 @@ data_mzsa2<-with(data_mzsa,data.frame(current_alcohol_use=qf04,
                                  # alcohol_amount_2=,
                                  # alcohol_amount_3=
                                  country=country,
-                                 alcohol_amount=bottles_drank_mzsa))
+                                 alcohol_amount=bottles_drank_mzsa,
+                                 weight=finalwgt))
 
-data_who<-rbind(data_tz2,data_mzsa2)
+# #separating countries
+# data_mz<-data_mzsa2 %>% subset(country=="Mozambique")
+
+# data_sa<-data_mzsa2 %>% subset(country=="South Africa")
+
+# #Applying sampling weights to South Africa
+# library(survey)
 
 #### CREATING ETHANOL AMOUT / ml data
 
@@ -415,16 +425,30 @@ rti_data<-subset(data_who,data_who$method_injury_recoded=="RTI")
 
 #MANAGING MZ and SA data
 
+#applying sampling weights
+
+# data_who<-rbind(data_tz2,data_mzsa2)
+
+#applying weights using the "survey" package
+#see:http://faculty.washington.edu/tlumley/old-survey/index.html
+#see:https://rpubs.com/corey_sparks/53683
+library(survey)
+data_who_weighted <- svydesign(ids = ~1, 
+                     data = rti_data,
+                     weights = rti_data$weights)
+
+
+
 ###################################################
 #IMPUTING MISSING DATA
 ###################################################
 #Studying missing data
-#Calculating frequency of missing data per variable
-propmiss <- function(dataframe) lapply(dataframe,function(x) data.frame(nmiss=sum(is.na(x)), n=length(x), propmiss=sum(is.na(x))/length(x)))
+# #Calculating frequency of missing data per variable
+# propmiss <- function(dataframe) lapply(dataframe,function(x) data.frame(nmiss=sum(is.na(x)), n=length(x), propmiss=sum(is.na(x))/length(x)))
 
-propmiss(data_moshi)
+# propmiss(data_moshi)
 
-#inspecting measure random of missing data
+# #inspecting measure random of missing data
 #Inspectif Weather Conditions
 #weather_missing<-car::recode(data_epi$weather_condition,"NA=0;else=1")
 #logmodel<-glm(weather_missing ~  data_epi$day_crash,family=binomial)
@@ -458,12 +482,12 @@ propmiss(data_moshi)
 # # plots impact of missing data for a set of pairs - works better for numerical data
 # marginplot(data.frame(data_epi$outcome,data_epi$visibility), col = mdc(1:2), cex = 1.2, cex.lab = 1.2, cex.numbers = 1.3, pch = 19)
 
-# generate imputations
-# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-imp <- mice(data_moshi, seed = 2222, m=10)
+# # generate imputations
+# # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+# imp <- mice(data_tz, seed = 2222, m=10)
 
-# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-data_moshi_imp<-complete(imp,1)
+# # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+# data_moshi_imp<-complete(imp,1)
 
 #Plost the distrbution of each of the 5 possibilities of imputations
 # stripplot(imp,pch=20,cex=1.2)
@@ -477,332 +501,13 @@ data_moshi_imp<-complete(imp,1)
 # pred[, "bmi"] <- 0 #transform the column values into 0's for not predictiong
 # imp <- mice(nhanes, pred = pred, pri = FALSE) # rerun the model specifying pred argumento witht eh matriz recoded.
 
-###################################################
-#WEIGHTING
-###################################################
+#########################################################
+#TABLE 1 (?)
+#########################################################
 
-###################################################
-#TABLE 1. DESCRIPTIVES
-###################################################
-summary(data_moshi_imp)
+svytable(country~method_injury_recoded, design = data_who_weighted)
+prop.table(svytable(country~method_injury, design = data_who_weighted))
 
-#alcohol usage
-mytable <- with(data_moshi_imp,table(breath_level))
-mytable
-prop.table(mytable)
-prop.test(156, 516)
-
-#alcohol legal limit
-mytable <- with(data_moshi_imp,table(breath_level_limit))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(breath_level_limit,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#TABLE 1
-#Age
-with(data_moshi_imp,describe(age))
-with(data_moshi_imp,by(age,breath_level,ad.test))
-with(data_moshi_imp,describeBy(age,breath_level))
-with(data_moshi_imp,t.test(age~breath_level))
-
-#Gender
-mytable <- with(data_moshi_imp,table(gender))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(gender,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#Education
-with(data_moshi_imp,describe(years_education))
-with(data_moshi_imp,by(years_education,breath_level,ad.test))
-with(data_moshi_imp,describeBy(years_education,breath_level))
-with(data_moshi_imp,t.test(years_education~breath_level))
-
-#Work
-mytable <- with(data_moshi_imp,table(work))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(work,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#Income
-# quantile(data_moshi_imp$income, probs = seq(0, 1, 0.20))
-# data_moshi_imp$income_cat<-car::recode(data_moshi_imp$income,"12000:60000='low';60001:108000='mediumlow';108001:200000='medium';200001:376000='mediumhigh';376001:80000000='high'")
-# with(data_moshi_imp,describe(income))
-# with(data_moshi_imp,by(income,breath_level,ad.test))
-# with(data_moshi_imp,by(income,breath_level,summary))
-# with(data_moshi_imp,t.test(income~breath_level))
-
-#past alcohol usage
-mytable <- with(data_moshi_imp,table(past_alcohol_use))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(past_alcohol_use,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-fisher.test(mytable)
-
-#predictor_FUP1=QNH04 - 24 hrs to injury
-mytable <- with(data_moshi_imp,table(predictor_FUP1))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(predictor_FUP1,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#predictor_FUP2=QH02 - 1 week prior to injury
-mytable <- with(data_moshi_imp,table(predictor_FUP2))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(predictor_FUP2,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-# #alcohol usage
-# mytable <- with(data_moshi_imp,table(breath_level_limit))
-# mytable
-# prop.table(mytable)
-# mytable <- with(data_moshi_imp,table(breath_level,breath_level_limit))
-# mytable
-# prop.table(mytable,1)
-# #assocstats(mytable)
-
-# #sys_bp
-# with(data_moshi_imp,describe(sys_bp))
-# with(data_moshi_imp,by(sys_bp,breath_level,ad.test))
-# with(data_moshi_imp,by(sys_bp,breath_level,describe))
-# with(data_moshi_imp,t.test(sys_bp~breath_level))
-
-# #gcs
-# with(data_moshi_imp,describe(gcs))
-# with(data_moshi_imp,by(gcs,breath_level,ad.test))
-# with(data_moshi_imp,by(gcs,breath_level,describe))
-# with(data_moshi_imp,t.test(gcs~breath_level))
-
-# #resp_rate
-# with(data_moshi_imp,describe(resp_rate))
-# with(data_moshi_imp,by(resp_rate,breath_level,ad.test))
-# with(data_moshi_imp,by(resp_rate,breath_level,describe))
-# with(data_moshi_imp,t.test(resp_rate~breath_level))
-
-# #avpu
-# with(data_moshi_imp,describe(avpu))
-# with(data_moshi_imp,by(avpu,breath_level,ad.test))
-# with(data_moshi_imp,by(avpu,breath_level,describe))
-# with(data_moshi_imp,t.test(avpu~breath_level))
-
-#time_to_injury
-with(data_moshi_imp,describe(time_to_injury))
-with(data_moshi_imp,by(time_to_injury,breath_level,ad.test))
-with(data_moshi_imp,by(time_to_injury,breath_level,describe))
-with(data_moshi_imp,t.test (time_to_injury~breath_level))
-
-#kts
-with(data_moshi,describe(kts))
-with(data_moshi_imp,by(kts,breath_level,ad.test))
-with(data_moshi_imp,by(kts,breath_level,describe))
-with(data_moshi_imp,t.test(kts~breath_level))
-
-# #pulse
-# with(data_moshi_imp,describe(pulse))
-# with(data_moshi_imp,by(pulse,breath_level,ad.test))
-# with(data_moshi_imp,by(pulse,breath_level,describe))
-# with(data_moshi_imp,t.test(pulse~breath_level))
-
-#rts
-with(data_moshi_imp,describe(rts))
-with(data_moshi_imp,by(rts,breath_level,ad.test))
-with(data_moshi_imp,by(rts,breath_level,describe))
-with(data_moshi_imp,t.test (rts~breath_level))
-
-#fracture
-mytable <- with(data_moshi_imp,table(fracture))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(fracture,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#dislocation
-mytable <- with(data_moshi_imp,table(dislocation))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(dislocation,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#open_wound
-mytable <- with(data_moshi_imp,table(open_wound))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(open_wound,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#bruise
-mytable <- with(data_moshi_imp,table(bruise))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(bruise,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#burn
-mytable <- with(data_moshi_imp,table(burn))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(burn,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#concussion
-mytable <- with(data_moshi_imp,table(concussion))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(concussion,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#organ_injury
-mytable <- with(data_moshi_imp,table(organ_injury))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(organ_injury,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#method_injury
-mytable <- with(data_moshi_imp,table(method_injury))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(method_injury,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#type_vehicle
-data_moshi_imp$type_vehicle<-as.factor(data_moshi_imp$type_vehicle)
-mytable <- with(data_moshi_imp,table(type_vehicle))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(type_vehicle,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#motive_injury
-data_moshi_imp$motive_injury<-as.factor(data_moshi_imp$motive_injury)
-mytable <- with(data_moshi_imp,table(motive_injury))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(motive_injury,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-
-#location
-data_moshi_imp$location<-as.factor(data_moshi_imp$location)
-mytable <- with(data_moshi_imp,table(location))
-mytable
-prop.table(mytable)
-mytable <- with(data_moshi_imp,table(location,breath_level))
-mytable
-prop.table(mytable,2)
-assocstats(mytable)
-fisher.test(mytable)
-
-# #emergency_need
-# data_moshi_imp$emergency_need<-as.factor(data_moshi_imp$emergency_need)
-# mytable <- with(data_moshi_imp,table(emergency_need))
-# mytable
-# prop.table(mytable)
-# mytable <- with(data_moshi_imp,table(emergency_need,breath_level))
-# mytable
-# prop.table(mytable,2)
-# assocstats(mytable)
-
-# #time_to_injury
-# with(data_moshi_imp,describe(alcohol_amount_1))
-# with(data_moshi_imp,by(alcohol_amount_1,breath_level,ad.test))
-# with(data_moshi_imp,by(alcohol_amount_1,breath_level,describe))
-# with(data_moshi_imp,t.test (alcohol_amount_1~breath_level))
-
-# ### DUMMY Variables
-# dummy_data<-with(data_moshi_imp,data.frame(breath_level,
-#  method_injury,as.factor(type_vehicle),location))
-# dummy<-as.data.frame(model.matrix(breath_level~ ., data = dummy_data))
-# names(dummy)<-c("Intercept",
-#           "injury_fall_trip",
-#           "injury_other",
-#           "injury_RIT",
-#           "injury_violence",
-#           "vehicle2",
-#           "vehicle3",
-#           "vehicle4",
-#           "location_drinking",
-#           "home",
-#           "location_outdoor",
-#           "location_vehicle",
-#           "location_workplace")
-
-# #Fall/TRIP
-# mytable <- table(dummy$injury_fall_trip,data_moshi_imp$breath_level)
-# mytable
-# prop.table(mytable,2)
-# assocstats(mytable)
-
-# #RTI
-# mytable <- table(dummy$injury_RIT,data_moshi_imp$breath_level)
-# mytable
-# prop.table(mytable,2)
-# assocstats(mytable)
-
-# #violence
-# mytable <- table(dummy$injury_violence,data_moshi_imp$breath_level)
-# mytable
-# prop.table(mytable,2)
-# assocstats(mytable)
-
-# #vehicle1
-# mytable <- table(dummy$vehicle1,data_moshi_imp$breath_level)
-# mytable
-# prop.table(mytable,2)
-# assocstats(mytable)
-
-# #vehicle2
-# mytable <- table(dummy$vehicle2,data_moshi_imp$breath_level)
-# mytable
-# prop.table(mytable,2)
-# assocstats(mytable)
-
-# #vehicle3
-# mytable <- table(dummy$vehicle3,data_moshi_imp$breath_level)
-# mytable
-# prop.table(mytable,2)
-# assocstats(mytable)
-
-# #vehicle4
-# mytable <- table(dummy$Intercept,data_moshi_imp$breath_level)
-# mytable
-# prop.table(mytable,2)
-# assocstats(mytable)
 
 ###########################################################
 ##TABLE 2
@@ -845,8 +550,6 @@ exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95)))
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
-#########################################################
-#FIGURE 2
-#########################################################
+
 
 
