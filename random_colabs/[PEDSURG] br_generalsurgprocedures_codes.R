@@ -114,6 +114,7 @@ pediatric_population<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Globa
 
 #data with avaiability of pediatric surgical care
 availability_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_peds_availability_data.csv")
+availability_data$ibge<-availability_data$X...ibge
 
 mortality_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_pedmortality_data.csv")
 ###################### SIA
@@ -259,7 +260,6 @@ data_procedures_region_pop_income <- merge(
 	income_data, by="ibge",all.x = TRUE)
 
 #merging availability of care to full dataset
-availability_data$ibge<-availability_data$X...ibge
 data_procedures_region_pop_income_avail <- merge(
 	data_procedures_region_pop_income,
 	availability_data, by="ibge",all.x = TRUE)
@@ -269,9 +269,20 @@ data_sih_full_by_mrocedures <- base::merge(
 	data_procedures_region_pop_income_avail,
 	surg_centers, by="CNES",all.x = TRUE)
 
+data_sih_full_by_mrocedures %>% 
+  group_by(peds_specific,ibge.x) %>%
+  summarise(no_rows = length(peds_specific)) %>%
+  spread(peds_specific,no_rows) -> data_hosp_levels
+
+data_hosp_levels$ibge<-data_hosp_levels$ibge.x
+
 # MUNICIPALITY LEVEL
 ################################### 
+library(tidyverse)
+
 #calculating counts of procedures by municipality
+#there is some conflict with something in this function
+
 data_sih_recoded %>% 
   group_by(procedure,ibge) %>%
   summarise(no_rows = length(procedure)) %>%
@@ -295,14 +306,14 @@ data_sih_recoded_bycity_income_region_pop <- merge(
 	data_sih_recoded_bycity_income_region,
 	pediatric_population, by="ibge",all.x = TRUE)
 
-# #merging pediatric and mortality population to full dataset
-# data_sih_recoded_bycity_income_region_pop_surg <- merge(
-# 	data_sih_recoded_bycity_income_region,
-# 	surg_centers, by="CNES",all.x = TRUE)
+#merging pediatric and mortality population to full dataset
+data_sih_recoded_bycity_income_region_pop_surg <- merge(
+	data_sih_recoded_bycity_income_region,
+	data_hosp_levels, by="ibge",all.x = TRUE)
 	
 #merging availability of care to full dataset
 data_sih_recoded_bycity_income_region_pop_avail <- merge(
-	data_sih_recoded_bycity_income_region_pop,
+	data_sih_recoded_bycity_income_region_pop_surg,
 	availability_data, by="ibge",all.x = TRUE)
 
 #merging availability of care to full dataset
@@ -321,15 +332,20 @@ data_sih_full_by_municipality$Regio<-car::recode(data_sih_full_by_municipality$R
 data_sih_full_by_municipalityNAto01<-lapply(data_sih_full_by_municipality,NAto0)
 data_sih_full_by_municipality<-as.data.frame(data_sih_full_by_municipalityNAto01)
 
-write.csv(data_sih_full_by_municipality,"/Users/Joao/Desktop/data_sih_full.csv")
+# write.csv(data_sih_full_by_municipality,"/Users/Joao/Desktop/data_sih_full.csv")
 
+library(gdata)
+# colnames(data_sih_full_by_municipality[19])<-"less_1"
+# colnames(data_sih_full_by_municipality[20])<-"1 to 4"
+# colnames(data_sih_full_by_municipality[21])<-"5 to 9"
+# colnames(data_sih_full_by_municipality[22])<-"10 to 14"						
 
 ######################################################################
 #TABLE 1
 ######################################################################
 
 summary_region<- with(data_sih_full_by_municipality,
-				 data.frame(pop,
+				 data.frame(POP,
 				 			Regio))
 summary_region<-na.omit(summary_region)
 # NAto0<-function(x){
@@ -339,19 +355,28 @@ summary_region<-na.omit(summary_region)
 # procNAto01<-lapply(summary_region,NAto0)
 # summary_regionzeroed<-as.data.frame(summary_region)
 
-library(plyr)
+# library(plyr)
 pop<-plyr::ddply(summary_region, "Regio", 
 	numcolwise(sum))
 
 
 region<-with(data_sih_full_by_mrocedures,
-	table(Regio,procedures))
-
-prop.table(region,2))
+	table(Regio,procedure))
+region
+prop.table(region,2)
 
 region<-as.data.frame(region)
-region$pop<-rep(pop$pop,5)
+region$pop<-rep(pop$POP,5)
 region$rates<-(region$Freq/region$pop)*10000
+
+# library(plyr)
+summary_region<- with(data_sih_full_by_mrocedures,
+				 data.frame(POP,
+				 			peds_specific))
+summary_region<-na.omit(summary_region)
+
+pop<-plyr::ddply(summary_region, "peds_specific", 
+	numcolwise(sum))
 
 hosp<-with(data_sih_full_by_mrocedures,
 	table(peds_specific,procedure))
@@ -359,13 +384,13 @@ hosp
 prop.table(hosp,2)
 
 hosp<-as.data.frame(hosp)
-hosp$pop<-rep(pop$pop,5)
+hosp$pop<-rep(pop$POP,5)
 hosp$rates<-(hosp$Freq/hosp$pop)*10000
 
 
-
+data_sih_full_by_municipality$income_level<-car::recode(data_sih_full_by_municipality$income_level,"0=NA")
 summary_region<- with(data_sih_full_by_municipality,
-				 data.frame(pop,
+				 data.frame(POP,
 				 			income_level))
 summary_region<-na.omit(summary_region)
 # NAto0<-function(x){
@@ -375,7 +400,7 @@ summary_region<-na.omit(summary_region)
 # procNAto01<-lapply(summary_region,NAto0)
 # summary_regionzeroed<-as.data.frame(summary_region)
 
-library(plyr)
+# library(plyr)
 pop<-plyr::ddply(summary_region, "income_level", 
 	numcolwise(sum))
 
@@ -386,53 +411,66 @@ income
 prop.table(income,2)
 
 income<-as.data.frame(income)
-income$pop<-rep(pop$pop,5)
+income$pop<-rep(pop$POP,5)
 income$rates<-(income$Freq/income$pop)*10000
 
 
 # MORTALITY
+summary_region<- with(data_sih_full_by_municipality,
+				 data.frame(POP,
+				 			income_level))
+summary_region<-na.omit(summary_region)
 
+pop<-plyr::ddply(summary_region, "income_level", 
+	numcolwise(sum))
 blabla<- with(data_sih_full_by_municipality,
-				 data.frame(mortality,
+				 data.frame(total,
 				 			income_level))
 blabla<-na.omit(blabla)
 
-library(plyr)
+# library(plyr)
 ble<-plyr::ddply(blabla, "income_level", 
 	numcolwise(sum))
-(ble$mortality/pop$pop)*10000
+(ble$total/pop$POP)*10000
+
+
+blabla1<- with(data_sih_full_by_municipality,
+				 data.frame(POP,
+				 			Regio))
+blabla<-na.omit(blabla)
+
+pop<-plyr::ddply(blabla1, "Regio", 
+	numcolwise(sum))
+
+library(plyr)
+ble<-plyr::ddply(blabla, "Regio", 
+	numcolwise(sum))
+ble$total/sum(ble$total)
+(ble$total/pop$POP)*10000
 
 
 blabla<- with(data_sih_full_by_municipality,
-				 data.frame(mortality,
+				 data.frame(total,
 				 			Regio))
 blabla<-na.omit(blabla)
 
 library(plyr)
 ble<-plyr::ddply(blabla, "Regio", 
 	numcolwise(sum))
-ble$mortality/sum(ble$mortality)
-(ble$mortality/pop$pop)*10000
-
-
-blabla<- with(data_sih_full_by_municipality,
-				 data.frame(mortality,
-				 			Regio))
-blabla<-na.omit(blabla)
-
-library(plyr)
-ble<-plyr::ddply(blabla, "Regio", 
-	numcolwise(sum))
-ble$mortality/sum(ble$mortality)
-(ble$mortality/pop$pop)*10000
+ble$total/sum(ble$total)
+(ble$total/pop$pop)*10000
 
 data_sih_full_by_municipality
 	
-fm_nbin <- glm(mortality ~ income_level+
-							  accessibility_index_pedicu2 +
+fm_nbin <- glm(as.numeric(as.character(X..1)) ~ income_level+
+							  accessibility_index_pedicu +
 							  accessibility_index_surgpeds +
-							  pop +
+							  POP +
 							  apendectomy +
+							  colostomy +
+							  hernia +
+							  laparotomy +
+							  wall +
 							  Regio,
 	data = data_sih_full_by_municipality,
 	family=poisson())
@@ -440,15 +478,65 @@ summary(fm_nbin)
 exp(coef(fm_nbin))
 exp(confint(fm_nbin,level=0.95))
 
-data_sih_full_by_municipality$accessibility_index_pedicu2<-data_sih_full_by_municipality$accessibility_index_pedicu*10000
-
-fm_nbin <- glm.nb(mortality ~ income_level+
-							  accessibility_index_pedicu2 +
+fm_nbin <- glm(as.numeric(as.character(X1.a.4)) ~ income_level+
+							  accessibility_index_pedicu +
 							  accessibility_index_surgpeds +
-							  pop +
+							  POP +
 							  apendectomy +
+							  colostomy +
+							  hernia +
+							  laparotomy +
+							  wall +
 							  Regio,
-	data = data_sih_full_by_municipality)
+	data = data_sih_full_by_municipality,
+	family=poisson())
+summary(fm_nbin)
+exp(coef(fm_nbin))
+exp(confint(fm_nbin,level=0.95))
+
+fm_nbin <- glm(as.numeric(as.character(X..1)) ~ income_level+
+							  accessibility_index_pedicu +
+							  accessibility_index_surgpeds +
+							  POP +
+							  apendectomy +
+							  colostomy +
+							  hernia +
+							  laparotomy +
+							  wall +
+							  Regio,
+	data = data_sih_full_by_municipality,
+	family=poisson())
+summary(fm_nbin)
+exp(coef(fm_nbin))
+exp(confint(fm_nbin,level=0.95))
+
+fm_nbin <- glm(as.numeric(as.character(X10.a.14)) ~ income_level+
+							  accessibility_index_pedicu +
+							  accessibility_index_surgpeds +
+							  POP +
+							  apendectomy +
+							  colostomy +
+							  hernia +
+							  laparotomy +
+							  wall +
+							  Regio,
+	data = data_sih_full_by_municipality,
+	family=poisson())
+summary(fm_nbin)
+exp(coef(fm_nbin))
+exp(confint(fm_nbin,level=0.95))
+
+fm_nbin <- glm(as.numeric(as.character(total)) ~ income_level+
+							  accessibility_index_pedicu +
+							  accessibility_index_surgpeds +
+							  POP +
+							  apendectomy +
+							  colostomy +
+							  hernia +
+							  laparotomy +
+							  wall,
+	data = data_sih_full_by_municipality,
+	family=poisson())
 summary(fm_nbin)
 exp(coef(fm_nbin))
 exp(confint(fm_nbin,level=0.95))

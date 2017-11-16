@@ -804,5 +804,7 @@ labs(x = 'Predictors of TBI Outcomes', y = 'OR (CI 95%)') +
 theme_bw()
 # }
 dev.off()
+
+write.csv(analysis_data,"/Users/Joao/Desktop/template_odds_forestplot_ggplot2.csv")
 	
 # plot_odds(logmodel)

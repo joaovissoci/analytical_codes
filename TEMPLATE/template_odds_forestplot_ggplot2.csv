@@ -1,0 +1,1170 @@
+"","age","male","moi","alcohol","gcs_tot","gos","transport_leg1","transport_cost","time_transport_recoded","time_to_care","transport_legs","gos_cat","gcs_cat","transport_legs_cat","time_to_care_cat","lat_leg1","long_leg1","lat_leg2","long_leg2","lat_leg3","long_leg3","lat_leg4","long_leg4"
+"1",40,"1","yes","No",15,5,"Ambulance",0,2.5,7.66666666666667,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.6608888,37.5662467,NA,NA,NA,NA,NA,NA
+"2",3,"0","yes","No",4,1,"Ambulance",0,0.5,22.8333333333333,1,"Death","Severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"3",34,"1","no","Yes",15,5,"Ambulance",0,3.25,27.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.5286807,37.118976,NA,NA,NA,NA
+"4",22,"1","yes","Yes",15,5,"Personal vehicle",0,4.75,3.75,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"5",9,"0","yes","No",15,5,"Ambulance",0,5.25,0.5,2,"Alive","Non-severe","1 or more","0-1hrs",-3.6608888,37.5662467,-3.5286807,37.118976,NA,NA,NA,NA
+"6",25,"1","yes","No",7,5,"Police",0,0.666666666666667,0.666666666666667,1,"Alive","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"7",31,"1","yes","No",10,5,"Personal vehicle",8000,0.833333333333333,3,2,"Alive","Severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"8",34,"1","no","Yes",4,5,"Personal vehicle",0,4,411.5,1,"Alive","Severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"9",45,"0","no","Yes",15,5,"Personal vehicle",0,2,2.08333333333333,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"10",38,"1","no","Yes",15,5,"Personal vehicle",0,2,3,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"11",32,"1","no","No",15,5,"Personal vehicle",0,0.0333333333333333,1.5,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"12",30,"1","no","Yes",11,5,"Hired transport",6000,1,2,2,"Alive","Severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.5286807,37.118976,NA,NA,NA,NA
+"13",49,"1","no","No",15,5,"Ambulance",33000,8,6.48333333333333,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"14",21,"1","yes","No",12,5,"Personal vehicle",0,2.33333333333333,2,2,"Alive","Severe","1 or more","1-2hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"15",32,"0","yes","No",14,1,"Police",0,2.33333333333333,0.833333333333333,2,"Death","Non-severe","1 or more","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"16",82,"1","yes","No",3,1,"Personal vehicle",0,2.5,93.1333333333333,2,"Death","Severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"17",30,"1","no","No",15,5,"Personal vehicle",4000,1,12,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"18",42,"1","yes","No",14,5,"Personal vehicle",70000,2.83333333333333,51,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"19",22,"1","yes","Yes",15,5,"Police",0,0.75,1.16666666666667,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"20",19,"1","no","No",4,1,"Personal vehicle",70000,2.33333333333333,98,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"21",44,"1","yes","Yes",8,1,"Hired transport",88000,1.75,19,2,"Death","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"22",34,"1","no","No",15,5,"Personal vehicle",0,1,2.75,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"23",1,"0","yes","No",8,5,"Personal vehicle",20000,0.666666666666667,2.25,2,"Alive","Severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"24",18,"1","yes","Yes",14,5,"Personal vehicle",0,0.5,1.33333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"25",36,"1","yes","No",15,5,"Personal vehicle",0,6.5,153,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"26",15,"1","yes","No",14,1,"Personal vehicle",0,1.75,1.16666666666667,2,"Death","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"27",7,"0","yes","No",15,5,"Hired transport",50000,1,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"28",46,"1","no","Yes",5,1,"Personal vehicle",0,2.5,1,2,"Death","Severe","1 or more","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"29",33,"1","no","Yes",15,5,"Personal vehicle",3000,0.916666666666667,36,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"30",32,"1","yes","No",15,5,"Personal vehicle",0,0.75,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"31",43,"1","no","No",6,1,"Hired transport",0,2,1.83333333333333,2,"Death","Severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"32",35,"0","yes","No",15,5,"Other",0,1,1.83333333333333,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"33",19,"1","no","No",15,5,"Hired transport",2500,1.83333333333333,2.33333333333333,2,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.186389,37.068611,NA,NA,NA,NA
+"34",44,"1","no","No",15,5,"Other",0,0.5,1.33333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"35",34,"1","no","No",15,5,"Other",0,3.5,3.75,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"36",33,"1","yes","No",15,5,"Personal vehicle",60000,1.66666666666667,27,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"37",24,"1","yes","No",15,5,"Personal vehicle",0,1.08333333333333,1.33333333333333,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"38",1,"1","no","No",15,5,"Hired transport",5000,0.333333333333333,1.58333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"39",18,"1","yes","No",14,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"40",7,"0","yes","No",15,5,"Personal vehicle",70000,4.33333333333333,65.5,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"41",75,"1","yes","No",15,5,"Personal vehicle",0,2.66666666666667,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"42",9,"0","no","No",15,5,"Personal vehicle",0,6,14,1,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"43",19,"0","yes","No",15,5,"Personal vehicle",2000,2,187,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"44",6,"0","no","No",10,4,"Personal vehicle",15000,3.5,182,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"45",27,"1","no","Yes",15,5,"Personal vehicle",0,1.33333333333333,0,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"46",32,"1","yes","No",15,5,"Personal vehicle",0,3.83333333333333,100,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"47",0.5,"1","no","No",15,5,"Personal vehicle",0,2.33333333333333,5,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"48",41,"1","yes","No",15,5,"Personal vehicle",0,4.33333333333333,19,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"49",19,"1","no","No",15,5,"Bodaboda",0,2.16666666666667,0.25,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"50",40,"1","yes","No",15,5,"Ambulance",0,0.416666666666667,3,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"51",7,"1","yes","No",8,5,"Personal vehicle",5000,0.75,0.833333333333333,1,"Alive","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"52",2,"1","no","No",15,5,"Personal vehicle",0,1.16666666666667,1.11666666666667,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"53",22,"1","yes","Yes",15,5,"Personal vehicle",0,1,75,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"54",47,"1","no","No",10,5,"Personal vehicle",0,1.25,15,2,"Alive","Severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"55",21,"1","yes","No",15,5,"Personal vehicle",5000,0.75,0.5,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"56",28,"1","no","Yes",7,1,"Personal vehicle",0,1,33.8333333333333,2,"Death","Severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"57",22,"1","yes","Yes",8,5,"Personal vehicle",0,2,5.66666666666667,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"58",35,"1","yes","Yes",14,5,"Personal vehicle",0,1.16666666666667,3.5,2,"Alive","Non-severe","1 or more","3-4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"59",8,"0","yes","No",15,5,"Personal vehicle",0,2,150,1,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"60",21,"1","no","Yes",14,5,"Hired transport",10000,0.833333333333333,0.833333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"61",25,"1","yes","Yes",14,5,"Personal vehicle",0,1.33333333333333,2.5,2,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"62",36,"1","no","No",15,5,"Personal vehicle",0,0.333333333333333,4,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"63",55,"1","yes","No",15,5,"Personal vehicle",25000,0.166666666666667,0.666666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"64",79,"1","no","No",15,1,"Personal vehicle",10000,3,18.3333333333333,2,"Death","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"65",68,"1","no","Yes",15,5,"Personal vehicle",0,1.75,20.1833333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"66",28,"1","yes","Yes",7,1,"Personal vehicle",50000,3.5,85.7166666666667,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"67",19,"0","no","No",15,5,"Ambulance",3000,0.5,0.25,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"68",32,"1","yes","Yes",14,5,"Personal vehicle",0,1.16666666666667,148.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"69",22,"0","yes","No",15,5,"Personal vehicle",0,0.833333333333333,0.733333333333333,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"70",49,"0","yes","No",15,5,"Hired transport",10000,0.666666666666667,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"71",32,"1","no","Yes",9,5,"Hired transport",8000,1,2.5,2,"Alive","Severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"72",9,"0","yes","No",6,5,"Personal vehicle",0,1.66666666666667,11,2,"Alive","Severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"73",18,"1","no","No",8,1,"Personal vehicle",0,2,19,2,"Death","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"74",52,"1","yes","No",15,5,"Personal vehicle",0,1,2.5,2,"Alive","Non-severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.5286807,37.118976,NA,NA,NA,NA
+"75",30,"1","yes","Yes",13,5,"Personal vehicle",0,2.5,2.75,2,"Alive","Non-severe","1 or more","2-3hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"76",27,"1","no","No",15,5,"Bodaboda",0,0.666666666666667,25.8333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"77",62,"1","yes","No",5,1,"Personal vehicle",120000,1.5,75,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"78",25,"1","yes","Yes",15,1,"Police",0,0.5,1.5,1,"Death","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"79",30,"1","yes","Yes",15,5,"Bodaboda",0,1,4.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"80",30,"1","yes","Yes",15,5,"Personal vehicle",0,0.916666666666667,136,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"81",28,"1","no","No",15,5,"Hired transport",4000,1.75,57.1666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"82",20,"1","yes","Yes",8,1,"Personal vehicle",30000,1.5,57.1666666666667,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"83",24,"1","yes","No",15,5,"Police",0,0.25,0.25,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"84",39,"1","yes","No",15,5,"Personal vehicle",0,0.5,1.83333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"85",27,"1","yes","No",3,1,"Personal vehicle",0,0.25,0.5,1,"Death","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"86",40,"1","yes","Yes",15,5,"Police",0,1,3,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"87",45,"1","yes","No",3,1,"Personal vehicle",0,1,36.3333333333333,2,"Death","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"88",26,"1","yes","No",15,5,"Personal vehicle",15000,2,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"89",79,"1","yes","Yes",5,1,"Police",0,0.5,0.5,1,"Death","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"90",48,"1","yes","No",14,5,"Personal vehicle",0,1.5,2.5,1,"Alive","Non-severe","0 to 1","2-3hrs",-4.2118703,37.4419273,NA,NA,NA,NA,NA,NA
+"91",25,"1","yes","No",6,5,"Personal vehicle",0,0.75,1,2,"Alive","Severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"92",35,"1","yes","Yes",15,5,"Personal vehicle",10000,1,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"93",36,"1","no","No",7,5,"Personal vehicle",0,2,13,2,"Alive","Severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"94",38,"1","yes","Yes",15,5,"Personal vehicle",10000,0.833333333333333,5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"95",29,"1","yes","Yes",15,5,"Personal vehicle",10000,1.33333333333333,4.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"96",15,"1","no","No",14,5,"Personal vehicle",30000,1.75,14,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.166825,36.8856703,NA,NA,NA,NA
+"97",37,"1","no","Yes",15,5,"Police",0,1.25,186,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"98",20,"0","yes","No",15,5,"Personal vehicle",3000,0.75,19.4333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"99",30,"1","no","No",15,5,"Personal vehicle",0,0.333333333333333,0.333333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"100",4,"0","yes","No",15,5,"Hired transport",200,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"101",20,"0","no","No",15,5,"Personal vehicle",0,0.75,1.5,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"102",40,"1","no","No",6,1,"Police",0,4.33333333333333,10.05,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"103",27,"1","yes","Yes",3,1,"Other",0,0.833333333333333,6.91666666666667,1,"Death","Severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"104",9,"1","no","No",15,5,"Hired transport",5000,1.83333333333333,0.75,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"105",33,"1","yes","Yes",15,5,"Personal vehicle",0,1.25,0.833333333333333,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"106",41,"1","yes","No",15,5,"Personal vehicle",0,2,0.833333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"107",4,"1","yes","No",15,5,"Personal vehicle",0,2.16666666666667,3.5,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.166825,36.8856703,NA,NA,NA,NA
+"108",2,"0","yes","No",15,5,"Personal vehicle",0,0.333333333333333,0.333333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"109",15,"0","yes","No",15,5,"Personal vehicle",0,4,25,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"110",37,"1","yes","No",15,5,"Personal vehicle",0,1.66666666666667,25,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"111",51,"1","yes","Yes",15,5,"Personal vehicle",0,15.25,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"112",31,"1","yes","Yes",15,5,"Personal vehicle",0,1,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"113",68,"1","no","No",5,1,"Other",0,5,21,2,"Death","Severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"114",37,"1","yes","No",15,5,"Bodaboda",0,0.666666666666667,14,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"115",10,"1","no","No",15,5,"Personal vehicle",0,1.75,12,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"116",33,"1","no","Yes",14,5,"Police",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"117",7,"1","yes","No",8,5,"Personal vehicle",95000,8.25,54.25,3,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"118",24,"1","no","Yes",15,5,"Personal vehicle",0,0.833333333333333,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"119",27,"1","no","Yes",15,5,"Personal vehicle",0,0.916666666666667,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"120",7,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"121",59,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,88,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"122",49,"0","yes","No",15,5,"Personal vehicle",0,0.75,3.16666666666667,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"123",50,"1","yes","No",15,5,"Personal vehicle",0,0.166666666666667,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"124",25,"0","no","No",15,5,"Police",0,0.5,1.25,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"125",35,"1","no","No",8,5,"Personal vehicle",220000,1.78333333333333,10,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"126",22,"1","yes","Yes",15,5,"Personal vehicle",0,1.25,6,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"127",62,"1","yes","Yes",15,5,"Personal vehicle",0,1.25,5.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"128",18,"0","yes","No",15,5,"Police",0,0.25,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"129",53,"1","yes","No",14,5,"Police",0,0.75,1.16666666666667,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"130",26,"1","yes","No",15,5,"Personal vehicle",60000,0.833333333333333,3.83333333333333,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"131",13,"0","yes","No",15,5,"Personal vehicle",0,0.25,0.333333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"132",14,"1","yes","Yes",9,1,"Bodaboda",0,3.41666666666667,5,3,"Death","Severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA
+"133",60,"1","yes","Yes",15,5,"Personal vehicle",0,1.33333333333333,3.83333333333333,2,"Alive","Non-severe","1 or more","3-4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"134",26,"1","no","Yes",6,5,"Bodaboda",80000,1.5,20.75,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"135",26,"1","yes","No",14,1,"Personal vehicle",0,1.08333333333333,2.83333333333333,2,"Death","Non-severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.5286807,37.118976,NA,NA,NA,NA
+"136",27,"1","yes","No",14,5,"Bodaboda",35000,1.66666666666667,9.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.1413061,37.212256,-3.1413061,37.212256,NA,NA,NA,NA
+"137",82,"0","no","No",3,1,"Hired transport",5000,0.166666666666667,0.5,1,"Death","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"138",34,"1","no","No",15,5,"Personal vehicle",4000,0.583333333333333,37.1666666666667,1,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"139",79,"0","yes","Yes",15,5,"Personal vehicle",0,3,148.333333333333,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,-3.3227432,37.3285435,NA,NA
+"140",14,"1","yes","Yes",15,5,"Bodaboda",2000,1.08333333333333,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"141",27,"1","yes","No",15,5,"Bodaboda",35000,1.58333333333333,10,3,"Alive","Non-severe","1 or more","more 4hrs",-3.1413061,37.212256,-3.1413061,37.212256,-3.1413061,37.212256,NA,NA
+"142",33,"1","yes","No",15,5,"Police",0,0.75,1.25,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"143",30,"1","yes","No",14,1,"Police",0,0.833333333333333,1.08333333333333,2,"Death","Non-severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"144",21,"1","yes","No",15,5,"Police",0,0.833333333333333,27.25,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"145",10,"0","yes","No",15,5,"Personal vehicle",0,0.333333333333333,0.166666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"146",81,"1","no","No",15,5,"Hired transport",5000,1.75,2.5,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"147",30,"1","yes","No",15,5,"Personal vehicle",27000,4,78.1666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"148",5,"1","yes","No",15,5,"Personal vehicle",0,0.916666666666667,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"149",30,"0","yes","No",15,5,"Police",0,0.5,243,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.166825,36.8856703,NA,NA,NA,NA,NA,NA
+"150",34,"1","yes","No",15,5,"Police",0,0.5,2.5,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.166825,36.8856703,NA,NA,NA,NA,NA,NA
+"151",39,"1","yes","No",15,1,"Personal vehicle",0,5.5,18.5,3,"Death","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"152",47,"0","no","No",15,5,"Bodaboda",63000,0.833333333333333,141,2,"Alive","Non-severe","1 or more","more 4hrs",-3.1413061,37.212256,-3.1413061,37.212256,NA,NA,NA,NA
+"153",32,"1","yes","No",15,5,"Personal vehicle",0,0.583333333333333,0.5,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"154",32,"1","yes","Yes",15,5,"Personal vehicle",0,1.5,122,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"155",20,"1","no","No",15,5,"Bodaboda",0,2.5,6372,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"156",23,"1","yes","Yes",15,5,"Personal vehicle",0,0.333333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"157",1,"0","yes","No",15,5,"Personal vehicle",0,0.333333333333333,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"158",19,"0","yes","No",15,5,"Personal vehicle",0,0.333333333333333,1.75,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"159",41,"1","yes","Yes",15,5,"Police",0,0.25,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"160",36,"1","no","Yes",15,5,"Personal vehicle",0,1.5,49,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"161",4,"0","yes","No",15,5,"Personal vehicle",0,0.25,0.0833333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"162",41,"1","yes","Yes",15,5,"Police",0,0.333333333333333,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"163",18,"1","yes","No",15,5,"Personal vehicle",0,0.333333333333333,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"164",22,"1","yes","Yes",15,5,"Personal vehicle",20000,0.333333333333333,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"165",48,"1","no","Yes",14,5,"Personal vehicle",0,2.05,19,4,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"166",38,"1","yes","Yes",15,5,"Police",0,0.5,0.583333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"167",7,"1","yes","No",6,5,"Personal vehicle",80000,1.66666666666667,29.25,3,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"168",31,"1","yes","No",14,5,"Police",0,0.333333333333333,0.333333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"169",26,"1","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"170",20,"1","yes","No",15,5,"Personal vehicle",0,1,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"171",48,"0","yes","No",15,5,"Personal vehicle",0,2.5,134,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"172",20,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,2.5,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"173",27,"1","yes","No",14,5,"Police",11500,2.16666666666667,18.5833333333333,4,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,-3.5286807,37.118976
+"174",20,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,2.5,2,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"175",41,"1","no","Yes",13,5,"Bodaboda",20000,1.25,41,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA
+"176",4,"1","yes","No",15,5,"Bodaboda",0,2.08333333333333,6,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA
+"177",32,"0","yes","No",3,1,"Personal vehicle",0,0.333333333333333,0.75,1,"Death","Severe","0 to 1","0-1hrs",-3.166825,36.8856703,NA,NA,NA,NA,NA,NA
+"178",68,"0","yes","No",15,5,"Police",0,1,2.5,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"179",80,"1","yes","Yes",15,5,"Hired transport",0,1.83333333333333,1.83333333333333,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"180",20,"1","yes","No",15,5,"Personal vehicle",80000,1.66666666666667,2,2,"Alive","Non-severe","1 or more","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"181",21,"1","no","Yes",12,5,"Police",0,0.666666666666667,7.06666666666667,1,"Alive","Severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"182",25,"0","no","No",15,5,"Personal vehicle",0,9.16666666666667,37,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"183",19,"1","yes","Yes",15,5,"Hired transport",40000,2.25,2.5,2,"Alive","Non-severe","1 or more","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"184",31,"1","no","No",15,5,"Hired transport",18000,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"185",38,"1","no","Yes",15,5,"Personal vehicle",0,1.08333333333333,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"186",38,"1","yes","Yes",14,5,"Police",0,1,1.16666666666667,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"187",16,"1","no","No",15,5,"Personal vehicle",20000,3.66666666666667,73.7833333333333,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"188",28,"1","no","No",15,5,"Bodaboda",50000,0.916666666666667,2.46666666666667,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"189",47,"1","yes","Yes",15,5,"Personal vehicle",0,1.33333333333333,83.3333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"190",20,"1","yes","No",15,5,"Personal vehicle",20000,1,0.333333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"191",20,"1","yes","No",15,1,"Hired transport",20000,1,1.5,1,"Death","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"192",18,"1","yes","No",15,5,"Personal vehicle",0,0.5,4,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"193",18,"1","yes","No",15,5,"Personal vehicle",0,3,2.66666666666667,2,"Alive","Non-severe","1 or more","2-3hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"194",18,"1","yes","No",15,5,"Personal vehicle",0,0.75,4,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"195",52,"0","yes","No",15,5,"Hired transport",0,1.08333333333333,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.3227432,37.3285435,NA,NA,NA,NA
+"196",20,"1","no","No",15,5,"Police",0,0.25,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"197",30,"1","no","No",15,5,"Personal vehicle",0,0.916666666666667,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"198",44,"1","yes","Yes",11,5,"Personal vehicle",3000,2.01666666666667,3,3,"Alive","Severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.5286807,37.118976,-3.3227432,37.3285435,NA,NA
+"199",16,"1","yes","No",15,5,"Hired transport",0,1,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"200",17,"0","yes","No",6,5,"Personal vehicle",0,1.33333333333333,1.66666666666667,1,"Alive","Severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"201",74,"1","yes","No",15,5,"Personal vehicle",0,1.13333333333333,6,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.3227432,37.3285435,NA,NA,NA,NA
+"202",25,"1","no","No",13,5,"Bodaboda",12000,1.16666666666667,11,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"203",53,"1","no","No",15,5,"Other",15000,5,210,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"204",17,"1","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"205",37,"0","yes","No",15,5,"Hired transport",90000,2.66666666666667,10.6666666666667,3,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,-3.5286807,37.118976,NA,NA
+"206",12,"0","yes","No",6,1,"Personal vehicle",0,0.916666666666667,1.83333333333333,2,"Death","Severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"207",23,"1","yes","No",9,1,"Personal vehicle",0,1,1,2,"Death","Severe","1 or more","0-1hrs",-3.186389,37.068611,-3.166825,36.8856703,NA,NA,NA,NA
+"208",23,"1","yes","No",15,5,"Personal vehicle",60000,16.5,19.0166666666667,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA
+"209",3,"0","yes","No",15,5,"Bodaboda",7300,1.66666666666667,8.5,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA
+"210",62,"1","yes","No",15,5,"Personal vehicle",0,1,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"211",28,"1","yes","No",14,5,"Hired transport",10000,0.833333333333333,0.25,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"212",38,"1","no","Yes",15,5,"Personal vehicle",0,0.75,8,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"213",33,"1","yes","Yes",15,5,"Personal vehicle",0,0.25,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"214",19,"0","yes","Yes",12,5,"Personal vehicle",0,0.25,0.25,1,"Alive","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"215",36,"0","yes","No",15,5,"Personal vehicle",10000,0.583333333333333,16.6666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"216",39,"1","yes","Yes",13,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"217",28,"1","yes","Yes",15,5,"Personal vehicle",30000,1.16666666666667,2.5,2,"Alive","Non-severe","1 or more","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"218",37,"1","yes","Yes",15,5,"Personal vehicle",0,0.333333333333333,0.333333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"219",24,"1","yes","Yes",5,1,"Personal vehicle",0,1.33333333333333,12.5,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"220",48,"1","yes","No",15,5,"Personal vehicle",0,0.416666666666667,0.4,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"221",40,"1","yes","No",5,1,"Personal vehicle",0,4.25,3.66666666666667,2,"Death","Severe","1 or more","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"222",20,"1","yes","No",7,5,"Personal vehicle",3000,1.08333333333333,67,2,"Alive","Severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"223",31,"1","yes","Yes",4,1,"Personal vehicle",0,0.333333333333333,1,1,"Death","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"224",42,"0","yes","No",9,5,"Police",67950,1.16666666666667,209,3,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"225",51,"1","yes","No",13,5,"Other",10000,1.08333333333333,18,3,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"226",44,"1","yes","Yes",13,5,"Personal vehicle",0,2,183.5,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"227",63,"1","no","Yes",15,5,"Personal vehicle",0,0.833333333333333,17,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"228",17,"0","yes","No",15,5,"Personal vehicle",0,0.583333333333333,0.5,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"229",27,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,5.5,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"230",22,"1","no","Yes",15,5,"Personal vehicle",32000,1.33333333333333,47,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"231",54,"1","yes","Yes",15,5,"Personal vehicle",0,0.833333333333333,5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"232",9,"0","no","No",14,5,"Personal vehicle",5000,0.75,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"233",30,"1","no","Yes",15,5,"Personal vehicle",5000,1.75,8.75,2,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"234",54,"0","yes","No",14,5,"Personal vehicle",0,1.5,27.75,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"235",82,"1","yes","No",14,5,"Personal vehicle",0,5.75,21,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"236",12,"0","yes","No",15,5,"Personal vehicle",5000,8.16666666666667,65,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"237",35,"1","yes","Yes",11,5,"Personal vehicle",0,1.08333333333333,23.1666666666667,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"238",15,"1","yes","No",15,5,"Personal vehicle",0,0.166666666666667,0.166666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"239",32,"1","yes","No",15,5,"Personal vehicle",0,1.75,5,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"240",30,"1","no","Yes",15,5,"Bodaboda",0,0.666666666666667,7,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"241",5,"0","yes","No",15,5,"Personal vehicle",0,2,3,2,"Alive","Non-severe","1 or more","2-3hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"242",7,"0","yes","No",14,5,"Police",0,0.333333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"243",22,"0","no","No",14,5,"Personal vehicle",50000,2,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"244",58,"0","no","No",15,5,"Personal vehicle",0,0.333333333333333,0.833333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"245",31,"0","yes","No",15,5,"Personal vehicle",0,0.5,2.16666666666667,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"246",35,"1","yes","Yes",15,5,"Bodaboda",4500,0.583333333333333,35,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"247",62,"1","yes","No",15,5,"Other",0,1.5,48,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"248",43,"1","yes","No",7,2,"Personal vehicle",30000,4,18,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"249",64,"1","no","Yes",15,5,"Hired transport",69000,1,61,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"250",20,"1","yes","Yes",15,5,"Personal vehicle",0,1.16666666666667,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"251",23,"1","yes","No",15,5,"Personal vehicle",0,0.25,0.25,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"252",35,"1","yes","Yes",15,5,"Personal vehicle",0,0.25,0.25,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"253",35,"1","yes","Yes",15,5,"Personal vehicle",0,0.25,0.166666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"254",42,"1","no","Yes",3,1,"Personal vehicle",0,0.833333333333333,9,2,"Death","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"255",33,"1","no","Yes",14,5,"Personal vehicle",5000,1,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"256",3,"1","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"257",35,"1","yes","No",3,1,"Personal vehicle",0,0.5,2.5,1,"Death","Severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"258",20,"1","no","No",15,5,"Personal vehicle",5000,0.166666666666667,0.166666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"259",44,"1","no","Yes",15,5,"Personal vehicle",0,0.916666666666667,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"260",30,"1","no","Yes",15,5,"Personal vehicle",5000,0.833333333333333,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"261",6,"1","yes","No",15,5,"Bodaboda",0,0.333333333333333,0.333333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"262",24,"1","yes","Yes",15,5,"Police",0,0.833333333333333,1.91666666666667,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"263",26,"1","yes","No",10,5,"Personal vehicle",0,0.583333333333333,2,2,"Alive","Severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"264",34,"1","yes","No",15,5,"Other",0,0.333333333333333,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"265",35,"1","yes","Yes",3,1,"Police",0,0.75,1.5,1,"Death","Severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"266",22,"1","yes","No",15,5,"Bodaboda",65000,2.66666666666667,3.01666666666667,2,"Alive","Non-severe","1 or more","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"267",30,"1","no","No",15,5,"Police",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"268",30,"0","yes","No",4,1,"Ambulance",0,1.83333333333333,265,3,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"269",22,"1","yes","Yes",15,5,"Other",0,0.416666666666667,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"270",13,"1","yes","No",13,5,"Personal vehicle",4000,0.75,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"271",24,"1","yes","No",15,5,"Hired transport",0,1,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"272",22,"1","yes","Yes",15,5,"Other",0,0.416666666666667,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"273",22,"1","yes","No",14,5,"Personal vehicle",0,0.416666666666667,3.5,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"274",16,"1","yes","No",15,5,"Personal vehicle",0,1,0.333333333333333,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"275",62,"1","no","No",14,5,"Personal vehicle",0,1.5,27,2,"Alive","Non-severe","1 or more","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"276",14,"1","yes","No",15,5,"Personal vehicle",34000,1.75,19,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"277",42,"0","yes","No",14,5,"Hired transport",60000,2.58333333333333,5.5,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA
+"278",69,"1","yes","No",3,5,"Personal vehicle",0,0.833333333333333,1.25,2,"Alive","Severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"279",25,"1","no","Yes",11,5,"Police",0,1,2,2,"Alive","Severe","1 or more","1-2hrs",NA,NA,-3.166825,36.8856703,NA,NA,NA,NA
+"280",33,"1","no","No",15,5,"Hired transport",0,1,15.25,3,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"281",35,"1","no","Yes",15,5,"Hired transport",0,0.833333333333333,6,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"282",82,"0","no","No",15,5,"Personal vehicle",0,4.25,1244.5,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"283",32,"1","yes","Yes",15,5,"Other",0,0.5,1.08333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"284",37,"1","yes","Yes",15,5,"Personal vehicle",28000,6,93.1333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"285",39,"1","yes","No",15,5,"Other",0,0.833333333333333,6.66666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"286",10,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"287",24,"1","no","No",15,5,"Other",0,1.91666666666667,3.66666666666667,3,"Alive","Non-severe","1 or more","3-4hrs",-3.186389,37.068611,-3.186389,37.068611,-3.186389,37.068611,NA,NA
+"288",54,"1","yes","No",15,5,"Bodaboda",29000,0.583333333333333,1.58333333333333,3,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"289",19,"1","no","No",15,5,"Bodaboda",20000,3.5,18,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"290",30,"1","yes","No",3,1,"Personal vehicle",0,0.333333333333333,0.333333333333333,1,"Death","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"291",34,"1","no","Yes",13,5,"Police",0,0.833333333333333,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"292",26,"1","no","No",15,5,"Other",0,1,2.08333333333333,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"293",26,"1","no","No",12,1,"Police",0,0.466666666666667,22.8333333333333,1,"Death","Severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"294",17,"1","yes","No",6,5,"Police",0,0.833333333333333,1,1,"Alive","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"295",40,"1","yes","Yes",13,5,"Personal vehicle",20000,1.5,2.5,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.6608888,37.5662467,NA,NA,NA,NA,NA,NA
+"296",43,"1","no","Yes",14,4,"Personal vehicle",0,0.833333333333333,1.5,2,"Death","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"297",54,"1","yes","No",15,5,"Police",0,2,4.93333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"298",1,"1","yes","No",15,5,"Personal vehicle",0,1.16666666666667,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"299",4,"0","yes","No",15,5,"Personal vehicle",0,1.16666666666667,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"300",11,"0","yes","No",15,5,"Personal vehicle",0,1.16666666666667,2.25,2,"Alive","Non-severe","1 or more","2-3hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"301",35,"1","yes","No",15,5,"Personal vehicle",0,1.16666666666667,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"302",42,"1","yes","No",15,5,"Personal vehicle",0,1.16666666666667,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"303",31,"1","yes","No",15,5,"Police",0,1.5,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"304",45,"1","yes","No",8,4,"Hired transport",84000,3,71.25,3,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"305",44,"0","no","No",15,5,"Other",4000,0.833333333333333,69.1666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"306",32,"1","no","No",15,5,"Police",0,1,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"307",25,"1","yes","Yes",15,5,"Personal vehicle",0,0.833333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"308",2,"1","no","No",8,5,"Bodaboda",1500,1.41666666666667,3.33333333333333,3,"Alive","Severe","1 or more","3-4hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"309",0.5,"0","yes","No",14,5,"Personal vehicle",0,10,1851,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"310",23,"0","yes","No",10,4,"Police",0,0.5,3,0,"Death","Severe","0 to 1","2-3hrs",-3.6608888,37.5662467,NA,NA,NA,NA,NA,NA
+"311",41,"1","yes","Yes",15,5,"Personal vehicle",0,1,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"312",42,"1","no","Yes",15,5,"Personal vehicle",0,0.5,1.5,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"313",28,"1","yes","Yes",14,5,"Police",0,0.583333333333333,8762,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"314",20,"1","no","No",15,5,"Personal vehicle",0,0.333333333333333,0.75,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"315",29,"1","no","No",3,1,"Police",66000,2,53,3,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"316",21,"1","yes","No",15,5,"Bodaboda",0,2.5,6,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,-3.6608888,37.5662467,NA,NA
+"317",28,"1","yes","No",15,5,"Police",0,1,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"318",49,"1","yes","Yes",15,5,"Bodaboda",0,1.75,3,2,"Alive","Non-severe","1 or more","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"319",69,"1","yes","No",15,5,"Bodaboda",0,1.58333333333333,50,4,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.3227432,37.3285435,-3.3227432,37.3285435
+"320",32,"0","no","No",15,5,"Personal vehicle",0,1.25,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"321",58,"0","no","No",15,5,"Personal vehicle",0,1.25,2.66666666666667,2,"Alive","Non-severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"322",28,"1","yes","No",15,5,"Personal vehicle",40000,1.75,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"323",25,"1","no","Yes",15,5,"Personal vehicle",0,1.5,5.33333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"324",52,"1","no","Yes",15,5,"Personal vehicle",0,1.41666666666667,19,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"325",1,"1","no","No",15,5,"Other",5000,0.916666666666667,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"326",39,"1","yes","No",15,5,"Personal vehicle",4000,0.833333333333333,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"327",2,"1","yes","No",15,5,"Personal vehicle",0,1.41666666666667,0.833333333333333,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"328",15,"1","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"329",1,"0","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"330",30,"1","no","Yes",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"331",23,"1","yes","Yes",15,5,"Police",0,0.333333333333333,0.333333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"332",33,"1","no","No",8,4,"Police",0,0.5,12,1,"Death","Severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"333",41,"1","yes","No",15,5,"Police",0,0.75,1.83333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"334",20,"1","yes","Yes",15,5,"Police",0,1,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"335",21,"1","yes","No",15,5,"Police",0,1,1.16666666666667,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.1413061,37.212256,NA,NA,NA,NA,NA,NA
+"336",48,"1","yes","No",15,5,"Other",0,3.66666666666667,73,3,"Alive","Non-severe","1 or more","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"337",26,"1","yes","No",15,5,"Police",0,0.833333333333333,1.66666666666667,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"338",34,"1","yes","No",15,5,"Personal vehicle",0,1,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"339",34,"1","yes","Yes",13,1,"Police",0,0.75,3,1,"Death","Non-severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"340",36,"1","yes","No",12,5,"Personal vehicle",3000,4.16666666666667,48,3,"Alive","Severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA
+"341",28,"1","yes","Yes",13,5,"Police",0,0.666666666666667,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"342",38,"1","yes","Yes",7,2,"Personal vehicle",0,0.833333333333333,1,2,"Death","Severe","1 or more","0-1hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"343",28,"1","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"344",40,"1","yes","Yes",14,5,"Police",0,0.5,24.5,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"345",30,"1","no","Yes",13,5,"Personal vehicle",0,0.833333333333333,4,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"346",48,"1","no","No",8,1,"Personal vehicle",0,1.5,76.1666666666667,2,"Death","Severe","1 or more","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"347",51,"1","yes","No",15,5,"Police",0,4,23.5,1,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"348",47,"1","yes","No",15,5,"Hired transport",0,4,23.8333333333333,1,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"349",40,"1","yes","Yes",15,5,"Personal vehicle",0,5.33333333333333,8,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"350",22,"1","yes","Yes",15,5,"Hired transport",10000,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"351",36,"1","yes","Yes",10,5,"Personal vehicle",0,1.16666666666667,89,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"352",46,"1","yes","No",7,1,"Personal vehicle",0,1,8.5,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"353",4,"0","yes","No",15,5,"Bodaboda",20000,0.416666666666667,1.95,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"354",5,"0","yes","No",15,5,"Personal vehicle",0,1.25,2.5,2,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"355",25,"1","yes","Yes",15,5,"Personal vehicle",0,0.333333333333333,0.833333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"356",23,"1","no","No",15,5,"Personal vehicle",10000,0.833333333333333,6,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"357",48,"1","yes","No",15,5,"Police",0,0.5,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"358",68,"1","yes","Yes",15,1,"Police",0,0.833333333333333,0,2,"Death","Non-severe","1 or more","0-1hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"359",22,"1","yes","Yes",15,5,"Personal vehicle",20000,1,1.16666666666667,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"360",14,"0","yes","No",9,5,"Personal vehicle",15000,7.5,0.5,1,"Alive","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"361",25,"1","no","Yes",14,5,"Ambulance",191000,7.5,71,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"362",28,"1","yes","Yes",15,5,"Personal vehicle",0,0.666666666666667,1.5,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"363",24,"1","yes","No",15,5,"Personal vehicle",0,2,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"364",25,"1","yes","Yes",15,5,"Personal vehicle",0,1.58333333333333,1.36666666666667,3,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.166825,36.8856703,-3.5286807,37.118976,NA,NA
+"365",62,"1","no","Yes",12,5,"Personal vehicle",20000,1.5,11.6666666666667,2,"Alive","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"366",22,"1","yes","Yes",5,1,"Personal vehicle",0,1.83333333333333,2.75,3,"Death","Severe","1 or more","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"367",27,"0","yes","No",15,5,"Personal vehicle",0,0.75,4.66666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"368",35,"1","yes","Yes",15,5,"Police",0,0.333333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"369",54,"1","no","No",15,1,"Personal vehicle",30000,1.5,2,2,"Death","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"370",30,"1","yes","No",15,5,"Personal vehicle",10000,0.25,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"371",45,"1","no","Yes",15,5,"Personal vehicle",0,0.333333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"372",20,"1","no","Yes",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"373",40,"0","yes","No",9,1,"Police",0,0.333333333333333,0.5,1,"Death","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"374",62,"1","yes","No",9,5,"Hired transport",80000,1.25,71,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"375",58,"1","yes","Yes",15,5,"Personal vehicle",0,0.666666666666667,1.91666666666667,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"376",30,"1","yes","No",15,5,"Personal vehicle",0,1.58333333333333,5.75,3,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,-3.5286807,37.118976,NA,NA
+"377",18,"1","yes","No",8,1,"Police",0,0.333333333333333,2,1,"Death","Severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"378",30,"1","yes","No",15,5,"Personal vehicle",0,1.33333333333333,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"379",25,"1","yes","Yes",15,5,"Personal vehicle",0,1,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"380",87,"1","no","No",15,5,"Personal vehicle",0,2,1397,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"381",34,"1","yes","No",13,5,"Police",0,0.833333333333333,8792,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"382",27,"1","yes","No",15,5,"Personal vehicle",0,1.33333333333333,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"383",24,"1","no","Yes",15,5,"Bodaboda",0,1.58333333333333,3.16666666666667,2,"Alive","Non-severe","1 or more","3-4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"384",23,"1","no","Yes",13,5,"Hired transport",0,2.16666666666667,3,3,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"385",28,"1","yes","Yes",15,5,"Bodaboda",70000,13.8333333333333,211.333333333333,4,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"386",30,"1","no","Yes",4,5,"Personal vehicle",20000,1.33333333333333,129.483333333333,2,"Alive","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"387",8,"0","yes","No",8,5,"Bodaboda",0,2.33333333333333,3,3,"Alive","Severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.166825,36.8856703,-3.166825,36.8856703,NA,NA
+"388",28,"1","yes","No",15,5,"Other",0,1.41666666666667,34,3,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"389",52,"0","yes","Yes",15,5,"Personal vehicle",0,0.833333333333333,38,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"390",24,"1","yes","No",15,5,"Other",252000,5.5,19,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"391",22,"1","yes","Yes",14,1,"Police",0,0.166666666666667,1.33333333333333,1,"Death","Non-severe","0 to 1","1-2hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"392",46,"1","yes","Yes",15,5,"Personal vehicle",0,0.333333333333333,0.333333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"393",24,"0","yes","No",15,5,"Ambulance",0,0.25,22.8333333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"394",59,"1","yes","No",15,5,"Personal vehicle",0,0.5,18,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"395",15,"1","yes","No",15,5,"Other",70000,5,8.01666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"396",51,"1","yes","No",15,5,"Personal vehicle",0,0.166666666666667,0.2,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"397",20,"1","yes","No",15,5,"Personal vehicle",25000,0.916666666666667,22.3,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"398",29,"1","yes","Yes",14,5,"Personal vehicle",0,0.333333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"399",32,"1","no","Yes",15,5,"Personal vehicle",0,0.833333333333333,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"400",28,"1","no","Yes",15,5,"Other",0,0.916666666666667,26.3333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"401",75,"1","no","No",15,5,"Personal vehicle",0,2,24,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"402",47,"1","no","Yes",15,4,"Other",0,2,17.3333333333333,3,"Death","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,-3.186389,37.068611,NA,NA
+"403",10,"1","yes","No",15,5,"Personal vehicle",0,1.75,5.25,3,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,-3.166825,36.8856703,NA,NA
+"404",54,"1","no","Yes",3,1,"Personal vehicle",0,1.83333333333333,0.833333333333333,2,"Death","Severe","1 or more","0-1hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"405",49,"0","yes","No",15,5,"Other",297000,6.25,24,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"406",37,"1","yes","Yes",8,5,"Personal vehicle",0,0.833333333333333,1.5,1,"Alive","Severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"407",18,"0","yes","Yes",13,5,"Personal vehicle",0,2,17.8333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"408",50,"1","yes","No",9,5,"Personal vehicle",352500,6,24,3,"Alive","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,NA,NA,-3.3227432,37.3285435,NA,NA
+"409",30,"1","yes","Yes",15,5,"Personal vehicle",0,1,24.8333333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"410",32,"0","no","No",15,5,"Personal vehicle",10000,0.833333333333333,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"411",42,"1","yes","Yes",15,5,"Personal vehicle",0,1.16666666666667,2.5,2,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"412",25,"1","no","No",5,5,"Personal vehicle",15000,0.75,1.16666666666667,2,"Alive","Severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"413",30,"1","no","No",13,5,"Personal vehicle",0,0.833333333333333,7,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.186389,37.068611,NA,NA,NA,NA
+"414",40,"1","no","Yes",6,1,"Police",0,2.33333333333333,2.5,2,"Death","Severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"415",20,"1","yes","Yes",5,5,"Bodaboda",1e+05,12.1666666666667,241,4,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"416",23,"1","no","No",15,5,"Bodaboda",8000,0.25,32,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"417",75,"1","no","Yes",3,1,"Police",0,0.416666666666667,437,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"418",18,"1","yes","No",15,5,"Personal vehicle",40000,1.33333333333333,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"419",28,"1","yes","Yes",12,5,"Personal vehicle",0,2.5,198,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"420",84,"1","yes","No",15,5,"Police",0,0.5,2.5,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"421",8,"1","yes","No",13,5,"Personal vehicle",0,2.75,10.25,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"422",20,"0","yes","Yes",15,5,"Police",0,0.75,49,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"423",27,"1","no","Yes",15,5,"Bodaboda",3000,1.25,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"424",35,"1","no","No",15,5,"Personal vehicle",15000,1.5,106,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"425",45,"1","yes","Yes",15,5,"Personal vehicle",0,1.83333333333333,13.1166666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"426",17,"1","yes","No",15,5,"Bodaboda",0,2,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"427",24,"1","yes","No",7,5,"Personal vehicle",150000,6,7,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"428",38,"0","no","Yes",15,5,"Personal vehicle",0,0.333333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"429",3,"0","no","No",15,5,"Personal vehicle",29000,0.833333333333333,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"430",46,"1","no","Yes",15,5,"Personal vehicle",0,2.5,3.5,2,"Alive","Non-severe","1 or more","3-4hrs",-3.1413061,37.212256,-3.1413061,37.212256,NA,NA,NA,NA
+"431",38,"1","yes","No",15,5,"Personal vehicle",0,0.5,2,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"432",20,"1","yes","No",7,5,"Personal vehicle",0,1,4.33333333333333,2,"Alive","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"433",39,"1","no","Yes",14,5,"Personal vehicle",20000,1.33333333333333,11,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"434",33,"1","yes","Yes",15,5,"Personal vehicle",0,0.333333333333333,0.833333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"435",56,"1","yes","Yes",15,5,"Police",0,0.333333333333333,1.83333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"436",35,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,3,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"437",27,"1","yes","Yes",14,5,"Personal vehicle",1e+05,2.83333333333333,4.5,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA
+"438",52,"1","yes","Yes",14,5,"Personal vehicle",0,2.25,5.25,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"439",67,"1","no","Yes",15,5,"Personal vehicle",0,0.5,0,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"440",23,"1","yes","Yes",13,5,"Personal vehicle",0,0.5,1.75,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"441",24,"1","yes","Yes",14,5,"Personal vehicle",0,0.5,1.75,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"442",28,"1","no","No",11,5,"Personal vehicle",0,0.666666666666667,13.25,1,"Alive","Severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"443",1,"1","no","No",15,1,"Bodaboda",7000,2.5,3,2,"Death","Non-severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"444",24,"1","no","No",15,5,"Personal vehicle",0,0.833333333333333,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"445",34,"1","no","Yes",15,5,"Personal vehicle",0,0.5,3,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"446",24,"1","no","No",8,5,"Other",0,0.666666666666667,1.66666666666667,2,"Alive","Severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"447",25,"1","yes","No",10,5,"Personal vehicle",4000,2.83333333333333,13.8333333333333,2,"Alive","Severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"448",10,"1","no","No",15,5,"Bodaboda",4000,1.25,83,2,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.3227432,37.3285435,NA,NA,NA,NA
+"449",19,"0","yes","No",12,1,"Police",0,2.5,4,2,"Death","Severe","1 or more","3-4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"450",16,"0","yes","No",15,5,"Police",0,2,4,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"451",12,"0","yes","No",15,5,"Personal vehicle",0,0.5,4,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"452",44,"0","yes","No",14,1,"Police",0,0.75,0.5,1,"Death","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"453",48,"1","yes","No",12,5,"Personal vehicle",0,1,1,1,"Alive","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"454",45,"0","yes","No",15,5,"Hired transport",0,0.783333333333333,3,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"455",20,"1","yes","No",15,5,"Police",0,0.5,1.66666666666667,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"456",31,"1","yes","Yes",14,5,"Personal vehicle",0,0.833333333333333,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"457",39,"1","no","Yes",15,5,"Hired transport",10000,0.5,3.5,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"458",47,"1","yes","No",15,5,"Personal vehicle",0,2.5,8,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"459",5,"1","yes","No",13,5,"Personal vehicle",0,0.833333333333333,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"460",16,"1","yes","Yes",15,5,"Bodaboda",2000,1.41666666666667,4.83333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"461",47,"1","yes","Yes",15,5,"Police",0,0.666666666666667,6,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"462",48,"1","yes","No",15,5,"Personal vehicle",0,1.58333333333333,3.05,3,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"463",9,"1","no","No",15,5,"Bodaboda",1500,1.25,5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"464",37,"1","yes","Yes",15,5,"Personal vehicle",0,1,3,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"465",33,"1","yes","Yes",15,5,"Personal vehicle",0,2.16666666666667,10,2,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"466",42,"1","no","Yes",15,5,"Hired transport",10000,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"467",34,"1","yes","Yes",14,5,"Personal vehicle",0,0.833333333333333,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"468",41,"0","no","No",15,5,"Personal vehicle",0,0.5,5,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"469",43,"1","no","Yes",15,5,"Personal vehicle",0,0.5,0.583333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"470",16,"1","yes","No",13,5,"Hired transport",0,2.25,7.25,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"471",56,"1","no","Yes",10,5,"Police",30000,1.16666666666667,48.5,3,"Alive","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA
+"472",27,"1","no","No",15,5,"Hired transport",70000,1.5,136,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"473",29,"1","yes","No",15,5,"Bodaboda",15000,6.08333333333333,92.3333333333333,3,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"474",8,"1","no","No",15,5,"Bodaboda",5000,1.25,75,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"475",27,"1","yes","Yes",12,5,"Police",0,1,1,1,"Alive","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"476",38,"1","no","No",14,5,"Personal vehicle",0,3,799,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"477",11,"0","yes","No",15,5,"Personal vehicle",0,1.5,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"478",3,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,1.66666666666667,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"479",20,"1","yes","No",10,5,"Personal vehicle",0,1,2,1,"Alive","Severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"480",22,"1","yes","No",15,5,"Personal vehicle",0,1,2.66666666666667,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"481",58,"0","yes","No",15,5,"Hired transport",0,1.83333333333333,3.5,2,"Alive","Non-severe","1 or more","3-4hrs",NA,NA,-3.5286807,37.118976,NA,NA,NA,NA
+"482",18,"1","yes","No",8,5,"Personal vehicle",40000,2.66666666666667,70,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"483",25,"1","yes","Yes",5,1,"Personal vehicle",0,0.5,0.5,1,"Death","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"484",30,"1","no","No",13,5,"Hired transport",0,4.5,5.66666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"485",18,"1","no","No",15,5,"Bodaboda",0,2.75,9.33333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"486",2,"0","no","No",15,5,"Personal vehicle",0,1.26666666666667,143,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"487",78,"1","yes","Yes",13,5,"Personal vehicle",0,1.33333333333333,9.5,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"488",20,"1","yes","No",15,5,"Bodaboda",45000,1.16666666666667,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"489",32,"1","yes","Yes",15,5,"Personal vehicle",0,0.333333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"490",63,"0","yes","Yes",15,5,"Hired transport",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"491",34,"0","yes","No",15,5,"Hired transport",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"492",47,"0","yes","No",15,5,"Personal vehicle",0,5.33333333333333,10,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"493",80,"1","no","No",15,5,"Personal vehicle",0,0.5,1.25,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"494",90,"0","no","Yes",15,5,"Personal vehicle",0,9,1,3,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.1413061,37.212256,NA,NA,NA,NA
+"495",51,"0","yes","No",15,5,"Hired transport",0,0.5,0.666666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"496",43,"1","no","No",15,5,"Personal vehicle",0,2,18,2,"Alive","Non-severe","1 or more","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"497",26,"1","yes","No",10,5,"Personal vehicle",0,2.33333333333333,2.16666666666667,2,"Alive","Severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"498",53,"0","yes","No",15,5,"Personal vehicle",0,0.5,13,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"499",13,"0","no","Yes",15,5,"Hired transport",20000,1,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"500",25,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"501",34,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"502",31,"1","yes","Yes",14,5,"Personal vehicle",0,1,5,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"503",12,"1","no","No",15,5,"Hired transport",10000,3.08333333333333,20.5,4,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA
+"504",1,"1","no","No",15,5,"Hired transport",400,0.833333333333333,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"505",33,"1","no","Yes",15,5,"Hired transport",9000,4.5,1,3,"Alive","Non-severe","1 or more","0-1hrs",-3.1413061,37.212256,-3.1413061,37.212256,NA,NA,NA,NA
+"506",23,"1","no","No",15,5,"Police",0,0.666666666666667,4.58333333333333,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"507",51,"1","yes","No",15,5,"Personal vehicle",0,0.916666666666667,4.81666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"508",12,"1","no","No",15,5,"Personal vehicle",20000,1,1.16666666666667,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"509",17,"0","yes","Yes",15,5,"Police",0,0.666666666666667,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"510",2,"1","yes","No",15,5,"Police",0,1,5.16666666666667,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"511",33,"1","yes","Yes",15,4,"Police",0,0.75,1.33333333333333,1,"Death","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"512",22,"1","yes","No",15,5,"Personal vehicle",20000,0.833333333333333,2.83333333333333,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"513",48,"1","no","Yes",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"514",10,"1","no","No",15,5,"Hired transport",0,1,3,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"515",21,"1","yes","No",14,5,"Personal vehicle",180000,4,437,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"516",28,"1","yes","Yes",15,5,"Police",0,0.666666666666667,3.33333333333333,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"517",26,"1","yes","Yes",15,5,"Police",0,0.5,1.33333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"518",29,"0","yes","No",12,5,"Personal vehicle",0,0.5,1,1,"Alive","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"519",82,"1","no","No",14,5,"Hired transport",0,0.75,23.6666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"520",79,"1","no","No",15,5,"Other",900,0.583333333333333,153,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"521",23,"1","no","Yes",15,5,"Hired transport",6000,0.5,0.833333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"522",17,"1","yes","No",13,5,"Personal vehicle",0,1.3,5.83333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"523",21,"1","yes","Yes",15,5,"Personal vehicle",0,0.166666666666667,0.416666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"524",18,"1","yes","No",15,5,"Bodaboda",38000,9,477.333333333333,4,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"525",18,"1","no","No",15,5,"Other",0,0.166666666666667,0.25,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"526",20,"1","yes","No",15,5,"Hired transport",10000,0.833333333333333,4.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"527",63,"0","yes","No",15,5,"Personal vehicle",0,1.08333333333333,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"528",6,"1","yes","No",8,5,"Hired transport",0,0.833333333333333,4.25,2,"Alive","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"529",31,"1","no","No",15,5,"Bodaboda",0,0.666666666666667,2.5,2,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"530",21,"1","yes","Yes",15,5,"Other",201500,6.5,22.4166666666667,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"531",48,"0","yes","Yes",15,5,"Personal vehicle",0,1.75,48,4,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"532",29,"1","yes","No",15,5,"Personal vehicle",0,1.83333333333333,225.5,3,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA
+"533",24,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,2.5,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"534",42,"1","yes","No",15,5,"Hired transport",0,0.75,14.5,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"535",19,"1","yes","No",15,5,"Personal vehicle",0,1,121,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"536",51,"1","yes","No",14,5,"Personal vehicle",0,4.16666666666667,123,4,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"537",29,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,1.75,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"538",28,"0","yes","No",14,1,"Personal vehicle",0,0.5,0.5,1,"Death","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"539",53,"1","yes","No",15,5,"Personal vehicle",0,1.08333333333333,4.3,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"540",26,"1","yes","Yes",10,4,"Personal vehicle",0,1.33333333333333,209,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"541",23,"1","no","Yes",13,5,"Personal vehicle",0,0.333333333333333,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"542",43,"1","no","Yes",14,5,"Personal vehicle",0,1,3.5,2,"Alive","Non-severe","1 or more","3-4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"543",66,"0","no","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"544",41,"1","yes","No",6,5,"Hired transport",35000,2.33333333333333,41,4,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"545",26,"1","yes","No",15,5,"Personal vehicle",1e+05,0.916666666666667,2,3,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.166825,36.8856703,NA,NA
+"546",30,"1","yes","Yes",15,5,"Hired transport",0,1,4.83333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"547",52,"1","yes","Yes",15,5,"Personal vehicle",0,0.833333333333333,3703,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"548",40,"1","no","No",15,5,"Bodaboda",3000,0.666666666666667,5.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.186389,37.068611,NA,NA,NA,NA
+"549",23,"1","yes","No",15,5,"Personal vehicle",0,0.583333333333333,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"550",32,"0","no","Yes",15,5,"Personal vehicle",30000,0.333333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"551",40,"1","yes","No",4,1,"Personal vehicle",0,1,78.5,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"552",51,"1","yes","No",14,5,"Police",0,0.583333333333333,1.58333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"553",50,"1","yes","No",14,5,"Police",0,1,1.5,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"554",53,"1","yes","No",15,5,"Police",0,0.766666666666667,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"555",50,"1","yes","No",15,4,"Police",0,0.5,1.33333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"556",42,"0","yes","No",15,5,"Police",0,0.333333333333333,1.58333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"557",38,"1","no","Yes",10,5,"Bodaboda",13000,4.25,141.5,3,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"558",18,"1","yes","No",6,5,"Police",0,1,1.58333333333333,1,"Alive","Severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"559",28,"1","no","No",3,1,"Other",0,0.666666666666667,1,2,"Death","Severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"560",17,"1","no","No",14,5,"Personal vehicle",0,0.833333333333333,4,0,"Alive","Non-severe","0 to 1","3-4hrs",-3.166825,36.8856703,NA,NA,NA,NA,NA,NA
+"561",43,"1","no","Yes",15,5,"Personal vehicle",0,0.833333333333333,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"562",40,"1","no","Yes",7,1,"Personal vehicle",0,2.66666666666667,9,2,"Death","Severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"563",44,"1","yes","Yes",15,5,"Police",0,0.5,2.83333333333333,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"564",26,"1","yes","Yes",15,5,"Personal vehicle",0,0.666666666666667,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"565",28,"1","yes","Yes",15,5,"Personal vehicle",0,1.66666666666667,1.83333333333333,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"566",33,"1","yes","Yes",15,5,"Other",5000,0.583333333333333,3.08333333333333,2,"Alive","Non-severe","1 or more","3-4hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"567",25,"1","no","No",13,5,"Bodaboda",23000,1.33333333333333,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.5286807,37.118976,NA,NA,NA,NA
+"568",20,"1","yes","No",15,5,"Police",0,0.333333333333333,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"569",16,"1","yes","No",15,5,"Hired transport",5000,0.75,3.66666666666667,2,"Alive","Non-severe","1 or more","3-4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"570",4,"1","yes","No",7,5,"Ambulance",40000,1.3,53,2,"Alive","Severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"571",30,"1","yes","No",15,5,"Personal vehicle",0,2,25.1666666666667,1,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"572",30,"1","yes","No",15,5,"Personal vehicle",2e+05,2.25,6.5,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"573",32,"0","yes","No",15,5,"Hired transport",5000,0.416666666666667,0.833333333333333,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"574",45,"1","no","Yes",15,5,"Personal vehicle",0,0.5,1.25,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"575",42,"1","yes","No",15,5,"Personal vehicle",0,0.5,235,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"576",35,"1","no","No",13,5,"Personal vehicle",0,6,36.3333333333333,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"577",41,"1","yes","Yes",8,5,"Personal vehicle",0,0.8,4.33333333333333,1,"Alive","Severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"578",20,"0","no","No",10,5,"Personal vehicle",30000,4.33333333333333,3,4,"Alive","Severe","1 or more","2-3hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,-4.2118703,37.4419273,-4.2118703,37.4419273
+"579",35,"1","yes","Yes",7,1,"Police",0,0.5,1,1,"Death","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"580",40,"1","no","No",15,5,"Personal vehicle",62000,3.66666666666667,3.5,2,"Alive","Non-severe","1 or more","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"581",4,"0","yes","No",15,5,"Personal vehicle",0,2,3.5,2,"Alive","Non-severe","1 or more","3-4hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"582",40,"1","yes","No",6,1,"Personal vehicle",0,0.583333333333333,18,2,"Death","Severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"583",55,"1","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"584",6,"0","yes","No",15,5,"Hired transport",10000,0.25,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"585",4,"1","no","No",11,5,"Personal vehicle",0,0.833333333333333,4.83333333333333,2,"Alive","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.166825,36.8856703,NA,NA,NA,NA
+"586",38,"1","yes","No",14,5,"Personal vehicle",0,0.75,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"587",49,"1","no","Yes",14,5,"Personal vehicle",0,0.583333333333333,0.916666666666667,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"588",28,"1","yes","Yes",15,5,"Personal vehicle",0,0.666666666666667,41.0833333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.186389,37.068611,NA,NA,NA,NA
+"589",6,"1","yes","No",15,5,"Personal vehicle",0,0.333333333333333,27.6666666666667,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"590",8,"1","yes","No",14,5,"Hired transport",0,0.583333333333333,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"591",23,"1","yes","Yes",9,5,"Police",0,0.5,3.46666666666667,1,"Alive","Severe","0 to 1","3-4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"592",23,"1","no","No",15,5,"Police",0,0.5,4.16666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"593",46,"1","yes","No",15,5,"Personal vehicle",30000,2.66666666666667,18.3333333333333,3,"Alive","Non-severe","1 or more","more 4hrs",-3.1413061,37.212256,-3.1413061,37.212256,-3.1413061,37.212256,NA,NA
+"594",26,"1","yes","No",15,5,"Personal vehicle",0,0.166666666666667,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"595",12,"1","no","No",14,5,"Hired transport",10000,0.166666666666667,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"596",22,"1","yes","Yes",14,5,"Personal vehicle",0,0.75,11.3333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"597",34,"1","no","Yes",14,5,"Hired transport",5000,0.583333333333333,17,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"598",20,"1","yes","No",15,5,"Personal vehicle",0,0.166666666666667,0.25,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"599",32,"0","no","No",15,5,"Personal vehicle",0,0.833333333333333,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"600",13,"1","no","No",14,5,"Hired transport",5000,0.583333333333333,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"601",27,"1","yes","Yes",15,5,"Personal vehicle",5400,2.08333333333333,235,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.166825,36.8856703,NA,NA,NA,NA
+"602",61,"1","no","No",14,5,"Personal vehicle",0,0.416666666666667,3,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"603",5,"1","no","No",15,5,"Bodaboda",7000,1.33333333333333,167.25,3,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"604",28,"1","no","No",15,5,"Other",30000,0.75,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"605",18,"1","no","No",15,5,"Personal vehicle",0,0.666666666666667,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"606",25,"1","no","No",14,5,"Personal vehicle",0,0.583333333333333,0.5,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"607",18,"1","no","No",15,5,"Personal vehicle",0,0.666666666666667,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"608",39,"1","yes","No",15,5,"Personal vehicle",0,0.416666666666667,3.25,2,"Alive","Non-severe","1 or more","3-4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"609",27,"1","no","Yes",15,5,"Personal vehicle",0,0.333333333333333,6,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"610",9,"1","yes","No",15,5,"Personal vehicle",0,0.5,2.5,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"611",48,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,0.666666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"612",46,"0","no","No",15,5,"Personal vehicle",9000,0.583333333333333,5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"613",7,"0","yes","No",15,4,"Personal vehicle",0,0.833333333333333,1.91666666666667,2,"Death","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"614",1,"1","no","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"615",30,"1","no","No",15,5,"Personal vehicle",0,2.25,25,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.166825,36.8856703,-3.166825,36.8856703,NA,NA
+"616",33,"1","yes","Yes",10,5,"Personal vehicle",0,0.666666666666667,0.833333333333333,1,"Alive","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"617",36,"1","yes","No",10,5,"Bodaboda",0,4.08333333333333,18,2,"Alive","Severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"618",21,"1","yes","No",15,5,"Personal vehicle",0,1.08333333333333,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"619",80,"0","yes","No",15,5,"Personal vehicle",10000,1.16666666666667,3.5,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"620",29,"1","yes","No",15,5,"Personal vehicle",0,2.58333333333333,5.41666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"621",35,"1","yes","No",15,5,"Police",0,0.416666666666667,1.83333333333333,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"622",35,"1","yes","No",14,5,"Police",0,0.416666666666667,0.833333333333333,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"623",7,"1","yes","No",15,4,"Other",0,0.5,0.3,1,"Death","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"624",18,"1","yes","No",15,5,"Personal vehicle",0,1,0.666666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"625",9,"0","yes","No",14,5,"Personal vehicle",0,0.25,0.333333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"626",60,"0","no","No",15,5,"Personal vehicle",10000,0.5,3.25,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"627",30,"1","yes","No",8,4,"Police",0,0.75,4.91666666666667,2,"Death","Severe","1 or more","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"628",55,"1","yes","No",15,5,"Hired transport",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"629",45,"1","yes","Yes",10,5,"Ambulance",60000,2,3,3,"Alive","Severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA
+"630",41,"0","yes","No",15,5,"Personal vehicle",0,0.333333333333333,0.416666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"631",36,"1","no","No",15,5,"Bodaboda",8000,1.75,2.83333333333333,2,"Alive","Non-severe","1 or more","2-3hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"632",23,"1","yes","Yes",15,5,"Bodaboda",20000,1.5,92,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,NA,NA,-3.5286807,37.118976,NA,NA
+"633",38,"1","yes","No",15,5,"Personal vehicle",10000,2,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"634",35,"0","yes","No",15,5,"Personal vehicle",0,1.83333333333333,4.33333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"635",30,"1","yes","Yes",13,5,"Personal vehicle",20000,1,8.75,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"636",23,"1","yes","No",15,5,"Personal vehicle",0,0.75,2.16666666666667,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"637",19,"1","yes","No",15,5,"Personal vehicle",0,0.75,8.83333333333333,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"638",13,"0","no","No",13,5,"Personal vehicle",36000,1.83333333333333,134,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"639",33,"1","no","Yes",15,5,"Personal vehicle",0,0.666666666666667,0.75,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"640",24,"1","yes","Yes",3,3,"Personal vehicle",15000,0.833333333333333,1.48333333333333,2,"Death","Severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"641",40,"0","no","No",15,5,"Personal vehicle",0,1.25,1.83333333333333,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"642",40,"0","yes","No",3,1,"Police",0,0.833333333333333,4.16666666666667,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"643",20,"1","yes","No",13,1,"Personal vehicle",0,1,5,2,"Death","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"644",36,"1","yes","No",15,5,"Personal vehicle",0,1.41666666666667,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"645",26,"1","yes","Yes",13,4,"Personal vehicle",0,0.916666666666667,1,3,"Death","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"646",27,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,24.8333333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"647",36,"1","yes","Yes",15,5,"Police",0,0.883333333333333,1.66666666666667,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"648",30,"1","no","Yes",15,5,"Personal vehicle",160000,4.33333333333333,217,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"649",60,"1","yes","No",15,5,"Police",0,0.916666666666667,0.833333333333333,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"650",31,"1","yes","Yes",14,5,"Personal vehicle",120000,6.33333333333333,12.3333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"651",3,"0","no","No",15,5,"Other",15000,1.75,5.83333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"652",4,"1","no","No",5,5,"Hired transport",1500,1.25,170.666666666667,2,"Alive","Severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"653",31,"0","yes","Yes",15,5,"Bodaboda",1500,2.33333333333333,32,2,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"654",10,"1","no","No",15,5,"Bodaboda",10000,0.833333333333333,1.33333333333333,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"655",40,"1","yes","No",6,1,"Personal vehicle",0,0.416666666666667,2,0,"Death","Severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"656",11,"0","no","No",15,5,"Personal vehicle",10000,4,18,2,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"657",19,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,0.666666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"658",30,"1","yes","Yes",15,5,"Bodaboda",0,0.75,3,3,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"659",52,"0","yes","No",15,5,"Hired transport",0,0.5,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"660",35,"1","yes","No",15,5,"Personal vehicle",0,1,830,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"661",53,"0","yes","Yes",15,5,"Personal vehicle",0,1.25,2.75,2,"Alive","Non-severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"662",17,"1","yes","Yes",11,5,"Personal vehicle",0,0.666666666666667,4.66666666666667,1,"Alive","Severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"663",30,"1","yes","Yes",15,5,"Personal vehicle",0,0.25,1.33333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"664",13,"1","yes","No",3,1,"Ambulance",0,0.5,2.66666666666667,0,"Death","Severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"665",37,"1","no","Yes",15,5,"Personal vehicle",25400,13.8333333333333,734,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,-3.5286807,37.118976,NA,NA
+"666",37,"1","yes","No",10,5,"Personal vehicle",0,2.58333333333333,100,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"667",23,"1","yes","No",15,5,"Personal vehicle",0,0.5,1.83333333333333,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"668",30,"1","yes","Yes",13,5,"Hired transport",2000,0.333333333333333,13.0166666666667,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"669",6,"1","no","No",15,5,"Personal vehicle",12000,1.75,6,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"670",17,"1","no","No",15,5,"Other",120000,5.41666666666667,30.3333333333333,4,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,NA,NA,-3.5286807,37.118976,NA,NA
+"671",5,"1","yes","No",13,1,"Other",2000,1.66666666666667,1.5,3,"Death","Non-severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.166825,36.8856703,-3.166825,36.8856703,NA,NA
+"672",46,"1","no","Yes",10,1,"Police",0,0.583333333333333,12.8,1,"Death","Severe","0 to 1","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"673",18,"1","yes","No",15,5,"Personal vehicle",0,1.66666666666667,0.25,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"674",44,"1","no","Yes",15,5,"Other",65000,3.33333333333333,19.4333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"675",28,"1","yes","Yes",4,1,"Personal vehicle",0,5,11,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"676",22,"1","yes","Yes",6,5,"Police",20000,0.833333333333333,18.6666666666667,2,"Alive","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"677",30,"0","yes","No",15,5,"Personal vehicle",0,0.5,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"678",26,"1","yes","Yes",10,5,"Personal vehicle",30000,2.5,328,2,"Alive","Severe","1 or more","more 4hrs",-3.1413061,37.212256,-3.1413061,37.212256,NA,NA,NA,NA
+"679",20,"1","no","No",15,5,"Bodaboda",20000,1.16666666666667,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"680",19,"1","no","Yes",13,5,"Hired transport",10000,0.583333333333333,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"681",40,"1","yes","No",15,5,"Personal vehicle",30000,0.25,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"682",19,"1","yes","No",15,5,"Personal vehicle",0,1,3.08333333333333,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"683",1,"1","yes","No",15,5,"Police",0,4,1,2,"Alive","Non-severe","1 or more","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"684",25,"1","yes","Yes",4,5,"Police",0,1.5,64.8333333333333,2,"Alive","Severe","1 or more","more 4hrs",-3.1413061,37.212256,-3.1413061,37.212256,NA,NA,NA,NA
+"685",7,"0","yes","No",15,4,"Personal vehicle",0,0.666666666666667,1.5,1,"Death","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"686",23,"1","yes","No",15,5,"Personal vehicle",0,1.5,3,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"687",35,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,0.583333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"688",25,"1","yes","Yes",10,5,"Police",0,0.5,13.1666666666667,1,"Alive","Severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"689",30,"1","no","Yes",15,5,"Personal vehicle",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"690",7,"1","yes","No",15,5,"Personal vehicle",0,0.166666666666667,0.166666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"691",47,"0","no","No",5,1,"Personal vehicle",0,4,49,3,"Death","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"692",29,"1","yes","Yes",15,5,"Police",0,0.666666666666667,16.5,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"693",4,"1","yes","No",15,5,"Other",0,0.666666666666667,1.33333333333333,2,"Alive","Non-severe","1 or more","1-2hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"694",10,"1","yes","No",15,5,"Personal vehicle",140000,2.5,42,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"695",25,"1","no","Yes",15,5,"Personal vehicle",1500,1.91666666666667,0.916666666666667,2,"Alive","Non-severe","1 or more","0-1hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"696",18,"1","yes","No",15,5,"Personal vehicle",20000,0.833333333333333,4.33333333333333,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"697",70,"1","yes","No",15,5,"Police",0,1.75,21.7,3,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA
+"698",64,"0","no","Yes",15,5,"Personal vehicle",0,0.666666666666667,0.666666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.166825,36.8856703,NA,NA,NA,NA,NA,NA
+"699",23,"1","yes","No",15,5,"Personal vehicle",0,1.01666666666667,14,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"700",29,"1","yes","Yes",15,5,"Personal vehicle",0,0.916666666666667,2.16666666666667,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"701",24,"1","yes","No",8,5,"Personal vehicle",0,0.666666666666667,2.41666666666667,1,"Alive","Severe","0 to 1","2-3hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"702",44,"1","yes","No",3,1,"Personal vehicle",0,0.5,65,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"703",45,"1","no","Yes",11,1,"Personal vehicle",0,0.5,1,0,"Death","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"704",21,"1","yes","No",15,5,"Personal vehicle",0,0.5,1.66666666666667,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"705",36,"1","no","No",15,5,"Bodaboda",0,2,7,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"706",5,"1","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"707",27,"1","yes","No",6,1,"Hired transport",80000,4.16666666666667,14.5,3,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"708",41,"1","yes","No",15,5,"Personal vehicle",2000,2.83333333333333,12,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"709",38,"1","yes","Yes",15,5,"Hired transport",10500,3,45,3,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,-3.166825,36.8856703,NA,NA
+"710",26,"1","yes","Yes",15,5,"Personal vehicle",0,1.5,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.6608888,37.5662467,NA,NA,NA,NA,NA,NA
+"711",20,"1","yes","No",15,5,"Police",0,2,3.5,1,"Alive","Non-severe","0 to 1","3-4hrs",-4.2118703,37.4419273,NA,NA,NA,NA,NA,NA
+"712",50,"1","no","No",15,5,"Personal vehicle",0,1,14,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"713",30,"1","yes","Yes",15,5,"Personal vehicle",30000,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"714",36,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"715",30,"1","no","No",7,5,"Personal vehicle",0,0.333333333333333,78,1,"Alive","Severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"716",52,"1","yes","No",3,1,"Personal vehicle",0,1,72.5,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"717",41,"1","yes","No",15,5,"Personal vehicle",0,0.75,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"718",61,"1","no","No",15,5,"Personal vehicle",0,1,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"719",3,"1","yes","No",12,5,"Hired transport",33400,3.5,50,3,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,-3.5286807,37.118976,NA,NA
+"720",6,"0","yes","No",9,1,"Personal vehicle",0,1.25,0.5,2,"Death","Severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"721",29,"1","yes","No",7,5,"Personal vehicle",0,0.833333333333333,25,2,"Alive","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"722",57,"1","yes","No",15,5,"Personal vehicle",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"723",24,"1","yes","Yes",7,5,"Personal vehicle",0,2.33333333333333,5,2,"Alive","Severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"724",27,"1","yes","Yes",15,5,"Personal vehicle",0,0.25,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"725",32,"1","yes","No",15,5,"Police",0,0.333333333333333,240.5,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"726",6,"1","yes","No",12,5,"Personal vehicle",0,1,2.66666666666667,2,"Alive","Severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"727",25,"1","yes","Yes",15,5,"Personal vehicle",0,0.833333333333333,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"728",24,"1","yes","No",15,5,"Hired transport",0,0.583333333333333,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"729",24,"0","yes","No",15,5,"Personal vehicle",0,0.25,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"730",16,"1","yes","No",14,5,"Personal vehicle",0,2.33333333333333,21,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"731",3,"0","no","No",15,5,"Personal vehicle",0,0.833333333333333,234,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"732",42,"1","no","Yes",14,5,"Personal vehicle",4500,1.75,0.916666666666667,2,"Alive","Non-severe","1 or more","0-1hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"733",32,"1","yes","No",13,5,"Personal vehicle",20000,2.33333333333333,8792,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,-3.5286807,37.118976,NA,NA,NA,NA
+"734",31,"0","yes","Yes",13,5,"Personal vehicle",0,1,7.33333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.186389,37.068611,-3.5286807,37.118976,NA,NA,NA,NA
+"735",49,"1","yes","No",15,5,"Personal vehicle",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"736",63,"0","yes","No",5,1,"Personal vehicle",25000,1.58333333333333,3.33333333333333,2,"Death","Severe","1 or more","3-4hrs",-3.1413061,37.212256,-3.5286807,37.118976,NA,NA,NA,NA
+"737",13,"1","yes","No",12,5,"Personal vehicle",0,0.25,0.25,1,"Alive","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"738",11,"1","yes","No",15,5,"Personal vehicle",0,0.5,0.783333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"739",20,"1","yes","Yes",15,5,"Personal vehicle",6000,1.41666666666667,2.83333333333333,3,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA
+"740",20,"1","yes","No",14,5,"Personal vehicle",0,0.416666666666667,3.43333333333333,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"741",23,"0","yes","No",5,1,"Personal vehicle",0,3,0.833333333333333,2,"Death","Severe","1 or more","0-1hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"742",9,"1","no","No",15,5,"Bodaboda",10000,2,3,2,"Alive","Non-severe","1 or more","2-3hrs",NA,NA,-3.186389,37.068611,NA,NA,NA,NA
+"743",8,"0","yes","No",15,5,"Personal vehicle",0,0.666666666666667,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"744",30,"1","yes","Yes",10,5,"Personal vehicle",15000,0.75,3,2,"Alive","Severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"745",18,"1","yes","No",15,5,"Police",30000,0.666666666666667,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"746",21,"1","yes","No",8,5,"Bodaboda",3500,2.33333333333333,5.5,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"747",44,"1","yes","Yes",15,5,"Personal vehicle",0,0.916666666666667,23.8333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"748",63,"1","yes","No",15,5,"Personal vehicle",0,0.75,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"749",13,"0","yes","No",14,5,"Personal vehicle",0,1.25,39,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"750",4,"0","yes","No",8,5,"Personal vehicle",1e+05,6,10,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"751",47,"0","yes","No",15,4,"Other",1e+05,5.08333333333333,8.5,2,"Death","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"752",47,"1","yes","Yes",15,5,"Personal vehicle",0,2.33333333333333,4,2,"Alive","Non-severe","1 or more","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"753",46,"1","no","No",15,5,"Personal vehicle",0,0.833333333333333,1417,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"754",35,"0","yes","No",15,5,"Personal vehicle",0,2.5,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.6608888,37.5662467,NA,NA,NA,NA
+"755",5,"0","yes","No",15,5,"Ambulance",0,4.5,5,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-3.5286807,37.118976,NA,NA,NA,NA
+"756",33,"0","no","Yes",15,5,"Personal vehicle",20000,4.33333333333333,11,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"757",46,"1","yes","Yes",15,5,"Police",0,0.25,1.5,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"758",19,"1","yes","No",15,5,"Hired transport",20000,0.666666666666667,5.25,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"759",28,"1","yes","Yes",11,1,"Hired transport",45000,7.25,29,3,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,-3.186389,37.068611,NA,NA
+"760",25,"1","no","No",15,5,"Police",0,0.583333333333333,13,3,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"761",23,"1","yes","No",15,4,"Personal vehicle",0,0.5,0.5,0,"Death","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"762",60,"1","yes","No",15,5,"Personal vehicle",0,2.75,1.83333333333333,2,"Alive","Non-severe","1 or more","1-2hrs",-3.6608888,37.5662467,-4.2118703,37.4419273,NA,NA,NA,NA
+"763",28,"1","no","Yes",15,5,"Personal vehicle",0,1.41666666666667,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"764",76,"1","no","No",15,5,"Personal vehicle",0,0.5,4.16666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"765",5,"1","yes","No",8,5,"Bodaboda",0,1.25,2.58333333333333,3,"Alive","Severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA
+"766",25,"1","yes","No",3,1,"Police",0,0.5,24.3333333333333,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"767",34,"1","no","Yes",10,5,"Personal vehicle",0,0.833333333333333,1.5,2,"Alive","Severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"768",34,"1","no","Yes",15,5,"Personal vehicle",30000,0.833333333333333,21,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"769",22,"1","yes","No",14,5,"Personal vehicle",0,0.333333333333333,1.5,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"770",20,"1","yes","No",12,5,"Personal vehicle",120000,6.83333333333333,23,3,"Alive","Severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA
+"771",17,"1","no","No",15,5,"Personal vehicle",0,0.333333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"772",23,"1","yes","No",15,5,"Other",0,0.75,16.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"773",39,"1","no","No",4,1,"Ambulance",0,0.333333333333333,1,0,"Death","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"774",52,"1","yes","Yes",14,4,"Personal vehicle",0,0.25,746,1,"Death","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"775",28,"1","yes","Yes",8,1,"Personal vehicle",0,0.833333333333333,5.75,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"776",25,"1","yes","No",15,5,"Personal vehicle",0,0.5,4.4,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"777",24,"1","yes","No",15,5,"Personal vehicle",0,0.166666666666667,0.25,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"778",1,"1","no","No",14,5,"Personal vehicle",40000,0.833333333333333,18.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"779",73,"0","no","No",14,5,"Personal vehicle",0,3.33333333333333,6.33333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"780",7,"1","yes","No",15,5,"Personal vehicle",0,2.66666666666667,30,3,"Alive","Non-severe","1 or more","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,-3.186389,37.068611,NA,NA
+"781",60,"1","no","No",15,5,"Personal vehicle",390000,5,11,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"782",12,"1","no","No",15,5,"Bodaboda",0,0.666666666666667,25,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"783",68,"0","no","No",15,5,"Personal vehicle",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"784",21,"1","yes","Yes",15,5,"Personal vehicle",0,5.33333333333333,22,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"785",32,"1","yes","No",5,5,"Personal vehicle",0,0.666666666666667,1.5,2,"Alive","Severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"786",43,"1","yes","No",15,5,"Bodaboda",123000,7.75,24.3333333333333,4,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"787",35,"1","yes","No",15,5,"Bodaboda",60000,3.25,23,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,-3.5286807,37.118976,NA,NA
+"788",66,"1","no","Yes",15,5,"Personal vehicle",0,1.58333333333333,33,3,"Alive","Non-severe","1 or more","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,-3.186389,37.068611,NA,NA
+"789",32,"0","yes","No",4,1,"Personal vehicle",0,0.5,0.666666666666667,1,"Death","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"790",35,"1","yes","Yes",10,5,"Personal vehicle",0,0.5,50.5,0,"Alive","Severe","0 to 1","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"791",18,"1","yes","No",14,5,"Personal vehicle",50000,4,20.3333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA
+"792",17,"1","yes","No",15,5,"Personal vehicle",0,3,90.6666666666667,3,"Alive","Non-severe","1 or more","more 4hrs",-3.1413061,37.212256,-3.1413061,37.212256,-3.1413061,37.212256,NA,NA
+"793",21,"0","no","No",15,5,"Personal vehicle",10000,3,27,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"794",20,"1","yes","No",15,5,"Other",0,0.166666666666667,27.6666666666667,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"795",2,"1","no","No",15,5,"Bodaboda",0,1.16666666666667,3,3,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,NA,NA,-3.5286807,37.118976,NA,NA
+"796",31,"0","yes","No",15,5,"Personal vehicle",0,0.166666666666667,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"797",42,"1","yes","No",15,5,"Personal vehicle",80000,2,23.75,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"798",22,"1","yes","No",15,5,"Personal vehicle",0,4.25,5,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"799",40,"0","no","No",15,5,"Personal vehicle",0,2.66666666666667,6,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,-3.3227432,37.3285435,NA,NA
+"800",40,"1","no","No",11,1,"Personal vehicle",0,0.5,0.25,0,"Death","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"801",9,"1","yes","No",15,5,"Personal vehicle",0,0.916666666666667,0.5,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"802",28,"1","yes","No",15,5,"Personal vehicle",0,0.75,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"803",4,"0","no","No",15,5,"Hired transport",3400,3,46,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"804",51,"1","no","No",15,5,"Bodaboda",8000,3,17,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"805",18,"1","no","Yes",15,5,"Bodaboda",0,0.333333333333333,3.75,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"806",18,"1","no","No",15,5,"Bodaboda",10000,3,5,4,"Alive","Non-severe","1 or more","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,-3.186389,37.068611,-3.166825,36.8856703
+"807",22,"1","yes","No",15,5,"Personal vehicle",0,1.5,0,2,"Alive","Non-severe","1 or more","0-1hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"808",66,"1","yes","Yes",14,5,"Personal vehicle",0,0.833333333333333,3.66666666666667,1,"Alive","Non-severe","0 to 1","3-4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"809",7,"1","no","No",15,5,"Bodaboda",4000,0.583333333333333,0.916666666666667,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"810",30,"1","yes","Yes",10,5,"Personal vehicle",1e+05,8,112,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"811",25,"1","no","No",15,5,"Police",0,1.66666666666667,0.666666666666667,2,"Alive","Non-severe","1 or more","0-1hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"812",4,"0","yes","No",15,5,"Hired transport",500,0.833333333333333,7.16666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"813",41,"1","yes","No",15,5,"Personal vehicle",0,0.583333333333333,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"814",72,"1","no","No",8,1,"Personal vehicle",0,0.833333333333333,2.5,2,"Death","Severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"815",10,"1","no","No",15,5,"Hired transport",10000,0.666666666666667,5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"816",18,"1","yes","No",15,5,"Personal vehicle",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"817",5,"1","no","No",15,5,"Personal vehicle",0,0.433333333333333,6.33333333333333,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"818",61,"1","yes","No",3,1,"Personal vehicle",0,0.5,1.25,0,"Death","Severe","0 to 1","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"819",1,"1","yes","No",15,5,"Personal vehicle",0,0.333333333333333,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"820",19,"1","yes","No",15,5,"Personal vehicle",0,1.16666666666667,25.5,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"821",34,"1","yes","No",15,5,"Personal vehicle",0,0.583333333333333,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"822",38,"1","yes","Yes",10,5,"Personal vehicle",0,2,3.5,1,"Alive","Severe","0 to 1","3-4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"823",20,"1","yes","No",15,5,"Personal vehicle",0,2.75,35,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"824",8,"1","yes","No",15,4,"Hired transport",0,1,2,2,"Death","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"825",52,"1","yes","No",15,5,"Personal vehicle",0,1.5,15.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.186389,37.068611,NA,NA,NA,NA
+"826",30,"1","yes","No",14,4,"Other",80000,4.5,74.5,3,"Death","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"827",26,"1","yes","No",12,1,"Personal vehicle",0,1.75,22.8333333333333,2,"Death","Severe","1 or more","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"828",11,"0","no","No",15,5,"Hired transport",15000,0.666666666666667,1.5,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"829",28,"1","yes","Yes",15,1,"Personal vehicle",0,1.16666666666667,4,2,"Death","Non-severe","1 or more","3-4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"830",29,"1","yes","No",9,5,"Hired transport",65000,2.83333333333333,24,2,"Alive","Severe","1 or more","more 4hrs",NA,NA,-3.166825,36.8856703,NA,NA,NA,NA
+"831",10,"1","yes","No",15,5,"Ambulance",0,0.75,5.5,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"832",10,"1","yes","No",15,4,"Ambulance",0,1,4,0,"Death","Non-severe","0 to 1","3-4hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"833",40,"1","yes","Yes",15,5,"Hired transport",46500,4.33333333333333,47,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,-3.5286807,37.118976,NA,NA
+"834",30,"0","no","No",15,5,"Personal vehicle",0,0.833333333333333,27,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"835",21,"1","yes","No",13,5,"Personal vehicle",0,0.5,938,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"836",26,"1","yes","No",15,5,"Personal vehicle",0,1,4,0,"Alive","Non-severe","0 to 1","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"837",21,"1","yes","Yes",8,4,"Police",0,0.25,4.33333333333333,1,"Death","Severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"838",25,"0","yes","No",15,5,"Personal vehicle",48000,15,190,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"839",59,"0","no","No",10,5,"Police",0,1.16666666666667,1,2,"Alive","Severe","1 or more","0-1hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"840",23,"1","no","No",15,4,"Personal vehicle",80000,1.25,23,2,"Death","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"841",43,"1","no","Yes",15,5,"Personal vehicle",0,0.666666666666667,1.81666666666667,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"842",24,"0","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"843",27,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"844",28,"1","yes","Yes",14,4,"Personal vehicle",0,0.5,2,1,"Death","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"845",16,"1","yes","No",14,5,"Ambulance",0,0.5,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"846",58,"1","yes","No",4,1,"Personal vehicle",0,0.5,4,0,"Death","Severe","0 to 1","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"847",29,"1","yes","No",13,5,"Hired transport",66000,3.08333333333333,113.033333333333,4,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"848",5,"1","yes","No",15,5,"Personal vehicle",0,0.666666666666667,15.3333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"849",18,"1","no","Yes",13,5,"Bodaboda",59000,1.58333333333333,134,4,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"850",16,"1","no","No",14,5,"Personal vehicle",10000,1.16666666666667,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"851",28,"1","yes","Yes",14,5,"Personal vehicle",0,2.5,121.166666666667,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"852",32,"1","yes","No",15,5,"Personal vehicle",0,1.16666666666667,1.75,2,"Alive","Non-severe","1 or more","1-2hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"853",23,"1","yes","No",8,4,"Police",0,1.08333333333333,2.33333333333333,2,"Death","Severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"854",24,"1","yes","Yes",11,5,"Personal vehicle",0,0.583333333333333,16.6666666666667,2,"Alive","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"855",54,"1","yes","Yes",6,1,"Police",0,0.5,0.5,1,"Death","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"856",75,"1","yes","No",14,1,"Hired transport",10000,0.5,1.83333333333333,1,"Death","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"857",32,"1","no","Yes",10,5,"Personal vehicle",1600000,14,1344,4,"Alive","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"858",21,"0","yes","No",13,5,"Ambulance",2000,1.16666666666667,3.33333333333333,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"859",44,"1","yes","No",14,5,"Police",58000,2.66666666666667,71.3333333333333,4,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"860",43,"1","no","Yes",9,5,"Other",0,1.5,2,2,"Alive","Severe","1 or more","1-2hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"861",25,"1","no","No",15,5,"Personal vehicle",25000,1.5,58,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"862",22,"0","yes","No",15,5,"Personal vehicle",0,0.416666666666667,4,0,"Alive","Non-severe","0 to 1","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"863",21,"1","yes","No",11,4,"Personal vehicle",30000,2,67,3,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"864",38,"1","no","No",15,5,"Hired transport",10000,2.33333333333333,4,2,"Alive","Non-severe","1 or more","3-4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"865",30,"1","no","No",15,5,"Personal vehicle",0,0.833333333333333,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"866",33,"1","no","Yes",7,1,"Personal vehicle",0,0.333333333333333,1,1,"Death","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"867",51,"1","no","No",8,1,"Personal vehicle",40000,2.66666666666667,10.75,2,"Death","Severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"868",27,"1","yes","Yes",15,5,"Personal vehicle",40000,1.41666666666667,171,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"869",50,"1","no","No",15,5,"Personal vehicle",0,4,9,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"870",40,"0","yes","No",15,5,"Police",0,0.833333333333333,9,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"871",35,"1","yes","No",15,5,"Personal vehicle",4000,0.583333333333333,2.66666666666667,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"872",17,"1","yes","No",7,1,"Personal vehicle",0,2.91666666666667,36,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"873",25,"1","no","No",15,5,"Personal vehicle",40000,1.83333333333333,24.6666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"874",35,"1","yes","No",9,1,"Police",0,0.416666666666667,0.666666666666667,0,"Death","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"875",67,"1","yes","No",13,5,"Personal vehicle",0,0.583333333333333,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"876",29,"1","yes","No",15,5,"Personal vehicle",0,0.416666666666667,8.5,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"877",22,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,0.75,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"878",20,"1","yes","No",14,5,"Personal vehicle",0,0.5,0.75,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"879",59,"1","no","No",15,5,"Personal vehicle",130000,5,799,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"880",40,"1","yes","No",15,5,"Ambulance",0,1,2,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"881",33,"1","yes","No",15,5,"Personal vehicle",0,0.916666666666667,5.66666666666667,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"882",20,"1","yes","Yes",15,5,"Personal vehicle",0,0.833333333333333,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"883",18,"1","yes","Yes",15,5,"Personal vehicle",0,0.666666666666667,39.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"884",7,"0","yes","No",6,4,"Personal vehicle",0,1,1,2,"Death","Severe","1 or more","0-1hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"885",24,"1","no","No",15,5,"Bodaboda",8500,2.5,0.666666666666667,2,"Alive","Non-severe","1 or more","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"886",16,"0","yes","No",15,5,"Personal vehicle",0,0.25,0.833333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"887",64,"1","yes","Yes",13,5,"Hired transport",22500,1.41666666666667,1168.5,3,"Alive","Non-severe","1 or more","more 4hrs",-3.1413061,37.212256,-3.1413061,37.212256,NA,NA,NA,NA
+"888",2,"1","no","No",15,5,"Personal vehicle",1500,1.25,1,3,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"889",30,"1","yes","No",14,5,"Personal vehicle",0,0.833333333333333,14,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"890",35,"1","no","Yes",11,4,"Personal vehicle",0,0.833333333333333,4.83333333333333,3,"Death","Severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,-3.5286807,37.118976,NA,NA
+"891",30,"1","no","Yes",10,5,"Police",0,0.75,220.083333333333,2,"Alive","Severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"892",32,"1","no","Yes",14,5,"Police",0,0.416666666666667,0.833333333333333,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"893",55,"1","yes","No",6,1,"Personal vehicle",0,0.666666666666667,1,2,"Death","Severe","1 or more","0-1hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"894",28,"1","no","Yes",15,5,"Personal vehicle",1e+05,1.16666666666667,26,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"895",32,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,1.16666666666667,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"896",16,"1","no","No",15,5,"Personal vehicle",0,1.33333333333333,86,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"897",18,"1","no","No",15,5,"Personal vehicle",0,1.5,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"898",41,"1","yes","Yes",15,1,"Personal vehicle",0,0.666666666666667,971,2,"Death","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"899",77,"0","yes","No",15,5,"Personal vehicle",40000,1.5,3.83333333333333,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"900",14,"1","yes","No",15,5,"Personal vehicle",0,2.83333333333333,187,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-4.2118703,37.4419273,NA,NA,NA,NA
+"901",73,"1","no","Yes",12,5,"Bodaboda",151500,10,448.616666666667,4,"Alive","Severe","1 or more","more 4hrs",-3.1413061,37.212256,-3.1413061,37.212256,NA,NA,-3.1413061,37.212256
+"902",16,"0","no","No",15,5,"Personal vehicle",0,0.666666666666667,401,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"903",46,"0","yes","No",7,4,"Personal vehicle",0,0.5,0.5,1,"Death","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"904",28,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"905",40,"1","yes","No",3,1,"Personal vehicle",0,0.5,0.5,1,"Death","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"906",50,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"907",59,"1","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"908",47,"1","yes","No",3,1,"Personal vehicle",0,0.5,0.5,1,"Death","Severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"909",45,"0","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"910",42,"1","yes","No",13,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"911",28,"1","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"912",31,"1","yes","No",15,5,"Personal vehicle",29000,0.666666666666667,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"913",63,"1","no","No",11,5,"Police",0,0.5,5,0,"Alive","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"914",15,"1","no","No",15,5,"Hired transport",0,0.833333333333333,6,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"915",38,"0","yes","No",15,5,"Police",0,0.333333333333333,6,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"916",10,"1","yes","No",14,5,"Bodaboda",5000,1,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.166825,36.8856703,NA,NA,NA,NA
+"917",35,"1","no","Yes",15,5,"Hired transport",15000,1,2.5,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"918",15,"1","yes","No",15,5,"Bodaboda",0,1.33333333333333,13,3,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA
+"919",22,"1","yes","Yes",5,3,"Personal vehicle",0,0.666666666666667,17,2,"Death","Severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"920",39,"1","no","Yes",15,5,"Personal vehicle",0,1.41666666666667,4.66666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"921",72,"0","no","No",15,5,"Hired transport",70000,2.83333333333333,102.5,3,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,-3.5286807,37.118976,NA,NA
+"922",1,"1","no","No",8,5,"Personal vehicle",0,0.5,0.833333333333333,1,"Alive","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"923",7,"1","no","No",15,5,"Ambulance",14000,9.5,591,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"924",51,"1","no","Yes",15,5,"Personal vehicle",0,0.25,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"925",38,"1","yes","Yes",15,5,"Personal vehicle",0,2.25,25,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"926",4,"1","yes","No",7,5,"Personal vehicle",0,0.666666666666667,3.5,1,"Alive","Severe","0 to 1","3-4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"927",4,"0","yes","No",15,5,"Personal vehicle",0,0.5,0.666666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"928",50,"0","no","No",15,5,"Personal vehicle",40000,1.33333333333333,4.33333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"929",8,"0","yes","No",15,5,"Personal vehicle",0,0.333333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"930",53,"1","no","Yes",15,5,"Personal vehicle",2900,6,485.5,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"931",22,"1","yes","Yes",7,5,"Other",0,0.666666666666667,2,1,"Alive","Severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"932",23,"1","no","No",9,1,"Personal vehicle",0,0.833333333333333,5.75,2,"Death","Severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"933",9,"1","no","No",15,5,"Personal vehicle",0,0.75,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"934",33,"1","yes","Yes",15,5,"Personal vehicle",0,1,37,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"935",26,"1","yes","Yes",6,1,"Police",0,0.333333333333333,0.5,1,"Death","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"936",4,"1","yes","No",9,5,"Personal vehicle",0,0.416666666666667,2.33333333333333,1,"Alive","Severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"937",36,"1","yes","No",15,1,"Personal vehicle",0,1.25,4.5,2,"Death","Non-severe","1 or more","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,NA,NA,NA,NA
+"938",3,"1","no","No",15,5,"Hired transport",2000,2.5,65.8333333333333,3,"Alive","Non-severe","1 or more","more 4hrs",-3.186389,37.068611,-3.186389,37.068611,-3.5286807,37.118976,NA,NA
+"939",45,"1","yes","No",15,5,"Personal vehicle",0,0.666666666666667,68,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"940",36,"1","no","No",14,5,"Police",0,0.583333333333333,9.5,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"941",25,"1","no","Yes",11,5,"Personal vehicle",0,1,3.36666666666667,1,"Alive","Severe","0 to 1","3-4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"942",22,"1","yes","No",15,5,"Personal vehicle",0,0.416666666666667,2,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"943",20,"1","no","Yes",15,5,"Bodaboda",5000,0.416666666666667,13,0,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"944",24,"1","yes","Yes",8,4,"Personal vehicle",0,0.666666666666667,24.8333333333333,1,"Death","Severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"945",29,"1","no","No",15,5,"Personal vehicle",0,1.5,8,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"946",38,"1","yes","No",14,4,"Police",2e+05,6.16666666666667,37,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"947",17,"1","yes","No",14,5,"Ambulance",0,0.5,1,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"948",25,"1","yes","Yes",13,5,"Personal vehicle",350000,0.333333333333333,17,1,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"949",17,"1","no","No",15,5,"Personal vehicle",3400,1.25,159,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"950",18,"1","yes","Yes",15,5,"Bodaboda",20000,0.666666666666667,5.93333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"951",23,"1","yes","No",15,5,"Personal vehicle",0,4.5,124.5,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"952",23,"1","yes","No",15,5,"Personal vehicle",0,0.666666666666667,0.666666666666667,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"953",35,"0","yes","Yes",15,5,"Personal vehicle",0,0.5,62,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"954",32,"0","no","No",15,5,"Personal vehicle",0,0.583333333333333,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"955",31,"1","yes","No",9,1,"Personal vehicle",470000,10.25,94.15,4,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"956",51,"1","no","No",15,5,"Hired transport",2900,1,98,1,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"957",21,"1","no","No",15,5,"Bodaboda",30000,2.5,201.5,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"958",3,"1","yes","No",6,5,"Bodaboda",0,0.5,3.16666666666667,1,"Alive","Severe","0 to 1","3-4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"959",16,"1","yes","No",15,5,"Personal vehicle",14000,3.5,335,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"960",50,"1","yes","No",14,5,"Personal vehicle",0,5.83333333333333,8.75,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"961",35,"1","yes","No",15,5,"Personal vehicle",0,1.75,31,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.166825,36.8856703,NA,NA,NA,NA
+"962",39,"1","yes","Yes",6,1,"Personal vehicle",0,1,83,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"963",25,"1","yes","No",9,1,"Personal vehicle",0,0.416666666666667,2,0,"Death","Severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"964",76,"1","no","No",15,5,"Hired transport",20000,0.666666666666667,3.5,2,"Alive","Non-severe","1 or more","3-4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"965",30,"1","yes","No",3,1,"Police",0,0.5,0.716666666666667,1,"Death","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"966",2,"1","no","No",15,5,"Personal vehicle",0,0.833333333333333,18,2,"Alive","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"967",47,"1","yes","No",15,5,"Personal vehicle",0,2,4.66666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.1413061,37.212256,NA,NA,NA,NA
+"968",11,"1","no","No",15,5,"Personal vehicle",20000,0.333333333333333,0.25,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"969",57,"1","yes","Yes",14,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"970",32,"1","yes","No",15,5,"Personal vehicle",0,3.66666666666667,4,2,"Alive","Non-severe","1 or more","3-4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"971",28,"1","no","No",15,5,"Personal vehicle",41800,1.41666666666667,5.58333333333333,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"972",25,"0","yes","No",10,5,"Personal vehicle",0,0.766666666666667,13.3333333333333,1,"Alive","Severe","0 to 1","more 4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"973",31,"1","yes","Yes",12,5,"Personal vehicle",0,0.333333333333333,3,1,"Alive","Severe","0 to 1","2-3hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"974",23,"1","yes","Yes",14,5,"Police",0,0.25,0.666666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"975",59,"0","yes","No",15,5,"Personal vehicle",0,0.25,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"976",40,"1","yes","Yes",15,5,"Personal vehicle",20000,0.633333333333333,2.75,2,"Alive","Non-severe","1 or more","2-3hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"977",26,"0","no","No",15,5,"Personal vehicle",0,0.166666666666667,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"978",52,"1","yes","No",15,4,"Personal vehicle",220000,7,22.5,2,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"979",38,"1","no","Yes",11,5,"Police",0,0.916666666666667,1,2,"Alive","Severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"980",25,"1","yes","Yes",14,5,"Personal vehicle",0,0.5,1,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"981",30,"1","yes","Yes",10,5,"Personal vehicle",0,0.916666666666667,0.5,2,"Alive","Severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"982",39,"1","no","No",10,1,"Personal vehicle",35000,1.83333333333333,8,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"983",35,"1","no","No",13,5,"Personal vehicle",20000,1,1.25,2,"Alive","Non-severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"984",25,"1","yes","No",15,5,"Personal vehicle",50000,2.08333333333333,4.4,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA
+"985",45,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,1.75,1,"Alive","Non-severe","0 to 1","1-2hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"986",65,"1","no","Yes",15,1,"Other",0,1.08333333333333,68,2,"Death","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"987",48,"1","yes","Yes",15,5,"Personal vehicle",0,1.83333333333333,830,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA
+"988",26,"1","yes","Yes",15,5,"Personal vehicle",40000,1.58333333333333,7.75,2,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"989",14,"0","yes","No",14,1,"Personal vehicle",1e+05,3.66666666666667,141,2,"Death","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"990",19,"1","yes","No",8,1,"Personal vehicle",0,0.666666666666667,1.5,1,"Death","Severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"991",3,"1","yes","No",9,1,"Personal vehicle",0,2.41666666666667,31.6666666666667,2,"Death","Severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"992",21,"0","yes","No",15,1,"Personal vehicle",0,0.75,4,2,"Death","Non-severe","1 or more","3-4hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"993",31,"1","no","Yes",15,5,"Hired transport",5000,0.333333333333333,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"994",20,"1","no","No",7,4,"Personal vehicle",0,0.416666666666667,83,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"995",49,"1","yes","No",13,5,"Personal vehicle",0,1,3,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"996",37,"0","yes","No",15,4,"Personal vehicle",0,1,3,2,"Death","Non-severe","1 or more","2-3hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"997",63,"1","yes","No",15,5,"Personal vehicle",0,0.5,0.3,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"998",25,"1","no","Yes",15,1,"Personal vehicle",0,0.833333333333333,11,2,"Death","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"999",38,"1","yes","No",10,5,"Personal vehicle",0,2.33333333333333,2.16666666666667,2,"Alive","Severe","1 or more","2-3hrs",-3.186389,37.068611,-3.166825,36.8856703,NA,NA,NA,NA
+"1000",45,"1","yes","Yes",15,5,"Personal vehicle",0,0.333333333333333,0.916666666666667,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"1001",32,"1","yes","No",15,3,"Police",16000,3.5,504,4,"Death","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,-3.186389,37.068611
+"1002",41,"1","yes","No",3,1,"Personal vehicle",0,0.5,1.91666666666667,0,"Death","Severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1003",11,"1","no","No",15,5,"Personal vehicle",0,0.5,164,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1004",73,"0","no","No",15,5,"Personal vehicle",800,0.916666666666667,2,2,"Alive","Non-severe","1 or more","1-2hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"1005",87,"0","no","No",14,4,"Hired transport",40000,0.666666666666667,1,2,"Death","Non-severe","1 or more","0-1hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"1006",80,"1","no","No",10,1,"Personal vehicle",0,0.916666666666667,4.75,2,"Death","Severe","1 or more","more 4hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"1007",19,"1","no","No",15,5,"Personal vehicle",0,1.25,99,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1008",45,"1","yes","Yes",15,5,"Other",0,2,49,3,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,-3.166825,36.8856703,-3.5286807,37.118976
+"1009",32,"1","yes","No",14,5,"Personal vehicle",0,1.16666666666667,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"1010",19,"1","yes","No",14,5,"Personal vehicle",0,4,27.3333333333333,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA
+"1011",79,"1","yes","Yes",12,1,"Personal vehicle",0,0.5,1.83333333333333,0,"Death","Severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1012",37,"1","no","Yes",6,5,"Personal vehicle",0,0.5,3.66666666666667,1,"Alive","Severe","0 to 1","3-4hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"1013",33,"1","yes","Yes",15,5,"Personal vehicle",0,2.33333333333333,50.6666666666667,2,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1014",64,"1","yes","No",15,5,"Personal vehicle",1e+05,3.75,61,4,"Alive","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,-4.2118703,37.4419273,-3.3227432,37.3285435
+"1015",10,"1","yes","No",15,1,"Police",0,0.25,1,1,"Death","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"1016",14,"1","yes","No",9,1,"Bodaboda",5e+05,1,241,1,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1017",25,"1","no","Yes",15,5,"Police",0,0.833333333333333,5,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1018",37,"1","no","No",15,5,"Personal vehicle",0,0.0833333333333333,2.5,1,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1019",60,"1","no","No",10,5,"Personal vehicle",0,0.5,0.25,0,"Alive","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1020",51,"0","yes","No",15,4,"Personal vehicle",0,1.25,2,2,"Death","Non-severe","1 or more","1-2hrs",-3.166825,36.8856703,-3.166825,36.8856703,NA,NA,NA,NA
+"1021",26,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,5,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.6608888,37.5662467,-3.6608888,37.5662467,NA,NA,NA,NA
+"1022",53,"1","yes","No",15,5,"Hired transport",20000,0.75,1,2,"Alive","Non-severe","1 or more","0-1hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"1023",27,"0","no","No",15,5,"Personal vehicle",0,0.5,13,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1024",36,"1","no","Yes",15,5,"Bodaboda",76000,3.33333333333333,6,3,"Alive","Non-severe","1 or more","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,-3.5286807,37.118976
+"1025",56,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,3,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"1026",50,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,2.96666666666667,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"1027",26,"1","yes","Yes",15,1,"Hired transport",290000,6.5,244.166666666667,2,"Death","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1028",39,"1","yes","No",10,1,"Police",0,0.5,1,1,"Death","Severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"1029",39,"1","no","No",15,5,"Personal vehicle",0,1.33333333333333,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"1030",15,"1","no","No",15,1,"Hired transport",90000,5,233,2,"Death","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1031",24,"1","yes","No",15,5,"Bodaboda",0,2.25,3,2,"Alive","Non-severe","1 or more","2-3hrs",-3.3227432,37.3285435,-3.3227432,37.3285435,NA,NA,NA,NA
+"1032",5,"1","yes","No",15,1,"Personal vehicle",0,15,7,2,"Death","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1033",3,"0","no","No",15,5,"Personal vehicle",0,0.5,13.5833333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1034",50,"0","yes","No",15,5,"Personal vehicle",0,0.5,0.5,1,"Alive","Non-severe","0 to 1","0-1hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"1035",28,"1","no","No",3,1,"Police",0,0.666666666666667,6,2,"Death","Severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"1036",4,"0","yes","No",15,4,"Bodaboda",20000,12,112,3,"Alive","Non-severe","1 or more","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1037",15,"0","no","No",14,4,"Bodaboda",3e+05,6,734,2,"Death","Non-severe","1 or more","more 4hrs",-4.2118703,37.4419273,-4.2118703,37.4419273,NA,NA,NA,NA
+"1038",50,"1","yes","Yes",15,5,"Other",36000,1.75,20.6666666666667,4,"Alive","Non-severe","1 or more","more 4hrs",-3.166825,36.8856703,-3.166825,36.8856703,-3.166825,36.8856703,-3.166825,36.8856703
+"1039",14,"1","yes","No",15,5,"Personal vehicle",0,0.5,1,0,"Alive","Non-severe","0 to 1","0-1hrs",-3.3227432,37.3285435,-3.5286807,37.118976,NA,NA,NA,NA
+"1040",19,"1","yes","No",15,5,"Personal vehicle",0,0.5,3,1,"Alive","Non-severe","0 to 1","2-3hrs",-3.5286807,37.118976,NA,NA,NA,NA,NA,NA
+"1041",28,"1","yes","Yes",15,5,"Hired transport",20000,0.75,5,1,"Alive","Non-severe","0 to 1","more 4hrs",-3.3227432,37.3285435,NA,NA,NA,NA,NA,NA
+"1042",37,"1","yes","Yes",15,5,"Personal vehicle",0,1.33333333333333,5,1,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1043",38,"1","yes","Yes",15,5,"Personal vehicle",0,0.833333333333333,5.33333333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1044",27,"0","yes","No",15,5,"Ambulance",0,1,1,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1045",38,"1","no","Yes",13,1,"Personal vehicle",0,0.7,42.1666666666667,2,"Death","Non-severe","1 or more","more 4hrs",-3.5286807,37.118976,-3.5286807,37.118976,NA,NA,NA,NA
+"1046",29,"1","yes","No",14,5,"Personal vehicle",0,0.5,1,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1047",39,"1","yes","Yes",14,5,"Personal vehicle",0,0.5,189.5,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1048",68,"0","yes","No",13,5,"Personal vehicle",0,0.5,0.5,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1049",50,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,29.5,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1050",37,"1","yes","No",15,5,"Personal vehicle",0,0.5,1,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1051",11,"1","yes","No",15,5,"Personal vehicle",0,1,25,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1052",51,"0","no","No",15,5,"Personal vehicle",0,0.333333333333333,3709,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1053",41,"1","yes","No",14,3,"Ambulance",0,0.25,1,0,"Death","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1054",70,"1","yes","No",3,1,"Ambulance",0,0.333333333333333,105.5,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1055",30,"1","yes","No",10,1,"Personal vehicle",0,0.5,0.25,0,"Death","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1056",31,"1","yes","No",15,5,"Personal vehicle",0,1,1.5,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1057",4,"1","no","No",15,5,"Personal vehicle",0,0.833333333333333,1417,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1058",39,"1","yes","Yes",13,5,"Personal vehicle",0,0.833333333333333,0.5,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1059",60,"1","yes","Yes",4,4,"Police",0,0.5,1,0,"Death","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1060",4,"1","yes","No",9,5,"Personal vehicle",0,0.5,2,0,"Alive","Severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1061",32,"1","yes","Yes",15,5,"Ambulance",0,0.75,7,0,"Death","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1062",41,"1","yes","No",15,4,"Personal vehicle",0,0.5,10,0,"Death","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1063",22,"1","yes","No",14,5,"Ambulance",0,0.5,0.25,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1064",50,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,12,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1065",65,"0","yes","No",12,5,"Personal vehicle",0,0.416666666666667,1.5,0,"Alive","Severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1066",31,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,12,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1067",56,"1","no","No",15,5,"Personal vehicle",0,0.5,2.75,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1068",23,"1","yes","No",15,5,"Personal vehicle",0,0.416666666666667,244,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1069",11,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,1,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1070",7,"1","yes","No",3,1,"Police",0,0.416666666666667,2.5,0,"Death","Severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1071",2,"1","yes","No",8,5,"Police",0,0.5,1,0,"Alive","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1072",68,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,2.83333333333333,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1073",42,"1","no","No",15,5,"Personal vehicle",0,0.833333333333333,1.66666666666667,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1074",32,"0","no","Yes",15,5,"Personal vehicle",0,0.5,7,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1075",72,"1","yes","No",12,5,"Personal vehicle",0,0.833333333333333,22.8333333333333,0,"Alive","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1076",50,"1","no","No",15,5,"Personal vehicle",0,0.5,7,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1077",35,"1","yes","Yes",13,1,"Personal vehicle",0,1,235,0,"Death","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1078",6,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,10,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1079",27,"1","yes","Yes",15,1,"Police",0,0.833333333333333,41,0,"Death","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1080",17,"0","yes","No",15,5,"Personal vehicle",0,0.833333333333333,14,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1081",13,"1","no","No",13,1,"Personal vehicle",0,0.416666666666667,2,0,"Death","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1082",24,"0","yes","No",15,5,"Hired transport",0,0.5,10.5,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1083",23,"1","yes","No",15,5,"Personal vehicle",0,0.5,2.83333333333333,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1084",26,"1","yes","No",15,5,"Personal vehicle",0,0.5,1.5,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1085",58,"1","yes","No",14,5,"Personal vehicle",0,0.833333333333333,1.25,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1086",43,"1","no","No",15,5,"Personal vehicle",0,1,1.5,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1087",22,"1","yes","No",12,4,"Police",0,0.416666666666667,0.75,0,"Death","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1088",21,"1","yes","No",15,5,"Personal vehicle",0,0.416666666666667,0.5,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1089",25,"1","yes","No",15,5,"Personal vehicle",0,0.416666666666667,2,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1090",26,"1","no","No",15,5,"Personal vehicle",0,0.833333333333333,1.75,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1091",41,"1","yes","No",14,5,"Personal vehicle",0,1,245.5,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1092",31,"1","yes","No",15,5,"Personal vehicle",0,0.5,708.833333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1093",44,"1","no","No",15,5,"Personal vehicle",0,1,1,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1094",17,"1","yes","No",4,1,"Personal vehicle",0,1,0.75,0,"Death","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1095",25,"1","yes","No",15,5,"Personal vehicle",0,0.5,5.16666666666667,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1096",31,"1","yes","No",14,5,"Personal vehicle",0,0.416666666666667,9.08333333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1097",27,"1","yes","No",7,5,"Personal vehicle",0,1,1,0,"Alive","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1098",32,"1","no","No",12,5,"Personal vehicle",0,0.5,22.8333333333333,0,"Alive","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1099",30,"0","yes","No",13,5,"Personal vehicle",0,0.833333333333333,6.33333333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1100",32,"0","no","No",8,1,"Police",0,0.5,75,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1101",31,"1","yes","No",12,5,"Personal vehicle",0,0.416666666666667,22.8333333333333,0,"Alive","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1102",22,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,1,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1103",19,"1","yes","No",11,1,"Police",0,0.416666666666667,26.0833333333333,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1104",51,"1","yes","No",15,5,"Personal vehicle",0,0.5,3,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1105",21,"0","yes","No",15,5,"Police",0,0.5,1.25,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1106",25,"1","yes","No",15,5,"Personal vehicle",0,0.5,2.83333333333333,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1107",40,"1","no","No",15,5,"Personal vehicle",0,0.416666666666667,1.25,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1108",74,"1","no","No",8,5,"Police",0,0.5,6,0,"Alive","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1109",19,"1","yes","No",15,5,"Personal vehicle",0,0.5,1.66666666666667,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1110",24,"1","yes","No",3,1,"Personal vehicle",0,0.416666666666667,129.483333333333,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1111",34,"1","yes","No",15,5,"Ambulance",0,0.333333333333333,3.66666666666667,0,"Alive","Non-severe","0 to 1","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1112",32,"1","yes","No",15,5,"Personal vehicle",0,0.5,2,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1113",21,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,2.16666666666667,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1114",52,"1","yes","No",15,5,"Personal vehicle",0,0.5,3,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1115",20,"1","yes","No",8,5,"Personal vehicle",0,0.5,4.16666666666667,0,"Alive","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1116",40,"0","yes","No",15,5,"Police",0,0.416666666666667,10,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1117",19,"1","yes","No",15,5,"Other",0,0.416666666666667,76.1666666666667,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1118",46,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,5.16666666666667,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1119",2,"0","yes","No",15,5,"Personal vehicle",0,0.5,10,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1120",25,"1","yes","Yes",9,1,"Personal vehicle",0,1,4.66666666666667,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1121",20,"1","no","No",14,5,"Police",0,0.416666666666667,65.5,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1122",42,"1","yes","No",15,5,"Ambulance",0,0.333333333333333,0.25,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1123",34,"1","yes","Yes",15,5,"Police",0,0.5,159,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1124",21,"1","yes","No",8,1,"Police",0,0.833333333333333,0.5,0,"Death","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1125",36,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,10.5,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1126",24,"0","yes","No",14,5,"Personal vehicle",0,0.833333333333333,121.166666666667,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1127",62,"0","yes","No",15,5,"Personal vehicle",0,0.5,1.16666666666667,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1128",25,"1","no","No",11,4,"Personal vehicle",0,0.416666666666667,2.33333333333333,0,"Death","Severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1129",32,"1","yes","No",15,5,"Personal vehicle",0,0.5,240.5,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1130",26,"1","yes","No",15,5,"Personal vehicle",0,0.5,240.5,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1131",43,"1","yes","No",7,4,"Personal vehicle",0,0.5,437,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1132",36,"1","yes","No",15,5,"Personal vehicle",0,0.416666666666667,4,0,"Alive","Non-severe","0 to 1","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1133",36,"1","yes","No",14,5,"Personal vehicle",0,1,39,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1134",34,"1","no","Yes",14,5,"Personal vehicle",0,0.5,4,0,"Alive","Non-severe","0 to 1","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1135",33,"1","no","No",11,5,"Personal vehicle",0,0.5,1.5,0,"Alive","Severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1136",60,"1","yes","No",7,5,"Personal vehicle",0,0.5,6,0,"Alive","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1137",32,"1","yes","Yes",14,1,"Personal vehicle",0,1,11.6666666666667,0,"Death","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1138",28,"1","yes","No",15,5,"Personal vehicle",0,0.5,2,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1139",21,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,756.833333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1140",36,"1","no","Yes",15,5,"Personal vehicle",0,0.5,7,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1141",36,"0","yes","No",15,5,"Personal vehicle",0,0.833333333333333,3.5,0,"Alive","Non-severe","0 to 1","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1142",26,"1","yes","No",3,1,"Ambulance",0,0.333333333333333,1,0,"Death","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1143",13,"1","yes","No",8,5,"Police",0,0.5,12,0,"Alive","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1144",28,"1","no","No",15,5,"Personal vehicle",0,0.416666666666667,1.25,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1145",2,"1","no","No",15,5,"Ambulance",0,1,22.8333333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1146",46,"1","no","No",14,5,"Personal vehicle",0,0.416666666666667,2,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1147",69,"1","no","No",15,5,"Personal vehicle",0,0.5,1,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1148",32,"1","yes","Yes",4,1,"Personal vehicle",0,0.416666666666667,41,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1149",46,"1","yes","No",15,5,"Personal vehicle",0,0.833333333333333,32,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1150",26,"1","no","No",11,5,"Personal vehicle",0,0.5,1.5,0,"Alive","Severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1151",25,"0","yes","No",15,5,"Personal vehicle",0,0.833333333333333,3,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1152",27,"1","no","No",8,4,"Personal vehicle",0,1,67,0,"Death","Severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1153",33,"1","no","Yes",15,5,"Personal vehicle",0,0.833333333333333,1.5,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1154",36,"1","no","No",12,5,"Personal vehicle",0,0.5,0.5,0,"Alive","Severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1155",54,"1","yes","No",15,5,"Personal vehicle",0,0.5,25,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1156",30,"1","no","No",14,5,"Personal vehicle",0,0.5,4.58333333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1157",27,"0","no","No",14,5,"Personal vehicle",0,0.5,18.5833333333333,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1158",23,"1","yes","No",14,1,"Personal vehicle",0,0.5,1,0,"Death","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1159",44,"1","yes","No",14,5,"Personal vehicle",0,0.5,27.5,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1160",18,"0","yes","No",15,5,"Personal vehicle",0,0.5,73,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1161",30,"1","yes","Yes",15,5,"Personal vehicle",0,0.5,3,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1162",27,"1","no","No",15,5,"Personal vehicle",0,0.5,0.5,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1163",50,"1","yes","No",15,5,"Personal vehicle",0,1,0.333333333333333,0,"Alive","Non-severe","0 to 1","0-1hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1164",30,"1","yes","No",15,5,"Police",0,1,66,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1165",17,"1","yes","No",15,5,"Personal vehicle",0,1,3.33333333333333,0,"Alive","Non-severe","0 to 1","3-4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1166",32,"1","no","No",15,5,"Personal vehicle",0,0.416666666666667,107,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1167",24,"1","no","No",15,5,"Personal vehicle",0,0.5,10,0,"Alive","Non-severe","0 to 1","more 4hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1168",66,"1","no","No",15,5,"Police",0,0.5,2,0,"Alive","Non-severe","0 to 1","1-2hrs",NA,NA,NA,NA,NA,NA,NA,NA
+"1169",29,"1","no","No",14,5,"Personal vehicle",0,1,3,0,"Alive","Non-severe","0 to 1","2-3hrs",NA,NA,NA,NA,NA,NA,NA,NA

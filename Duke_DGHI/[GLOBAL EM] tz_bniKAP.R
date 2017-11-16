@@ -37,7 +37,7 @@ character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAPprofessionals_data.csv",sep=",")
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAPprofessionals_data.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -1299,7 +1299,73 @@ predictors
 # predictors<-centrality(network)$ShortestPaths[,24]
 # predictors
 
+library(corrplot)
+MDS_Corr <- read.csv("JoshBrmMdsCORR_9.4.2014.csv", header=T, row.names=1, na.rm=TRUE)
+round(MDS_Corr, digits=2)
+MDS_Corr$FAM<- NULL
+MDS_Corr$Freq<- NULL
 
+joshcor<-cor(MDS_Corr, use="complete.obs")
+
+
+
+rownames(cor)<-c("Q1",
+"Q2",
+"Q3",
+"Q4",
+"Q5",
+"Q6",
+"Q7",
+"Q8",
+"Q9",
+"Q10",
+"Q11",
+"Q12",
+"Q13",
+"Q14",
+"Q15",
+"Q16",
+"Q17",
+"Q18",
+"Q19",
+"Q20",
+"Q21",
+"Q22",
+"Q23",
+"Q24")
+
+colnames(cor)<-c("Q1",
+"Q2",
+"Q3",
+"Q4",
+"Q5",
+"Q6",
+"Q7",
+"Q8",
+"Q9",
+"Q10",
+"Q11",
+"Q12",
+"Q13",
+"Q14",
+"Q15",
+"Q16",
+"Q17",
+"Q18",
+"Q19",
+"Q20",
+"Q21",
+"Q22",
+"Q23",
+"Q24")
+
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/appendix2.eps",
+	width = 8, height = 8)
+#Add plot
+corrplot(cor, method="shade", shade.col=NA, tl.col="black")
+dev.off()
 ######################################################################
 #END
 ######################################################################
