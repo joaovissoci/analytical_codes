@@ -433,11 +433,50 @@ rti_data<-subset(data_who,data_who$method_injury_recoded=="RTI")
 #see:http://faculty.washington.edu/tlumley/old-survey/index.html
 #see:https://rpubs.com/corey_sparks/53683
 library(survey)
-data_who_weighted <- svydesign(ids = ~1, 
+data_who_full_weighted <- svydesign(ids = ~1, 
+                     data = data_who,
+                     weights = data_who$weight)
+
+data_who_rti_weighted <- svydesign(ids = ~1, 
                      data = rti_data,
-                     weights = rti_data$weights)
+                     weights = rti_data$weight)
+
+#data Tz
+data_tz$method_injury<-car::recode(data_tz$QE02,"
+            1='RTI';
+            2='RTI';
+            3='RTI';
+            5='Violence';
+            6='Violence';
+            7='Violence';
+            9='Outros';
+            10='Violence';
+            13='Outros';
+            14='Outros'")
+data_tz$type_vehicle<-car::recode(data_tz$QE02B,"
+               1='car';
+               2='avru';
+               3='avru';
+               4='car';
+               9=NA;
+               else='non-RTI'")
+
+data_tz$past_alcohol_use<-car::recode(data_tz$QG01,"
+               1:8='yes';
+               9='no';
+               99=NA")
+data_tz$past_alcohol_use<-as.factor(data_tz$past_alcohol_use)
+
+data_tz$breath_level<-car::recode(data_tz$QD04,"
+               0='no';
+               9=NA;
+               else='yes'")
+data_tz$breath_level<-as.factor(data_tz$breath_level)
+
+rti_data_tz<-subset(data_tz,data_tz$method_injury=="RTI")
 
 
+dim(data_tz)
 
 ###################################################
 #IMPUTING MISSING DATA
@@ -505,9 +544,38 @@ data_who_weighted <- svydesign(ids = ~1,
 #TABLE 1 (?)
 #########################################################
 
-svytable(country~method_injury_recoded, design = data_who_weighted)
-prop.table(svytable(country~method_injury, design = data_who_weighted))
+#All injury DATA
+#RTI prevalence with weighted sampling for all injury
+svytable(~method_injury_recoded + country, design = data_who_full_weighted)
+prop.table(svytable(~method_injury + country, design = data_who_full_weighted),2)
 
+#Self-Reported Alcohol use prevalences by country
+svytable(~past_alcohol_use + country, design = data_who_full_weighted)
+prop.table(svytable(~past_alcohol_use + country, design = data_who_full_weighted),2)
+
+#BAC Alcohol use prevalences by country
+svytable(~breath_level + country, design = data_who_full_weighted)
+prop.table(svytable(~breath_level + country, design = data_who_full_weighted),2)
+
+#RTI DATA Only
+#Self-Reported Alcohol use prevalences by country
+svytable(~past_alcohol_use + country, design = data_who_rti_weighted)
+prop.table(svytable(~past_alcohol_use + country, design = data_who_rti_weighted),2)
+
+#BAC Alcohol use prevalences by country
+svytable(~breath_level + country, design = data_who_rti_weighted)
+prop.table(svytable(~breath_level + country, design = data_who_rti_weighted),2)
+
+# TZ data
+# Type of rti
+table<-with(rti_data_tz,table(type_vehicle))
+table
+prop.table(table)
+
+#by self-reported alcohol use
+table<-with(rti_data_tz,table(type_vehicle,past_alcohol_use))
+table
+prop.table(table)
 
 ###########################################################
 ##TABLE 2
