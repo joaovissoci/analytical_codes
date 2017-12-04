@@ -27,7 +27,8 @@ Please choose the procedure you want to see your score:
 ```{r}
 #selectInput('cat', 'Participant', data$cat)
     
-selectInput('procedure', 'Procedure', data$procedure,
+selectInput('procedure', 'Procedure', 
+data$procedure,
                selected=1)
     
 #numericInput('clusters', 'Cluster count', 3,
@@ -35,7 +36,8 @@ selectInput('procedure', 'Procedure', data$procedure,
 
 # Combine the selected variables into a new data frame
 selectedData <- reactive({
-  subset(data,data$procedure==input$procedure)
+  subset(data,data$procedure==
+  input$procedure)
 })
 
 ```
