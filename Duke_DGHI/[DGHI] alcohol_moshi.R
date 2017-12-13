@@ -192,6 +192,7 @@ data_moshi<-with(data,data.frame(breath_level=QD04,
                                  location=QE06,
                                  activity_prior=QE071,
                                  past_alcohol_use=QG01,
+                                 current_alcohol_use=QF04,
                                  # high_alcohol_use=QG03,
                                  # past_alchol_use=QG04,
                                  # low_alcohol_use=QG04,
@@ -249,6 +250,8 @@ data_moshi$activity_prior<-car::recode(data_moshi$activity_prior,"99=NA")
 # data_moshi$high_alcohol_use<-car::recode(data_moshi$high_alcohol_use,"99=NA")
 data_moshi$past_alcohol_use<-car::recode(data_moshi$past_alcohol_use,"1:8='yes';9='no';99=NA")
 data_moshi$past_alcohol_use<-as.factor(data_moshi$past_alcohol_use)
+data_moshi$current_alcohol_use<-car::recode(data_moshi$current_alcohol_use,"1='yes';2='no';9=NA")
+data_moshi$current_alcohol_use<-as.factor(data_moshi$current_alcohol_use)
 # data_moshi$low_alcohol_use<-car::recode(data_moshi$low_alcohol_use,"99=NA")
 data_moshi$predictor_FUP1<-car::recode(data_moshi$predictor_FUP1,"
             1='yes';2='no';8=NA;9=NA;99=NA;NaN='no'")
@@ -1324,7 +1327,7 @@ strata<-c(1:length(rti_model$past_alcohol_use))
 outcome1<-c(1)
 outcome2<-c(0)
 outcome3<-c(0)
-fup1<-with(rti_model,data.frame(predictor=past_alcohol_use,strata,id=id_1,outcome=outcome1,confouder=bottle))
+fup1<-with(rti_model,data.frame(predictor=current_alcohol_use,strata,id=id_1,outcome=outcome1,confouder=bottle))
 fup2<-with(rti_model,data.frame(predictor=predictor_FUP1,strata,id=id_2,outcome=outcome2,confouder=bottle24))
 fup3<-with(rti_model,data.frame(predictor=predictor_FUP2,strata,id=id_3,outcome=outcome3,confouder=bottle1week))
 #matched_data<-with(rti_model,data.frame(breath_level,id))
@@ -1346,7 +1349,7 @@ summary(x_3B)
 clogistic.display(x_3B)
 
 ### MODEL 1:2
-vru_model<-subset(rti_model,rti_model$type_vehicle=='avru')
+vru_model<-subset(rti_model,rti_model$predictor_vehicle=='avru')
 
 id_1<-c(1)
 id_2<-c(2)
@@ -1355,7 +1358,7 @@ strata<-c(1:length(vru_model$past_alcohol_use))
 outcome1<-c(1)
 outcome2<-c(0)
 outcome3<-c(0)
-fup1<-with(vru_model,data.frame(predictor=past_alcohol_use,strata,id=id_1,outcome=outcome1,confouder=bottle))
+fup1<-with(vru_model,data.frame(predictor=current_alcohol_use,strata,id=id_1,outcome=outcome1,confouder=bottle))
 fup2<-with(vru_model,data.frame(predictor=predictor_FUP1,strata,id=id_2,outcome=outcome2,confouder=bottle24))
 fup3<-with(vru_model,data.frame(predictor=predictor_FUP2,strata,id=id_3,outcome=outcome3,confouder=bottle1week))
 #matched_data<-with(rti_model,data.frame(breath_level,id))
@@ -1386,7 +1389,7 @@ strata<-c(1:length(car_model$past_alcohol_use))
 outcome1<-c(1)
 outcome2<-c(0)
 outcome3<-c(0)
-fup1<-with(car_model,data.frame(predictor=past_alcohol_use,strata,id=id_1,outcome=outcome1,confouder=bottle))
+fup1<-with(car_model,data.frame(predictor=current_alcohol_use,strata,id=id_1,outcome=outcome1,confouder=bottle))
 fup2<-with(car_model,data.frame(predictor=predictor_FUP1,strata,id=id_2,outcome=outcome2,confouder=bottle24))
 fup3<-with(car_model,data.frame(predictor=predictor_FUP2,strata,id=id_3,outcome=outcome3,confouder=bottle1week))
 #matched_data<-with(rti_model,data.frame(breath_level,id))

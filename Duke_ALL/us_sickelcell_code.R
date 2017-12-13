@@ -9,15 +9,15 @@
 #################################################################
 #SETTING ENVIRONMENT
 #################################################################
-#All packages must be installes with install.packages() function
-lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest", 
-	"moments","GPArotation","nFactors","boot","psy", "car",
-	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
-	"reshape2","mclust","foreign","survival","memisc","lme4",
-	"lmerTest","dplyr","meta","xlsx"), 
-library, character.only=T)
+# #All packages must be installes with install.packages() function
+# lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest", 
+# 	"moments","GPArotation","nFactors","boot","psy", "car",
+# 	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
+# 	"reshape2","mclust","foreign","survival","memisc","lme4",
+# 	"lmerTest","dplyr","meta","xlsx"), 
+# library, character.only=T)
 
-install.packages("readxl") # CRAN version
+# install.packages("readxl") # CRAN version
 install.packages("writexl") # CRAN version
 
 
@@ -30,7 +30,7 @@ library("writexl")
 #LOADING DATA FROM A .CSV FILE
 # data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_dukescikecell_data.csv")
 
-data<-read_excel("/Users/Joao/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/REDCAPreport.xlsx")
+data<-read_excel("/Users/joaovissoci/Downloads/REDCAPreport.xlsx")
 
 #information between " " are the path to the directory in your computer where the data is stored
 
@@ -50,18 +50,21 @@ time_recode_data<-data.frame(
 						data[20],
 						data[24],
 						data[26],
+						data[31],
 						data[40],
 						data[42])
 
 colnames(time_recode_data)<-c("time_arrival",
 							  "time_room_assignment",
 							  "time_ceu",
+							  "time_ceu_discharge",
 							  "time_first_drug",
 							  "time_pca")
 
 data$time_first_dose_drug<-with(time_recode_data,time_first_drug-time_arrival)/60
 data$time_first_pca<-with(time_recode_data,time_pca-time_arrival)
 data$ed_LOS<-with(time_recode_data,time_ceu-time_room_assignment)/60
+data$CEU_LOS<-with(time_recode_data,time_ceu_discharge-time_ceu)
 
 write_xlsx(data,"/Users/Joao/Desktop/sicke_cell_data.xlsx",col_names=TRUE)
 

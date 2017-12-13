@@ -81,8 +81,8 @@ data_mzsa<-as.data.frame(data_mzsa)
 # #gcs<-with(data,rowSums(data.frame(QL02,QL02a,QL02b)))
 
 
-NaNtoNA<-function(x){
-  car::recode(x,"NaN=NA")
+NaNto0<-function(x){
+  car::recode(x,"NaN=0")
   }
 
 #Alcohol Dosage - Time 1
@@ -109,7 +109,7 @@ alcohol_amount_1<-with(data_tz,data.frame(
                      QF07L35))
 
 
-alcohol_amount_1<-lapply(alcohol_amount_1,NaNtoNA)
+alcohol_amount_1<-lapply(alcohol_amount_1,NaNto0)
 alcohol_amount_1<-rowSums(as.data.frame(alcohol_amount_1))
 
 #transforming into alcohol amount
@@ -120,12 +120,12 @@ data_tz$bottles_drank_tz<-alcohol_amount_1/16.5
 data_tz$country<-c("ATz")
 data_tz$weights<-c(1)
 
-data_tz2<-with(data_tz,data.frame(current_alcohol_use=QF04,
+data_tz2<-with(data_tz,data.frame(current_alcohol_use=as.character(QF04),
                                  breath_level=QD04,
                                  age=AGE,
-                                 gender=SEX,
+                                 gender=as.character(SEX),
                                  years_education=QI01,
-                                 work=QI02,
+                                 work=as.character(QI02),
                                  # sys_bp=QL01,
                                  # gcs=QL02C,
                                  # resp_rate=QL03,
@@ -140,12 +140,13 @@ data_tz2<-with(data_tz,data.frame(current_alcohol_use=QF04,
                                  # burn=QE015,
                                  # concussion=QE016,
                                  # organ_injury=QE017,
-                                 method_injury=QE02,
+                                 method_injury=as.character(QE02),
                                  # type_vehicle=QE02B,
                                  # motive_injury=QE03,
                                  # location=QE06,
                                  # activity_prior=QE071,
-                                 past_alcohol_use=QG01,
+                                 past_alcohol_use=as.character(QG01),
+                                 current_alcohol_use=as.character(QF04),
                                  # high_alcohol_use=QG03,
                                  # past_alchol_use=QG04,
                                  # low_alcohol_use=QG04,
@@ -219,6 +220,7 @@ data_mzsa2<-with(data_mzsa,data.frame(current_alcohol_use=qf04,
                                  # location=QE06,
                                  # activity_prior=QE071,
                                  past_alcohol_use=qg01,
+                                 current_alcohol_use=qg01,
                                  # high_alcohol_use=QG03,
                                  # past_alchol_use=QG04,
                                  # low_alcohol_use=QG04,
@@ -241,6 +243,8 @@ data_mzsa2<-with(data_mzsa,data.frame(current_alcohol_use=qf04,
 # library(survey)
 
 #### CREATING ETHANOL AMOUT / ml data
+
+data_who<-rbind(data_mzsa2,data_tz2)
 
 c9999toNA<-function(x){
    car::recode(x,"9999=NA")
@@ -541,21 +545,137 @@ dim(data_tz)
 # imp <- mice(nhanes, pred = pred, pri = FALSE) # rerun the model specifying pred argumento witht eh matriz recoded.
 
 #########################################################
-#TABLE 1 (?)
+#TABLE 1
+#########################################################
+#All injury DATA
+#RTI prevalence with weighted sampling for all injury
+with(data_who,table(country))
+svytable(~country, design = data_who_full_weighted)
+with(data_who,table(method_injury_recoded,country))
+svytable(~method_injury_recoded + country, design = data_who_full_weighted)
+prop.table(svytable(~method_injury_recoded + country, design = data_who_full_weighted),2)
+#metanalysis
+m3 <- metaprop(c(375,96,113),c(514,464,459), sm="PLOGIT")
+m3
+
+#RTI DATA Only
+#gender use prevalences by country
+with(rti_data,table(gender))
+with(rti_data,table(gender,country))
+svytable(~gender + country, design = data_who_rti_weighted)
+prop.table(svytable(~gender + country, design = data_who_rti_weighted),2)
+svychisq(~gender + country, design = data_who_rti_weighted,statistic = c("F"))
+#metanalysis
+m3 <- metaprop(c(279,80,67),c(375,113,96), sm="PLOGIT")
+m3
+
+#age use prevalences by country
+with(rti_data,table(age))
+with(rti_data,table(age,country))
+svytable(~age + country, design = data_who_rti_weighted)
+prop.table(svytable(~age + country, design = data_who_rti_weighted),2)
+svychisq(~age + country, design = data_who_rti_weighted,statistic = c("F"))
+#metanalysis
+m3 <- metaprop(c(188,68,40),c(375,113,96), sm="PLOGIT")
+m3
+
+#education years use prevalences by country
+svyby(~years_education, ~country, design = data_who_rti_weighted, svymean)
+svychisq(~age + country, design = data_who_rti_weighted,statistic = c("F"))
+0.39*sqrt(375)
+0.32*sqrt(113)
+0.44*sqrt(96)
+
+#metanalysis
+m3 <- metamean(n=c(375,113,96),
+               mean=c(9.4,6.5,8.7),
+               sd=c(7.6,3.4,4.3))
+m3
+
+#occupation use prevalences by country
+with(rti_data,table(work))
+with(rti_data,table(work,country))
+svytable(~work + country, design = data_who_rti_weighted)
+prop.table(svytable(~work + country, design = data_who_rti_weighted),2)
+svychisq(~work + country, design = data_who_rti_weighted,statistic = c("F"))
+
+#metanalysis
+m3 <- metaprop(c(298,71,57),c(375,113,96), sm="PLOGIT")
+m3
+
+#Self-reported Alcohol use prevalences by country
+with(rti_data,table(current_alcohol_use))
+with(rti_data,table(current_alcohol_use,country))
+svytable(~current_alcohol_use + country, design = data_who_rti_weighted)
+prop.table(svytable(~current_alcohol_use + country, design = data_who_rti_weighted),2)
+svychisq(~current_alcohol_use + country, design = data_who_rti_weighted,statistic = c("F"))
+
+#metanalysis
+m3 <- metaprop(c(96,26,26),c(375,113,96), sm="PLOGIT")
+m3
+
+#BAC Alcohol use prevalences by country
+with(rti_data,table(breath_level))
+with(rti_data,table(breath_level,country))
+svytable(~breath_level + country, design = data_who_rti_weighted)
+prop.table(svytable(~breath_level + country, design = data_who_rti_weighted),2)
+svychisq(~breath_level + country, design = data_who_rti_weighted,statistic = c("F"))
+
+#metanalysis
+m3 <- metaprop(c(107,24,33),c(375,113,96), sm="PLOGIT")
+m3
+
+#Alcohol amount prevalences by country
+with(rti_data,table(alcohol_amount))
+with(rti_data,table(alcohol_amount,country))
+svytable(~alcohol_amount + country, design = data_who_rti_weighted)
+prop.table(svytable(~alcohol_amount + country, design = data_who_rti_weighted),2)
+svychisq(~alcohol_amount + country, design = data_who_rti_weighted,statistic = c("F"))
+
+#metanalysis
+m3 <- metaprop(c(289,91,56),c(375,113,96), sm="PLOGIT")
+m3
+#metanalysis
+m3 <- metaprop(c(18,4,1),c(375,113,96), sm="PLOGIT")
+m3
+#metanalysis
+m3 <- metaprop(c(33,5,5),c(375,113,96), sm="PLOGIT")
+m3
+#metanalysis
+m3 <- metaprop(c(35,13,31),c(375,113,96), sm="PLOGIT")
+m3
+
+#########################################################
+#TABLE 2
 #########################################################
 
 #All injury DATA
 #RTI prevalence with weighted sampling for all injury
+with(data_who,table(method_injury_recoded))
+with(data_who,table(method_injury_recoded,country))
 svytable(~method_injury_recoded + country, design = data_who_full_weighted)
-prop.table(svytable(~method_injury + country, design = data_who_full_weighted),2)
+prop.table(svytable(~method_injury_recoded + country, design = data_who_full_weighted),2)
+#metanalysis
+m3 <- metaprop(c(375,113,93),c(516,459,464), sm="PLOGIT")
+m3
 
 #Self-Reported Alcohol use prevalences by country
-svytable(~past_alcohol_use + country, design = data_who_full_weighted)
-prop.table(svytable(~past_alcohol_use + country, design = data_who_full_weighted),2)
+with(data_who,table(current_alcohol_use))
+with(data_who,table(current_alcohol_use,country))
+svytable(~current_alcohol_use + country, design = data_who_full_weighted)
+prop.table(svytable(~current_alcohol_use + country, design = data_who_full_weighted),2)
+#metanalysis
+m3 <- metaprop(c(143,77,238),c(516,459,464), sm="PLOGIT")
+m3
 
 #BAC Alcohol use prevalences by country
+with(data_who,table(breath_level))
+with(data_who,table(breath_level,country))
 svytable(~breath_level + country, design = data_who_full_weighted)
 prop.table(svytable(~breath_level + country, design = data_who_full_weighted),2)
+#metanalysis
+m3 <- metaprop(c(154,81,244),c(516,459,464), sm="PLOGIT")
+m3
 
 #RTI DATA Only
 #Self-Reported Alcohol use prevalences by country
@@ -577,9 +697,30 @@ table<-with(rti_data_tz,table(type_vehicle,past_alcohol_use))
 table
 prop.table(table)
 
+
+
+
 ###########################################################
 ##TABLE 2
 ###########################################################
+
+#BAC Alcohol use prevalences by country
+svytable(~breath_level + country, design = data_who_rti_weighted)
+prop.table(svytable(~breath_level + country, design = data_who_rti_weighted),2)
+
+## higher efficiency by modelling variance better
+table2_model <- svyglm(past_alcohol_use~
+                        age +
+                        gender +
+                        years_education +
+                        work, 
+              design=data_who_full_weighted,
+              family=quasibinomial())
+
+
+
+
+
 
 logmodel<-glm(current_alcohol_use ~ 
             age +
@@ -597,27 +738,54 @@ exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95)))
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
 
+
+
+
 #########################################################
 #FIGURE 1
 #########################################################
 
-logmodel<-glm(method_injury_recoded ~ 
-            age +
-            gender +
-            # years_education +
-            # work +
-            #rd_condition +
-            alcohol_amount + 
-            country
-      ,family=binomial, data=data_who)
+event_alcohol<-c(375,96,113,
+                279,67,80,
+                188,40,68,
+                9.4,8.7,6.5,
+                298,57,71,
+                96,31,26,
+                107,33,24,
+                152,65,91,
+                25,1,4,
+                43,9,5,
+                59,22,13)
 
-summary(logmodel)
-#anova(reglogGEU)
-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
+n_alcohol<-c(375,96,113,
+                279,67,80,
+                188,40,68,
+                9.4,8.7,6.5,
+                298,57,71,
+                96,31,26,
+                107,33,24,
+                25,1,4,
+                43,9,5,
+                59,22,13)
 
+event_nonalcohol<-c(152,65,91,
+                    152,65,91,
+                    152,65,91)
+
+n_nonalcohol<-c()
+
+label<-c(rep("RTI",3),
+         rep("Gender",3),
+         rep("Age",3),
+         rep("Education",3),
+         rep("Employment",3),
+         rep("Self-reported alcohol use",3),
+         rep("Positive BAC",3),
+         rep("1 to 2 containners",3),
+         rep("3 to 4 containners",3),
+         rep("5 or more containners",3))
+
+country<-c(rep("Tanzania","South Africa","Mozambique",10))
 
 
 
