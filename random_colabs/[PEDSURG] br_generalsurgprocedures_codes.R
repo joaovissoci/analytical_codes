@@ -332,7 +332,23 @@ data_sih_full_by_municipality$Regio<-car::recode(data_sih_full_by_municipality$R
 data_sih_full_by_municipalityNAto01<-lapply(data_sih_full_by_municipality,NAto0)
 data_sih_full_by_municipality<-as.data.frame(data_sih_full_by_municipalityNAto01)
 
-# write.csv(data_sih_full_by_municipality,"/Users/Joao/Desktop/data_sih_full.csv")
+
+data_sih_full_by_municipality<-rename.vars(data_sih_full_by_municipality,
+										c("X0",
+										  "X1",
+										  "X..1",
+										  "X1.a.4",
+										  "X5.a.9",
+										  "X10.a.14"),
+										c("level2",
+										  "level3",
+										  "lessthan1",
+										  "onetofour",
+										  "fivetonine",
+										  "tentofourteen"))
+
+
+write.csv(data_sih_full_by_municipality,"/Users/Joao/Desktop/data_sih_full.csv")
 
 library(gdata)
 # colnames(data_sih_full_by_municipality[19])<-"less_1"

@@ -1,0 +1,6 @@
+. Select DukeBlue from your available networks
+2. Change Phase 2 Authentication to MSCHAPV2
+** If prompted for CA certificate, you may use system certificates and specify the duke.edu domain
+3. For Identity, enter your NetID
+4. For Password, enter your NetID password
+5. Hit Save or Connect (will vary depending on the device)

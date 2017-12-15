@@ -1,0 +1,321 @@
+---
+title: "BRAINIAC Report - Faculty"
+output: 
+  flexdashboard::flex_dashboard:
+  orientation: rows
+  social: menu
+  source_code: https://git.io/vaZdx
+  runtime: shiny
+---
+    
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(dplyr)
+library(lubridate)
+
+#to run and generate the dashboard
+#rmarkdown::run("/Users/Joao/Desktop/deleteme.Rmd")
+
+# Access to CRAN packages data stream
+source("/Users/Joao/Desktop/package_stream.R")
+
+data_0<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/DGNN/sap_neuro/US_sap_data.csv",sep=",")
+
+data_0$case_date1<-mdy(data_0$case_date)
+
+# data$recoder_date1<-as.POSIXct(data$recoder_date,
+#                       format='%m/%d/%y %H:%M')
+
+# pkgStream is a reactive expression that represents a stream of
+# new package download data; up to once a second it may return a
+# data frame of new downloads since the last update.
+# pkgStream <- packageStream()
+
+# pkgData is a reactive expression that accumulates previous values
+# of pkgStream, discarding any that are older than maxAgeSecs.
+# maxAgeSecs <- 60 * 5 
+# pkgData <- packageData(pkgStream, maxAgeSecs)
+```
+
+Sidebar {.sidebar}
+=======================================================================
+  
+### SAP dashboard
+  
+  The streaming data is a 1-week-delayed livestream of download
+logs from  cran.rstudio.com. The server code for that service is at [jcheng5/cransim](https://github.com/jcheng5/cransim).
+
+
+```{r}
+
+# Rate at which to flag high download traffic
+ # selectInput("attending", label = h3("Attending"), 
+ #    choices = c("All", unique(as.character(data_0$attending))),
+ #    selected="All")
+
+# Rate at which to flag high download traffic
+ selectInput("resident", label = h3("Resident"), 
+    choices = c("All", unique(as.character(data_0$resident))),
+    selected="All")
+
+ # Rate at which to flag high download traffic
+ selectInput("subspecialty", label = h3("Subspecialty"), 
+    choices = c("All", unique(as.character(data_0$subspecialty))),
+    selected="All")
+
+ # Rate at which to flag high download traffic
+ selectInput("case", label = h3("Case"), 
+    choices = c("All", unique(as.character(data_0$case))),
+    selected="All")
+
+# # Maximum number of raw data rows to keep
+# numericInput("maxrows", "Recent procedures and scores:", 10)
+
+# resident<-reactive(as.integer(input$resident))
+# subspecialty<-reactive(as.integer(input$subspecialty))
+# case<-reactive(as.integer(input$case))
+
+# data<-subset(data_0,data_0$subspecialty == subspecialty)
+# data<-subset(data_0,data_0$case == case)
+
+```
+
+
+Dashboard
+=======================================================================
+  
+Row
+-----------------------------------------------------------------------
+  
+### Average ZPD score {.value-box}
+  
+```{r}
+# downloadRate is a reactive expression that computes the download
+# rate during this dashboard's lifetime.
+# startTime <- as.numeric(Sys.time())
+# downloadRate <- reactive({
+#   elapsed <- as.numeric(Sys.time()) - startTime
+#   nrow(pkgData()) / min(maxAgeSecs, elapsed)
+# })
+
+# Emit the download rate
+renderValueBox({
+
+    data <- data_0
+    if (input$resident != "All") {
+      data <- data[data$resident == input$resident,]
+    }
+    if (input$subspecialty != "All") {
+      data <- data[data$subspecialty == input$subspecialty,]
+    }
+    if (input$case != "All") {
+      data <- data[data$case == input$case,]
+    }
+
+  # rate <- formatC(downloadRate(), digits = 1, format = "f")
+  valueBox(
+    value = round(mean(na.omit(data$rZPD1))),
+    icon = "fa-area-chart"
+    # color = if (rate >= input$rateThreshold) "warning" else "primary"
+  )
+})
+```
+
+### Proportion using Zones  {.value-box}
+
+```{r}
+# dlCount is a reactive expression that keeps track of the total
+# number of rows that have ever appeared through pkgStream.
+# dlCount <- downloadCount(pkgStream)
+
+# Emit the download count
+renderValueBox({
+
+    data <- data_0
+    if (input$resident != "All") {
+      data <- data[data$resident == input$resident,]
+    }
+    if (input$subspecialty != "All") {
+      data <- data[data$subspecialty == input$subspecialty,]
+    }
+    if (input$case != "All") {
+      data <- data[data$case == input$case,]
+    }
+
+    dlCount <- round(prop.table(table(data$q6_zones_use))[4]*100)
+
+  valueBox(value=dlCount,
+           icon = "fa-download",
+           color = if (dlCount <= 80) "warning" else "primary")
+})
+```
+
+### Most frequent ZPD {.value-box}
+
+```{r}
+# usrCount is a reactive expression that keeps an approximate
+# count of all of the unique users that have been seen since the
+# app started.
+
+# Emit the user count
+renderValueBox({
+
+    data <- data_0
+    if (input$resident != "All") {
+      data <- data[data$resident == input$resident,]
+    }
+    if (input$subspecialty != "All") {
+      data <- data[data$subspecialty == input$subspecialty,]
+    }
+    if (input$case != "All") {
+      data <- data[data$case == input$case,]
+    }
+
+  usrCount <- names(table(data$zpd)[which.max(table(data$zpd))])
+
+  valueBox(value = usrCount, icon = "fa-users")
+})
+```
+
+### Performance overtime
+
+```{r}
+library(dygraphs)
+dygraph(nhtemp, main = "New Haven Temperatures") %>% 
+  dyRangeSelector(dateWindow = c("1920-01-01", "1960-01-01"))
+```
+
+Row
+-----------------------------------------------------------------------
+  
+### ZPD description by procedures {data-width=700}
+  
+```{r}
+
+renderBubbles({
+    
+    data <- data_0
+    if (input$resident != "All") {
+      data <- data[data$resident == input$resident,]
+    }
+    if (input$subspecialty != "All") {
+      data <- data[data$subspecialty == input$subspecialty,]
+    }
+    if (input$case != "All") {
+      data <- data[data$case == input$case,]
+    }
+
+  # if (nrow(pkgData()) == 0)
+  #   return()
+  
+  # order <- unique(pkgData()$package)
+  # df <- pkgData() %>%
+  #   group_by(package) %>%
+  #   tally() %>%
+  #   arrange(desc(n), tolower(package)) %>%
+  #   # Just show the top 60, otherwise it gets hard to see
+  #   head(60)
+
+  df <- data %>%
+    group_by(resident) %>%
+    tally() %>%
+    arrange(desc(n), tolower(resident)) %>%
+    # Just show the top 60, otherwise it gets hard to see
+    head(20)
+  
+  bubbles(df$n, df$resident, key = df$resident)
+})
+```
+
+### Last performance evaluation {data-width=340}
+
+```{r}
+renderTable({
+
+    #   data <- data_0
+    # if (input$attending != "All") {
+    #   data <- data[data$attending == input$attending,]
+    # }
+    
+    # if (all(is.na(data$q7_suggestion_for_improvement))==TRUE) {
+
+    #   "No comments"
+
+    # } else{
+
+    # pkgData() %>%
+    data %>%
+    # group_by(attending) %>%
+    # tally() %>%
+    # arrange(desc(n), tolower(package)) %>%
+    arrange(data,case_date1) %>%
+    # mutate(percentage = n / nrow(pkgData()) * 100) %>%
+    select("Comment" = q7_suggestion_for_improvement) %>%
+    as.data.frame() %>%
+    head(10)
+
+})
+
+```
+
+<!-- Functional
+=======================================================================
+
+Row
+-----------------------------------------------------------------------
+  
+### Recent Downlads
+  
+```{r}
+renderTable({
+  downloads <- tail(pkgData(), n = input$maxrows)
+  downloads <- downloads[,c("date", "time", "size", "r_version", 
+                            "r_arch", "r_os", "package")]
+  downloads[order(nrow(downloads):1),]
+})
+```
+
+### Performance overtime
+
+```{r}
+library(dygraphs)
+dygraph(nhtemp, main = "New Haven Temperatures") %>% 
+  dyRangeSelector(dateWindow = c("1920-01-01", "1960-01-01"))
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Comment
+
+***
+
+"Excellent exposure obviously putting on the electrode is not as easy at it looks but you persevered." (Haglund)
+
+"Really nice job, now just user finer points to increase efficiency, this was a routing 3 level but handled everything nice and safely" (Vissoci)
+
+"Doing a nice job on the drilling, more efficient as the day went along, again being careful not to go deep at the lateral margins when drilling and good pick up that our initial pin placement at top was in bad position" (Yoda)
+
+
+Spine
+=======================================================================
+  
+### Recent Downlads
+  
+```{r}
+renderTable({
+  downloads <- tail(pkgData(), n = input$maxrows)
+  downloads <- downloads[,c("date", "time", "size", "r_version", 
+                            "r_arch", "r_os", "package")]
+  downloads[order(nrow(downloads):1),]
+})
+```
+
+### Performance overtime
+
+```{r}
+library(dygraphs)
+dygraph(nhtemp, main = "New Haven Temperatures") %>% 
+  dyRangeSelector(dateWindow = c("1920-01-01", "1960-01-01"))
+```
+ -->
