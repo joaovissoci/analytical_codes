@@ -19,7 +19,7 @@ library(lubridate)
 # Access to CRAN packages data stream
 source("/Users/Joao/Desktop/package_stream.R")
 
-data_0<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/DGNN/sap_neuro/US_sap_data.csv",sep=",")
+data_0<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/DGNN/sap_neuro/US_sap_data.csv",sep=",")
 
 data_0$case_date1<-mdy(data_0$case_date)
 
