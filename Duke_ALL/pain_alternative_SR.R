@@ -26,29 +26,72 @@ data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/P
 #DATA MANAGEMENT
 #############################################################################
 #gathering variables important to the model
-meta_model_var<-with(data,data.frame(
-									 study,
+meta_model_var<-with(data,data.frame(study,
 									 intervention_cat,
-									 year,
-									 country,
-									 total_sample,
-									 intervention_1=intervention_sample_T1,
-									 control_1=control_sample_size_T1,
-									 # mean_pre_intervention_adj,
-									 # sd_pre_intervention_adj,
-									 mean_post_intervention_adj,
-									 sd_post_intervention_adj,
-									 # mean_pre_control_adj,
-									 # sd_pre_control_adj,
-									 mean_post_control_adj,
-									 sd_post_control_adj,
 									 pain_outcome_time_cat,
 									 first_fup,
-									 metanalysis))
+									 metanalysis,
+									 pre_intervention_samplesize,
+									 mean_pre_intervention_adj,
+									 sd_pre_intervention_adj,
+									 post_intervention_samplesize,
+									 mean_post_intervention_adj,
+									 sd_post_intervention_adj,
+									 post_intervention_mean_DIFF_adj,
+									 post_intervention_sd_DIFF_adj,
+									 pre_control_samplesize,
+									 mean_pre_control_adj,
+									 sd_pre_control_adj,
+									 post_control_samplesize,
+									 mean_post_control_adj,
+									 sd_post_control_adj,
+									 post_control_mean_DIFF_adj,
+									 post_control_sd_DIFF_adj,
+									 DIFF_ready))
 
 # #extracting only studies with enough information for metanalysis
-meta_model<-subset(meta_model_var,
+meta_model_temp<-subset(meta_model_var,
 	meta_model_var$metanalysis=="yes")
+
+#############################################################################
+#Calculating diff scores
+#############################################################################
+
+meta_model_diff<-subset(meta_model_temp,
+	meta_model_temp$DIFF_ready=="yes")
+
+meta_model_nodiff<-subset(meta_model_temp,
+	meta_model_temp$DIFF_ready=="no")
+
+#separate studies with diff and without deff
+
+#calculate diff control
+m_control <- metacont(pre_control_samplesize, 
+              mean_pre_control_adj, 
+              sd_pre_control_adj,
+			  post_control_samplesize, 
+			  mean_post_control_adj,
+			  sd_post_control_adj,
+              data=meta_model_nodiff)
+
+meta_model_nodiff$post_control_mean_DIFF_adj<-m_control$TE
+meta_model_nodiff$post_control_sd_DIFF_adj<-m_control$seTE
+
+#calculate diff intervention
+m_intervention <- metacont(pre_intervention_samplesize, 
+              mean_pre_intervention_adj, 
+              sd_pre_intervention_adj,
+			  post_intervention_samplesize, 
+			  mean_post_intervention_adj,
+			  sd_post_intervention_adj,
+              data=meta_model_nodiff)
+
+meta_model_nodiff$post_intervention_mean_DIFF_adj<-m_intervention$TE
+meta_model_nodiff$post_intervention_sd_DIFF_adj<-m_intervention$seTE
+
+#merge databases
+
+meta_model<-rbind(meta_model_diff,meta_model_nodiff)
 
 #############################################################################
 #Figure. 2
@@ -59,25 +102,25 @@ meta_first_fup<-subset(meta_model,
 	meta_model$first_fup=="yes")
 
 #excluding missing information
-meta_first_fup<-na.omit(meta_first_fup)
+# meta_first_fup<-na.omit(meta_first_fup)
 
 # #Adjusting to avoind the error of a missing category in
 # #the byvar analysis
 meta_first_fup<-as.matrix(meta_first_fup)
 meta_first_fup<-as.data.frame(meta_first_fup)
 
-meta_first_fup$intervention_1<-as.numeric(
-	as.character(meta_first_fup$intervention_1)) 
-meta_first_fup$mean_post_intervention_adj<-as.numeric(
-	as.character(meta_first_fup$mean_post_intervention_adj))
-meta_first_fup$sd_post_intervention_adj<-as.numeric(
-	as.character(meta_first_fup$sd_post_intervention_adj))
-meta_first_fup$control_1<-as.numeric(
-	as.character(meta_first_fup$control_1))
-meta_first_fup$mean_post_control_adj<-as.numeric(
-	as.character(meta_first_fup$mean_post_control_adj))
-meta_first_fup$sd_post_control_adj<-as.numeric(
-	as.character(meta_first_fup$sd_post_control_adj))
+meta_first_fup$pre_intervention_samplesize<-as.numeric(
+	as.character(meta_first_fup$pre_intervention_samplesize)) 
+meta_first_fup$post_intervention_mean_DIFF_adj<-as.numeric(
+	as.character(meta_first_fup$post_intervention_mean_DIFF_adj))
+meta_first_fup$post_intervention_sd_DIFF_adj<-as.numeric(
+	as.character(meta_first_fup$post_intervention_sd_DIFF_adj))
+meta_first_fup$pre_control_samplesize<-as.numeric(
+	as.character(meta_first_fup$pre_control_samplesize))
+meta_first_fup$post_control_mean_DIFF_adj<-as.numeric(
+	as.character(meta_first_fup$post_control_mean_DIFF_adj))
+meta_first_fup$post_control_sd_DIFF_adj<-as.numeric(
+	as.character(meta_first_fup$post_control_sd_DIFF_adj))
 
 
 # #recoding metanalysis groups
@@ -90,17 +133,17 @@ meta_first_fup$intervention_cat <- relevel(
 	meta_first_fup$intervention_cat, "Physical")
 
 #run metanalysis model for type of intervention
-meta1 <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
+meta1 <- metacont(n.e=pre_intervention_samplesize,
+	post_intervention_mean_DIFF_adj,
+	post_intervention_sd_DIFF_adj,
+	n.c=pre_control_samplesize,
+	post_control_mean_DIFF_adj,
+	post_control_sd_DIFF_adj, 
   data=meta_first_fup, 
   sm="SMD",
   byvar=intervention_cat,
   print.byvar=FALSE,
-  comb.fixed=FALSE,
+  # comb.fixed=FALSE,
   studlab=study)
 summary(meta1)
 
