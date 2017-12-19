@@ -55,7 +55,7 @@ library, character.only=T)
 # load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/novas analises - pediatria 15 anos/jovens_sia.RData")
 # data_sia<-apendectomy
 
-procedimento <- read.table("/Users/Joao/Downloads/tb_procedimento.txt", header = F, sep = ";",
+procedimento <- read.table("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/tb_procedimento.txt", header = F, sep = ";",
                            colClasses = c("character","character","character","character"
                                           ,"character","character","character","character"
                                           ,"character","character","character","character"
@@ -76,12 +76,12 @@ procedimento$V15 <- NULL
 procedimento$V2 <- trimws(procedimento$V2)
 
 #data with procedures information
-load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2010.Rdata")
-load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2011.Rdata")
-load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2012.Rdata")
-load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2013.Rdata")
-load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2014.Rdata")
-load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2015.Rdata")
+load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2010.Rdata")
+load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2011.Rdata")
+load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2012.Rdata")
+load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2013.Rdata")
+load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2014.Rdata")
+load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2015.Rdata")
 
 data_sih<-rbind(ped_2010,
 				ped_2011[,c(1:87)][,-45],
@@ -97,26 +97,27 @@ data_sih$PROC_SOLIC_nome <- data_sih$V2
 data_sih$V2 <- NULL
 
 #data with socioneconomic classification by income level
-income_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/acs/br_acsdiagnotic_data.csv")
+income_data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/acs/br_acsdiagnotic_data.csv")
 
 #data with iformation about state and regions
-state_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/epidemiologic transition/ihd_cities.csv")
+state_data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/epidemiologic transition/ihd_cities.csv")
 
 # procedures<-levels(as.factor(apendectomy$PROC_SOLIC_nome))
 
-# write.csv(procedures,"/Users/joaovissoci/Desktop/procedures.csv")
+# write.csv(procedures,"/Users/joaovissocivissoci/Desktop/procedures.csv")
 
 #data with informmation about hospital infrastructure
-infrastructure_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_hospitalinfrastructure_data.csv")
+infrastructure_data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_hospitalinfrastructure_data.csv")
 
 #data with pediatric population
-pediatric_population<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/pediatric_population_2015.csv",sep=",")
+pediatric_population<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/pediatric_population_2015.csv",sep=",")
 
 #data with avaiability of pediatric surgical care
-availability_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_peds_availability_data.csv")
+availability_data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_peds_availability_data.csv")
 availability_data$ibge<-availability_data$X...ibge
 
-mortality_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_pedmortality_data.csv")
+mortality_data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_pedmortality_data.csv")
+
 ###################### SIA
 # #Subsetting the SIA data to include only General Pediatric Surgery Procedures
 # data_sia_subset<-subset(data_sia,data_sia$PROC_SOLIC_nome=="LAPAROTOMIA EXPLORADORA" |
@@ -198,6 +199,7 @@ data_sih_subset$procedure<-car::recode(data_sih_subset$PROC_SOLIC_nome,"
 data_sih_recoded<-NULL
 data_sih_recoded$ibge<-data_sih_subset$MUNIC_RES
 data_sih_recoded$procedure<-data_sih_subset$procedure
+data_sih_recoded$year<-data_sih_subset$ANO_CMPT
 data_sih_recoded<-as.data.frame(data_sih_recoded)
 
 #Stacking datasets
@@ -279,6 +281,18 @@ data_hosp_levels$ibge<-data_hosp_levels$ibge.x
 # MUNICIPALITY LEVEL
 ################################### 
 library(tidyverse)
+
+#getting procedures by year by city
+data_sih_recoded %>% 
+  group_by(procedure,ibge,year) %>%
+  summarise(no_rows = length(procedure)) %>%
+  spread(procedure,no_rows) -> data_sih_recoded_bycitybyyear
+
+data_sih_recoded_bycitybyyear_gathered<-gather(data_sih_recoded_bycitybyyear,"procedures","value",3:7)
+
+data_sih_recoded_bycitybyyear_spread<-spread(data_sih_recoded_bycitybyyear_gathered, year, value)
+
+# write.csv(data_sih_recoded_bycitybyyear_spread,"/Users/joaovissoci/Desktop/ped_proc_byyear.csv")
 
 #calculating counts of procedures by municipality
 #there is some conflict with something in this function

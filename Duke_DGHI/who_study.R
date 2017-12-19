@@ -693,12 +693,12 @@ table
 prop.table(table)
 
 #by self-reported alcohol use
-table<-with(rti_data_tz,table(type_vehicle,past_alcohol_use))
+table<-with(rti_data_tz,table(type_vehicle,QF04))
 table
-prop.table(table)
+prop.table(table,2)
 
 
-
+current_alcohol_use=as.character(QF04),
 
 ###########################################################
 ##TABLE 2
