@@ -19,7 +19,7 @@ library, character.only=T)
 #IMPORTING DATA
 #################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/Pain_SR/pain_sr_data-sae.csv")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/Pain_SR/pain_sr_data-sae.csv")
 #information between " " are the path to the directory in your computer where the data is stored
 
 #############################################################################
@@ -163,7 +163,7 @@ meta1 <- metacont(post_intervention_samplesize,
   studlab=study_name)
 # summary(meta1)
 
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
+tiff("/Users/joaovissoci/Desktop/painSR_sensitivytPOST.tiff",
   width = 1200, height = 600,compression = 'lzw')
 forest(meta1,bysort=FALSE)
 dev.off()
@@ -323,15 +323,11 @@ metainf(meta1, pooled="random")
 #############################################################################
 #Figure. 2 - Models for DIRECT interventions
 
-
 # modeling only DIRECT intervention results
- meta_model_direct<-subset(meta_model,
+meta_model_direct<-subset(meta_model,
  	meta_model$intervention_cat=="Direct")
 
-#running by=group analysis for time of FUP
-#NO BYGROUP - All studies are immidiatly after the intervention
-
-meta_model_direct_post<-with(meta_model_direct,data.frame(
+meta_model_direct<-with(meta_model_direct,data.frame(
 					post_intervention_samplesize,
 					mean_post_intervention_adj,
 					sd_post_intervention_adj,
@@ -339,28 +335,29 @@ meta_model_direct_post<-with(meta_model_direct,data.frame(
 					mean_post_control_adj,
 					sd_post_control_adj,
 					study_name,
+					intervention_cat,
 					pain_outcome_time_cat))
 
 #excluding missing information
-meta_model_direct_post<-na.omit(meta_model_direct_post)
+meta_model_direct<-na.omit(meta_model_direct)
 
 # #Adjusting to avoind the error of a missing category in
 # #the byvar analysis
-meta_model_direct_post<-as.matrix(meta_model_direct_post)
-meta_model_direct_post<-as.data.frame(meta_model_direct_post)
+meta_model_direct<-as.matrix(meta_model_direct)
+meta_model_direct<-as.data.frame(meta_model_direct)
 
-meta_model_direct_post$post_intervention_samplesize<-as.numeric(
-	as.character(meta_model_direct_post$post_intervention_samplesize)) 
-meta_model_direct_post$mean_post_intervention_adj<-as.numeric(
-	as.character(meta_model_direct_post$mean_post_intervention_adj))
-meta_model_direct_post$sd_post_intervention_adj<-as.numeric(
-	as.character(meta_model_direct_post$sd_post_intervention_adj))
-meta_model_direct_post$post_control_samplesize<-as.numeric(
-	as.character(meta_model_direct_post$post_control_samplesize))
-meta_model_direct_post$mean_post_control_adj<-as.numeric(
-	as.character(meta_model_direct_post$mean_post_control_adj))
-meta_model_direct_post$sd_post_control_adj<-as.numeric(
-	as.character(meta_model_direct_post$sd_post_control_adj))
+meta_model_direct$post_intervention_samplesize<-as.numeric(
+	as.character(meta_model_direct$post_intervention_samplesize)) 
+meta_model_direct$mean_post_intervention_adj<-as.numeric(
+	as.character(meta_model_direct$mean_post_intervention_adj))
+meta_model_direct$sd_post_intervention_adj<-as.numeric(
+	as.character(meta_model_direct$sd_post_intervention_adj))
+meta_model_direct$post_control_samplesize<-as.numeric(
+	as.character(meta_model_direct$post_control_samplesize))
+meta_model_direct$mean_post_control_adj<-as.numeric(
+	as.character(meta_model_direct$mean_post_control_adj))
+meta_model_direct$sd_post_control_adj<-as.numeric(
+	as.character(meta_model_direct$sd_post_control_adj))
 
 
 # #recoding metanalysis groups
@@ -369,8 +366,9 @@ meta_model_direct_post$sd_post_control_adj<-as.numeric(
 # 	'brief intervention and contact'='TEA or BI';
 # 	'psychotherapy'='Psychotherapy'")
 
-meta_model_direct_post$intervention_cat <- relevel(
-	meta_model_direct_post$intervention_cat, "Physical")
+meta_model_direct$pain_outcome_time_cat <- factor(
+	meta_model_direct$pain_outcome_time_cat,levels(
+		meta_model_direct$pain_outcome_time_cat)[c(2,1,3)])
 
 #run metanalysis model for type of intervention
 meta1 <- metacont(post_intervention_samplesize,
@@ -379,11 +377,11 @@ meta1 <- metacont(post_intervention_samplesize,
 	post_control_samplesize,
 	mean_post_control_adj,
 	sd_post_control_adj, 
-  data=meta_model_direct_post, 
+  data=meta_model_direct, 
   sm="SMD",
-  print.byvar=FALSE,
   byvar=pain_outcome_time_cat,
-  comb.fixed=FALSE,
+  print.byvar=FALSE,
+  # comb.fixed=FALSE,
   studlab=study_name)
 summary(meta1)
 
@@ -397,27 +395,27 @@ funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
 
-#excluding Goertz 2006 reduces Hˆ2 to 61.4% and the estimate to -0.276
-meta1 <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_model_direct[-3,], sm="SMD",
-  print.byvar=FALSE,byvar=pain_outcome_time_cat,
-  comb.fixed=FALSE,studlab=study_name)
-summary(meta1)
+# #excluding Goertz 2006 reduces Hˆ2 to 61.4% and the estimate to -0.276
+# meta1 <- metacont(intervention_1, 
+# 	mean_post_intervention_adj,
+# 	sd_post_intervention_adj,
+# 	control_1,
+# 	mean_post_control_adj,
+# 	sd_post_control_adj, 
+#   data=meta_model_direct[-3,], sm="SMD",
+#   print.byvar=FALSE,byvar=pain_outcome_time_cat,
+#   comb.fixed=FALSE,studlab=study_name)
+# summary(meta1)
 
-tiff("/Users/jnv4/Desktop/painSR_figure3a.tiff",
-  width = 800, height = 400,compression = 'lzw')
-forest(meta1,bysort=FALSE,
-	   overall=FALSE)
-dev.off()
+# tiff("/Users/jnv4/Desktop/painSR_figure3a.tiff",
+#   width = 800, height = 400,compression = 'lzw')
+# forest(meta1,bysort=FALSE,
+# 	   overall=FALSE)
+# dev.off()
 
-funnel(meta1)
-metainf(meta1)
-metainf(meta1, pooled="random")
+# funnel(meta1)
+# metainf(meta1)
+# metainf(meta1, pooled="random")
 
 #############################################################################
 #Figure. 3 - Models for INDIRECT interventions
@@ -429,7 +427,7 @@ metainf(meta1, pooled="random")
 #running by=group analysis for time of FUP
 #NO BYGROUP - All studies are immidiatly after the intervention
 
-meta_model_indirect_post<-with(meta_model_indirect,data.frame(
+meta_model_indirect<-with(meta_model_indirect,data.frame(
 					post_intervention_samplesize,
 					mean_post_intervention_adj,
 					sd_post_intervention_adj,
@@ -437,28 +435,29 @@ meta_model_indirect_post<-with(meta_model_indirect,data.frame(
 					mean_post_control_adj,
 					sd_post_control_adj,
 					study_name,
+					intervention_cat,
 					pain_outcome_time_cat))
 
 #excluding missing information
-meta_model_indirect_post<-na.omit(meta_model_indirect_post)
+meta_model_indirect<-na.omit(meta_model_indirect)
 
 # #Adjusting to avoind the error of a missing category in
 # #the byvar analysis
-meta_model_indirect_post<-as.matrix(meta_model_indirect_post)
-meta_model_indirect_post<-as.data.frame(meta_model_indirect_post)
+meta_model_indirect<-as.matrix(meta_model_indirect)
+meta_model_indirect<-as.data.frame(meta_model_indirect)
 
-meta_model_indirect_post$post_intervention_samplesize<-as.numeric(
-	as.character(meta_model_indirect_post$post_intervention_samplesize)) 
-meta_model_indirect_post$mean_post_intervention_adj<-as.numeric(
-	as.character(meta_model_indirect_post$mean_post_intervention_adj))
-meta_model_indirect_post$sd_post_intervention_adj<-as.numeric(
-	as.character(meta_model_indirect_post$sd_post_intervention_adj))
-meta_model_indirect_post$post_control_samplesize<-as.numeric(
-	as.character(meta_model_indirect_post$post_control_samplesize))
-meta_model_indirect_post$mean_post_control_adj<-as.numeric(
-	as.character(meta_model_indirect_post$mean_post_control_adj))
-meta_model_indirect_post$sd_post_control_adj<-as.numeric(
-	as.character(meta_model_indirect_post$sd_post_control_adj))
+meta_model_indirect$post_intervention_samplesize<-as.numeric(
+	as.character(meta_model_indirect$post_intervention_samplesize)) 
+meta_model_indirect$mean_post_intervention_adj<-as.numeric(
+	as.character(meta_model_indirect$mean_post_intervention_adj))
+meta_model_indirect$sd_post_intervention_adj<-as.numeric(
+	as.character(meta_model_indirect$sd_post_intervention_adj))
+meta_model_indirect$post_control_samplesize<-as.numeric(
+	as.character(meta_model_indirect$post_control_samplesize))
+meta_model_indirect$mean_post_control_adj<-as.numeric(
+	as.character(meta_model_indirect$mean_post_control_adj))
+meta_model_indirect$sd_post_control_adj<-as.numeric(
+	as.character(meta_model_indirect$sd_post_control_adj))
 
 
 # #recoding metanalysis groups
@@ -467,27 +466,28 @@ meta_model_indirect_post$sd_post_control_adj<-as.numeric(
 # 	'brief intervention and contact'='TEA or BI';
 # 	'psychotherapy'='Psychotherapy'")
 
-meta_model_indirect_post$intervention_cat <- relevel(
-	meta_model_indirect_post$intervention_cat, "Physical")
+meta_model_indirect$pain_outcome_time_cat <- factor(
+	meta_model_indirect$pain_outcome_time_cat,levels(
+		meta_model_indirect$pain_outcome_time_cat)[c(2,1,4,3)])
 
 #run metanalysis model for type of intervention
-meta3c <- metacont(post_intervention_samplesize,
+meta1 <- metacont(post_intervention_samplesize,
 	mean_post_intervention_adj,
 	sd_post_intervention_adj,
 	post_control_samplesize,
 	mean_post_control_adj,
 	sd_post_control_adj, 
-  data=meta_model_indirect_post, 
+  data=meta_model_indirect, 
   sm="SMD",
-  print.byvar=FALSE,
   byvar=pain_outcome_time_cat,
-  comb.fixed=FALSE,
+  print.byvar=FALSE,
+  # comb.fixed=FALSE,
   studlab=study_name)
-summary(meta3c)
+summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3b.tiff",
   width = 800, height = 400,compression = 'lzw')
-forest(meta3c,
+forest(meta1,
 	   bysort=FALSE,
 	   overall=FALSE)
 dev.off()
@@ -506,7 +506,7 @@ metainf(meta3c, pooled="random")
 ##running by=group analysis for time of FUP
 #NO BYGROUP - All studies are immidiatly after the intervention
 
-meta_model_physical_post<-with(meta_model_physical,data.frame(
+meta_model_physical<-with(meta_model_physical,data.frame(
 					post_intervention_samplesize,
 					mean_post_intervention_adj,
 					sd_post_intervention_adj,
@@ -514,28 +514,29 @@ meta_model_physical_post<-with(meta_model_physical,data.frame(
 					mean_post_control_adj,
 					sd_post_control_adj,
 					study_name,
+					intervention_cat,
 					pain_outcome_time_cat))
 
 #excluding missing information
-meta_model_physical_post<-na.omit(meta_model_physical_post)
+meta_model_physical<-na.omit(meta_model_physical)
 
 # #Adjusting to avoind the error of a missing category in
 # #the byvar analysis
-meta_model_physical_post<-as.matrix(meta_model_physical_post)
-meta_model_physical_post<-as.data.frame(meta_model_physical_post)
+meta_model_physical<-as.matrix(meta_model_physical)
+meta_model_physical<-as.data.frame(meta_model_physical)
 
-meta_model_physical_post$post_intervention_samplesize<-as.numeric(
-	as.character(meta_model_physical_post$post_intervention_samplesize)) 
-meta_model_physical_post$mean_post_intervention_adj<-as.numeric(
-	as.character(meta_model_physical_post$mean_post_intervention_adj))
-meta_model_physical_post$sd_post_intervention_adj<-as.numeric(
-	as.character(meta_model_physical_post$sd_post_intervention_adj))
-meta_model_physical_post$post_control_samplesize<-as.numeric(
-	as.character(meta_model_physical_post$post_control_samplesize))
-meta_model_physical_post$mean_post_control_adj<-as.numeric(
-	as.character(meta_model_physical_post$mean_post_control_adj))
-meta_model_physical_post$sd_post_control_adj<-as.numeric(
-	as.character(meta_model_physical_post$sd_post_control_adj))
+meta_model_physical$post_intervention_samplesize<-as.numeric(
+	as.character(meta_model_physical$post_intervention_samplesize)) 
+meta_model_physical$mean_post_intervention_adj<-as.numeric(
+	as.character(meta_model_physical$mean_post_intervention_adj))
+meta_model_physical$sd_post_intervention_adj<-as.numeric(
+	as.character(meta_model_physical$sd_post_intervention_adj))
+meta_model_physical$post_control_samplesize<-as.numeric(
+	as.character(meta_model_physical$post_control_samplesize))
+meta_model_physical$mean_post_control_adj<-as.numeric(
+	as.character(meta_model_physical$mean_post_control_adj))
+meta_model_physical$sd_post_control_adj<-as.numeric(
+	as.character(meta_model_physical$sd_post_control_adj))
 
 
 # #recoding metanalysis groups
@@ -544,27 +545,28 @@ meta_model_physical_post$sd_post_control_adj<-as.numeric(
 # 	'brief intervention and contact'='TEA or BI';
 # 	'psychotherapy'='Psychotherapy'")
 
-meta_model_physical_post$intervention_cat <- relevel(
-	meta_model_physical_post$intervention_cat, "Physical")
+meta_model_physical$pain_outcome_time_cat <- factor(
+	meta_model_physical$pain_outcome_time_cat,levels(
+		meta_model_physical$pain_outcome_time_cat)[c(2,1,4,3)])
 
 #run metanalysis model for type of intervention
-meta3c <- metacont(post_intervention_samplesize,
+meta1 <- metacont(post_intervention_samplesize,
 	mean_post_intervention_adj,
 	sd_post_intervention_adj,
 	post_control_samplesize,
 	mean_post_control_adj,
 	sd_post_control_adj, 
-  data=meta_model_physical_post, 
+  data=meta_model_physical, 
   sm="SMD",
-  print.byvar=FALSE,
   byvar=pain_outcome_time_cat,
-  comb.fixed=FALSE,
+  print.byvar=FALSE,
+  # comb.fixed=FALSE,
   studlab=study_name)
-summary(meta3c)
+summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",
   width = 800, height = 400,compression = 'lzw')
-forest(meta3c,
+forest(meta1,
 	   bysort=FALSE,
 	   overall=FALSE)
 dev.off()
@@ -757,39 +759,37 @@ metainf(meta1, pooled="random")
  meta_model_direct<-subset(meta_model,
  	meta_model$intervention_cat=="Direct")
 
-#running by=group analysis for time of FUP
-#NO BYGROUP - All studies are immidiatly after the intervention
-
-meta_model_direct_post<-with(meta_model_direct,data.frame(
+meta_model_direct<-with(meta_model_direct,data.frame(
 					post_intervention_samplesize,
-					mean_post_intervention_adj,
-					sd_post_intervention_adj,
+					post_intervention_mean_DIFF_adj,
+					post_intervention_sd_DIFF_adj,
 					post_control_samplesize,
-					mean_post_control_adj,
-					sd_post_control_adj,
+					post_control_mean_DIFF_adj,
+					post_control_sd_DIFF_adj,
 					study_name,
+					intervention_cat,
 					pain_outcome_time_cat))
 
 #excluding missing information
-meta_model_direct_post<-na.omit(meta_model_direct_post)
+meta_model_direct<-na.omit(meta_model_direct)
 
 # #Adjusting to avoind the error of a missing category in
 # #the byvar analysis
-meta_model_direct_post<-as.matrix(meta_model_direct_post)
-meta_model_direct_post<-as.data.frame(meta_model_direct_post)
+meta_model_direct<-as.matrix(meta_model_direct)
+meta_model_direct<-as.data.frame(meta_model_direct)
 
-meta_model_direct_post$post_intervention_samplesize<-as.numeric(
-	as.character(meta_model_direct_post$post_intervention_samplesize)) 
-meta_model_direct_post$mean_post_intervention_adj<-as.numeric(
-	as.character(meta_model_direct_post$mean_post_intervention_adj))
-meta_model_direct_post$sd_post_intervention_adj<-as.numeric(
-	as.character(meta_model_direct_post$sd_post_intervention_adj))
-meta_model_direct_post$post_control_samplesize<-as.numeric(
-	as.character(meta_model_direct_post$post_control_samplesize))
-meta_model_direct_post$mean_post_control_adj<-as.numeric(
-	as.character(meta_model_direct_post$mean_post_control_adj))
-meta_model_direct_post$sd_post_control_adj<-as.numeric(
-	as.character(meta_model_direct_post$sd_post_control_adj))
+meta_model_direct$post_intervention_samplesize<-as.numeric(
+	as.character(meta_model_direct$post_intervention_samplesize)) 
+meta_model_direct$post_intervention_mean_DIFF_adj<-as.numeric(
+	as.character(meta_model_direct$post_intervention_mean_DIFF_adj))
+meta_model_direct$post_intervention_sd_DIFF_adj<-as.numeric(
+	as.character(meta_model_direct$post_intervention_sd_DIFF_adj))
+meta_model_direct$post_control_samplesize<-as.numeric(
+	as.character(meta_model_direct$post_control_samplesize))
+meta_model_direct$post_control_mean_DIFF_adj<-as.numeric(
+	as.character(meta_model_direct$post_control_mean_DIFF_adj))
+meta_model_direct$post_control_sd_DIFF_adj<-as.numeric(
+	as.character(meta_model_direct$post_control_sd_DIFF_adj))
 
 
 # #recoding metanalysis groups
@@ -798,23 +798,23 @@ meta_model_direct_post$sd_post_control_adj<-as.numeric(
 # 	'brief intervention and contact'='TEA or BI';
 # 	'psychotherapy'='Psychotherapy'")
 
-meta_model_direct_post$intervention_cat <- relevel(
-	meta_model_direct_post$intervention_cat, "Physical")
+meta_model_direct$pain_outcome_time_cat <- factor(
+	meta_model_direct$pain_outcome_time_cat,levels(
+		meta_model_direct$pain_outcome_time_cat)[c(2,1,3)])
 
 #run metanalysis model for type of intervention
 meta1 <- metacont(post_intervention_samplesize,
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
+	post_intervention_mean_DIFF_adj,
+	post_intervention_sd_DIFF_adj,
 	post_control_samplesize,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_model_direct_post, 
+	post_control_mean_DIFF_adj,
+	post_control_sd_DIFF_adj, 
+  data=meta_model_direct, 
   sm="SMD",
-  print.byvar=FALSE,
   byvar=pain_outcome_time_cat,
-  comb.fixed=FALSE,
+  print.byvar=FALSE,
+  # comb.fixed=FALSE,
   studlab=study_name)
-summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
   width = 1200, height = 600,compression = 'lzw')
@@ -935,36 +935,37 @@ metainf(meta3c, pooled="random")
 ##running by=group analysis for time of FUP
 #NO BYGROUP - All studies are immidiatly after the intervention
 
-meta_model_physical_post<-with(meta_model_physical,data.frame(
+meta_model_physical<-with(meta_model_physical,data.frame(
 					post_intervention_samplesize,
-					mean_post_intervention_adj,
-					sd_post_intervention_adj,
+					post_intervention_mean_DIFF_adj,
+					post_intervention_sd_DIFF_adj,
 					post_control_samplesize,
-					mean_post_control_adj,
-					sd_post_control_adj,
+					post_control_mean_DIFF_adj,
+					post_control_sd_DIFF_adj,
 					study_name,
+					intervention_cat,
 					pain_outcome_time_cat))
 
 #excluding missing information
-meta_model_physical_post<-na.omit(meta_model_physical_post)
+meta_model_physical<-na.omit(meta_model_physical)
 
 # #Adjusting to avoind the error of a missing category in
 # #the byvar analysis
-meta_model_physical_post<-as.matrix(meta_model_physical_post)
-meta_model_physical_post<-as.data.frame(meta_model_physical_post)
+meta_model_physical<-as.matrix(meta_model_physical)
+meta_model_physical<-as.data.frame(meta_model_physical)
 
-meta_model_physical_post$post_intervention_samplesize<-as.numeric(
-	as.character(meta_model_physical_post$post_intervention_samplesize)) 
-meta_model_physical_post$mean_post_intervention_adj<-as.numeric(
-	as.character(meta_model_physical_post$mean_post_intervention_adj))
-meta_model_physical_post$sd_post_intervention_adj<-as.numeric(
-	as.character(meta_model_physical_post$sd_post_intervention_adj))
-meta_model_physical_post$post_control_samplesize<-as.numeric(
-	as.character(meta_model_physical_post$post_control_samplesize))
-meta_model_physical_post$mean_post_control_adj<-as.numeric(
-	as.character(meta_model_physical_post$mean_post_control_adj))
-meta_model_physical_post$sd_post_control_adj<-as.numeric(
-	as.character(meta_model_physical_post$sd_post_control_adj))
+meta_model_physical$post_intervention_samplesize<-as.numeric(
+	as.character(meta_model_physical$post_intervention_samplesize)) 
+meta_model_physical$post_intervention_mean_DIFF_adj<-as.numeric(
+	as.character(meta_model_physical$post_intervention_mean_DIFF_adj))
+meta_model_physical$post_intervention_sd_DIFF_adj<-as.numeric(
+	as.character(meta_model_physical$post_intervention_sd_DIFF_adj))
+meta_model_physical$post_control_samplesize<-as.numeric(
+	as.character(meta_model_physical$post_control_samplesize))
+meta_model_physical$post_control_mean_DIFF_adj<-as.numeric(
+	as.character(meta_model_physical$post_control_mean_DIFF_adj))
+meta_model_physical$post_control_sd_DIFF_adj<-as.numeric(
+	as.character(meta_model_physical$post_control_sd_DIFF_adj))
 
 
 # #recoding metanalysis groups
@@ -973,28 +974,27 @@ meta_model_physical_post$sd_post_control_adj<-as.numeric(
 # 	'brief intervention and contact'='TEA or BI';
 # 	'psychotherapy'='Psychotherapy'")
 
-meta_model_physical_post$intervention_cat <- relevel(
-	meta_model_physical_post$intervention_cat, "Physical")
+meta_model_physical$pain_outcome_time_cat <- factor(
+	meta_model_physical$pain_outcome_time_cat,levels(
+		meta_model_physical$pain_outcome_time_cat)[c(2,1,4,3)])
 
 #run metanalysis model for type of intervention
-meta3c <- metacont(post_intervention_samplesize,
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
+meta1 <- metacont(post_intervention_samplesize,
+	post_intervention_mean_DIFF_adj,
+	post_intervention_sd_DIFF_adj,
 	post_control_samplesize,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_model_physical_post, 
+	post_control_mean_DIFF_adj,
+	post_control_sd_DIFF_adj, 
+  data=meta_model_physical, 
   sm="SMD",
-  print.byvar=FALSE,
   byvar=pain_outcome_time_cat,
-  comb.fixed=FALSE,
+  print.byvar=FALSE,
+  # comb.fixed=FALSE,
   studlab=study_name)
-summary(meta3c)
 
-tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",
-  width = 800, height = 400,compression = 'lzw')
-forest(meta3c,
-	   bysort=FALSE,
+tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
+  width = 1200, height = 600,compression = 'lzw')
+forest(meta1,bysort=FALSE,
 	   overall=FALSE)
 dev.off()
 
