@@ -19,14 +19,14 @@ library, character.only=T)
 #IMPORTING DATA
 #################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/Pain_SR/pain_outcome_SR_v2.csv")
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/Pain_SR/pain_sr_data-sae.csv")
 #information between " " are the path to the directory in your computer where the data is stored
 
 #############################################################################
 #DATA MANAGEMENT
 #############################################################################
 #gathering variables important to the model
-meta_model_var<-with(data,data.frame(study,
+meta_model<-with(data,data.frame(study_name,
 									 intervention_cat,
 									 pain_outcome_time_cat,
 									 first_fup,
@@ -50,51 +50,128 @@ meta_model_var<-with(data,data.frame(study,
 									 DIFF_ready))
 
 # #extracting only studies with enough information for metanalysis
-meta_model<-subset(meta_model_var,
-	meta_model_var$metanalysis=="yes")
+# meta_model<-subset(meta_model_var,
+# 	meta_model_var$metanalysis=="yes")
+
+
 
 #############################################################################
 #Calculating diff scores
 #############################################################################
 
-meta_model_diff<-subset(meta_model,
-	meta_model$DIFF_ready=="yes")
+# meta_model_diff<-subset(meta_model,
+# 	meta_model$DIFF_ready=="yes")
 
-meta_model_nodiff<-subset(meta_model,
-	meta_model$DIFF_ready=="no")
+# meta_model_nodiff<-subset(meta_model,
+# 	meta_model$DIFF_ready=="no")
 
-#separate studies with diff and without deff
+# #separate studies with diff and without deff
 
-#calculate diff control
-m_control <- metacont(pre_control_samplesize, 
-              mean_pre_control_adj, 
-              sd_pre_control_adj,
-			  post_control_samplesize, 
-			  mean_post_control_adj,
-			  sd_post_control_adj,
-              data=meta_model_nodiff)
+# #calculate diff control
+# m_control <- metacont(pre_control_samplesize, 
+#               mean_pre_control_adj, 
+#               sd_pre_control_adj,
+# 			  post_control_samplesize, 
+# 			  mean_post_control_adj,
+# 			  sd_post_control_adj,
+#               data=meta_model_nodiff)
 
-meta_model_nodiff$post_control_mean_DIFF_adj<-m_control$TE
-meta_model_nodiff$post_control_sd_DIFF_adj<-m_control$seTE
+# meta_model_nodiff$post_control_mean_DIFF_adj<-m_control$TE
+# meta_model_nodiff$post_control_sd_DIFF_adj<-m_control$seTE
 
-#calculate diff intervention
-m_intervention <- metacont(pre_intervention_samplesize, 
-              mean_pre_intervention_adj, 
-              sd_pre_intervention_adj,
-			  post_intervention_samplesize, 
-			  mean_post_intervention_adj,
-			  sd_post_intervention_adj,
-              data=meta_model_nodiff)
+# #calculate diff intervention
+# m_intervention <- metacont(pre_intervention_samplesize, 
+#               mean_pre_intervention_adj, 
+#               sd_pre_intervention_adj,
+# 			  post_intervention_samplesize, 
+# 			  mean_post_intervention_adj,
+# 			  sd_post_intervention_adj,
+#               data=meta_model_nodiff)
 
-meta_model_nodiff$post_intervention_mean_DIFF_adj<-m_intervention$TE
-meta_model_nodiff$post_intervention_sd_DIFF_adj<-m_intervention$seTE
+# meta_model_nodiff$post_intervention_mean_DIFF_adj<-m_intervention$TE
+# meta_model_nodiff$post_intervention_sd_DIFF_adj<-m_intervention$seTE
 
-#merge databases
+# #merge databases
 
-meta_model_prepostdiff<-rbind(meta_model_diff,meta_model_nodiff)
+# meta_model_prepostdiff<-rbind(meta_model_diff,meta_model_nodiff)
 
 #############################################################################
+#Compare Diff models vs. Post treat model
+#############################################################################
+meta_comp<-subset(meta_model,
+	meta_model$DIFF_ready=="yes")
+
+#First fup model with post treatment data
+
+# #extracting studies with suicide ideation measures
+meta_comp<-subset(meta_comp,
+	meta_comp$first_fup=="yes")
+
+meta_comp_post<-with(meta_comp,data.frame(
+					post_intervention_samplesize,
+					mean_post_intervention_adj,
+					sd_post_intervention_adj,
+					post_control_samplesize,
+					mean_post_control_adj,
+					sd_post_control_adj,
+					study_name,
+					intervention_cat))
+
+#excluding missing information
+meta_comp_post<-na.omit(meta_comp_post)
+
+# #Adjusting to avoind the error of a missing category in
+# #the byvar analysis
+meta_comp_post<-as.matrix(meta_comp_post)
+meta_comp_post<-as.data.frame(meta_comp_post)
+
+meta_comp_post$post_intervention_samplesize<-as.numeric(
+	as.character(meta_comp_post$post_intervention_samplesize)) 
+meta_comp_post$mean_post_intervention_adj<-as.numeric(
+	as.character(meta_comp_post$mean_post_intervention_adj))
+meta_comp_post$sd_post_intervention_adj<-as.numeric(
+	as.character(meta_comp_post$sd_post_intervention_adj))
+meta_comp_post$post_control_samplesize<-as.numeric(
+	as.character(meta_comp_post$post_control_samplesize))
+meta_comp_post$mean_post_control_adj<-as.numeric(
+	as.character(meta_comp_post$mean_post_control_adj))
+meta_comp_post$sd_post_control_adj<-as.numeric(
+	as.character(meta_comp_post$sd_post_control_adj))
+
+
+# #recoding metanalysis groups
+# meta_bssi$intervention<-car::recode(meta_bssi$intervention,"
+# 	'targeted education awarenes'='TEA or BI';
+# 	'brief intervention and contact'='TEA or BI';
+# 	'psychotherapy'='Psychotherapy'")
+
+meta_comp$intervention_cat <- relevel(
+	meta_comp$intervention_cat, "Physical")
+
+#run metanalysis model for type of intervention
+meta1 <- metacont(post_intervention_samplesize,
+	mean_post_intervention_adj,
+	sd_post_intervention_adj,
+	post_control_samplesize,
+	mean_post_control_adj,
+	sd_post_control_adj, 
+  data=meta_comp, 
+  sm="SMD",
+  byvar=intervention_cat,
+  print.byvar=FALSE,
+  # comb.fixed=FALSE,
+  studlab=study_name)
+# summary(meta1)
+
+tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
+  width = 1200, height = 600,compression = 'lzw')
+forest(meta1,bysort=FALSE)
+dev.off()
+
+#############################################################################
+#
 #Metanalysis Post treatment comparison
+#
 #############################################################################
 ## Suicide ideation metanalysis model
 # #extracting studies with suicide ideation measures
@@ -108,7 +185,7 @@ meta_first_fup_post<-with(meta_first_fup,data.frame(
 					post_control_samplesize,
 					mean_post_control_adj,
 					sd_post_control_adj,
-					study,
+					study_name,
 					intervention_cat))
 
 #excluding missing information
@@ -154,7 +231,7 @@ meta1 <- metacont(post_intervention_samplesize,
   byvar=intervention_cat,
   print.byvar=FALSE,
   # comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
@@ -166,7 +243,7 @@ funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
 
-#Excluding the study by Mealy 1986 reduces Hˆ2 to 80% and the estimate to -0.44
+#Excluding the study_name by Mealy 1986 reduces Hˆ2 to 80% and the estimate to -0.44
 #run metanalysis model for type of intervention
 meta1 <- metacont(intervention_1, 
 	mean_post_intervention_adj,
@@ -179,7 +256,7 @@ meta1 <- metacont(intervention_1,
   byvar=intervention_cat,
   print.byvar=FALSE,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
@@ -191,7 +268,7 @@ funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
 
-#Excluding the study by Goertz 1986 reduces Hˆ2 to 69.6%% and the estimate to -0.33 
+#Excluding the study_name by Goertz 1986 reduces Hˆ2 to 69.6%% and the estimate to -0.33 
 #run metanalysis model for type of intervention
 meta1 <- metacont(intervention_1, 
 	mean_post_intervention_adj,
@@ -204,7 +281,7 @@ meta1 <- metacont(intervention_1,
   byvar=intervention_cat,
   print.byvar=FALSE,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
@@ -216,7 +293,7 @@ funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
 
-#Excluding the study by Shamloo 2015 reduces Hˆ2 to 61.4%% and the estimate to -0.29 
+#Excluding the study_name by Shamloo 2015 reduces Hˆ2 to 61.4%% and the estimate to -0.29 
 #run metanalysis model for type of intervention
 meta1 <- metacont(intervention_1, 
 	mean_post_intervention_adj,
@@ -229,7 +306,7 @@ meta1 <- metacont(intervention_1,
   byvar=intervention_cat,
   print.byvar=FALSE,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
@@ -245,7 +322,7 @@ metainf(meta1, pooled="random")
 
 #############################################################################
 #Figure. 2 - Models for DIRECT interventions
-#############################################################################
+
 
 # modeling only DIRECT intervention results
  meta_model_direct<-subset(meta_model,
@@ -261,7 +338,7 @@ meta_model_direct_post<-with(meta_model_direct,data.frame(
 					post_control_samplesize,
 					mean_post_control_adj,
 					sd_post_control_adj,
-					study,
+					study_name,
 					pain_outcome_time_cat))
 
 #excluding missing information
@@ -307,7 +384,7 @@ meta1 <- metacont(post_intervention_samplesize,
   print.byvar=FALSE,
   byvar=pain_outcome_time_cat,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
@@ -329,7 +406,7 @@ meta1 <- metacont(intervention_1,
 	sd_post_control_adj, 
   data=meta_model_direct[-3,], sm="SMD",
   print.byvar=FALSE,byvar=pain_outcome_time_cat,
-  comb.fixed=FALSE,studlab=study)
+  comb.fixed=FALSE,studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3a.tiff",
@@ -344,7 +421,7 @@ metainf(meta1, pooled="random")
 
 #############################################################################
 #Figure. 3 - Models for INDIRECT interventions
-#############################################################################
+
 # modeling only DIRECT intervention results
  meta_model_indirect<-subset(meta_model,
  	meta_model$intervention_cat=="Indirect")
@@ -359,7 +436,7 @@ meta_model_indirect_post<-with(meta_model_indirect,data.frame(
 					post_control_samplesize,
 					mean_post_control_adj,
 					sd_post_control_adj,
-					study,
+					study_name,
 					pain_outcome_time_cat))
 
 #excluding missing information
@@ -405,7 +482,7 @@ meta3c <- metacont(post_intervention_samplesize,
   print.byvar=FALSE,
   byvar=pain_outcome_time_cat,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta3c)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3b.tiff",
@@ -421,7 +498,7 @@ metainf(meta3c, pooled="random")
 
 #############################################################################
 #Figure. 4 - Models for PHYSICAL interventions
-#############################################################################
+
 # modeling only DIRECT intervention results
  meta_model_physical<-subset(meta_model,
  	meta_model$intervention_cat=="Physical")
@@ -436,7 +513,7 @@ meta_model_physical_post<-with(meta_model_physical,data.frame(
 					post_control_samplesize,
 					mean_post_control_adj,
 					sd_post_control_adj,
-					study,
+					study_name,
 					pain_outcome_time_cat))
 
 #excluding missing information
@@ -482,7 +559,7 @@ meta3c <- metacont(post_intervention_samplesize,
   print.byvar=FALSE,
   byvar=pain_outcome_time_cat,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta3c)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",
@@ -505,7 +582,7 @@ meta3c <- metacont(intervention_1,
 	sd_post_control_adj, 
   data=meta_model_physical[-9,], sm="SMD",
   byvar=pain_outcome_time_cat,print.byvar=FALSE,
-  comb.fixed=FALSE,studlab=study)
+  comb.fixed=FALSE,studlab=study_name)
 summary(meta3c)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",
@@ -527,7 +604,7 @@ metainf(meta3c, pooled="random")
 
 ## Suicide ideation metanalysis model
 # #extracting studies with suicide ideation measures
-meta_first_fup_prepostdiff<-subset(meta_model_prepostdiff,
+meta_first_fup_prepostdiff<-subset(meta_model,
 	meta_model$first_fup=="yes")
 
 meta_first_fup_prepostdiff<-with(meta_first_fup_prepostdiff,data.frame(
@@ -537,7 +614,7 @@ meta_first_fup_prepostdiff<-with(meta_first_fup_prepostdiff,data.frame(
 					post_control_samplesize,
 					post_control_mean_DIFF_adj,
 					post_control_sd_DIFF_adj,
-					study,
+					study_name,
 					intervention_cat))
 
 #excluding missing information
@@ -583,7 +660,7 @@ meta1 <- metacont(post_intervention_samplesize,
   byvar=intervention_cat,
   print.byvar=FALSE,
   # comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
@@ -595,7 +672,7 @@ funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
 
-#Excluding the study by Mealy 1986 reduces Hˆ2 to 80% and the estimate to -0.44
+#Excluding the study_name by Mealy 1986 reduces Hˆ2 to 80% and the estimate to -0.44
 #run metanalysis model for type of intervention
 meta1 <- metacont(intervention_1, 
 	mean_post_intervention_adj,
@@ -608,7 +685,7 @@ meta1 <- metacont(intervention_1,
   byvar=intervention_cat,
   print.byvar=FALSE,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
@@ -620,7 +697,7 @@ funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
 
-#Excluding the study by Goertz 1986 reduces Hˆ2 to 69.6%% and the estimate to -0.33 
+#Excluding the study_name by Goertz 1986 reduces Hˆ2 to 69.6%% and the estimate to -0.33 
 #run metanalysis model for type of intervention
 meta1 <- metacont(intervention_1, 
 	mean_post_intervention_adj,
@@ -633,7 +710,7 @@ meta1 <- metacont(intervention_1,
   byvar=intervention_cat,
   print.byvar=FALSE,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
@@ -645,7 +722,7 @@ funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
 
-#Excluding the study by Shamloo 2015 reduces Hˆ2 to 61.4%% and the estimate to -0.29 
+#Excluding the study_name by Shamloo 2015 reduces Hˆ2 to 61.4%% and the estimate to -0.29 
 #run metanalysis model for type of intervention
 meta1 <- metacont(intervention_1, 
 	mean_post_intervention_adj,
@@ -658,7 +735,7 @@ meta1 <- metacont(intervention_1,
   byvar=intervention_cat,
   print.byvar=FALSE,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
@@ -690,7 +767,7 @@ meta_model_direct_post<-with(meta_model_direct,data.frame(
 					post_control_samplesize,
 					mean_post_control_adj,
 					sd_post_control_adj,
-					study,
+					study_name,
 					pain_outcome_time_cat))
 
 #excluding missing information
@@ -736,7 +813,7 @@ meta1 <- metacont(post_intervention_samplesize,
   print.byvar=FALSE,
   byvar=pain_outcome_time_cat,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
@@ -758,7 +835,7 @@ meta1 <- metacont(intervention_1,
 	sd_post_control_adj, 
   data=meta_model_direct[-3,], sm="SMD",
   print.byvar=FALSE,byvar=pain_outcome_time_cat,
-  comb.fixed=FALSE,studlab=study)
+  comb.fixed=FALSE,studlab=study_name)
 summary(meta1)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3a.tiff",
@@ -788,7 +865,7 @@ meta_model_indirect_post<-with(meta_model_indirect,data.frame(
 					post_control_samplesize,
 					mean_post_control_adj,
 					sd_post_control_adj,
-					study,
+					study_name,
 					pain_outcome_time_cat))
 
 #excluding missing information
@@ -834,7 +911,7 @@ meta3c <- metacont(post_intervention_samplesize,
   print.byvar=FALSE,
   byvar=pain_outcome_time_cat,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta3c)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3b.tiff",
@@ -865,7 +942,7 @@ meta_model_physical_post<-with(meta_model_physical,data.frame(
 					post_control_samplesize,
 					mean_post_control_adj,
 					sd_post_control_adj,
-					study,
+					study_name,
 					pain_outcome_time_cat))
 
 #excluding missing information
@@ -911,7 +988,7 @@ meta3c <- metacont(post_intervention_samplesize,
   print.byvar=FALSE,
   byvar=pain_outcome_time_cat,
   comb.fixed=FALSE,
-  studlab=study)
+  studlab=study_name)
 summary(meta3c)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",
@@ -934,7 +1011,7 @@ meta3c <- metacont(intervention_1,
 	sd_post_control_adj, 
   data=meta_model_physical[-9,], sm="SMD",
   byvar=pain_outcome_time_cat,print.byvar=FALSE,
-  comb.fixed=FALSE,studlab=study)
+  comb.fixed=FALSE,studlab=study_name)
 summary(meta3c)
 
 tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",

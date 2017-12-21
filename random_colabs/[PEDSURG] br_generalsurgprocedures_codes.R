@@ -55,7 +55,7 @@ library, character.only=T)
 # load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/novas analises - pediatria 15 anos/jovens_sia.RData")
 # data_sia<-apendectomy
 
-procedimento <- read.table("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/tb_procedimento.txt", header = F, sep = ";",
+procedimento <- read.table("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/tb_procedimento.txt", header = F, sep = ";",
                            colClasses = c("character","character","character","character"
                                           ,"character","character","character","character"
                                           ,"character","character","character","character"
@@ -209,7 +209,7 @@ data_procedures<-data.frame(data_sih_recoded,CNES=data_sih_subset$CNES,
 
 #building dataset with region information
 states<-with(state_data,data.frame(Sigla,Regio,ibge=GEOCOD,POP))
-
+s
 # Healthcenters LEVEL
 #####################################################################
 
