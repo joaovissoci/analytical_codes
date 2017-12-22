@@ -19,7 +19,7 @@ library, character.only=T)
 #IMPORTING DATA
 #################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/Pain_SR/pain_sr_data-sae.csv")
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/Pain_SR/pain_sr_data-sae.csv")
 #information between " " are the path to the directory in your computer where the data is stored
 
 #############################################################################
@@ -96,89 +96,18 @@ meta_model<-with(data,data.frame(study_name,
 # meta_model_prepostdiff<-rbind(meta_model_diff,meta_model_nodiff)
 
 #############################################################################
-#Compare Diff models vs. Post treat model
-#############################################################################
-meta_comp<-subset(meta_model,
-	meta_model$DIFF_ready=="yes")
-
-#First fup model with post treatment data
-
-# #extracting studies with suicide ideation measures
-meta_comp<-subset(meta_comp,
-	meta_comp$first_fup=="yes")
-
-meta_comp_post<-with(meta_comp,data.frame(
-					post_intervention_samplesize,
-					mean_post_intervention_adj,
-					sd_post_intervention_adj,
-					post_control_samplesize,
-					mean_post_control_adj,
-					sd_post_control_adj,
-					study_name,
-					intervention_cat))
-
-#excluding missing information
-meta_comp_post<-na.omit(meta_comp_post)
-
-# #Adjusting to avoind the error of a missing category in
-# #the byvar analysis
-meta_comp_post<-as.matrix(meta_comp_post)
-meta_comp_post<-as.data.frame(meta_comp_post)
-
-meta_comp_post$post_intervention_samplesize<-as.numeric(
-	as.character(meta_comp_post$post_intervention_samplesize)) 
-meta_comp_post$mean_post_intervention_adj<-as.numeric(
-	as.character(meta_comp_post$mean_post_intervention_adj))
-meta_comp_post$sd_post_intervention_adj<-as.numeric(
-	as.character(meta_comp_post$sd_post_intervention_adj))
-meta_comp_post$post_control_samplesize<-as.numeric(
-	as.character(meta_comp_post$post_control_samplesize))
-meta_comp_post$mean_post_control_adj<-as.numeric(
-	as.character(meta_comp_post$mean_post_control_adj))
-meta_comp_post$sd_post_control_adj<-as.numeric(
-	as.character(meta_comp_post$sd_post_control_adj))
-
-
-# #recoding metanalysis groups
-# meta_bssi$intervention<-car::recode(meta_bssi$intervention,"
-# 	'targeted education awarenes'='TEA or BI';
-# 	'brief intervention and contact'='TEA or BI';
-# 	'psychotherapy'='Psychotherapy'")
-
-meta_comp$intervention_cat <- relevel(
-	meta_comp$intervention_cat, "Physical")
-
-#run metanalysis model for type of intervention
-meta1 <- metacont(post_intervention_samplesize,
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	post_control_samplesize,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_comp, 
-  sm="SMD",
-  byvar=intervention_cat,
-  print.byvar=FALSE,
-  # comb.fixed=FALSE,
-  studlab=study_name)
-# summary(meta1)
-
-tiff("/Users/joaovissoci/Desktop/painSR_sensitivytPOST.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE)
-dev.off()
-
-#############################################################################
 #
 #Metanalysis Post treatment comparison
 #
 #############################################################################
-## Suicide ideation metanalysis model
+
+#First fup model with post treatment data
+
 # #extracting studies with suicide ideation measures
-meta_first_fup<-subset(meta_model,
+meta_firstFUP_post<-subset(meta_model,
 	meta_model$first_fup=="yes")
 
-meta_first_fup_post<-with(meta_first_fup,data.frame(
+meta_firstFUP_post<-with(meta_firstFUP_post,data.frame(
 					post_intervention_samplesize,
 					mean_post_intervention_adj,
 					sd_post_intervention_adj,
@@ -189,25 +118,25 @@ meta_first_fup_post<-with(meta_first_fup,data.frame(
 					intervention_cat))
 
 #excluding missing information
-meta_first_fup_post<-na.omit(meta_first_fup_post)
+# meta_firstFUP_post<-na.omit(meta_firstFUP_post)
 
 # #Adjusting to avoind the error of a missing category in
 # #the byvar analysis
-meta_first_fup_post<-as.matrix(meta_first_fup_post)
-meta_first_fup_post<-as.data.frame(meta_first_fup_post)
+meta_firstFUP_post<-as.matrix(meta_firstFUP_post)
+meta_firstFUP_post<-as.data.frame(meta_firstFUP_post)
 
-meta_first_fup_post$post_intervention_samplesize<-as.numeric(
-	as.character(meta_first_fup_post$post_intervention_samplesize)) 
-meta_first_fup_post$mean_post_intervention_adj<-as.numeric(
-	as.character(meta_first_fup_post$mean_post_intervention_adj))
-meta_first_fup_post$sd_post_intervention_adj<-as.numeric(
-	as.character(meta_first_fup_post$sd_post_intervention_adj))
-meta_first_fup_post$post_control_samplesize<-as.numeric(
-	as.character(meta_first_fup_post$post_control_samplesize))
-meta_first_fup_post$mean_post_control_adj<-as.numeric(
-	as.character(meta_first_fup_post$mean_post_control_adj))
-meta_first_fup_post$sd_post_control_adj<-as.numeric(
-	as.character(meta_first_fup_post$sd_post_control_adj))
+meta_firstFUP_post$post_intervention_samplesize<-as.numeric(
+	as.character(meta_firstFUP_post$post_intervention_samplesize)) 
+meta_firstFUP_post$mean_post_intervention_adj<-as.numeric(
+	as.character(meta_firstFUP_post$mean_post_intervention_adj))
+meta_firstFUP_post$sd_post_intervention_adj<-as.numeric(
+	as.character(meta_firstFUP_post$sd_post_intervention_adj))
+meta_firstFUP_post$post_control_samplesize<-as.numeric(
+	as.character(meta_firstFUP_post$post_control_samplesize))
+meta_firstFUP_post$mean_post_control_adj<-as.numeric(
+	as.character(meta_firstFUP_post$mean_post_control_adj))
+meta_firstFUP_post$sd_post_control_adj<-as.numeric(
+	as.character(meta_firstFUP_post$sd_post_control_adj))
 
 
 # #recoding metanalysis groups
@@ -216,109 +145,46 @@ meta_first_fup_post$sd_post_control_adj<-as.numeric(
 # 	'brief intervention and contact'='TEA or BI';
 # 	'psychotherapy'='Psychotherapy'")
 
-meta_first_fup_post$intervention_cat <- relevel(
-	meta_first_fup_post$intervention_cat, "Physical")
+meta_firstFUP_post$intervention_cat <- relevel(
+	meta_firstFUP_post$intervention_cat, "Physical")
 
 #run metanalysis model for type of intervention
-meta1 <- metacont(post_intervention_samplesize,
+meta_fig1_suppl <- metacont(post_intervention_samplesize,
 	mean_post_intervention_adj,
 	sd_post_intervention_adj,
 	post_control_samplesize,
 	mean_post_control_adj,
 	sd_post_control_adj, 
-  data=meta_first_fup_post, 
-  sm="SMD",
-  byvar=intervention_cat,
-  print.byvar=FALSE,
-  # comb.fixed=FALSE,
-  studlab=study_name)
-summary(meta1)
-
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE)
-dev.off()
-
-funnel(meta1)
-metainf(meta1)
-metainf(meta1, pooled="random")
-
-#Excluding the study_name by Mealy 1986 reduces Hˆ2 to 80% and the estimate to -0.44
-#run metanalysis model for type of intervention
-meta1 <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_first_fup_post[-11,], 
+  data=meta_firstFUP_post, 
   sm="SMD",
   byvar=intervention_cat,
   print.byvar=FALSE,
   comb.fixed=FALSE,
   studlab=study_name)
-summary(meta1)
+# summary(meta1)
 
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/Suppl_figure1_POST.eps",
+	width = 14, height = 12)
+forest(meta_fig1_suppl,sortvar=meta_fig1_suppl$TE,
+					   bysort=FALSE,
+					   digits.mean=2,
+					   digits.sd=2)
 dev.off()
 
-funnel(meta1)
+
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/Suppl_figure1_POST_funnel.eps",
+	width = 8, height = 8)
+funnel(meta_fig1_suppl)
+dev.off()
+
 metainf(meta1)
 metainf(meta1, pooled="random")
 
-#Excluding the study_name by Goertz 1986 reduces Hˆ2 to 69.6%% and the estimate to -0.33 
-#run metanalysis model for type of intervention
-meta1 <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_first_fup_post[-c(7,11),], 
-  sm="SMD",
-  byvar=intervention_cat,
-  print.byvar=FALSE,
-  comb.fixed=FALSE,
-  studlab=study_name)
-summary(meta1)
 
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE)
-dev.off()
-
-funnel(meta1)
-metainf(meta1)
-metainf(meta1, pooled="random")
-
-#Excluding the study_name by Shamloo 2015 reduces Hˆ2 to 61.4%% and the estimate to -0.29 
-#run metanalysis model for type of intervention
-meta1 <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_first_fup_post[-c(7,11,19),], 
-  sm="SMD",
-  byvar=intervention_cat,
-  print.byvar=FALSE,
-  comb.fixed=FALSE,
-  studlab=study_name)
-summary(meta1)
-
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE)
-dev.off()
-
-funnel(meta1)
-metainf(meta1)
-metainf(meta1, pooled="random")
-
-#discuss Lau 2008 or Borchgrevik 1998
 
 #############################################################################
 #Figure. 2 - Models for DIRECT interventions
@@ -371,7 +237,7 @@ meta_model_direct$pain_outcome_time_cat <- factor(
 		meta_model_direct$pain_outcome_time_cat)[c(2,1,3)])
 
 #run metanalysis model for type of intervention
-meta1 <- metacont(post_intervention_samplesize,
+meta_direct_post <- metacont(post_intervention_samplesize,
 	mean_post_intervention_adj,
 	sd_post_intervention_adj,
 	post_control_samplesize,
@@ -383,17 +249,28 @@ meta1 <- metacont(post_intervention_samplesize,
   print.byvar=FALSE,
   # comb.fixed=FALSE,
   studlab=study_name)
-summary(meta1)
+summary(meta_direct_post)
 
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE,
-	   overall=FALSE)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/Suppl_figure2a_POST.eps",
+	width = 14, height = 12)
+forest(meta_direct_post,sortvar=meta_direct_post$TE,
+					   bysort=FALSE,
+					   digits.mean=2,
+					   digits.sd=2)
 dev.off()
 
-funnel(meta1)
-metainf(meta1)
-metainf(meta1, pooled="random")
+
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/Suppl_figure2a_POST_funnel.eps",
+	width = 8, height = 8)
+funnel(meta_direct_post)
+dev.off()
+
+metainf(meta_direct_post)
+metainf(meta_direct_post, pooled="random")
 
 # #excluding Goertz 2006 reduces Hˆ2 to 61.4% and the estimate to -0.276
 # meta1 <- metacont(intervention_1, 
@@ -421,80 +298,80 @@ metainf(meta1, pooled="random")
 #Figure. 3 - Models for INDIRECT interventions
 
 # modeling only DIRECT intervention results
- meta_model_indirect<-subset(meta_model,
- 	meta_model$intervention_cat=="Indirect")
+#  meta_model_indirect<-subset(meta_model,
+#  	meta_model$intervention_cat=="Indirect")
 
-#running by=group analysis for time of FUP
-#NO BYGROUP - All studies are immidiatly after the intervention
+# #running by=group analysis for time of FUP
+# #NO BYGROUP - All studies are immidiatly after the intervention
 
-meta_model_indirect<-with(meta_model_indirect,data.frame(
-					post_intervention_samplesize,
-					mean_post_intervention_adj,
-					sd_post_intervention_adj,
-					post_control_samplesize,
-					mean_post_control_adj,
-					sd_post_control_adj,
-					study_name,
-					intervention_cat,
-					pain_outcome_time_cat))
+# meta_model_indirect<-with(meta_model_indirect,data.frame(
+# 					post_intervention_samplesize,
+# 					mean_post_intervention_adj,
+# 					sd_post_intervention_adj,
+# 					post_control_samplesize,
+# 					mean_post_control_adj,
+# 					sd_post_control_adj,
+# 					study_name,
+# 					intervention_cat,
+# 					pain_outcome_time_cat))
 
-#excluding missing information
-meta_model_indirect<-na.omit(meta_model_indirect)
+# #excluding missing information
+# meta_model_indirect<-na.omit(meta_model_indirect)
 
-# #Adjusting to avoind the error of a missing category in
-# #the byvar analysis
-meta_model_indirect<-as.matrix(meta_model_indirect)
-meta_model_indirect<-as.data.frame(meta_model_indirect)
+# # #Adjusting to avoind the error of a missing category in
+# # #the byvar analysis
+# meta_model_indirect<-as.matrix(meta_model_indirect)
+# meta_model_indirect<-as.data.frame(meta_model_indirect)
 
-meta_model_indirect$post_intervention_samplesize<-as.numeric(
-	as.character(meta_model_indirect$post_intervention_samplesize)) 
-meta_model_indirect$mean_post_intervention_adj<-as.numeric(
-	as.character(meta_model_indirect$mean_post_intervention_adj))
-meta_model_indirect$sd_post_intervention_adj<-as.numeric(
-	as.character(meta_model_indirect$sd_post_intervention_adj))
-meta_model_indirect$post_control_samplesize<-as.numeric(
-	as.character(meta_model_indirect$post_control_samplesize))
-meta_model_indirect$mean_post_control_adj<-as.numeric(
-	as.character(meta_model_indirect$mean_post_control_adj))
-meta_model_indirect$sd_post_control_adj<-as.numeric(
-	as.character(meta_model_indirect$sd_post_control_adj))
+# meta_model_indirect$post_intervention_samplesize<-as.numeric(
+# 	as.character(meta_model_indirect$post_intervention_samplesize)) 
+# meta_model_indirect$mean_post_intervention_adj<-as.numeric(
+# 	as.character(meta_model_indirect$mean_post_intervention_adj))
+# meta_model_indirect$sd_post_intervention_adj<-as.numeric(
+# 	as.character(meta_model_indirect$sd_post_intervention_adj))
+# meta_model_indirect$post_control_samplesize<-as.numeric(
+# 	as.character(meta_model_indirect$post_control_samplesize))
+# meta_model_indirect$mean_post_control_adj<-as.numeric(
+# 	as.character(meta_model_indirect$mean_post_control_adj))
+# meta_model_indirect$sd_post_control_adj<-as.numeric(
+# 	as.character(meta_model_indirect$sd_post_control_adj))
 
 
-# #recoding metanalysis groups
-# meta_bssi$intervention<-car::recode(meta_bssi$intervention,"
-# 	'targeted education awarenes'='TEA or BI';
-# 	'brief intervention and contact'='TEA or BI';
-# 	'psychotherapy'='Psychotherapy'")
+# # #recoding metanalysis groups
+# # meta_bssi$intervention<-car::recode(meta_bssi$intervention,"
+# # 	'targeted education awarenes'='TEA or BI';
+# # 	'brief intervention and contact'='TEA or BI';
+# # 	'psychotherapy'='Psychotherapy'")
 
-meta_model_indirect$pain_outcome_time_cat <- factor(
-	meta_model_indirect$pain_outcome_time_cat,levels(
-		meta_model_indirect$pain_outcome_time_cat)[c(2,1,4,3)])
+# meta_model_indirect$pain_outcome_time_cat <- factor(
+# 	meta_model_indirect$pain_outcome_time_cat,levels(
+# 		meta_model_indirect$pain_outcome_time_cat)[c(2,1,4,3)])
 
-#run metanalysis model for type of intervention
-meta1 <- metacont(post_intervention_samplesize,
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	post_control_samplesize,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_model_indirect, 
-  sm="SMD",
-  byvar=pain_outcome_time_cat,
-  print.byvar=FALSE,
-  # comb.fixed=FALSE,
-  studlab=study_name)
-summary(meta1)
+# #run metanalysis model for type of intervention
+# meta1 <- metacont(post_intervention_samplesize,
+# 	mean_post_intervention_adj,
+# 	sd_post_intervention_adj,
+# 	post_control_samplesize,
+# 	mean_post_control_adj,
+# 	sd_post_control_adj, 
+#   data=meta_model_indirect, 
+#   sm="SMD",
+#   byvar=pain_outcome_time_cat,
+#   print.byvar=FALSE,
+#   # comb.fixed=FALSE,
+#   studlab=study_name)
+# summary(meta1)
 
-tiff("/Users/jnv4/Desktop/painSR_figure3b.tiff",
-  width = 800, height = 400,compression = 'lzw')
-forest(meta1,
-	   bysort=FALSE,
-	   overall=FALSE)
-dev.off()
+# tiff("/Users/jnv4/Desktop/painSR_figure3b.tiff",
+#   width = 800, height = 400,compression = 'lzw')
+# forest(meta1,
+# 	   bysort=FALSE,
+# 	   overall=FALSE)
+# dev.off()
 
-funnel(meta3c)
-metainf(meta3c)
-metainf(meta3c, pooled="random")
+# funnel(meta3c)
+# metainf(meta3c)
+# metainf(meta3c, pooled="random")
 
 #############################################################################
 #Figure. 4 - Models for PHYSICAL interventions
@@ -550,7 +427,7 @@ meta_model_physical$pain_outcome_time_cat <- factor(
 		meta_model_physical$pain_outcome_time_cat)[c(2,1,4,3)])
 
 #run metanalysis model for type of intervention
-meta1 <- metacont(post_intervention_samplesize,
+meta_physical_post <- metacont(post_intervention_samplesize,
 	mean_post_intervention_adj,
 	sd_post_intervention_adj,
 	post_control_samplesize,
@@ -562,39 +439,26 @@ meta1 <- metacont(post_intervention_samplesize,
   print.byvar=FALSE,
   # comb.fixed=FALSE,
   studlab=study_name)
-summary(meta1)
+summary(meta_physical_post)
 
-tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",
-  width = 800, height = 400,compression = 'lzw')
-forest(meta1,
-	   bysort=FALSE,
-	   overall=FALSE)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/Suppl_figure2b_POST.eps",
+	width = 14, height = 12)
+forest(meta_physical_post,sortvar=meta_physical_post$TE,
+					   bysort=FALSE,
+					   digits.mean=2,
+					   digits.sd=2)
 dev.off()
 
-funnel(meta3c)
-metainf(meta3c)
-metainf(meta3c, pooled="random")
 
-#run metanalysis model for continuous data
-meta3c <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_model_physical[-9,], sm="SMD",
-  byvar=pain_outcome_time_cat,print.byvar=FALSE,
-  comb.fixed=FALSE,studlab=study_name)
-summary(meta3c)
-
-tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",
-  width = 800, height = 400,compression = 'lzw')
-forest(meta3c,
-	   bysort=FALSE,
-	   overall=FALSE)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/Suppl_figure2b_POST_funnel.eps",
+	width = 8, height = 8)
+funnel(meta_physical_post)
 dev.off()
 
-funnel(meta3c)
 metainf(meta3c)
 metainf(meta3c, pooled="random")
 
@@ -651,7 +515,7 @@ meta_first_fup_prepostdiff$intervention_cat <- relevel(
 	meta_first_fup_prepostdiff$intervention_cat, "Physical")
 
 #run metanalysis model for type of intervention
-meta1 <- metacont(post_intervention_samplesize,
+meta_firstFUP_DIFF <- metacont(post_intervention_samplesize,
 	post_intervention_mean_DIFF_adj,
 	post_intervention_sd_DIFF_adj,
 	post_control_samplesize,
@@ -663,93 +527,28 @@ meta1 <- metacont(post_intervention_samplesize,
   print.byvar=FALSE,
   # comb.fixed=FALSE,
   studlab=study_name)
-summary(meta1)
+summary(meta_firstFUP_DIFF)
 
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/figure1.eps",
+	width = 14, height = 12)
+forest(meta_firstFUP_DIFF,sortvar=meta_firstFUP_DIFF$TE,
+					   bysort=FALSE,
+					   digits.mean=2,
+					   digits.sd=2)
 dev.off()
 
-funnel(meta1)
-metainf(meta1)
-metainf(meta1, pooled="random")
 
-#Excluding the study_name by Mealy 1986 reduces Hˆ2 to 80% and the estimate to -0.44
-#run metanalysis model for type of intervention
-meta1 <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_first_fup_post[-11,], 
-  sm="SMD",
-  byvar=intervention_cat,
-  print.byvar=FALSE,
-  comb.fixed=FALSE,
-  studlab=study_name)
-summary(meta1)
-
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/igure1_funnel.eps",
+	width = 8, height = 8)
+funnel(meta_firstFUP_DIFF)
 dev.off()
 
-funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
-
-#Excluding the study_name by Goertz 1986 reduces Hˆ2 to 69.6%% and the estimate to -0.33 
-#run metanalysis model for type of intervention
-meta1 <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_first_fup_post[-c(7,11),], 
-  sm="SMD",
-  byvar=intervention_cat,
-  print.byvar=FALSE,
-  comb.fixed=FALSE,
-  studlab=study_name)
-summary(meta1)
-
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE)
-dev.off()
-
-funnel(meta1)
-metainf(meta1)
-metainf(meta1, pooled="random")
-
-#Excluding the study_name by Shamloo 2015 reduces Hˆ2 to 61.4%% and the estimate to -0.29 
-#run metanalysis model for type of intervention
-meta1 <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_first_fup_post[-c(7,11,19),], 
-  sm="SMD",
-  byvar=intervention_cat,
-  print.byvar=FALSE,
-  comb.fixed=FALSE,
-  studlab=study_name)
-summary(meta1)
-
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE)
-dev.off()
-
-funnel(meta1)
-metainf(meta1)
-metainf(meta1, pooled="random")
-
-#discuss Lau 2008 or Borchgrevik 1998
 
 #############################################################################
 #Figure. 2 - Models for DIRECT interventions
@@ -803,7 +602,7 @@ meta_model_direct$pain_outcome_time_cat <- factor(
 		meta_model_direct$pain_outcome_time_cat)[c(2,1,3)])
 
 #run metanalysis model for type of intervention
-meta1 <- metacont(post_intervention_samplesize,
+meta_direct_DIFF <- metacont(post_intervention_samplesize,
 	post_intervention_mean_DIFF_adj,
 	post_intervention_sd_DIFF_adj,
 	post_control_samplesize,
@@ -816,114 +615,135 @@ meta1 <- metacont(post_intervention_samplesize,
   # comb.fixed=FALSE,
   studlab=study_name)
 
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE,
-	   overall=FALSE)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/figure2a.eps",
+	width = 14, height = 12)
+forest(meta_direct_DIFF,sortvar=meta_direct_DIFF$TE,
+					   bysort=FALSE,
+					   digits.mean=2,
+					   digits.sd=2)
 dev.off()
 
-funnel(meta1)
+
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/igure2a_funnel.eps",
+	width = 8, height = 8)
+funnel(meta_direct_DIFF)
+dev.off()
+
 metainf(meta1)
 metainf(meta1, pooled="random")
 
 #excluding Goertz 2006 reduces Hˆ2 to 61.4% and the estimate to -0.276
-meta1 <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_model_direct[-3,], sm="SMD",
-  print.byvar=FALSE,byvar=pain_outcome_time_cat,
-  comb.fixed=FALSE,studlab=study_name)
-summary(meta1)
+# meta1 <- metacont(intervention_1, 
+# 	mean_post_intervention_adj,
+# 	sd_post_intervention_adj,
+# 	control_1,
+# 	mean_post_control_adj,
+# 	sd_post_control_adj, 
+#   data=meta_model_direct[-3,], sm="SMD",
+#   print.byvar=FALSE,byvar=pain_outcome_time_cat,
+#   comb.fixed=FALSE,studlab=study_name)
+# summary(meta1)
 
-tiff("/Users/jnv4/Desktop/painSR_figure3a.tiff",
-  width = 800, height = 400,compression = 'lzw')
-forest(meta1,bysort=FALSE,
-	   overall=FALSE)
-dev.off()
+# tiff("/Users/jnv4/Desktop/painSR_figure3a.tiff",
+#   width = 800, height = 400,compression = 'lzw')
+# forest(meta1,bysort=FALSE,
+# 	   overall=FALSE)
+# dev.off()
 
-funnel(meta1)
-metainf(meta1)
-metainf(meta1, pooled="random")
+# funnel(meta1)
+# metainf(meta1)
+# metainf(meta1, pooled="random")
 
 #############################################################################
 #Figure. 3 - Models for INDIRECT interventions
 #############################################################################
 # modeling only DIRECT intervention results
- meta_model_indirect<-subset(meta_model,
- 	meta_model$intervention_cat=="Indirect")
+#  meta_model_indirect<-subset(meta_model,
+#  	meta_model$intervention_cat=="Indirect")
 
-#running by=group analysis for time of FUP
-#NO BYGROUP - All studies are immidiatly after the intervention
+# #running by=group analysis for time of FUP
+# #NO BYGROUP - All studies are immidiatly after the intervention
 
-meta_model_indirect_post<-with(meta_model_indirect,data.frame(
-					post_intervention_samplesize,
-					mean_post_intervention_adj,
-					sd_post_intervention_adj,
-					post_control_samplesize,
-					mean_post_control_adj,
-					sd_post_control_adj,
-					study_name,
-					pain_outcome_time_cat))
+# meta_model_indirect_post<-with(meta_model_indirect,data.frame(
+# 					post_intervention_samplesize,
+# 					mean_post_intervention_adj,
+# 					sd_post_intervention_adj,
+# 					post_control_samplesize,
+# 					mean_post_control_adj,
+# 					sd_post_control_adj,
+# 					study_name,
+# 					pain_outcome_time_cat))
 
-#excluding missing information
-meta_model_indirect_post<-na.omit(meta_model_indirect_post)
+# #excluding missing information
+# meta_model_indirect_post<-na.omit(meta_model_indirect_post)
 
-# #Adjusting to avoind the error of a missing category in
-# #the byvar analysis
-meta_model_indirect_post<-as.matrix(meta_model_indirect_post)
-meta_model_indirect_post<-as.data.frame(meta_model_indirect_post)
+# # #Adjusting to avoind the error of a missing category in
+# # #the byvar analysis
+# meta_model_indirect_post<-as.matrix(meta_model_indirect_post)
+# meta_model_indirect_post<-as.data.frame(meta_model_indirect_post)
 
-meta_model_indirect_post$post_intervention_samplesize<-as.numeric(
-	as.character(meta_model_indirect_post$post_intervention_samplesize)) 
-meta_model_indirect_post$mean_post_intervention_adj<-as.numeric(
-	as.character(meta_model_indirect_post$mean_post_intervention_adj))
-meta_model_indirect_post$sd_post_intervention_adj<-as.numeric(
-	as.character(meta_model_indirect_post$sd_post_intervention_adj))
-meta_model_indirect_post$post_control_samplesize<-as.numeric(
-	as.character(meta_model_indirect_post$post_control_samplesize))
-meta_model_indirect_post$mean_post_control_adj<-as.numeric(
-	as.character(meta_model_indirect_post$mean_post_control_adj))
-meta_model_indirect_post$sd_post_control_adj<-as.numeric(
-	as.character(meta_model_indirect_post$sd_post_control_adj))
+# meta_model_indirect_post$post_intervention_samplesize<-as.numeric(
+# 	as.character(meta_model_indirect_post$post_intervention_samplesize)) 
+# meta_model_indirect_post$mean_post_intervention_adj<-as.numeric(
+# 	as.character(meta_model_indirect_post$mean_post_intervention_adj))
+# meta_model_indirect_post$sd_post_intervention_adj<-as.numeric(
+# 	as.character(meta_model_indirect_post$sd_post_intervention_adj))
+# meta_model_indirect_post$post_control_samplesize<-as.numeric(
+# 	as.character(meta_model_indirect_post$post_control_samplesize))
+# meta_model_indirect_post$mean_post_control_adj<-as.numeric(
+# 	as.character(meta_model_indirect_post$mean_post_control_adj))
+# meta_model_indirect_post$sd_post_control_adj<-as.numeric(
+# 	as.character(meta_model_indirect_post$sd_post_control_adj))
 
 
-# #recoding metanalysis groups
-# meta_bssi$intervention<-car::recode(meta_bssi$intervention,"
-# 	'targeted education awarenes'='TEA or BI';
-# 	'brief intervention and contact'='TEA or BI';
-# 	'psychotherapy'='Psychotherapy'")
+# # #recoding metanalysis groups
+# # meta_bssi$intervention<-car::recode(meta_bssi$intervention,"
+# # 	'targeted education awarenes'='TEA or BI';
+# # 	'brief intervention and contact'='TEA or BI';
+# # 	'psychotherapy'='Psychotherapy'")
 
-meta_model_indirect_post$intervention_cat <- relevel(
-	meta_model_indirect_post$intervention_cat, "Physical")
+# meta_model_indirect_post$intervention_cat <- relevel(
+# 	meta_model_indirect_post$intervention_cat, "Physical")
 
-#run metanalysis model for type of intervention
-meta3c <- metacont(post_intervention_samplesize,
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	post_control_samplesize,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_model_indirect_post, 
-  sm="SMD",
-  print.byvar=FALSE,
-  byvar=pain_outcome_time_cat,
-  comb.fixed=FALSE,
-  studlab=study_name)
-summary(meta3c)
+# #run metanalysis model for type of intervention
+# meta_indirect_DIFF <- metacont(post_intervention_samplesize,
+# 	mean_post_intervention_adj,
+# 	sd_post_intervention_adj,
+# 	post_control_samplesize,
+# 	mean_post_control_adj,
+# 	sd_post_control_adj, 
+#   data=meta_model_indirect_post, 
+#   sm="SMD",
+#   print.byvar=FALSE,
+#   byvar=pain_outcome_time_cat,
+#   comb.fixed=FALSE,
+#   studlab=study_name)
+# summary(meta3c)
 
-tiff("/Users/jnv4/Desktop/painSR_figure3b.tiff",
-  width = 800, height = 400,compression = 'lzw')
-forest(meta3c,
-	   bysort=FALSE,
-	   overall=FALSE)
-dev.off()
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/Joao/Desktop/figure2a.eps",
+# 	width = 14, height = 12)
+# forest(meta_direct_DIFF,sortvar=meta_direct_DIFF$TE,
+# 					   bysort=FALSE,
+# 					   digits.mean=2,
+# 					   digits.sd=2)
+# dev.off()
 
-funnel(meta3c)
-metainf(meta3c)
-metainf(meta3c, pooled="random")
+
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/Joao/Desktop/igure2a_funnel.eps",
+# 	width = 8, height = 8)
+# funnel(meta_direct_DIFF)
+# dev.off()
+
+# metainf(meta3c)
+# metainf(meta3c, pooled="random")
 
 #############################################################################
 #Figure. 4 - Models for PHYSICAL interventions
@@ -979,7 +799,7 @@ meta_model_physical$pain_outcome_time_cat <- factor(
 		meta_model_physical$pain_outcome_time_cat)[c(2,1,4,3)])
 
 #run metanalysis model for type of intervention
-meta1 <- metacont(post_intervention_samplesize,
+meta_physical_DIFF <- metacont(post_intervention_samplesize,
 	post_intervention_mean_DIFF_adj,
 	post_intervention_sd_DIFF_adj,
 	post_control_samplesize,
@@ -992,38 +812,49 @@ meta1 <- metacont(post_intervention_samplesize,
   # comb.fixed=FALSE,
   studlab=study_name)
 
-tiff("/Users/jnv4/Desktop/painSR_figure2.tiff",
-  width = 1200, height = 600,compression = 'lzw')
-forest(meta1,bysort=FALSE,
-	   overall=FALSE)
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/figure2b.eps",
+	width = 14, height = 12)
+forest(meta_physical_DIFF,sortvar=meta_physical_DIFF$TE,
+					   bysort=FALSE,
+					   digits.mean=2,
+					   digits.sd=2)
 dev.off()
 
-funnel(meta3c)
+
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/igure2b_funnel.eps",
+	width = 8, height = 8)
+funnel(meta_physical_DIFF)
+dev.off()
+
 metainf(meta3c)
 metainf(meta3c, pooled="random")
 
 #run metanalysis model for continuous data
-meta3c <- metacont(intervention_1, 
-	mean_post_intervention_adj,
-	sd_post_intervention_adj,
-	control_1,
-	mean_post_control_adj,
-	sd_post_control_adj, 
-  data=meta_model_physical[-9,], sm="SMD",
-  byvar=pain_outcome_time_cat,print.byvar=FALSE,
-  comb.fixed=FALSE,studlab=study_name)
-summary(meta3c)
+# meta3c <- metacont(intervention_1, 
+# 	mean_post_intervention_adj,
+# 	sd_post_intervention_adj,
+# 	control_1,
+# 	mean_post_control_adj,
+# 	sd_post_control_adj, 
+#   data=meta_model_physical[-9,], sm="SMD",
+#   byvar=pain_outcome_time_cat,print.byvar=FALSE,
+#   comb.fixed=FALSE,studlab=study_name)
+# summary(meta3c)
 
-tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",
-  width = 800, height = 400,compression = 'lzw')
-forest(meta3c,
-	   bysort=FALSE,
-	   overall=FALSE)
-dev.off()
+# tiff("/Users/jnv4/Desktop/painSR_figure3c.tiff",
+#   width = 800, height = 400,compression = 'lzw')
+# forest(meta3c,
+# 	   bysort=FALSE,
+# 	   overall=FALSE)
+# dev.off()
 
-funnel(meta3c)
-metainf(meta3c)
-metainf(meta3c, pooled="random")
+# funnel(meta3c)
+# metainf(meta3c)
+# metainf(meta3c, pooled="random")
 
 # ##############################################################################
 # #END

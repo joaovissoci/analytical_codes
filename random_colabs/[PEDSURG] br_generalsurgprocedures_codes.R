@@ -76,12 +76,12 @@ procedimento$V15 <- NULL
 procedimento$V2 <- trimws(procedimento$V2)
 
 #data with procedures information
-load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2010.Rdata")
-load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2011.Rdata")
-load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2012.Rdata")
-load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2013.Rdata")
-load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2014.Rdata")
-load("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2015.Rdata")
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2010.Rdata")
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2011.Rdata")
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2012.Rdata")
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2013.Rdata")
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2014.Rdata")
+load("/Users/Joao/Box Sync/Home Folder jnv4/Data/Pediatric Surgery/ped_2015.Rdata")
 
 data_sih<-rbind(ped_2010,
 				ped_2011[,c(1:87)][,-45],
@@ -97,26 +97,26 @@ data_sih$PROC_SOLIC_nome <- data_sih$V2
 data_sih$V2 <- NULL
 
 #data with socioneconomic classification by income level
-income_data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/acs/br_acsdiagnotic_data.csv")
+income_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/acs/br_acsdiagnotic_data.csv")
 
 #data with iformation about state and regions
-state_data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/epidemiologic transition/ihd_cities.csv")
+state_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/epidemiologic transition/ihd_cities.csv")
 
 # procedures<-levels(as.factor(apendectomy$PROC_SOLIC_nome))
 
-# write.csv(procedures,"/Users/joaovissocivissoci/Desktop/procedures.csv")
+# write.csv(procedures,"/Users/Joaovissoci/Desktop/procedures.csv")
 
 #data with informmation about hospital infrastructure
-infrastructure_data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_hospitalinfrastructure_data.csv")
+infrastructure_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_hospitalinfrastructure_data.csv")
 
 #data with pediatric population
-pediatric_population<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/pediatric_population_2015.csv",sep=",")
+pediatric_population<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/pediatric_population_2015.csv",sep=",")
 
 #data with avaiability of pediatric surgical care
-availability_data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_peds_availability_data.csv")
+availability_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_peds_availability_data.csv")
 availability_data$ibge<-availability_data$X...ibge
 
-mortality_data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_pedmortality_data.csv")
+mortality_data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/br_datasets/br_pedmortality_data.csv")
 
 ###################### SIA
 # #Subsetting the SIA data to include only General Pediatric Surgery Procedures
@@ -209,7 +209,7 @@ data_procedures<-data.frame(data_sih_recoded,CNES=data_sih_subset$CNES,
 
 #building dataset with region information
 states<-with(state_data,data.frame(Sigla,Regio,ibge=GEOCOD,POP))
-s
+
 # Healthcenters LEVEL
 #####################################################################
 
@@ -269,14 +269,17 @@ data_procedures_region_pop_income_avail <- merge(
 #merging pediatric and mortality population to full dataset
 data_sih_full_by_mrocedures <- base::merge(
 	data_procedures_region_pop_income_avail,
-	surg_centers, by="CNES",all.x = TRUE)
+	surg_centers, by="CNES",all.y = TRUE)
+
+# write.csv(data_sih_full_by_mrocedures,"/Users/Joao/Desktop/data_sih_full_by_mrocedures.csv")
 
 data_sih_full_by_mrocedures %>% 
   group_by(peds_specific,ibge.x) %>%
   summarise(no_rows = length(peds_specific)) %>%
   spread(peds_specific,no_rows) -> data_hosp_levels
 
-data_hosp_levels$ibge<-data_hosp_levels$ibge.x
+
+# data_hosp_levels$ibge<-data_hosp_levels$ibge.x
 
 # MUNICIPALITY LEVEL
 ################################### 
