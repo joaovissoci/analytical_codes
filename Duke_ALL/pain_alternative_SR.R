@@ -19,7 +19,7 @@ library, character.only=T)
 #IMPORTING DATA
 #################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/Pain_SR/pain_sr_data-sae.csv")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/Pain_SR/pain_sr_data-sae.csv")
 #information between " " are the path to the directory in your computer where the data is stored
 
 #############################################################################
@@ -165,7 +165,7 @@ meta_fig1_suppl <- metacont(post_intervention_samplesize,
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/Suppl_figure1_POST.eps",
+postscript("/Users/joaovissoci/Desktop/figure1_POST.eps",
 	width = 14, height = 12)
 forest(meta_fig1_suppl,sortvar=meta_fig1_suppl$TE,
 					   bysort=FALSE,
@@ -176,7 +176,7 @@ dev.off()
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/Suppl_figure1_POST_funnel.eps",
+postscript("/Users/joaovissoci/Desktop/Suppl_figure1_POST_funnel.eps",
 	width = 8, height = 8)
 funnel(meta_fig1_suppl)
 dev.off()
@@ -247,24 +247,25 @@ meta_direct_post <- metacont(post_intervention_samplesize,
   sm="SMD",
   byvar=pain_outcome_time_cat,
   print.byvar=FALSE,
-  # comb.fixed=FALSE,
+  comb.fixed=FALSE,
   studlab=study_name)
 summary(meta_direct_post)
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/Suppl_figure2a_POST.eps",
+postscript("/Users/joaovissoci/Desktop/figure2a_POST.eps",
 	width = 14, height = 12)
 forest(meta_direct_post,sortvar=meta_direct_post$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
-					   digits.sd=2)
+					   digits.sd=2,
+					   overall=FALSE)
 dev.off()
 
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/Suppl_figure2a_POST_funnel.eps",
+postscript("/Users/joaovissoci/Desktop/igure2a_POST_funnel.eps",
 	width = 8, height = 8)
 funnel(meta_direct_post)
 dev.off()
@@ -437,24 +438,25 @@ meta_physical_post <- metacont(post_intervention_samplesize,
   sm="SMD",
   byvar=pain_outcome_time_cat,
   print.byvar=FALSE,
-  # comb.fixed=FALSE,
+  comb.fixed=FALSE,
   studlab=study_name)
 summary(meta_physical_post)
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/Suppl_figure2b_POST.eps",
+postscript("/Users/joaovissoci/Desktop/figure2b_POST.eps",
 	width = 14, height = 12)
 forest(meta_physical_post,sortvar=meta_physical_post$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
-					   digits.sd=2)
+					   digits.sd=2,
+					   overall=FALSE)
 dev.off()
 
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/Suppl_figure2b_POST_funnel.eps",
+postscript("/Users/joaovissoci/Desktop/figure2b_POST_funnel.eps",
 	width = 8, height = 8)
 funnel(meta_physical_post)
 dev.off()
@@ -525,13 +527,13 @@ meta_firstFUP_DIFF <- metacont(post_intervention_samplesize,
   sm="SMD",
   byvar=intervention_cat,
   print.byvar=FALSE,
-  # comb.fixed=FALSE,
+  comb.fixed=FALSE,
   studlab=study_name)
 summary(meta_firstFUP_DIFF)
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure1.eps",
+postscript("/Users/joaovissoci/Desktop/suppl_figure1_DIFF.eps",
 	width = 14, height = 12)
 forest(meta_firstFUP_DIFF,sortvar=meta_firstFUP_DIFF$TE,
 					   bysort=FALSE,
@@ -542,7 +544,7 @@ dev.off()
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/igure1_funnel.eps",
+postscript("/Users/joaovissoci/Desktop/suppl_figure1_funnel_DIFF.eps",
 	width = 8, height = 8)
 funnel(meta_firstFUP_DIFF)
 dev.off()
@@ -612,23 +614,24 @@ meta_direct_DIFF <- metacont(post_intervention_samplesize,
   sm="SMD",
   byvar=pain_outcome_time_cat,
   print.byvar=FALSE,
-  # comb.fixed=FALSE,
+  comb.fixed=FALSE,
   studlab=study_name)
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure2a.eps",
+postscript("/Users/joaovissoci/Desktop/suppl_figure2a_DIFF.eps",
 	width = 14, height = 12)
 forest(meta_direct_DIFF,sortvar=meta_direct_DIFF$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
-					   digits.sd=2)
+					   digits.sd=2,
+					   overall=FALSE)
 dev.off()
 
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/igure2a_funnel.eps",
+postscript("/Users/joaovissoci/Desktop/suppl_figure2a_DIFF_funnel.eps",
 	width = 8, height = 8)
 funnel(meta_direct_DIFF)
 dev.off()
@@ -809,23 +812,24 @@ meta_physical_DIFF <- metacont(post_intervention_samplesize,
   sm="SMD",
   byvar=pain_outcome_time_cat,
   print.byvar=FALSE,
-  # comb.fixed=FALSE,
+  comb.fixed=FALSE,
   studlab=study_name)
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure2b.eps",
+postscript("/Users/joaovissoci/Desktop/suppl_figure2b_DIFF.eps",
 	width = 14, height = 12)
 forest(meta_physical_DIFF,sortvar=meta_physical_DIFF$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
-					   digits.sd=2)
+					   digits.sd=2,
+					   overall=FALSE)
 dev.off()
 
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/igure2b_funnel.eps",
+postscript("/Users/joaovissoci/Desktop/suppl_figure2b_DIFF_funnel.eps",
 	width = 8, height = 8)
 funnel(meta_physical_DIFF)
 dev.off()
