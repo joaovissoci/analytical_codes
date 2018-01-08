@@ -267,38 +267,9 @@ data$less_opinion_trtd_person<-car::recode(data$less_opinion_trtd_person,"
 #Organize scale datasets
 
 #BNI
-BNI_data<-with(data,data.frame(alc_treatment_intelligent,alcoholic_trustworthy,alc_treatment_failure,think_less_treated_person,
+stigma_data<-with(data,data.frame(alc_treatment_intelligent,alcoholic_trustworthy,alc_treatment_failure,think_less_treated_person,
                                            less_opinion_trtd_person,alcoholic_close_friend,recovered_alcoholic_teacher,recover_alcoholic_chldrn,
                                            recover_alcoholic_hired,non_alcoholic_hired,recovered_alc_treat_same,no_date_hospital_for_alc))
-
-# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-# data_imputed <- mice(BNI_data, seed = 2222, m=10)
-
-# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-# BNI_data<-mice::complete(data_imputed,4)
-
-#BNI_Devaluation
-BNI_Devaluation<-with(BNI_data,data.frame(alc_treatment_intelligent,alcoholic_trustworthy,alc_treatment_failure,
-                                          think_less_treated_person,less_opinion_trtd_person))
-
-#BNI_Discrimination
-BNI_Discrimination<-with(BNI_data,data.frame(alcoholic_close_friend,recovered_alcoholic_teacher,recover_alcoholic_chldrn,
-                                               recover_alcoholic_hired,non_alcoholic_hired,recovered_alc_treat_same,no_date_hospital_for_alc))
-
-
-psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
-
-cor_data<-cor_auto(BNI_data) 
-
-# # fa(cor_data,2,rotate="promax")
-# fa(BNI_data,1,fm="pa",rotate="promax")
-# fa(BNI_data,2,fm="pa",rotate="promax")
-# fa(BNI_data,3,fm="pa",rotate="promax")
-
-#based on a polychoric correlation matrix
-fa.poly(BNI_data,1,fm="uls",rotate="oblimin")
-fa.poly(BNI_data,2,fm="uls",rotate="oblimin")
-fa.poly(BNI_data,3,fm="uls",rotate="oblimin")
 
 # 1 factor model
 cfa_model <- '
@@ -337,31 +308,10 @@ alc_treatment_intelligent ~~       alcoholic_trustworthy
 fit <- lavaan::cfa(cfa_model,
                    data = BNI_data,
                    estimator="WLSMV",
-                   ordered=colnames(BNI_data)
+                   ordered=colnames(stigma_data)
 )
 
-summary(fit, fit.measures=TRUE)
-
-lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
-                                          "rmsea.ci.lower.scaled",
-                                          "rmsea.ci.upper.scaled",
-                                          "cfi.scaled",
-                                          "tli.scaled",
-                                          "nnfi.scaled",
-                                          "chisq.scaled",
-                                          "pvalue.scaled"
-)
-)
-
-# AIC(fit)
-Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
-subset(Est, op == "=~")
-subset(Est, op == "~~")
-#lavInspect(fit,what="th") 
-
-### Modification Indexes
-Mod <- lavaan::modificationIndices(fit)
-subset(Mod, mi > 10)
+# summary(fit, fit.measures=TRUE)
 
 #Predicted scores
 
@@ -377,6 +327,7 @@ pas_data<-with(data_nonabst,data.frame(alc_treatment_intelligent,
 pas_scores<-lavaan::lavPredict(fit,newdata=pas_data,method="EBM")
 pas_scores_scaled<-scales::rescale(as.data.frame(pas_scores)$BNI, 
     to = c(0, 100))
+
 # score_data<-with(data_nonabst, data.frame(alcoholic_close_friend,
 # 							recovered_alcoholic_teacher,
 # 							recover_alcoholic_chldrn,
@@ -492,7 +443,7 @@ data_full<-data.frame(age=data_nonabst$age,
 					  drinking_arguments=data_nonabst$drinking_arguments,
 					  could_get_hurt=data_nonabst$could_get_hurt,
 					  police_bc_drink=data_nonabst$police_bc_drink,
-					  pas_scores_scaled,
+					  stigma=pas_scores_scaled,
 					  # devaluation,
 					  # discrimination,
 					  talked_dr=data_nonabst$talked_dr,
@@ -520,6 +471,8 @@ data_full<-mice::complete(imp,4)
 #TABLE 1
 ######################################################################
 
+
+#### NOT RUN
 describe(data_full$age_1st_drink)
 describe(data_full$age_12ormore_drinks_yr)
 
@@ -534,13 +487,13 @@ cor(cost_study,method="spearman")
 #cost?
 #availability
 
-
+#### NOT RUN
 with(data_full,table(talked_dr))
 
 
 #Age
 with(data_full,
-	describe(age))
+	psych::describe(age))
 with(data_full,
 	by(age,talked_dr,describe))
 with(data_full,
