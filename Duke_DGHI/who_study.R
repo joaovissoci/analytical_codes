@@ -697,8 +697,10 @@ table<-with(rti_data_tz,table(type_vehicle,QF04))
 table
 prop.table(table,2)
 
-
-current_alcohol_use=as.character(QF04),
+#by BAC level
+table<-with(rti_data_tz,table(type_vehicle,breath_level))
+table
+prop.table(table,2)
 
 ###########################################################
 ##TABLE 2

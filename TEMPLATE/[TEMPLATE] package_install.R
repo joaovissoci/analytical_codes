@@ -62,6 +62,9 @@ install.packages("pcalg")
 install.packages("semPlot")
 install.packages("GGally")
 install.packages("tidyverse")
+install.packages("flexdashboard")
+install.packages("dygraphs")
+install.packages("plotly")
 
 
 devtools::install_github("jennybc/googlesheets")

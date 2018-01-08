@@ -1,0 +1,10 @@
+name: us_sap_faculty_dashboard
+title:
+username:
+account: joaovissoci
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 254690
+bundleId: 1166257
+url: https://joaovissoci.shinyapps.io/us_sap_faculty_dashboard/
+when: 1515384033.98905

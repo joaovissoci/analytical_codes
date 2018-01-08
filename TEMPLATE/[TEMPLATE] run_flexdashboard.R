@@ -6,3 +6,5 @@ devtools::install_github("rstudio/rmarkdown")
 
 
 rmarkdown::run("/Users/joaovissoci/Git/analytical_codes/Duke_DGNN/US_SAP_faculty_dashboard.rmd")
+
+rsconnect::deployApp('/Users/joaovissoci/Git/analytical_codes/Duke_DGNN/US_SAP_faculty_dashboard.rmd')
