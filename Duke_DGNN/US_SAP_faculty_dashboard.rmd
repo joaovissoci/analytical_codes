@@ -7,7 +7,6 @@ output:
   social: menu
   source_code: https://git.io/vaZdx
   runtime: shiny
-  output: html_document
 ---
     
 ```{r setup, include=FALSE}

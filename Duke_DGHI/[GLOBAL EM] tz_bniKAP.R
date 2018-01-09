@@ -37,7 +37,7 @@ character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAPprofessionals_data.csv",sep=",")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAPprofessionals_data.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -1075,21 +1075,21 @@ plot_data$flip[plot_data$variable == "less_opinion_trtd_person"]="flip"
 
 
 plot_data$color<-NULL
-plot_data$color[plot_data$flip == "flip" & plot_data$value == "Strongly agree"]="#4A6FE3"
-plot_data$color[plot_data$flip == "flip" & plot_data$value == "Agree"]="#8595E1"
-plot_data$color[plot_data$flip == "flip" & plot_data$value == "Somewhat agree"]="#B5BBE3"
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Strongly agree"]="#4A6FE3"
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Agree"]="#8595E1"
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Somewhat agree"]="#B5BBE3"
 
-plot_data$color[plot_data$flip == "flip" & plot_data$value == "Somewhat disagree"]="#E6AFB9"
-plot_data$color[plot_data$flip == "flip" & plot_data$value == "Disagree"]="#E07B91"
-plot_data$color[plot_data$flip == "flip" & plot_data$value == "Strongly disagree"]="#D33F6A"
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Somewhat disagree"]="#E6AFB9"
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Disagree"]="#E07B91"
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Strongly disagree"]="#D33F6A"
 
-plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Strongly disagree"]="#4A6FE3"
-plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Disagree"]="#8595E1"
-plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Somewhat disagree"]="#B5BBE3"
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Strongly disagree"]="#4A6FE3"
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Disagree"]="#8595E1"
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Somewhat disagree"]="#B5BBE3"
 
-plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Somewhat agree"]="#E6AFB9"
-plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Agree"]="#E07B91"
-plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Strongly agree"]="#D33F6A"
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Somewhat agree"]="#E6AFB9"
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Agree"]="#E07B91"
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Strongly agree"]="#D33F6A"
 
 plot_data$color[plot_data$value == "Mean (SD)"]="white"
 
@@ -1169,14 +1169,14 @@ figure4<-ggplot(plot_data, aes(y=variable, x=value)) +
 "2. Most people believe that a person who has had alcohol \ntreatment is just as intelligent as the average person.",
 "3. Most people believe that a former alcoholic is just as \ntrustworthy as the average person.",
 "4. Most people would accept a fully recovered former alcoholic \nas a teacher of young children in a public school.",
-"5. #Most people feel that entering alcohol treatment is a \nsign of personal failure.",
-"6. #Most people would not hire a former alcoholic to take care \nof their children, even if he or she had been \nsober for some time.",
-"7. #Most people think less of a person who has been in alcohol \ntreatment.",
+"5. Most people feel that entering alcohol treatment is a \nsign of personal failure.",
+"6. Most people would not hire a former alcoholic to take care \nof their children, even if he or she had been \nsober for some time.",
+"7. Most people think less of a person who has been in alcohol \ntreatment.",
 "8. Most employers will hire a former alcoholic if he or \nshe is qualified for the job.",
-"9. #Most employers will pass over the application of a former \nalcoholic in favor of another applicant.",
+"9. Most employers will pass over the application of a former \nalcoholic in favor of another applicant.",
 "10. Most people in my community would treat a former alcoholic \njust as they would treat anyone else.",
-"11. #Most young women would be reluctant to date a man \nwho has been hospitalized for alcoholism.",
-"12. #Once they know a person was in alcohol treatment, \nmost people will take his or her opinion less seriously."
+"11. Most young women would be reluctant to date a man \nwho has been hospitalized for alcoholism.",
+"12. Once they know a person was in alcohol treatment, \nmost people will take his or her opinion less seriously."
 							))) +
   # geom_tile(fill=plot_data$tile) +
   geom_text(aes(label=text))
