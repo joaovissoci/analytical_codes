@@ -48,44 +48,263 @@ data3<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global 
 data4<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
 
 data5<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/pgic.sas7bdat"))
+
 ######################################################
 #DATA MANAGEMENT
 ######################################################
+
+#Organizing PSFS data
+######################################################
+
+data_3_subset0<-subset(data3,data3$AVISIT=="Envenomation +14 Days" |
+                             data3$AVISIT=="Envenomation +3 Days"  |
+                             data3$AVISIT=="Envenomation +7 Days"  |
+                             data3$AVISIT=="Envenomation +10 Days")
+
+# getting total scores
+psfs_data_subset_total_temp1<-subset(data_3_subset0,data_3_subset0$PARAM=="PSFS Total Score")
+
+psfs_data_subset_total<-with(psfs_data_subset_total_temp1,data.frame(USUBJID,
+                                                  TRTP,
+                                                  AVAL,
+                                                  AVISIT))
+
+id<-with(psfs_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+psfs_data_subset_total$id<-id2
+
+psfs_data_subset_total_casted1 <- dcast(psfs_data_subset_total, 
+                          id+USUBJID+TRTP ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(psfs_data_subset_total_casted1)[4]<-"psfs_FUP_10_total"
+colnames(psfs_data_subset_total_casted1)[5]<-"psfs_FUP_14_total"
+colnames(psfs_data_subset_total_casted1)[6]<-"psfs_FUP_3_total"
+colnames(psfs_data_subset_total_casted1)[7]<-"psfs_FUP_7_total"
+
+# getting values for score 1
+psfs_data_subset_score1_temp1<-subset(data_3_subset0,data_3_subset0$PARAM=="Score 1")
+
+psfs_data_subset_score1<-with(psfs_data_subset_score1_temp1,data.frame(USUBJID,
+                                                  TRTP,
+                                                  AVAL,
+                                                  AVISIT))
+
+id_score1<-with(psfs_data_subset_score1,
+              strsplit(as.character(USUBJID),"-"))
+
+id_score1<-as.data.frame(t(as.data.frame(id_score1)))
+
+id_score12<-apply(id_score1[,4:5],1,paste, collapse="-")
+
+psfs_data_subset_score1$id<-id_score12
+
+psfs_data_subset_score1_casted1 <- dcast(psfs_data_subset_score1, 
+                          id+USUBJID+TRTP ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(psfs_data_subset_score1_casted1)[4]<-"psfs_FUP_10_score1"
+colnames(psfs_data_subset_score1_casted1)[5]<-"psfs_FUP_14_score1"
+colnames(psfs_data_subset_score1_casted1)[6]<-"psfs_FUP_3_score1"
+colnames(psfs_data_subset_score1_casted1)[7]<-"psfs_FUP_7_score1"
+
+# getting values for score 2
+psfs_data_subset_score2_temp1<-subset(data_3_subset0,data_3_subset0$PARAM=="Score 2")
+
+psfs_data_subset_score2<-with(psfs_data_subset_score2_temp1,data.frame(USUBJID,
+                                                  TRTP,
+                                                  AVAL,
+                                                  AVISIT))
+
+id_score2<-with(psfs_data_subset_score2,
+              strsplit(as.character(USUBJID),"-"))
+id_score2<-as.data.frame(t(as.data.frame(id_score2)))
+
+id_score22<-apply(id_score2[,4:5],1,paste, collapse="-")
+
+psfs_data_subset_score2$id<-id_score22
+
+psfs_data_subset_score2_casted1 <- dcast(psfs_data_subset_score2, 
+                          id+USUBJID+TRTP ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(psfs_data_subset_score2_casted1)[4]<-"psfs_FUP_10_score2"
+colnames(psfs_data_subset_score2_casted1)[5]<-"psfs_FUP_14_score2"
+colnames(psfs_data_subset_score2_casted1)[6]<-"psfs_FUP_3_score2"
+colnames(psfs_data_subset_score2_casted1)[7]<-"psfs_FUP_7_score2"
+
+# getting values for score 3
+psfs_data_subset_score3_temp1<-subset(data_3_subset0,data_3_subset0$PARAM=="Score 3")
+
+psfs_data_subset_score3<-with(psfs_data_subset_score3_temp1,data.frame(USUBJID,
+                                                  TRTP,
+                                                  AVAL,
+                                                  AVISIT))
+
+id_score3<-with(psfs_data_subset_score3,
+              strsplit(as.character(USUBJID),"-"))
+id_score3<-as.data.frame(t(as.data.frame(id_score3)))
+
+id_score32<-apply(id_score3[,4:5],1,paste, collapse="-")
+
+psfs_data_subset_score3$id<-id_score32
+
+psfs_data_subset_score3_casted1 <- dcast(psfs_data_subset_score3, 
+                          id+USUBJID+TRTP ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(psfs_data_subset_score3_casted1)[4]<-"psfs_FUP_10_score3"
+colnames(psfs_data_subset_score3_casted1)[5]<-"psfs_FUP_14_score3"
+colnames(psfs_data_subset_score3_casted1)[6]<-"psfs_FUP_3_score3"
+colnames(psfs_data_subset_score3_casted1)[7]<-"psfs_FUP_7_score3"
+
+# getting values for activity 1 chosen in the PSFS
+data_3_subset_activity_1_temp1<-subset(data3, data3$AVISIT=="Envenomation +3 Days")
+
+psfs_data_subset_data_3_subset_activity_1_temp1<-subset(data_3_subset_activity_1_temp1,data_3_subset_activity_1_temp1$PARAM=="Activity 1")
+
+psfs_data_subset_data_3_subset_activity_1<-with(psfs_data_subset_data_3_subset_activity_1_temp1,data.frame(USUBJID,
+                                                  TRTP,
+                                                  AVAL,
+                                                  AVISIT))
+
+id_data_3_subset_activity_1<-with(psfs_data_subset_data_3_subset_activity_1,
+              strsplit(as.character(USUBJID),"-"))
+id_data_3_subset_activity_1<-as.data.frame(t(as.data.frame(id_data_3_subset_activity_1)))
+
+id_data_3_subset_activity_12<-apply(id_data_3_subset_activity_1[,4:5],1,paste, collapse="-")
+
+psfs_data_subset_data_3_subset_activity_1$id<-id_data_3_subset_activity_12
+
+psfs_data_subset_data_3_subset_activity_1_casted1 <- dcast(psfs_data_subset_data_3_subset_activity_1, 
+                          id+USUBJID+TRTP ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(psfs_data_subset_data_3_subset_activity_1_casted1)[4]<-"psfs_FUP_3_data_3_subset_activity_1"
+
+# getting values for activity 2 chosen in the PSFS
+data_3_subset_activity_2_temp1<-subset(data3, data3$AVISIT=="Envenomation +3 Days")
+
+psfs_data_subset_data_3_subset_activity_2_temp1<-subset(data_3_subset_activity_2_temp1,data_3_subset_activity_2_temp1$PARAM=="Activity 2")
+
+psfs_data_subset_data_3_subset_activity_2<-with(psfs_data_subset_data_3_subset_activity_2_temp1,data.frame(USUBJID,
+                                                  TRTP,
+                                                  AVAL,
+                                                  AVISIT))
+
+id_data_3_subset_activity_2<-with(psfs_data_subset_data_3_subset_activity_2,
+              strsplit(as.character(USUBJID),"-"))
+id_data_3_subset_activity_2<-as.data.frame(t(as.data.frame(id_data_3_subset_activity_2)))
+
+id_data_3_subset_activity_22<-apply(id_data_3_subset_activity_2[,4:5],1,paste, collapse="-")
+
+psfs_data_subset_data_3_subset_activity_2$id<-id_data_3_subset_activity_22
+
+psfs_data_subset_data_3_subset_activity_2_casted1 <- dcast(psfs_data_subset_data_3_subset_activity_2, 
+                          id+USUBJID+TRTP ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(psfs_data_subset_data_3_subset_activity_2_casted1)[4]<-"psfs_FUP_3_data_3_subset_activity_2"
+
+# getting values for activity 3 chosen in the PSFS
+data_3_subset_activity_3_temp1<-subset(data3, data3$AVISIT=="Envenomation +3 Days")
+
+psfs_data_subset_data_3_subset_activity_3_temp1<-subset(data_3_subset_activity_3_temp1,data_3_subset_activity_3_temp1$PARAM=="Activity 2")
+
+psfs_data_subset_data_3_subset_activity_3<-with(psfs_data_subset_data_3_subset_activity_3_temp1,data.frame(USUBJID,
+                                                  TRTP,
+                                                  AVAL,
+                                                  AVISIT))
+
+id_data_3_subset_activity_3<-with(psfs_data_subset_data_3_subset_activity_3,
+              strsplit(as.character(USUBJID),"-"))
+id_data_3_subset_activity_3<-as.data.frame(t(as.data.frame(id_data_3_subset_activity_3)))
+
+id_data_3_subset_activity_32<-apply(id_data_3_subset_activity_3[,4:5],1,paste, collapse="-")
+
+psfs_data_subset_data_3_subset_activity_3$id<-id_data_3_subset_activity_32
+
+psfs_data_subset_data_3_subset_activity_3_casted1 <- dcast(psfs_data_subset_data_3_subset_activity_3, 
+                          id+USUBJID+TRTP ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(psfs_data_subset_data_3_subset_activity_3_casted1)[4]<-"psfs_FUP_3_data_3_subset_activity_3"
+
+#Combining PSFS data
+
+psfs_data_1<-data.frame(psfs_data_subset_total_casted1,
+                        psfs_data_subset_score1_casted1[,-1],
+                      psfs_data_subset_data_3_subset_activity_2_casted1[,-1],
+                      psfs_data_subset_data_3_subset_activity_3_casted1[,-1],
+                      psfs_data_subset_data_3_subset_activity_1_casted1[,-1])
+
+psfs_data_2<-data.frame(psfs_data_subset_score2_casted1,
+                      psfs_data_subset_score3_casted1[,-1])
+
+psfs_data<-merge(psfs_data_1,psfs_data_2, by="id",all.x = TRUE)
+
+#organizing data from the pilos study
+#Organizing PSFS data
+data4$redcap_event_name<-as.factor(data4$redcap_event_name)
+data_4_subset<-subset(data4,data4$redcap_event_name=="Env + 14 Days" |
+                             data4$redcap_event_name=="Env + 3 Days")
+
+data_psfs_pilot<-with(data_4_subset,data.frame(id=subjid,
+                                               AVISIT=redcap_event_name,
+                                               AVAL=scorres_psfs_total,
+                                               USUBJID=subjid))
+
+data_psfs_pilot_casted <- dcast(data_psfs_pilot, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(data_psfs_pilot_casted)[3]<-"psfs_FUP_14"
+colnames(data_psfs_pilot_casted)[4]<-"psfs_FUP_3"
+data_psfs_pilot_casted$TRTP<-"pilot"
+
+#merging pilot and rct data
+
+data_psfs_casted<-rbind(data_psfs_casted1,data_psfs_pilot_casted)
+
 # recoding method os administration variable
-data$type<-car::recode(data$time,"
-            '3days'='paper';
-            '7days'='paper';
-            '10days'='phone';
-            '14days'='paper';
-            '17days'='phone';
-            '21days'='paper';
-            '24days'='phone';
-            '28days'='paper';
-            else='phone'")
+# data$type<-car::recode(data$time,"
+#             '3days'='paper';
+#             '7days'='paper';
+#             '10days'='phone';
+#             '14days'='paper';
+#             '17days'='phone';
+#             '21days'='paper';
+#             '24days'='phone';
+#             '28days'='paper';
+#             else='phone'")
 
-data$time_2measures<-car::recode(data$time,"
-            '3days'='Tnothing';
-            '7days'='T1paper';
-            '10days'='T1phone';
-            '14days'='T2paper';
-            '17days'='T2phone';
-            '21days'='T3paper';
-            '24days'='T3phone';
-            '28days'='Tnothing';
-            else='Tnothing'")
+# data$time_2measures<-car::recode(data$time,"
+#             '3days'='Tnothing';
+#             '7days'='T1paper';
+#             '10days'='T1phone';
+#             '14days'='T2paper';
+#             '17days'='T2phone';
+#             '21days'='T3paper';
+#             '24days'='T3phone';
+#             '28days'='Tnothing';
+#             else='Tnothing'")
 
-#Kessler
-psfs_questions<-with(data,data.frame(q1,q2,q3))
+# #Kessler
+# psfs_questions<-with(data,data.frame(q1,q2,q3))
 
-data$score<-rowMeans(psfs_questions)
+# data$score<-rowMeans(psfs_questions)
 
-#subsetting data set to keep only baseline data
-data_validation_paperT0<-data[data$time=="3days",]
-data_validation_phoneT0<-data[data$time=="10days",]
+# #subsetting data set to keep only baseline data
+# data_validation_paperT0<-data[data$time=="3days",]
+# data_validation_phoneT0<-data[data$time=="10days",]
 
-data_validationT0<-data[data$time=="3days",]
-data_validationT1<-data[data$time=="7days",]
-data_validationT2<-data[data$time=="10days",]
+# data_validationT0<-data[data$time=="3days",]
+# data_validationT1<-data[data$time=="7days",]
+# data_validationT2<-data[data$time=="10days",]
 
 # #recoding marital status variable
 # data_validation$married<-car::recode(data_validation$married,"
@@ -119,35 +338,34 @@ data_validationT2<-data[data$time=="10days",]
 
 ### Temporal stability data
 
-temporal_data_paper<-subset(data,data$time=="21days" | data$time=="28days")
+# temporal_data_paper<-subset(data,data$time=="21days" | data$time=="28days")
 
-icc_temporal_paper1<-with(temporal_data_paper,data.frame(X...id,time,score))
-icc_temporal_paper<-cast(icc_temporal_paper1,
-                          X...id~time)
+# icc_temporal_paper1<-with(temporal_data_paper,data.frame(X...id,time,score))
+# icc_temporal_paper<-cast(icc_temporal_paper1,
+#                           X...id~time)
 
-temporal_data_phone<-subset(data,data$time=="17days" | data$time=="24days")
+# temporal_data_phone<-subset(data,data$time=="17days" | data$time=="24days")
 
-icc_temporal_phone1<-with(temporal_data_phone,data.frame(X...id,time,score))
-icc_temporal_phone<-cast(icc_temporal_phone1,
-                          X...id~time)
+# icc_temporal_phone1<-with(temporal_data_phone,data.frame(X...id,time,score))
+# icc_temporal_phone<-cast(icc_temporal_phone1,
+#                           X...id~time)
 
-### Consistency between methods of application
+# ### Consistency between methods of application
 
-icc<-subset(data,data$time=="14days" | data$time=="17days")
+# icc<-subset(data,data$time=="14days" | data$time=="17days")
 
-icc_data1<-with(icc,data.frame(id,time,score))
-icc_data<-cast(icc_data1,
-                          id~time)
+# icc_data1<-with(icc,data.frame(id,time,score))
+# icc_data<-cast(icc_data1,
+#                           id~time)
 
-descriptive_data<-subset(data,data$time_2measures=="T1paper" | 
-                              data$time_2measures=="T1phone" |
-                              data$time_2measures=="T2paper" |
-                              data$time_2measures=="T2phone" |
-                              data$time_2measures=="T3paper" |
-                              data$time_2measures=="T3phone"
-                              )
+# descriptive_data<-subset(data,data$time_2measures=="T1paper" | 
+#                               data$time_2measures=="T1phone" |
+#                               data$time_2measures=="T2paper" |
+#                               data$time_2measures=="T2phone" |
+#                               data$time_2measures=="T3paper" |
+#                               data$time_2measures=="T3phone"
+#                               )
 
-#MCID
 #Organizing PGIC data
 data_2_subset1<-subset(data2,data2$QSCAT=="Patient Global Impression of Change" &
                              data2$VISIT=="Envenomation +14 Days")
@@ -181,54 +399,7 @@ data_pgic_pilot<-with(data_5_subset,data.frame(id=subjid,
 
 data_globalchange_casted<-rbind(data_globalchange_casted1,data_pgic_pilot)
 
-#Organizing PSFS data
-data_3_subset0<-subset(data3,data3$AVISIT=="Envenomation +14 Days" |
-                             data3$AVISIT=="Envenomation +3 Days")
 
-data_3_subset1<-subset(data_3_subset0,data_3_subset0$PARAM=="PSFS Total Score")
-
-data_psfs<-with(data_3_subset1,data.frame(USUBJID,
-                                                  TRTP,
-                                                  AVAL,
-                                                  AVISIT))
-
-id<-with(data_psfs,
-              strsplit(as.character(USUBJID),"-"))
-id<-as.data.frame(t(as.data.frame(id)))
-
-id2<-apply(id[,4:5],1,paste, collapse="-")
-
-data_psfs$id<-id2
-
-data_psfs_casted1 <- dcast(data_psfs, 
-                          id+USUBJID+TRTP ~ AVISIT,
-                                  value.var="AVAL")
-
-colnames(data_psfs_casted1)[4]<-"psfs_FUP_14"
-colnames(data_psfs_casted1)[5]<-"psfs_FUP_3"
-
-#organizing data from the pilos study
-#Organizing PSFS data
-data4$redcap_event_name<-as.factor(data4$redcap_event_name)
-data_4_subset<-subset(data4,data4$redcap_event_name=="Env + 14 Days" |
-                             data4$redcap_event_name=="Env + 3 Days")
-
-data_psfs_pilot<-with(data_4_subset,data.frame(id=subjid,
-                                               AVISIT=redcap_event_name,
-                                               AVAL=scorres_psfs_total,
-                                               USUBJID=subjid))
-
-data_psfs_pilot_casted <- dcast(data_psfs_pilot, 
-                          id+USUBJID ~ AVISIT,
-                                  value.var="AVAL")
-
-colnames(data_psfs_pilot_casted)[3]<-"psfs_FUP_14"
-colnames(data_psfs_pilot_casted)[4]<-"psfs_FUP_3"
-data_psfs_pilot_casted$TRTP<-"pilot"
-
-#merging pilot and rct data
-
-data_psfs_casted<-rbind(data_psfs_casted1,data_psfs_pilot_casted)
 
 #merging PSFS and PGIC data for the clinimetrics assessment
 data_mcid<-merge(x = data_psfs_casted, 
@@ -257,8 +428,11 @@ data_mcid2<-na.omit(data_mcid[-c(22,79),])
 data_mcid_stable<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='stable')
 data_mcid_improved<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='improved')
 
+##PSFS content analysis
+
+
 ######################################################################
-#BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
+#TABLE 1
 ######################################################################
 ###Section wih several exploratory data analysis functions
 ###### Exploratory Data Anlysis
@@ -270,23 +444,9 @@ data_mcid_improved<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='impro
 # describe(data_validation$home_people)
 
 # Categorical Descriptives
-table<-with(data_validation,table(married))
+table<-with(data_mcid,table(change_cat_PGIC1_severe))
 table
 prop.table(table)
-
-# Categorical Descriptives
-table<-with(data_validation,table(female))
-table
-prop.table(table)
-
-# Categorical Descriptives
-table<-with(data_validation,table(occupation_cat))
-table
-prop.table(table)
-
-ggplot(data, aes(time, score)) + geom_line() +
-  scale_x_date(format = "%b-%Y") + xlab("") + ylab("Daily Views")
-
 
 ######################################################################
 #FLOORING AND CEILING EFFECT

@@ -1,0 +1,10 @@
+name: us_sap_residents_dashboard
+title:
+username:
+account: joaovissoci
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 255293
+bundleId: 1169318
+url: https://joaovissoci.shinyapps.io/us_sap_residents_dashboard/
+when: 1515534195.16777
