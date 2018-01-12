@@ -38,7 +38,7 @@ lapply(c("meta"), library, character.only=T)
 
 # bnp_sr_data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/BNP SR/bnp_SR_data.csv")
 
-bnp_sr_metadata<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/SRs/BNP SR/US_bnpmetaanalysis_data.csv")
+bnp_sr_metadata<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/SRs/BNP SR/US_bnpmetaanalysis_data2.csv")
 
 
 #############################################################################
@@ -106,7 +106,7 @@ meta1 <- metacont(
 				    label.c="Normal",
 				    complab="SMD, Hodges' G",
 				    comb.random=TRUE,
-				    comb.fixed=TRUE,
+				    comb.fixed=FALSE,
   					data=delat_data,
   					sm="SMD",
  				    byvar=group,
@@ -147,8 +147,9 @@ forest(meta1,
 	   just.studlab="left",
 	   layout="JAMA",
 	   # leftlabs=c("Author", "N", "Delta", "SD"),
-	   comb.fixed=TRUE,
-	   xlim=c(-3, 3)
+	   # comb.fixed=TRUE,
+	   xlim=c(-3, 3),
+	   overall=FALSE
 	   # colgap.forest.left=unit(3.5,"cm")
 	   )
 dev.off()
