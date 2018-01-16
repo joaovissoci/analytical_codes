@@ -1045,9 +1045,9 @@ toplot<-plot_ly(tryout_NAtozero,type = "bar",
       add_trace(y = ~active_help, name = 'Active Help') %>%
       add_trace(y = ~passive_help, name = 'Passive Help') %>%
       add_trace(y = ~no_help, name = 'No Help') %>%
-      layout(yaxis = list(title = 'Count'),
+      layout(yaxis = list(title = 'Days until No Help'),
            xaxis = list(title = 'Zones of Proximal Development'), 
-            barmode = 'group',
+            barmode = 'stack',
             legend=list(orientation='h'))
 
 

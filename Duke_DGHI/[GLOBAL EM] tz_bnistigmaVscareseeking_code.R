@@ -35,7 +35,8 @@ lapply(c("Hmisc",
 		 # "mvnormtest",
 		 "polycor",
 		 "mice",
-		 "semPlot"), 
+		 "semPlot",
+		 "tidyverse"), 
 library, character.only=T)
 
 ######################################################################
@@ -43,75 +44,73 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data_patients<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
+data_patients<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
 
-data_family<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAfamily_data.csv")
+data_family<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAfamily_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
 ######################################################################
 
-data_nonabst<-subset(data,data$consumption!=0)
+#creating family and patients group variables
+
+data_patients$group<-c("Patients")
+data_family$group<-c("Family")
 
 # names(data)
 
 #####socioeconomic variables
-#age
 
-#female
-
-#alcohol positive
-
-#daily drinking
-
-data_nonabst$daily_drink<-car::recode(
-	data_nonabst$daily_drink,"
+data_patients$daily_drink<-car::recode(
+	data_patients$daily_drink,"
 	998=NA;
 	999=NA;
 	'2 GLAS'=2;
 	'3-Feb'=3;
 	'4-Mar'=4;
 	'7-May'=7")
-data_nonabst$daily_drink<-as.numeric(as.character(data_nonabst$daily_drink))
+data_patients$daily_drink<-as.numeric(as.character(data_patients$daily_drink))
 
 #### ALcohol use consequences
 
 #drinking_interferes
 
-data_nonabst$drinking_interferes<-car::recode(
-	data_nonabst$drinking_interferes,"
+data_patients$drinking_interferes<-car::recode(
+	data_patients$drinking_interferes,"
 	1='yes';
 	5='no';
 	else=NA")
 
 #drinking_arguments
 
-data_nonabst$drinking_arguments<-car::recode(
-	data_nonabst$drinking_arguments,"
+data_patients$drinking_arguments<-car::recode(
+	data_patients$drinking_arguments,"
 	1='yes';
 	5='no';
 	else=NA")
 
 #could_get_hurt
 
-data_nonabst$could_get_hurt<-car::recode(
-	data_nonabst$could_get_hurt,"
+data_patients$could_get_hurt<-car::recode(
+	data_patients$could_get_hurt,"
 	1='yes';
 	5='no';
 	else=NA")
 
 #police_bc_drink
 
-data_nonabst$police_bc_drink<-car::recode(
-	data_nonabst$police_bc_drink,"
+data_patients$police_bc_drink<-car::recode(
+	data_patients$police_bc_drink,"
 	1='yes';
 	5='no';
 	else=NA")
 
-#### AUDIT Score
+# AUDIT
+######################################################################
+
 # data<-subset(data1,data1$audit_complete==2)
 
-audit_data<-with(data_nonabst,data.frame(
+audit_data<-with(data_patients,data.frame(
 				how_often_drink,                  
 				number_drinks_day,
 				how_often_6_more_drinks,
@@ -146,24 +145,15 @@ audit_data$audit_score_cat<-car::recode(
 # 	audit_data_NAto0)
 
 #### Care seeking
-
-#talekd_dr
-
-data_nonabst$talked_dr<-car::recode(data_nonabst$talked_dr,"
+data_patients$talked_dr<-car::recode(data_patients$talked_dr,"
 	1='yes';
 	5='no';
 	else=NA")
 
-#helpful_treatment
+# DRINC
+######################################################################
 
-#recent_trtmnt
-
-#hospital_alc
-
-#Selfhelp_group
-
-# #Drinc
-drinc_data<-with(data_nonabst,data.frame(
+drinc_data<-with(data_patients,data.frame(
 				had_hangover,
 				bad_about_self,
 				missed_work_school,
@@ -230,7 +220,8 @@ drinc_data_score<-rowSums(drinc_data_questions)/2
 # 	0:5='Low';else='High'")
 
 
-# #STIGMA
+# STIGMA
+######################################################################
 patients_score_data<-with(data_patients, data.frame(alcoholic_close_friend,
               recovered_alcoholic_teacher,
               recover_alcoholic_chldrn,
@@ -278,7 +269,7 @@ data_stigma$think_less_treated_person<-car::recode(data_stigma$think_less_treate
                                                    1='6';2='5';3='4';
                                                    4='3';5='2';6='1'")
 
-recoding think_less_treated_person variable
+# recoding think_less_treated_person variable
 data_stigma$think_less_treated_person<-car::recode(data_stigma$think_less_treated_person,"
                                                    1='6';2='5';3='4';
                                                    4='3';5='2';6='1'")
@@ -325,22 +316,9 @@ imp <- mice(data_stigma, seed = 2222, m=5)
 # # reports the complete data_stigmaset with missing imputated. It returns 5 options of data_stigmasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
 data_stigma<-mice::complete(imp,4)
 
+# Find factor scores for stigma
 
-cor_data_stigma<-cor_auto(data_stigma[,-13]) 
-
-psych::alpha(cor_data_stigma,n.iter=1000,check.keys=TRUE)
-
-# # fa(cor_data_stigma,2,rotate="promax")
-# fa(BNI_data_stigma,1,fm="pa",rotate="promax")
-# fa(BNI_data_stigma,2,fm="pa",rotate="promax")
-# fa(BNI_data_stigma,3,fm="pa",rotate="promax")
-
-#based on a polychoric correlation matrix
-fa.poly(BNI_data_stigma,1,fm="uls",rotate="oblimin")
-fa.poly(data_stigma[,-13],2,fm="uls",rotate="oblimin")
-fa.poly(BNI_data_stigma,3,fm="uls",rotate="oblimin")
-
-# 1 factor model
+# Specifying model
 cfa_model <- '
 BNI =~ alc_treatment_intelligent + 
        alcoholic_trustworthy +
@@ -358,52 +336,14 @@ BNI =~ alc_treatment_intelligent +
 alc_treatment_intelligent ~~       alcoholic_trustworthy
 '
 
-# Neg =~ alc_treatment_failure +
-#        # think_less_treated_person +
-#        less_opinion_trtd_person + 
-#        recover_alcoholic_chldrn +
-#        non_alcoholic_hired +
-#        no_date_hospital_for_alc
-# '
-
-# 2 factor model
-# cfa_model <- '
-# BNI_Devaluation =~ alc_treatment_intelligent+alcoholic_trustworthy+alc_treatment_failure+
-#                                           think_less_treated_person+less_opinion_trtd_person
-# BNI_Discrimination =~ alcoholic_close_friend+recovered_alcoholic_teacher+recover_alcoholic_chldrn+
-#                                                recover_alcoholic_hired+non_alcoholic_hired+recovered_alc_treat_same+no_date_hospital_for_alc
-# '
-
+#estimating model
 fit <- lavaan::cfa(cfa_model,
                    data = data_stigma[,-13],
                    estimator="WLSMV",
                    ordered=colnames(data_stigma[,-13])
 )
 
-summary(fit, fit.measures=TRUE)
-
-lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
-                                          "rmsea.ci.lower.scaled",
-                                          "rmsea.ci.upper.scaled",
-                                          "cfi.scaled",
-                                          "tli.scaled",
-                                          "nnfi.scaled",
-                                          "chisq.scaled",
-                                          "pvalue.scaled"
-)
-)
-
-# AIC(fit)
-Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
-subset(Est, op == "=~")
-subset(Est, op == "~~")
-#lavInspect(fit,what="th") 
-
-### Modification Indexes
-Mod <- lavaan::modificationIndices(fit)
-subset(Mod, mi > 10)
-
-#Predicted scores
+#Calculating the predicted scores
 
 pas_data<-with(data_stigma,data.frame(alc_treatment_intelligent, 
        alcoholic_trustworthy,
@@ -416,10 +356,10 @@ pas_data<-with(data_stigma,data.frame(alc_treatment_intelligent,
 
 pas_scores<-lavaan::lavPredict(fit,newdata=pas_data)
 pas_scores_scaled<-scales::rescale(as.data.frame(pas_scores)$BNI, 
-    to = c(0, 100))
+    to = c(0, 100)) #rescaling
 
+#Extracting scores for patients only
 pas_scores_patients<-pas_scores_scaled[data_stigma$group=="Patients"]
-pas_scores_family<-pas_scores_scaled[data_stigma$group=="Family"]
 
 # score_data<-with(data_nonabst, data.frame(alcoholic_close_friend,
 # 							recovered_alcoholic_teacher,
@@ -527,32 +467,132 @@ pas_scores_family<-pas_scores_scaled[data_stigma$group=="Family"]
 # # describe(devaluation)
 # devaluation_cat<-car::recode(devaluation,"0:3='low';else='high'")
 
-data_full<-data.frame(age=data_nonabst$age,
-					  female=data_nonabst$female,
-					  pos_etoh=data_nonabst$pos_etoh,
-					  daily_drink=data_nonabst$daily_drink,
-					  # number_drinks_day=data_nonabst$number_drinks_day,
-					  drinking_interferes=data_nonabst$drinking_interferes,
-					  drinking_arguments=data_nonabst$drinking_arguments,
-					  could_get_hurt=data_nonabst$could_get_hurt,
-					  police_bc_drink=data_nonabst$police_bc_drink,
-					  stigma=pas_scores_scaled,
+data_full<-data.frame(age=data_patients$age,
+					  female=data_patients$female,
+					  pos_etoh=data_patients$pos_etoh,
+					  daily_drink=data_patients$daily_drink,
+					  # number_drinks_day=data_patients$number_drinks_day,
+					  drinking_interferes=data_patients$drinking_interferes,
+					  drinking_arguments=data_patients$drinking_arguments,
+					  could_get_hurt=data_patients$could_get_hurt,
+					  police_bc_drink=data_patients$police_bc_drink,
+					  stigma=pas_scores_patients,
 					  # devaluation,
 					  # discrimination,
-					  talked_dr=data_nonabst$talked_dr,
-					  # helpful_treatment=data_nonabst$helpful_treatment,
-					  # recent_trtmnt=data_nonabst$recent_trtmnt,
-					  # hospital_alc=data_nonabst$hospital_alc,
-					  # selfhelp_group=data_nonabst$selfhelp_group,
+					  talked_dr=data_patients$talked_dr,
+					  # helpful_treatment=data_patients$helpful_treatment,
+					  # recent_trtmnt=data_patients$recent_trtmnt,
+					  # hospital_alc=data_patients$hospital_alc,
+					  # selfhelp_group=data_patients$selfhelp_group,
 					  audit_total=audit_data$audit_score,
 					  audit_alcoholuse=audit_data$audit_score_D1,
 					  audit_alcoholdependence=audit_data$audit_score_D2,
 					  audit_alcoholrisk=audit_data$audit_score_D3,
 					  audit_cat=audit_data$audit_score_cat,
 					  drinc_data_score,
-					  age_1st_drink=data_nonabst$age_1st_drink,
-					  age_12ormore_drinks_yr=data_nonabst$age_12ormore_drinks_yr
-					  )
+					  # age_1st_drink=data_patients$age_1st_drink,
+					  # age_12ormore_drinks_yr=data_patients$age_12ormore_drinks_yr,
+					  consumption=data_patients$consumption)
+
+# data_full %>% mutate(test = ifelse((talked_dr == 'NA' & consumption == 0), 
+# 									'no',
+# 									NA_real_)) -> tested
+
+#recode seeking care to include non-abstainers
+for(i in 1:length(data_full[,1])) {
+
+if(is.na(data_full$talked_dr[i]) == TRUE  & 
+		 data_full$consumption[i] == 0) {	
+
+		data_full$talked_dr_full[i] <- 1 	
+
+} else { 
+
+		data_full$talked_dr_full[i] <- data_full$talked_dr[i]	
+
+}
+}
+
+#recode daily_drink to include non-abstainers
+for(i in 1:length(data_full[,1])) {
+
+if(is.na(data_full$daily_drink[i]) == TRUE  & 
+		 data_full$consumption[i] == 0) {	
+
+		data_full$daily_drink_full[i] <- 1 	
+
+} else { 
+
+		data_full$daily_drink_full[i] <- data_full$daily_drink[i]	
+
+}
+}
+
+#recode drinking_interferes to include non-abstainers
+for(i in 1:length(data_full[,1])) {
+
+if(is.na(data_full$drinking_interferes[i]) == TRUE  & 
+		 data_full$consumption[i] == 0) {	
+
+		data_full$drinking_interferes_full[i] <- 1 	
+
+} else { 
+
+		data_full$drinking_interferes_full[i] <- data_full$drinking_interferes[i]	
+
+}
+}
+
+#recode drinking_arguments to include non-abstainers
+	for(i in 1:length(data_full[,1])) {
+
+if(is.na(data_full$drinking_arguments[i]) == TRUE  & 
+		 data_full$consumption[i] == 0) {	
+
+		data_full$drinking_arguments_full[i] <- 1 	
+
+} else { 
+
+		data_full$drinking_arguments_full[i] <- data_full$drinking_arguments[i]	
+
+}
+}
+
+#recode could_get_hurt to include non-abstainers
+for(i in 1:length(data_full[,1])) {
+
+if(is.na(data_full$could_get_hurt[i]) == TRUE  & 
+		 data_full$consumption[i] == 0) {	
+
+		data_full$could_get_hurt_full[i] <- 1 	
+
+} else { 
+
+		data_full$could_get_hurt_full[i] <- data_full$could_get_hurt[i]	
+
+}
+}
+
+for(i in 1:length(data_full[,1])) {
+#recode police_bc_drink to include non-abstainers
+if(is.na(data_full$police_bc_drink[i]) == TRUE  & 
+		 data_full$consumption[i] == 0) {	
+
+		data_full$police_bc_drink_full[i] <- 1 	
+
+} else { 
+
+		data_full$police_bc_drink_full[i] <- data_full$police_bc_drink[i]	
+
+}
+}
+
+data_full<-data_full %>% select(-talked_dr,
+	              -drinking_interferes,
+	              -drinking_arguments,
+	              -could_get_hurt,
+	              -police_bc_drink,
+	              -daily_drink)
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
 imp <- mice(data_full, seed = 2222, m=5)
@@ -560,257 +600,261 @@ imp <- mice(data_full, seed = 2222, m=5)
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
 data_full<-mice::complete(imp,4)
 
+#Isolating only non_abst data
+data_nonabst<-subset(data_full,data_patients$consumption!=0)
+
+
 ######################################################################
 #TABLE 1
 ######################################################################
 
 
 #### NOT RUN
-describe(data_full$age_1st_drink)
-describe(data_full$age_12ormore_drinks_yr)
+# describe(data_full$age_1st_drink)
+# describe(data_full$age_12ormore_drinks_yr)
 
 
-cost_study<-with(data_full,data.frame(age_12ormore_drinks_yr,
-									  age_1st_drink,
-									  audit_total))
+# cost_study<-with(data_full,data.frame(age_12ormore_drinks_yr,
+# 									  age_1st_drink,
+# 									  audit_total))
 
-cor(cost_study,method="spearman")
+# cor(cost_study,method="spearman")
 
-#non abstainers?
-#cost?
-#availability
+# #non abstainers?
+# #cost?
+# #availability
 
-#### NOT RUN
-with(data_full,table(talked_dr))
+# #### NOT RUN
+# with(data_full,table(talked_dr))
 
 
 #Age
-with(data_full,
+with(data_nonabst,
 	psych::describe(age))
-with(data_full,
-	by(age,talked_dr,describe))
-with(data_full,
-	t.test(age~talked_dr))
-logmodel<-glm(talked_dr ~ age
-			,family=binomial, data=data_full)
+with(data_nonabst,
+	by(age,talked_dr_full,describe))
+with(data_nonabst,
+	t.test(age~talked_dr_full))
+logmodel<-glm(talked_dr_full ~ age
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #gender
-with(data_full,table(female))
-with(data_full,prop.table(table(female)))
-table<-with(data_full,table(female,talked_dr))
+with(data_nonabst,table(female))
+with(data_nonabst,prop.table(table(female)))
+table<-with(data_nonabst,table(female,talked_dr_full))
 table
-with(data_full,prop.table(table(female,talked_dr),2))
+with(data_nonabst,prop.table(table(female,talked_dr_full),2))
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
-logmodel<-glm(talked_dr ~ female
-			,family=binomial, data=data_full)
+logmodel<-glm(talked_dr_full ~ female
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #alcohol
-with(data_full,table(pos_etoh))
-with(data_full,prop.table(table(pos_etoh)))
-table<-with(data_full,table(pos_etoh,talked_dr))
+with(data_nonabst,table(pos_etoh))
+with(data_nonabst,prop.table(table(pos_etoh)))
+table<-with(data_nonabst,table(pos_etoh,talked_dr_full))
 table
-with(data_full,prop.table(table(pos_etoh,talked_dr),2))
+with(data_nonabst,prop.table(table(pos_etoh,talked_dr_full),2))
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
-logmodel<-glm(talked_dr ~ pos_etoh
-			,family=binomial, data=data_full)
+logmodel<-glm(talked_dr_full ~ pos_etoh
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #at-risk alcohol Users
-with(data_full,table(audit_cat))
-with(data_full,prop.table(table(audit_cat)))
-table<-with(data_full,table(audit_cat,talked_dr))
+with(data_nonabst,table(audit_cat))
+with(data_nonabst,prop.table(table(audit_cat)))
+table<-with(data_nonabst,table(audit_cat,talked_dr_full))
 table
-with(data_full,prop.table(table(audit_cat,talked_dr),2))
+with(data_nonabst,prop.table(table(audit_cat,talked_dr_full),2))
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
-logmodel<-glm(talked_dr ~ audit_cat
-			,family=binomial, data=data_full)
+logmodel<-glm(talked_dr_full ~ audit_cat
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #daily_drink
-with(data_full,
+with(data_nonabst,
 	summary(daily_drink))
-with(data_full,
-	by(daily_drink,talked_dr,summary))
-with(data_full,
-	wilcox.test(daily_drink~talked_dr))
-# logmodel<-glm(talked_dr ~ daily_drink
-# 			,family=binomial, data=data_full)
+with(data_nonabst,
+	by(daily_drink,talked_dr_full,summary))
+with(data_nonabst,
+	wilcox.test(daily_drink~talked_dr_full))
+# logmodel<-glm(talked_dr_full ~ daily_drink
+# 			,family=binomial, data=data_nonabst)
 # summary(logmodel)
 # exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #drinking_interferes
-with(data_full,table(drinking_interferes))
-with(data_full,prop.table(table(drinking_interferes)))
-table<-with(data_full,table(drinking_interferes,talked_dr))
+with(data_nonabst,table(drinking_interferes))
+with(data_nonabst,prop.table(table(drinking_interferes)))
+table<-with(data_nonabst,table(drinking_interferes,talked_dr_full))
 table
-with(data_full,prop.table(table(drinking_interferes,talked_dr),2))
+with(data_nonabst,prop.table(table(drinking_interferes,talked_dr_full),2))
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
-logmodel<-glm(talked_dr ~ drinking_interferes
-			,family=binomial, data=data_full)
+logmodel<-glm(talked_dr_full ~ drinking_interferes
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #drinking_arguments
-with(data_full,table(drinking_arguments))
-with(data_full,prop.table(table(drinking_arguments)))
-table<-with(data_full,table(drinking_arguments,talked_dr))
+with(data_nonabst,table(drinking_arguments))
+with(data_nonabst,prop.table(table(drinking_arguments)))
+table<-with(data_nonabst,table(drinking_arguments,talked_dr_full))
 table
-with(data_full,prop.table(table(drinking_arguments,talked_dr),2))
+with(data_nonabst,prop.table(table(drinking_arguments,talked_dr_full),2))
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
-logmodel<-glm(talked_dr ~ drinking_arguments
-			,family=binomial, data=data_full)
+logmodel<-glm(talked_dr_full ~ drinking_arguments
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #could_get_hurt
-with(data_full,table(could_get_hurt))
-with(data_full,prop.table(table(could_get_hurt)))
-table<-with(data_full,table(could_get_hurt,talked_dr))
+with(data_nonabst,table(could_get_hurt))
+with(data_nonabst,prop.table(table(could_get_hurt)))
+table<-with(data_nonabst,table(could_get_hurt,talked_dr_full))
 table
-with(data_full,prop.table(table(could_get_hurt,talked_dr),2))
+with(data_nonabst,prop.table(table(could_get_hurt,talked_dr_full),2))
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
-logmodel<-glm(talked_dr ~ could_get_hurt
-			,family=binomial, data=data_full)
+logmodel<-glm(talked_dr_full ~ could_get_hurt
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #police_bc_drink
-with(data_full,table(police_bc_drink))
-with(data_full,prop.table(table(police_bc_drink)))
-table<-with(data_full,table(police_bc_drink,talked_dr))
+with(data_nonabst,table(police_bc_drink))
+with(data_nonabst,prop.table(table(police_bc_drink)))
+table<-with(data_nonabst,table(police_bc_drink,talked_dr_full))
 table
-with(data_full,prop.table(table(police_bc_drink,talked_dr),2))
+with(data_nonabst,prop.table(table(police_bc_drink,talked_dr_full),2))
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
-logmodel<-glm(talked_dr ~ police_bc_drink
-			,family=binomial, data=data_full)
+logmodel<-glm(talked_dr_full ~ police_bc_drink
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #pas_score
-with(data_full,
+with(data_nonabst,
 	summary(pas_scores_scaled))
-with(data_full,
-	by(pas_scores_scaled,talked_dr,summary))
-with(data_full,
-	wilcox.test(pas_scores_scaled~talked_dr))
-logmodel<-glm(talked_dr ~ pas_scores_scaled
-			,family=binomial, data=data_full)
+with(data_nonabst,
+	by(pas_scores_scaled,talked_dr_full,summary))
+with(data_nonabst,
+	wilcox.test(pas_scores_scaled~talked_dr_full))
+logmodel<-glm(talked_dr_full ~ pas_scores_scaled
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #devaluation
-with(data_full,
+with(data_nonabst,
 	summary(devaluation))
-with(data_full,
-	by(devaluation,talked_dr,summary))
-with(data_full,
-	wilcox.test(devaluation~talked_dr))
-logmodel<-glm(talked_dr ~ devaluation
-			,family=binomial, data=data_full)
+with(data_nonabst,
+	by(devaluation,talked_dr_full,summary))
+with(data_nonabst,
+	wilcox.test(devaluation~talked_dr_full))
+logmodel<-glm(talked_dr_full ~ devaluation
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #discrimination
-with(data_full,
+with(data_nonabst,
 	summary(discrimination))
-with(data_full,
-	by(discrimination,talked_dr,summary))
-with(data_full,
-	wilcox.test(discrimination~talked_dr))
-logmodel<-glm(talked_dr ~ discrimination
-			,family=binomial, data=data_full)
+with(data_nonabst,
+	by(discrimination,talked_dr_full,summary))
+with(data_nonabst,
+	wilcox.test(discrimination~talked_dr_full))
+logmodel<-glm(talked_dr_full ~ discrimination
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #audit_total
-with(data_full,
+with(data_nonabst,
 	summary(audit_total))
-with(data_full,
-	by(audit_total,talked_dr,summary))
-with(data_full,
-	wilcox.test(audit_total~talked_dr))
-logmodel<-glm(talked_dr ~ audit_total
-			,family=binomial, data=data_full)
+with(data_nonabst,
+	by(audit_total,talked_dr_full,summary))
+with(data_nonabst,
+	wilcox.test(audit_total~talked_dr_full))
+logmodel<-glm(talked_dr_full ~ audit_total
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #audit_alcoholuse
-with(data_full,
+with(data_nonabst,
 	summary(audit_alcoholuse))
-with(data_full,
-	by(audit_alcoholuse,talked_dr,summary))
-with(data_full,
-	wilcox.test(audit_alcoholuse~talked_dr))
-logmodel<-glm(talked_dr ~ age
-			,family=binomial, data=data_full)
+with(data_nonabst,
+	by(audit_alcoholuse,talked_dr_full,summary))
+with(data_nonabst,
+	wilcox.test(audit_alcoholuse~talked_dr_full))
+logmodel<-glm(talked_dr_full ~ age
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #audit_alcoholdependence
-with(data_full,
+with(data_nonabst,
 	summary(audit_alcoholdependence))
-with(data_full,
-	by(audit_alcoholdependence,talked_dr,summary))
-with(data_full,
-	wilcox.test(audit_alcoholdependence~talked_dr))
-logmodel<-glm(talked_dr ~ age
-			,family=binomial, data=data_full)
+with(data_nonabst,
+	by(audit_alcoholdependence,talked_dr_full,summary))
+with(data_nonabst,
+	wilcox.test(audit_alcoholdependence~talked_dr_full))
+logmodel<-glm(talked_dr_full ~ age
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #audit_alcoholrisk
-with(data_full,
+with(data_nonabst,
 	summary(audit_alcoholrisk))
-with(data_full,
-	by(audit_alcoholrisk,talked_dr,summary))
-with(data_full,
-	wilcox.test(audit_alcoholrisk~talked_dr))
-logmodel<-glm(talked_dr ~ age
-			,family=binomial, data=data_full)
+with(data_nonabst,
+	by(audit_alcoholrisk,talked_dr_full,summary))
+with(data_nonabst,
+	wilcox.test(audit_alcoholrisk~talked_dr_full))
+logmodel<-glm(talked_dr_full ~ age
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 #drinc_data_score
-with(data_full,
+with(data_nonabst,
 	summary(drinc_data_score))
-with(data_full,
-	by(drinc_data_score,talked_dr,summary))
-with(data_full,
-	wilcox.test(drinc_data_score~talked_dr))
-logmodel<-glm(talked_dr ~ drinc_data_score
-			,family=binomial, data=data_full)
+with(data_nonabst,
+	by(drinc_data_score,talked_dr_full,summary))
+with(data_nonabst,
+	wilcox.test(drinc_data_score~talked_dr_full))
+logmodel<-glm(talked_dr_full ~ drinc_data_score
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
 
-logmodel<-glm(talked_dr ~ pos_etoh +
+logmodel<-glm(talked_dr_full ~ pos_etoh +
 						  daily_drink +
 						  drinking_interferes +
 						  drinking_arguments +
 						  could_get_hurt +
 						  audit_total +						
 						  drinc_data_score
-			,family=binomial, data=data_full)
+			,family=binomial, data=data_nonabst)
 summary(logmodel)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
@@ -827,7 +871,7 @@ linearmodel<-glm(pas_score ~
 						  could_get_hurt +
 						  audit_total +						
 						  drinc_data_score
-			,family=gaussian, data=data_full)
+			,family=gaussian, data=data_nonabst)
 summary(linearmodel)
 exp(cbind(Odds=coef(linearmodel),confint(linearmodel,level=0.95))) 
 
@@ -837,7 +881,7 @@ exp(cbind(Odds=coef(linearmodel),confint(linearmodel,level=0.95)))
 ######################################################################
 
 #
-network_data<-with(data_full,data.frame(#age=data_nonabst$age,
+network_data<-with(data_nonabst,data.frame(#age=data_nonabst$age,
 					  #female=data_nonabst$female,
 					  # pos_etoh=data_nonabst$pos_etoh,
 					  # daily_drink=data_nonabst$daily_drink,
@@ -849,7 +893,7 @@ network_data<-with(data_full,data.frame(#age=data_nonabst$age,
 					  pas_scores_scaled,
 					  # devaluation,
 					  # discrimination,
-					  talked_dr=as.numeric(as.factor(talked_dr)),
+					  talked_dr_full=as.numeric(as.factor(talked_dr_full)),
 					  # helpful_treatment=data_nonabst$helpful_treatment,
 					  # recent_trtmnt=data_nonabst$recent_trtmnt,
 					  # hospital_alc=data_nonabst$hospital_alc,
@@ -881,10 +925,10 @@ network_glasso<-qgraph(
 # Mediation analysis
 
 model <- ' # direct effect
-             talked_dr ~ c*audit_total
+             talked_dr_full ~ c*audit_total
            # mediator
              drinc_data_score ~ a*audit_total
-             talked_dr ~ b*drinc_data_score
+             talked_dr_full ~ b*drinc_data_score
            # indirect effect (a*b)
              ab := a*b
            # total effect
@@ -893,7 +937,7 @@ model <- ' # direct effect
 
 fit <- lavaan::sem(model, data = network_data,
 					estimator="WLSMV",
-					ordered=colnames(network_data$talked_dr))
+					ordered=colnames(network_data$talked_dr_full))
 summary(fit,standardized=TRUE,
 					fit.measures=TRUE,
 					rsq=TRUE)
@@ -905,11 +949,11 @@ subset(Est, op == ":=")
 # Mediation analysis - STIGMA
 
 model <- ' # direct effect
-             talked_dr ~ dA*audit_total
-             talked_dr ~ dB*drinc_data_score
-             talked_dr ~ dC*pas_scores_scaled
-             # talked_dr ~ dC*devaluation
-             # talked_dr ~ dD*discrimination
+             talked_dr_full ~ dA*audit_total
+             talked_dr_full ~ dB*drinc_data_score
+             talked_dr_full ~ dC*pas_scores_scaled
+             # talked_dr_full ~ dC*devaluation
+             # talked_dr_full ~ dD*discrimination
            
            # mediator
              drinc_data_score ~ indA*audit_total
@@ -928,7 +972,7 @@ model <- ' # direct effect
 
 fit <- lavaan::sem(model, data = network_data,
 					estimator="WLSMV",
-					ordered=colnames(network_data$talked_dr))
+					ordered=colnames(network_data$talked_dr_full))
 summary(fit,standardized=TRUE,
 					fit.measures=TRUE,
 					rsq=TRUE)
