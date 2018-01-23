@@ -305,6 +305,12 @@ stigma_data<-with(data,data.frame(alc_treatment_intelligent,alcoholic_trustworth
                                            alcoholic_close_friend,recovered_alcoholic_teacher,
                                            recover_alcoholic_hired,recovered_alc_treat_same,no_date_hospital_for_alc))
 
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+imp_stigma <- mice(stigma_data, seed = 2222, m=5)
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+stigma_data<-complete(imp_stigma,4)
+
 # 1 factor model
 cfa_model <- '
 BNI =~ alc_treatment_intelligent + 
@@ -373,10 +379,11 @@ data_nonabst<-subset(data.frame(age=data$age,
 							pas_scores_scaled,
 							drinc_data_score,
 							drinc_data_score_cat,
-							drink_drive=data$drink_drive),							
+							drink_drive=data$drink_drive,
+							talked_dr=data$talked_dr),							
 							data$consumption!=0)
 
-data_nonabst$groups<-data_nonabst$talked_dr
+data_nonabst$outcome<-data_nonabst$drink_drive
 
 data_abst<-subset(data.frame(age=data$age,
 							gender=data$female,
@@ -387,21 +394,33 @@ data_abst<-subset(data.frame(age=data$age,
 							pas_scores_scaled,
 							drinc_data_score,
 							drinc_data_score_cat,
-							drink_drive=data$drink_drive),							
-							data$consumption!=0)
+							drink_drive=data$drink_drive,
+							talked_dr=data$talked_dr),							
+							data$consumption==0)
 
-data_abst$groups<-c(3)
-
-
-data_full1<-rbind(data_nonabst,data_abst)
-
-# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-imp2 <- mice(data_full1, seed = 2222, m=5)
+data_abst$outcome<-c(3)
 
 
-# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-data_full<-complete(imp2,4)
+data_full<-rbind(data_nonabst,data_abst)
 
+# # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+# imp2 <- mice(data_full1, seed = 2222, m=5)
+
+
+# # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+# data_full<-complete(imp2,4)
+
+data_full$outcome<-car::recode(data_full$outcome,"2='yes';
+												 0='no';
+												 3='abst'")
+
+data_full$outcome<-as.factor(data_full$outcome)
+
+data_full$mvc<-car::recode(data_full$mvc,"2='yes';
+												 0='no';
+												 1='yes'")
+
+data_full$mvc<-as.factor(data_full$mvc)
 ######################################################################
 #DATA MANAGEMENT
 ######################################################################
@@ -434,87 +453,109 @@ data_full<-complete(imp2,4)
 ######################################################################
 str(data_full)
 
-with(data_full,table(groups))
-with(data_full,prop.table(table(groups)))
+with(data_full,table(outcome))
+with(data_full,prop.table(table(outcome)))
+
+with(data,table(consumption))
+with(data,prop.table(table(consumption)))
 
 #Age
 with(data_full,
 	describe(age))
 with(data_full,
-	by(age,groups,describe))
+	by(age,outcome,describe))
 with(data_full,
-	kruskal.test(audit_score~groups))
+	kruskal.test(age~outcome))
 
 #gender
 with(data_full,table(gender))
 with(data_full,prop.table(table(gender)))
-with(data_full,table(gender,groups))
-with(data_full,prop.table(table(gender,groups),2))
+table<-with(data_full,table(gender,outcome))
+table
+with(data_full,prop.table(table(gender,outcome),2))
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
 
 #alcohol
 with(data_full,table(alcohol))
 with(data_full,prop.table(table(alcohol)))
-with(data_full,table(alcohol,groups))
-with(data_full,prop.table(table(alcohol,groups),2))
+with(data_full,table(alcohol,outcome))
+with(data_full,prop.table(table(alcohol,outcome),2))
+table<-with(data_full,table(alcohol,outcome))
+table
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
 
 #positive_breath
 with(data_full,table(positive_breath))
 with(data_full,prop.table(table(positive_breath)))
-with(data_full,table(positive_breath,groups))
-with(data_full,prop.table(table(positive_breath,groups),2))
+with(data_full,table(positive_breath,outcome))
+with(data_full,prop.table(table(positive_breath,outcome),2))
+table<-with(data_full,table(positive_breath,outcome))
+table
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
 
 #mvc
 with(data_full,table(mvc))
 with(data_full,prop.table(table(mvc)))
-with(data_full,table(mvc,groups))
-with(data_full,prop.table(table(mvc,groups),2))
+with(data_full,table(mvc,outcome))
+with(data_full,prop.table(table(mvc,outcome),2))
+table<-with(data_full,table(positive_breath,outcome))
+table
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
 
 #Comparing AUdit Scores
 with(data_full,
 	summary(audit_score))
 with(data_full,
-	by(audit_score,groups,summary))
-with(,
-	kruskal.test(audit_score~groups))
+	by(audit_score,outcome,summary))
+with(data_full,
+	kruskal.test(audit_score~outcome))
 # data_nonabst$audit_cat<-car::recode(data_nonabst$audit_score,"
 # 	0.00:4.00='a';
 # 	4.01:7.50='b';
 # 	7.51:15.00='c';
 # 	15.01:36.00='d'")
 
-#Comparing AUdit Scores - D1
-with(data_full,
-	summary(audit_score_D1))
-with(data_full,
-	by(audit_score_D1,groups,summary))
-with(data_full,
-	kruskal.test(audit_score_D1~groups))
-# data_nonabst$audit_cat<-car::recode(data_nonabst$audit_score,"
-# 	0.00:4.00='a';
-# 	4.01:7.50='b';
-# 	7.51:15.00='c';
-# 	15.01:36.00='d'")
+# #Comparing AUdit Scores - D1
+# with(data_full,
+# 	summary(audit_score_D1))
+# with(data_full,
+# 	by(audit_score_D1,outcome,summary))
+# with(data_full,
+# 	kruskal.test(audit_score_D1~outcome))
+# # data_nonabst$audit_cat<-car::recode(data_nonabst$audit_score,"
+# # 	0.00:4.00='a';
+# # 	4.01:7.50='b';
+# # 	7.51:15.00='c';
+# # 	15.01:36.00='d'")
 
-#Comparing AUdit Scores - D1
-with(data_full,
-	summary(audit_score_D2))
-with(data_full,
-	by(audit_score_D2,groups,summary))
-with(data_full,
-	kruskal.test(audit_score_D2~groups))
-# data_nonabst$audit_cat<-car::recode(data_nonabst$audit_score,"
-# 	0.00:4.00='a';
-# 	4.01:7.50='b';
-# 	7.51:15.00='c';
-# 	15.01:36.00='d'")
+# #Comparing AUdit Scores - D1
+# with(data_full,
+# 	summary(audit_score_D2))
+# with(data_full,
+# 	by(audit_score_D2,outcome,summary))
+# with(data_full,
+# 	kruskal.test(audit_score_D2~outcome))
+# # data_nonabst$audit_cat<-car::recode(data_nonabst$audit_score,"
+# # 	0.00:4.00='a';
+# # 	4.01:7.50='b';
+# # 	7.51:15.00='c';
+# # 	15.01:36.00='d'")
 
 ######################################################################
 #FIGURE 1
 ######################################################################
 
 #
-p <- ggplot(subset(data_full,data_full$groups!=3),
-			aes(as.factor(groups),audit_score))
+p <- ggplot(subset(data_full,data_full$outcome!=3),
+			aes(as.factor(outcome),audit_score))
 p <- p + geom_boxplot(fill="grey")
 p <- p + xlab("Drink and drive") + ylab("AUDIT Score")
 p <- p + theme_bw()
@@ -528,37 +569,295 @@ p
 
 #PDD summary
 with(data_full,
-	summary(pas_score))
+	summary(pas_scores_scaled))
 with(data_full,
-	by(pas_score,groups,summary))
+	by(pas_scores_scaled,outcome,summary))
 with(data_full,
-	kruskal.test(pas_score~groups))
+	kruskal.test(pas_scores_scaled~outcome))
 
 #mvc
 with(data_full,table(pas_score_cat))
 with(data_full,prop.table(table(pas_score_cat)))
-x<-with(data_full,table(pas_score_cat,groups))
-with(data_full,prop.table(table(pas_score_cat,groups),2))
+x<-with(data_full,table(pas_score_cat,outcome))
+with(data_full,prop.table(table(pas_score_cat,outcome),2))
 assocstats(x)
 fisher.test(x)
 
 summary(data_full$discrimination)
 with(data_full,
-	by(discrimination,groups,summary))
+	by(discrimination,outcome,summary))
 with(data_full,
-	kruskal.test(discrimination~groups))
+	kruskal.test(discrimination~outcome))
 
 summary(data_full$devaluation)
 with(data_full,
-	by(devaluation,groups,summary))
+	by(devaluation,outcome,summary))
 with(data_full,
-	kruskal.test(devaluation~groups))
+	kruskal.test(devaluation~outcome))
 
 with(data_full,cor(data.frame(pas_score,audit_score)))
 
 ######################################################################
-#TABLE 2
+#Figure 2
 ######################################################################
+
+#Building graph for each item
+figure2_data1<-with(data,data.frame(alcoholic_close_friend,
+              recovered_alcoholic_teacher,
+              recover_alcoholic_chldrn,
+              recover_alcoholic_hired,
+              non_alcoholic_hired,
+              recovered_alc_treat_same,
+              no_date_hospital_for_alc,
+              alc_treatment_intelligent,
+              alcoholic_trustworthy,
+              alc_treatment_failure,
+              think_less_treated_person,
+              less_opinion_trtd_person))
+
+
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+imp <- mice(figure2_data1, seed = 2222, m=5)
+
+# reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
+figure2_data<-complete(imp,4)
+
+graph<-melt(figure2_data)
+count_data_fig2<-plyr::count(graph, c("variable", "value"))
+count_data_fig2<-na.omit(count_data_fig2)
+count_data_fig2$value<-car::recode(count_data_fig2$value,"
+	1='Strongly disagree';
+	2='Disagree';
+	3='Somewhat disagree';
+	4='Somewhat agree';
+	5='Agree';
+	6='Strongly agree'")
+count_data_fig2$feq_2<-(count_data_fig2$freq*100)/35
+count_data_fig2$feq_2<-round(count_data_fig2$feq_2,digits=1)
+
+#Adding value of zero to likert options not chosen
+variable_add<-c("think_less_treated_person","alcoholic_trustworthy",
+	"recover_alcoholic_hired")
+value_add<-c("Somewhat disagree","Disagree","Somewhat agree")
+freq_2_add<-c(0.0,0.0,0.0)
+freq_add<-c(0,0,0)
+add<-data.frame(variable=variable_add,
+	value=value_add,
+	freq=freq_add,
+	feq_2=freq_2_add)
+
+plot_data<-rbind(count_data_fig2,add)
+
+#Adding Mean and Standard Deviations
+meanttoadd_labels<-c("alcoholic_close_friend",
+							"recovered_alcoholic_teacher",
+							"recover_alcoholic_chldrn",
+							"recover_alcoholic_hired",
+							"non_alcoholic_hired",
+							"recovered_alc_treat_same",
+							"not_date_hospital_for_alc",
+							"alc_treatment_intelligent",
+							"alcoholic_trustworthy",
+							"alc_treatment_failure",
+							"think_less_treated_person",
+							"less_opinion_trtd_person")
+
+meanttoadd_variable<-rep("Mean (SD)",12)
+
+descriptives_temp<-describeBy(graph$value,graph$variable)
+
+meanttoadd_means<-round(c(descriptives_temp[[1]]$mean,
+				    descriptives_temp[[2]]$mean,
+				    descriptives_temp[[3]]$mean,
+				    descriptives_temp[[4]]$mean,
+				    descriptives_temp[[5]]$mean,
+				    descriptives_temp[[6]]$mean,
+				    descriptives_temp[[7]]$mean,
+				    descriptives_temp[[8]]$mean,
+				    descriptives_temp[[9]]$mean,
+				    descriptives_temp[[10]]$mean,
+				    descriptives_temp[[11]]$mean,
+				    descriptives_temp[[12]]$mean),2)
+
+meanttoadd_sd<-round(c(descriptives_temp[[1]]$sd,
+				    descriptives_temp[[2]]$sd,
+				    descriptives_temp[[3]]$sd,
+				    descriptives_temp[[4]]$sd,
+				    descriptives_temp[[5]]$sd,
+				    descriptives_temp[[6]]$sd,
+				    descriptives_temp[[7]]$sd,
+				    descriptives_temp[[8]]$sd,
+				    descriptives_temp[[9]]$sd,
+				    descriptives_temp[[10]]$sd,
+				    descriptives_temp[[11]]$sd,
+				    descriptives_temp[[12]]$sd),2)
+
+meanttoadd_values<-paste0(meanttoadd_means, " ","\n", "(", meanttoadd_sd,")")
+
+
+meantoadd_data<-data.frame(variable=meanttoadd_labels,
+						   value=meanttoadd_variable,
+						   freq=c(0),
+						   feq_2=c(0))
+
+plot_data<-rbind(count_data_fig2,add,meantoadd_data)
+
+plot_data$text<-c(rep(NA,72),meanttoadd_values)
+plot_data$tile<-c(rep(NA,72),rep("white",12))
+
+# plot_data$color<-NULL
+# plot_data$color[plot_data$feq_2 >= 0 & plot_data$feq_2 < 5.883]="lightcyan1"
+# plot_data$color[plot_data$feq_2 >= 5.883 & plot_data$feq_2 < 11.76]="lightcyan2"
+# plot_data$color[plot_data$feq_2 >= 11.76 & plot_data$feq_2 < 26.47]="lightcyan3"
+# plot_data$color[plot_data$feq_2 >= 26.47]="lightcyan4"
+
+#find colors numbers: diverge_hcl(7, c = 100, l = c(50, 90), power = 1)
+#from: https://cran.r-project.org/web/packages/colorspace/vignettes/hcl-colors.pdf
+
+plot_data$flip<-NULL
+plot_data$flip[plot_data$variable == "recovered_alcoholic_teacher"]="notflip"
+plot_data$flip[plot_data$variable == "alcoholic_close_friend"]="notflip"
+plot_data$flip[plot_data$variable == "alc_treatment_intelligent"]="notflip"
+plot_data$flip[plot_data$variable == "alcoholic_trustworthy"]="notflip"
+plot_data$flip[plot_data$variable == "recover_alcoholic_hired"]="notflip"
+plot_data$flip[plot_data$variable == "recovered_alc_treat_same"]="notflip"
+
+plot_data$flip[plot_data$variable == "alc_treatment_failure"]="flip"
+plot_data$flip[plot_data$variable == "recover_alcoholic_chldrn"]="flip"
+plot_data$flip[plot_data$variable == "non_alcoholic_hired"]="flip"
+plot_data$flip[plot_data$variable == "not_date_hospital_for_alc"]="flip"
+plot_data$flip[plot_data$variable == "think_less_treated_person"]="flip"
+plot_data$flip[plot_data$variable == "less_opinion_trtd_person"]="flip"
+
+
+plot_data$color<-NULL
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Strongly agree"]="#4A6FE3"
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Agree"]="#8595E1"
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Somewhat agree"]="#B5BBE3"
+
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Somewhat disagree"]="#E6AFB9"
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Disagree"]="#E07B91"
+plot_data$color[plot_data$flip == "notflip" & plot_data$value == "Strongly disagree"]="#D33F6A"
+
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Strongly disagree"]="#4A6FE3"
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Disagree"]="#8595E1"
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Somewhat disagree"]="#B5BBE3"
+
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Somewhat agree"]="#E6AFB9"
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Agree"]="#E07B91"
+plot_data$color[plot_data$flip == "flip" & plot_data$value == "Strongly agree"]="#D33F6A"
+
+plot_data$color[plot_data$value == "Mean (SD)"]="white"
+
+# write.csv(plot_data,"/Users/joaovissoci/plot_data.csv")
+
+# avseq <- ggplot(plot_data, aes(y=variable, x=value)) + 
+#   geom_tile(fill=plot_data$color) + 
+#   geom_text(aes(y=variable, x=value, label=feq_2),size=7) + 
+#   theme_minimal() + 
+#   xlab(label="") + 
+#   ylab(label="Stigma Scale") + 
+#   scale_x_discrete(limits = c("Strongly disagree",
+#   							  "Disagree",
+#   							  "Somewhat disagree",
+#   							  "Somewhat agree",
+#   							  "Agree",
+#   							  "Strongly agree")) + 
+#   scale_y_discrete(limits = rev(levels(plot_data$variable)),
+#   				   labels = rev(c(
+# "1. Most people would willingly accept a former alcoholic \nas a close friend.",
+# "2. Most people believe that a person who has had alcohol \ntreatment is just as intelligent as the average person.",
+# "3. Most people believe that a former alcoholic is just as \ntrustworthy as the average person.",
+# "4. Most people would accept a fully recovered former alcoholic \nas a teacher of young children in a public school.",
+# "5. Most people feel that entering alcohol treatment is a \nsign of personal failure.",
+# "6. Most people would not hire a former alcoholic to take care \nof their children, even if he or she had been \nsober for some time.",
+# "7. Most people think less of a person who has been in alcohol \ntreatment.",
+# "8. Most employers will hire a former alcoholic if he or \nshe is qualified for the job.",
+# "9. Most employers will pass over the application of a former \nalcoholic in favor of another applicant.",
+# "10. Most people in my community would treat a former alcoholic \njust as they would treat anyone else.",
+# "11. Most young women would be reluctant to date a man \nwho has been hospitalized for alcoholism.",
+# "12. Once they know a person was in alcohol treatment, \nmost people will take his or her opinion less seriously."
+# 							))) #+ 
+#   # theme(text = element_text(size=35))  #+ 
+#   # scale_y_discrete(limits=rev(levels))
+# avseq
+
+# library(ggplot2)
+figure4<-ggplot(plot_data, aes(y=variable, x=value)) +
+  geom_point(aes(size = plot_data$feq_2*2), 
+  			 alpha=0.8, 
+  			 color=plot_data$color, 
+  			 show.legend=FALSE) +
+  geom_text(aes(label = feq_2), 
+  			color="white") +
+  scale_size(range = c(0,25)) +
+  theme_bw() +
+  xlab(label="") + 
+  ylab(label="Stigma Scale") + 
+  scale_x_discrete(limits = c("Strongly disagree",
+  							  "Disagree",
+  							  "Somewhat disagree",
+  							  "Somewhat agree",
+  							  "Agree",
+  							  "Strongly agree",
+  							  "Mean (SD)"),
+  				   labels = c("Strongly \ndisagree",
+  							  "Disagree",
+  							  "Somewhat \ndisagree",
+  							  "Somewhat \nagree",
+  							  "Agree",
+  							  "Strongly \nagree",
+  							  "Mean (SD)")) + 
+  scale_y_discrete(limits = rev(c("alcoholic_close_friend",
+  								  "alc_treatment_intelligent",
+  								  "alcoholic_trustworthy",
+  								  "recovered_alcoholic_teacher",
+  								  "alc_treatment_failure",
+  								  "recover_alcoholic_chldrn",
+  								  "think_less_treated_person",
+  								  "recover_alcoholic_hired",
+  								  "non_alcoholic_hired",
+  								  "recovered_alc_treat_same",
+  								  "not_date_hospital_for_alc",
+  								  "less_opinion_trtd_person")),
+  				   labels = rev(c(
+"1. Most people would willingly accept a former alcoholic \nas a close friend.",
+"2. Most people believe that a person who has had alcohol \ntreatment is just as intelligent as the average person.",
+"3. Most people believe that a former alcoholic is just as \ntrustworthy as the average person.",
+"4. Most people would accept a fully recovered former alcoholic \nas a teacher of young children in a public school.",
+"5. Most people feel that entering alcohol treatment is a \nsign of personal failure.",
+"6. Most people would not hire a former alcoholic to take care \nof their children, even if he or she had been \nsober for some time.",
+"7. Most people think less of a person who has been in alcohol \ntreatment.",
+"8. Most employers will hire a former alcoholic if he or \nshe is qualified for the job.",
+"9. Most employers will pass over the application of a former \nalcoholic in favor of another applicant.",
+"10. Most people in my community would treat a former alcoholic \njust as they would treat anyone else.",
+"11. Most young women would be reluctant to date a man \nwho has been hospitalized for alcoholism.",
+"12. Once they know a person was in alcohol treatment, \nmost people will take his or her opinion less seriously."
+							))) +
+  # geom_tile(fill=plot_data$tile) +
+  geom_text(aes(label=text))
+
+ ggsave("figure4.eps", #change .eps to .pdf for different format
+		figure4, #plot is the name of the fig, but the function assumes the last plot if argument is NULL
+		path="/Users/joaovissoci/Desktop", #path to save the plot
+		width = 8, 
+		height = 8, 
+		device=cairo_ps) #cairo_ps is a d
+# dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 model<-glm(as.factor(drink_drive) ~ audit_score*pas_score,
 			data=data_nonabst,
@@ -590,8 +889,8 @@ with(care,
 ######################################################################
 
 #
-p <- ggplot(subset(data_full,data_full$groups!=3),
-			aes(as.factor(groups),pas_score))
+p <- ggplot(subset(data_full,data_full$outcome!=3),
+			aes(as.factor(outcome),pas_score))
 p <- p + geom_boxplot(fill="grey")
 p <- p + xlab("Drink and drive") + ylab("PDD Score")
 p <- p + theme_bw()

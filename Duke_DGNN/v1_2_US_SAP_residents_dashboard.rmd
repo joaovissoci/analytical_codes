@@ -684,7 +684,7 @@ data<-subset(data_0,data_0$resident == resident() &
                   data_0$subspecialty == subspecialty() &
                   data_0$case == case())
 
-dlCount <- round(prop.table(table(data$q6_zones_use))[4]*100)
+dlCount <- round(prop.table(table(data$q6_zones_use))[3]*100)
 
   valueBox(value=dlCount,
            icon = "fa-download",
@@ -831,7 +831,7 @@ valueBox(value = usrCount,
 ### **ZPD 2** - *Highest level on case* {.value-box}
   
 ```{r}
-renderTable({
+renderValueBox({
 
     #   data <- data_0
     # if (input$attending != "All") {
@@ -899,7 +899,7 @@ valueBox(value = usrCount,
 ### **ZPD 3** - *Highest level on case* {.value-box}
   
 ```{r}
-renderTable({
+renderValueBox({
 
     #   data <- data_0
     # if (input$attending != "All") {
@@ -967,7 +967,7 @@ valueBox(value = usrCount,
 ### **ZPD 4** - *Highest level on case* {.value-box}
   
 ```{r}
-renderTable({
+renderValueBox({
 
     #   data <- data_0
     # if (input$attending != "All") {

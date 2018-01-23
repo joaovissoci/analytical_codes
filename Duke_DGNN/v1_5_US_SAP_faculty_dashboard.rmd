@@ -1,5 +1,5 @@
 ---
-title: "SAP Report - Residents"
+title: "SAP Report - Faculty"
 output: 
   flexdashboard::flex_dashboard:
   orientation: rows
@@ -25,7 +25,7 @@ library(plotly)
 # source("/Users/Joao/Desktop/package_stream.R")
 
 #original data
-# data_01<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/DGNN/sap_neuro/US_sap_data.csv",sep=",")
+# data_01<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/DGNN/sap_neuro/US_sap_data_v2.csv",sep=",")
 
 data_01<-structure(list(X...recoder_date = structure(c(54L, 55L, 56L, 
 57L, 58L, 59L, 60L, 61L, 79L, 63L, 64L, 65L, 66L, 67L, 68L, 69L, 
@@ -559,8 +559,6 @@ data_0$case_date1<-mdy(data_0$case_date)
 
 data_0$zpd<-car::recode(data_0$zpd,"'ZPD 4'='ZPD4'")
 
-data_0$password<-c("dgnn")
-
 # data$recoder_date1<-as.POSIXct(data$recoder_date,
 #                       format='%m/%d/%y %H:%M')
 
@@ -575,7 +573,7 @@ data_0$password<-c("dgnn")
 # pkgData <- packageData(pkgStream, maxAgeSecs)
 ```
 
-Inputs {.sidebar}
+Inputs {.sidebar} {heigth=1000}
 -------------------------------------------------------------------  
 ### SAP dashboard
   
@@ -592,10 +590,6 @@ Inputs {.sidebar}
     choices = c("All", unique(as.character(data_01$resident))),
     selected="All")
 
-passwordInput("password", "Password:")
-#              actionButton("go","Go"),
-#              verbatimTextoutput("value"))
-
  # Rate at which to flag high download traffic
  selectInput("subspecialty", label = h3("Subspecialty"), 
     choices = c("All", unique(as.character(data_01$subspecialty))),
@@ -605,6 +599,11 @@ passwordInput("password", "Password:")
  selectInput("case", label = h3("Case"), 
     choices = c("All", unique(as.character(data_01$case))),
     selected="All")
+
+  # Rate at which to flag high download traffic
+passwordInput("attending", "Attending:")
+#              actionButton("go","Go"),
+#              verbatimTextoutput("value"))
 
 # # Maximum number of raw data rows to keep
 # numericInput("maxrows", "Recent procedures and scores:", 10)
@@ -634,7 +633,6 @@ Column
 # dlCount is a reactive expression that keeps track of the total
 # number of rows that have ever appeared through pkgStream.
 # dlCount <- downloadCount(pkgStream)
-
 
 observe({
     x <- input$subspecialty
@@ -676,31 +674,16 @@ renderValueBox({
 resident<-reactive({input$resident})
 subspecialty<-reactive({input$subspecialty})
 case<-reactive({input$case})
-password<-reactive({input$password})
-
-if(data_0$password == password()) {
 
 data<-subset(data_0,data_0$resident == resident() &
                   data_0$subspecialty == subspecialty() &
                   data_0$case == case())
 
-dlCount <- round(prop.table(table(data$q6_zones_use))[4]*100)
+dlCount <- round(prop.table(table(data$q6_zones_use))[3]*100)
 
   valueBox(value=dlCount,
            icon = "fa-download",
            color = if (dlCount <= 50) "warning" else "primary")
-
-} else {
-
-dlCount <- 0
-
-  valueBox(value=dlCount,
-           icon = "fa-download",
-           color = if (dlCount <= 50) "warning" else "primary")
-
-}
-
-
 })
 ```
 
@@ -732,13 +715,11 @@ renderValueBox({
 resident<-reactive({input$resident})
 subspecialty<-reactive({input$subspecialty})
 case<-reactive({input$case})
-password<-reactive({input$password})
-
-if(data_0$password == password()) {
 
 data<-subset(data_0,data_0$resident == resident() &
                   data_0$subspecialty == subspecialty() &
                   data_0$case == case())
+
 
 #count number of lines
   value<-length(data$case)
@@ -748,15 +729,6 @@ data<-subset(data_0,data_0$resident == resident() &
     icon = "fa-area-chart"
     # color = if (rate >= input$rateThreshold) "warning" else "primary"
   )
-
-} else {
-
- valueBox(
-    value = 0,
-    icon = "fa-area-chart"
-    # color = if (rate >= input$rateThreshold) "warning" else "primary"
-)
-}
 })
 ```
 
@@ -784,13 +756,20 @@ renderValueBox({
 resident<-reactive({input$resident})
 subspecialty<-reactive({input$subspecialty})
 case<-reactive({input$case})
-password<-reactive({input$password})
-
-if(data_0$password == password()) {
 
 data<-subset(data_0,data_0$resident == resident() &
                   data_0$subspecialty == subspecialty() &
                   data_0$case == case())
+
+#recoding ZPDs
+# spd_rec<-car::recode(data$zpd,"
+#                                     'ZPD1'=1;
+#                                     'ZPD2'=2;
+#                                     'ZPD3'=3;
+#                                     'ZPD4'=4;
+#                                     'ZPD 4'=4;
+#                                     ''=NA
+#                           ")
 
 #getting the highest
 highest_zpd <- max(as.numeric(na.omit(as.character(data$aZPD1))))
@@ -814,47 +793,37 @@ color <- car::recode(highest_zpd,"
 valueBox(value = usrCount, 
          icon = "fa-users",
          color = color)
-
-} else {
-
- valueBox(
-    value = 0,
-    icon = "fa-area-chart"
-    # color = if (rate >= input$rateThreshold) "warning" else "primary"
-)
-}
-
 })
 ```
 
-
 ### **ZPD 2** - *Highest level on case* {.value-box}
-  
+
 ```{r}
-renderTable({
+# usrCount is a reactive expression that keeps an approximate
+# count of all of the unique users that have been seen since the
+# app started.
 
-    #   data <- data_0
-    # if (input$attending != "All") {
-    #   data <- data[data$attending == input$attending,]
+# Emit the user count
+renderValueBox({
+
+    # data <- data_0
+    # if (input$resident != "All") {
+    #   data <- data[data$resident == input$resident,]
     # }
-    
-    # if (all(is.na(data$q7_suggestion_for_improvement))==TRUE) {
-
-    #   "No comments"
-
-    # } else{
+    # if (input$subspecialty != "All") {
+    #   data <- data[data$subspecialty == input$subspecialty,]
+    # }
+    # if (input$case != "All") {
+    #   data <- data[data$case == input$case,]
+    # }
 
 resident<-reactive({input$resident})
 subspecialty<-reactive({input$subspecialty})
 case<-reactive({input$case})
-password<-reactive({input$password})
-
-if(data_0$password == password()) {
 
 data<-subset(data_0,data_0$resident == resident() &
                   data_0$subspecialty == subspecialty() &
                   data_0$case == case())
-
 
 #getting the highest
 highest_zpd <- max(as.numeric(na.omit(as.character(data$aZPD2))))
@@ -878,51 +847,37 @@ color <- car::recode(highest_zpd,"
 valueBox(value = usrCount, 
          icon = "fa-users",
          color = color)
-
-} else {
-
-    valueBox(
-    value = 0,
-    icon = "fa-users"
-    # color = if (rate >= input$rateThreshold) "warning" else "primary"
-)
-}
-# 
-
-
-    # select("Status" = q7_suggestion_for_improvement) %>%
-    # as.data.frame() %>%
-
 })
 ```
 
 ### **ZPD 3** - *Highest level on case* {.value-box}
-  
+
 ```{r}
-renderTable({
+# usrCount is a reactive expression that keeps an approximate
+# count of all of the unique users that have been seen since the
+# app started.
 
-    #   data <- data_0
-    # if (input$attending != "All") {
-    #   data <- data[data$attending == input$attending,]
+# Emit the user count
+renderValueBox({
+
+    # data <- data_0
+    # if (input$resident != "All") {
+    #   data <- data[data$resident == input$resident,]
     # }
-    
-    # if (all(is.na(data$q7_suggestion_for_improvement))==TRUE) {
-
-    #   "No comments"
-
-    # } else{
+    # if (input$subspecialty != "All") {
+    #   data <- data[data$subspecialty == input$subspecialty,]
+    # }
+    # if (input$case != "All") {
+    #   data <- data[data$case == input$case,]
+    # }
 
 resident<-reactive({input$resident})
 subspecialty<-reactive({input$subspecialty})
 case<-reactive({input$case})
-password<-reactive({input$password})
-
-if(data_0$password == password()) {
 
 data<-subset(data_0,data_0$resident == resident() &
                   data_0$subspecialty == subspecialty() &
                   data_0$case == case())
-
 
 #getting the highest
 highest_zpd <- max(as.numeric(na.omit(as.character(data$aZPD3))))
@@ -946,51 +901,37 @@ color <- car::recode(highest_zpd,"
 valueBox(value = usrCount, 
          icon = "fa-users",
          color = color)
-
-} else {
-
-    valueBox(
-    value = 0,
-    icon = "fa-users"
-    # color = if (rate >= input$rateThreshold) "warning" else "primary"
-)
-}
-# 
-
-
-    # select("Status" = q7_suggestion_for_improvement) %>%
-    # as.data.frame() %>%
-
 })
 ```
 
 ### **ZPD 4** - *Highest level on case* {.value-box}
-  
+
 ```{r}
-renderTable({
+# usrCount is a reactive expression that keeps an approximate
+# count of all of the unique users that have been seen since the
+# app started.
 
-    #   data <- data_0
-    # if (input$attending != "All") {
-    #   data <- data[data$attending == input$attending,]
+# Emit the user count
+renderValueBox({
+
+    # data <- data_0
+    # if (input$resident != "All") {
+    #   data <- data[data$resident == input$resident,]
     # }
-    
-    # if (all(is.na(data$q7_suggestion_for_improvement))==TRUE) {
-
-    #   "No comments"
-
-    # } else{
+    # if (input$subspecialty != "All") {
+    #   data <- data[data$subspecialty == input$subspecialty,]
+    # }
+    # if (input$case != "All") {
+    #   data <- data[data$case == input$case,]
+    # }
 
 resident<-reactive({input$resident})
 subspecialty<-reactive({input$subspecialty})
 case<-reactive({input$case})
-password<-reactive({input$password})
-
-if(data_0$password == password()) {
 
 data<-subset(data_0,data_0$resident == resident() &
                   data_0$subspecialty == subspecialty() &
                   data_0$case == case())
-
 
 #getting the highest
 highest_zpd <- max(as.numeric(na.omit(as.character(data$aZPD4))))
@@ -1014,21 +955,6 @@ color <- car::recode(highest_zpd,"
 valueBox(value = usrCount, 
          icon = "fa-users",
          color = color)
-
-} else {
-
-    valueBox(
-    value = 0,
-    icon = "fa-users"
-    # color = if (rate >= input$rateThreshold) "warning" else "primary"
-)
-}
-# 
-
-
-    # select("Status" = q7_suggestion_for_improvement) %>%
-    # as.data.frame() %>%
-
 })
 ```
 
@@ -1039,6 +965,7 @@ Column
 ### ZPD evolving overtime
 
 ```{r}
+# <!-- {data-height=1550} -->
 # data <- data_0
 
 # selectedData <- reactive({
@@ -1078,11 +1005,8 @@ Column
 resident<-reactive({input$resident})
 subspecialty<-reactive({input$subspecialty})
 case<-reactive({input$case})
-password<-reactive({input$password})
 
 renderPlotly({
-
-if(data_0$password == password()) {
 
   data_0$aZPD1<-car::recode(data_0$aZPD1,"1='show_tell';
                                         2='active_help';
@@ -1104,7 +1028,6 @@ data_0$aZPD4<-car::recode(data_0$aZPD4,"1='show_tell';
                                         2='active_help';
                                         3='passive_help';
                                         4='no_help'")
-
 
 data<-subset(data_0,data_0$resident == resident() &
                   data_0$subspecialty == subspecialty() &
@@ -1207,13 +1130,73 @@ toplot<-plot_ly(tryout_NAtozero,type = "bar",
             barmode = 'stack',
             legend=list(orientation='h',
                 x = 200, y = 1.2))
+})
+
+```
+
+### Average ZPD level
+  
+```{r}
+renderTable({
+
+    #   data <- data_0
+    # if (input$attending != "All") {
+    #   data <- data[data$attending == input$attending,]
+    # }
+    
+    # if (all(is.na(data$q7_suggestion_for_improvement))==TRUE) {
+
+    #   "No comments"
+
+    # } else{
+
+resident<-reactive({input$resident})
+subspecialty<-reactive({input$subspecialty})
+case<-reactive({input$case})
+
+data<-subset(data_0,data_0$resident == resident() &
+                  data_0$subspecialty == subspecialty() &
+                  data_0$case == case())
 
 
-  } else {
+data_zpd<-with(data,data.frame(aZPD1,aZPD2,aZPD3,aZPD4))
 
-NA
+    # pkgData() %>%
+    data_zpd %>%
+    # tally() %>%
+    # arrange(desc(n), tolower(package)) %>%
+    gather() %>%
+    group_by(key) %>%
+    summarise(mean=mean(na.omit(value)),sd=sd(na.omit(value))) -> group_by_zpd
+  # mutate(percentage = n / nrow(pkgData()) * 100) %>%
 
-}
+
+  group_by_zpd$cat<-car::recode(group_by_zpd$mean,"
+    1:1.999='Show/Tell';
+    2:2.999='Active Help';
+    3:3.999='Passive Help';
+    4='No Help'") 
+
+ group_by_zpd$key<-car::recode(group_by_zpd$key,"
+      'aZPD1'='ZPD 1';
+      'aZPD2'='ZPD 2';
+      'aZPD3'='ZPD 3';
+      'aZPD4'='ZPD 4'")
+
+ group_by_zpd[,2]<-round(group_by_zpd[,2],2)
+
+colnames(group_by_zpd)<-c("ZPDs","Average score", "Sd Score","Category")
+
+group_by_zpd
+
+group_by_tbl<-group_by_zpd[,-c(2,3)]
+
+group_by_tbl
+# 
+
+
+    # select("Status" = q7_suggestion_for_improvement) %>%
+    # as.data.frame() %>%
 
 })
 ```
