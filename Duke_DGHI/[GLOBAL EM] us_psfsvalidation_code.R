@@ -38,16 +38,80 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
+# #unused files
+# adae<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adae.sas7bdat"))
+
+# write.csv(adae,"/Users/Joao/Desktop/deleteme_adae.csv")
+
+# adcm<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adcm.sas7bdat"))
+
+# write.csv(adcm,"/Users/Joao/Desktop/deleteme_adcm.csv")
+
+# addv<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/addv.sas7bdat"))
+
+# write.csv(addv,"/Users/Joao/Desktop/deleteme_addv.csv")
+
+# adex<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adex.sas7bdat"))
+
+# write.csv(adex,"/Users/Joao/Desktop/deleteme_adex.csv")
+
+# adfa<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adfa.sas7bdat"))
+
+# write.csv(adfa,"/Users/Joao/Desktop/deleteme_adfa.csv")
+
+# adlb<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adlb.sas7bdat"))
+
+# write.csv(adlb,"/Users/Joao/Desktop/deleteme_adlb.csv")
+
+# admh<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/admh.sas7bdat"))
+
+# write.csv(admh,"/Users/Joao/Desktop/deleteme_admh.csv")
+
+# adpe<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adpe.sas7bdat"))
+
+# write.csv(adpe,"/Users/Joao/Desktop/deleteme_adpe.csv")
+
+# adqs<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adqs.sas7bdat"))
+
+# write.csv(adqs,"/Users/Joao/Desktop/deleteme_adqs.csv")
+
+# adsl<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adsl.sas7bdat"))
+
+# write.csv(adsl,"/Users/Joao/Desktop/deleteme_adsl.csv")
+
+# adtte<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adtte.sas7bdat"))
+
+# write.csv(adtte,"/Users/Joao/Desktop/deleteme_adtte.csv")
+
+# advs<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/advs.sas7bdat"))
+
+# write.csv(advs,"/Users/Joao/Desktop/deleteme_advs.csv")
+
+# adya<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
+
+# write.csv(adya,"/Users/Joao/Desktop/deleteme_adya.csv")
+
+# adys<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adys.sas7bdat"))
+
+# write.csv(adys,"/Users/Joao/Desktop/deleteme_adys.csv")
+
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
 
-data2<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_sdtmdata/qs.sas7bdat"))
+#DASH, PGIC and LEFS
+data2<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adqs.sas7bdat"))
 
-data3<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
+#PSFS
+data3<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
 
-data4<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
+#PSFS Pilot
+data4<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
 
-data5<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/pgic.sas7bdat"))
+#PGIC Pilot
+data5<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/pgic.sas7bdat"))
+
+#SF36/PROMIS
+data6<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adys.sas7bdat"))
 
 ######################################################
 #DATA MANAGEMENT
@@ -251,7 +315,8 @@ psfs_data<-merge(psfs_data_1,psfs_data_2, by="id",all.x = TRUE)
 #Organizing PSFS data
 data4$redcap_event_name<-as.factor(data4$redcap_event_name)
 data_4_subset<-subset(data4,data4$redcap_event_name=="Env + 14 Days" |
-                             data4$redcap_event_name=="Env + 3 Days")
+                             data4$redcap_event_name=="Env + 3 Days" |
+                             data4$redcap_event_name=="Env + 7 Days")
 
 data_psfs_pilot<-with(data_4_subset,data.frame(id=subjid,
                                                AVISIT=redcap_event_name,
@@ -264,11 +329,20 @@ data_psfs_pilot_casted <- dcast(data_psfs_pilot,
 
 colnames(data_psfs_pilot_casted)[3]<-"psfs_FUP_14"
 colnames(data_psfs_pilot_casted)[4]<-"psfs_FUP_3"
+colnames(data_psfs_pilot_casted)[5]<-"psfs_FUP_7"
+
 data_psfs_pilot_casted$TRTP<-"pilot"
 
 #merging pilot and rct data
 
-data_psfs_casted<-rbind(data_psfs_casted1,data_psfs_pilot_casted)
+psfs_data_tocombine<-with(psfs_data,data.frame(id,
+                                               USUBJID=USUBJID.x,
+                                               psfs_FUP_14=psfs_FUP_14_total,
+                                               psfs_FUP_3=psfs_FUP_3_total,
+                                               psfs_FUP_7=psfs_FUP_7_total,
+                                               TRTP=TRTP.x))
+
+data_psfs_combined<-rbind(psfs_data_tocombine,data_psfs_pilot_casted)
 
 # recoding method os administration variable
 # data$type<-car::recode(data$time,"
@@ -367,12 +441,14 @@ data_psfs_casted<-rbind(data_psfs_casted1,data_psfs_pilot_casted)
 #                               )
 
 #Organizing PGIC data
-data_2_subset1<-subset(data2,data2$QSCAT=="Patient Global Impression of Change" &
-                             data2$VISIT=="Envenomation +14 Days")
+data_2_subset1<-subset(data2,data2$PARAMCD=="PGIC1")
 
-data_globalchange<-with(data_2_subset1,data.frame(USUBJID,
-                                                  QSTESTCD,
-                                                  QSSTRESN))
+data_2_subset2<-subset(data_2_subset1,
+                             data_2_subset1$AVISIT=="Envenomation +14 Days")
+
+data_globalchange<-with(data_2_subset2,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL))
 
 id<-with(data_globalchange,
               strsplit(as.character(USUBJID),"-"))
@@ -383,17 +459,20 @@ id2<-apply(id[,4:5],1,paste, collapse="-")
 data_globalchange$id<-id2
 
 data_globalchange_casted1 <- dcast(data_globalchange, 
-                                  id+USUBJID ~ QSTESTCD,
-                                  value.var="QSSTRESN")
+                                  id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(data_globalchange_casted1)[3]<-"pgic_FUP_14"
 
 #Organizing PGIC data from the pilot study
-data5$redcap_event_name<-as.factor(data5$redcap_event_name)
-data_5_subset<-subset(data5,data5$redcap_event_name=="Env  +14 Days")
+# data5$redcap_event_name<-as.factor(data5$redcap_event_name)
+data_5_subset<-subset(data5,data5$redcap_event_name=="Env + 14 Days")
 
 data_pgic_pilot<-with(data_5_subset,data.frame(id=subjid,
-                                               PGIC1=scorres_pgic_1,
-                                               PGIC2=scorres_pgic_2,
+                                               pgic_FUP_14=scorres_pgic_1,
+                                               # PGIC2=scorres_pgic_2,
                                                USUBJID=subjid))
+
 
 #merging pilot and rct data
 
@@ -402,34 +481,445 @@ data_globalchange_casted<-rbind(data_globalchange_casted1,data_pgic_pilot)
 
 
 #merging PSFS and PGIC data for the clinimetrics assessment
-data_mcid<-merge(x = data_psfs_casted, 
+data_mcid<-merge(x = psfs_data_tocombine, 
              y = data_globalchange_casted, 
              by = "id", 
              all.x = TRUE)
 
-#Calculating changes over time
-data_mcid$change_score<-data_mcid[,4]-data_mcid[,5]
+#Calculating changes over time T3-T7
+data_mcid$change_score_t7t3<-data_mcid[,5]-data_mcid[,4]
 
-data_mcid$change_cat_PGIC1_mild<-car::recode(data_mcid$PGIC1,"1:4='stable';
+#Calculating changes over time T3-T14
+data_mcid$change_score_t14t3<-data_mcid[,3]-data_mcid[,4]
+
+#recoding globa impression of change
+data_mcid$change_cat_PGIC1_small<-car::recode(data_mcid$pgic_FUP_14,"1:4='stable';
                                                     5:7='improved'")
 
-data_mcid$change_cat_PGIC1_moderate<-car::recode(data_mcid$PGIC1,"1:5='stable';
+data_mcid$change_cat_PGIC1_medium<-car::recode(data_mcid$pgic_FUP_14,"1:5='stable';
                                                     6:7='improved'")
 
-data_mcid$change_cat_PGIC1_severe<-car::recode(data_mcid$PGIC1,"1:6='stable';
+data_mcid$change_cat_PGIC1_large<-car::recode(data_mcid$pgic_FUP_14,"1:6='stable';
                                                     7='improved'")
 
-data_mcid$change_cat_PGIC2<-car::recode(data_mcid$PGIC2,"0:3='improved';
-                                                    4:6='stable';
-                                                    7:10='stable'")
+# data_mcid$change_cat_PGIC2<-car::recode(data_mcid$PGIC2,"0:3='improved';
+#                                                     4:6='stable';
+#                                                     7:10='stable'")
 
-data_mcid2<-na.omit(data_mcid[-c(22,79),])
+# data_mcid2<-na.omit(data_mcid[-c(22,79),])
 
 data_mcid_stable<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='stable')
 data_mcid_improved<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='improved')
 
-##PSFS content analysis
+##Organizing DASH data
+####################################
 
+data_2_subset_DASH<-subset(data2,data2$AVISIT=="Envenomation +3 Days" |
+                                 data2$AVISIT=="Envenomation +7 Days" |
+                                 data2$AVISIT=="Envenomation +14 Days")
+
+# getting total scores
+dash_data_subset_total_temp1<-subset(data_2_subset_DASH,data_2_subset_DASH$PARAMCD=="DASHSCOR")
+
+dash_data_subset_total<-with(dash_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAM))
+
+id<-with(dash_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+dash_data_subset_total$id<-id2
+
+dash_data_subset_total_casted1 <- dcast(dash_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(dash_data_subset_total_casted1)[3]<-"dash_FUP_14"
+colnames(dash_data_subset_total_casted1)[4]<-"dash_FUP_3"
+colnames(dash_data_subset_total_casted1)[5]<-"dash_FUP_7"
+
+#merging PSFS and DASH data for the clinimetrics assessment
+data_dash<-merge(x = psfs_data_tocombine, 
+             y = dash_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
+
+##Organizing LEFS data
+####################################
+
+data_2_subset_LEFS<-subset(data2,data2$AVISIT=="Envenomation +3 Days" |
+                                 data2$AVISIT=="Envenomation +7 Days" |
+                                 data2$AVISIT=="Envenomation +14 Days")
+
+# getting total scores
+lefs_data_subset_total_temp1<-subset(data_2_subset_LEFS,data_2_subset_DASH$PARAMCD=="LEFSSCOR")
+
+lefs_data_subset_total<-with(lefs_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAM))
+
+id<-with(lefs_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+lefs_data_subset_total$id<-id2
+
+lefs_data_subset_total_casted1 <- dcast(lefs_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(lefs_data_subset_total_casted1)[3]<-"lefs_FUP_14"
+colnames(lefs_data_subset_total_casted1)[4]<-"lefs_FUP_3"
+colnames(lefs_data_subset_total_casted1)[5]<-"lefs_FUP_7"
+
+#merging PSFS and DASH data for the clinimetrics assessment
+data_lefs<-merge(x = psfs_data_tocombine, 
+             y = lefs_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
+
+##Organizing SF36 data
+####################################
+
+#Bodily Pain Score
+data_6_subset_BPScore<-subset(data6,data6$AVISIT=="Envenomation +7 Days" |
+                                    data6$AVISIT=="Envenomation +14 Days")
+
+# getting total scores
+BPScore_data_subset_total_temp1<-subset(data_6_subset_BPScore,data_6_subset_BPScore$PARAMCD=="BPSCO")
+
+BPScore_data_subset_total<-with(BPScore_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAMCD))
+
+id<-with(BPScore_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+BPScore_data_subset_total$id<-id2
+
+BPScore_data_subset_total_casted1 <- dcast(BPScore_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(BPScore_data_subset_total_casted1)[3]<-"BPScore_FUP_14"
+colnames(BPScore_data_subset_total_casted1)[4]<-"BPScore_FUP_7"
+
+#merging PSFS and DASH data for the clinimetrics assessment
+data_BPScore<-merge(x = psfs_data_tocombine, 
+             y = BPScore_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
+
+
+#General health Score
+data_6_subset_GHScore<-subset(data6,data6$AVISIT=="Envenomation +7 Days" |
+                                    data6$AVISIT=="Envenomation +14 Days")
+
+# getting total scores
+GHScore_data_subset_total_temp1<-subset(data_6_subset_GHScore,data_6_subset_GHScore$PARAMCD=="GHSCO")
+
+GHScore_data_subset_total<-with(GHScore_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAMCD))
+
+id<-with(GHScore_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+GHScore_data_subset_total$id<-id2
+
+GHScore_data_subset_total_casted1 <- dcast(GHScore_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(GHScore_data_subset_total_casted1)[3]<-"GHScore_FUP_14"
+colnames(GHScore_data_subset_total_casted1)[4]<-"GHScore_FUP_7"
+
+#merging PSFS and DASH data for the clinimetrics assessment
+data_GHScore<-merge(x = psfs_data_tocombine, 
+             y = GHScore_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
+
+#Health transition Score
+data_6_subset_HTScore<-subset(data6,data6$AVISIT=="Envenomation +7 Days" |
+                                    data6$AVISIT=="Envenomation +14 Days")
+
+# getting total scores
+HTScore_data_subset_total_temp1<-subset(data_6_subset_HTScore,data_6_subset_HTScore$PARAMCD=="HTSCO")
+
+HTScore_data_subset_total<-with(HTScore_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAMCD))
+
+id<-with(HTScore_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+HTScore_data_subset_total$id<-id2
+
+HTScore_data_subset_total_casted1 <- dcast(HTScore_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(HTScore_data_subset_total_casted1)[3]<-"HTScore_FUP_14"
+colnames(HTScore_data_subset_total_casted1)[4]<-"HTScore_FUP_7"
+
+#merging PSFS and DASH data for the clinimetrics assessment
+data_HTScore<-merge(x = psfs_data_tocombine, 
+             y = HTScore_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
+
+#Mental Helath Score
+data_6_subset_MHScore<-subset(data6,data6$AVISIT=="Envenomation +7 Days" |
+                                    data6$AVISIT=="Envenomation +14 Days")
+
+# getting total scores
+MHScore_data_subset_total_temp1<-subset(data_6_subset_MHScore,data_6_subset_MHScore$PARAMCD=="MHSCO")
+
+MHScore_data_subset_total<-with(MHScore_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAMCD))
+
+id<-with(MHScore_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+MHScore_data_subset_total$id<-id2
+
+MHScore_data_subset_total_casted1 <- dcast(MHScore_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(MHScore_data_subset_total_casted1)[3]<-"MHScore_FUP_14"
+colnames(MHScore_data_subset_total_casted1)[4]<-"MHScore_FUP_7"
+
+#merging PSFS and DASH data for the clinimetrics assessment
+data_MHScore<-merge(x = psfs_data_tocombine, 
+             y = MHScore_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
+
+#Physical Functioning Score
+data_6_subset_PFScore<-subset(data6,data6$AVISIT=="Envenomation +7 Days" |
+                                    data6$AVISIT=="Envenomation +14 Days")
+
+# getting total scores
+PFScore_data_subset_total_temp1<-subset(data_6_subset_PFScore,data_6_subset_PFScore$PARAMCD=="PFSCO")
+
+PFScore_data_subset_total<-with(PFScore_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAMCD))
+
+id<-with(PFScore_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+PFScore_data_subset_total$id<-id2
+
+PFScore_data_subset_total_casted1 <- dcast(PFScore_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(PFScore_data_subset_total_casted1)[3]<-"PFScore_FUP_14"
+colnames(PFScore_data_subset_total_casted1)[4]<-"PFScore_FUP_7"
+
+#merging PSFS and DASH data for the clinimetrics assessment
+data_PFScore<-merge(x = psfs_data_tocombine, 
+             y = PFScore_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
+
+#Role Emotional Score
+data_6_subset_REScore<-subset(data6,data6$AVISIT=="Envenomation +7 Days" |
+                                    data6$AVISIT=="Envenomation +14 Days")
+
+# getting total scores
+REScore_data_subset_total_temp1<-subset(data_6_subset_REScore,data_6_subset_REScore$PARAMCD=="RESCO")
+
+REScore_data_subset_total<-with(REScore_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAMCD))
+
+id<-with(REScore_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+REScore_data_subset_total$id<-id2
+
+REScore_data_subset_total_casted1 <- dcast(REScore_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(REScore_data_subset_total_casted1)[3]<-"REScore_FUP_14"
+colnames(REScore_data_subset_total_casted1)[4]<-"REScore_FUP_7"
+
+#merging PSFS and DASH data for the clinimetrics assessment
+data_RPScore<-merge(x = psfs_data_tocombine, 
+             y = RPScore_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
+
+#Role physical Score
+data_6_subset_RPScore<-subset(data6,data6$AVISIT=="Envenomation +7 Days" |
+                                    data6$AVISIT=="Envenomation +14 Days")
+
+# getting total scoRPS
+RPScore_data_subset_total_temp1<-subset(data_6_subset_RPScore,data_6_subset_RPScore$PARAMCD=="RPSCO")
+
+RPScore_data_subset_total<-with(RPScore_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAMCD))
+
+id<-with(RPScore_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+RPScore_data_subset_total$id<-id2
+
+RPScore_data_subset_total_casted1 <- dcast(RPScore_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(RPScore_data_subset_total_casted1)[3]<-"RPScore_FUP_14"
+colnames(RPScore_data_subset_total_casted1)[4]<-"RPScore_FUP_7"
+
+#merging PSFS and DASH data for the clinimetrics assessment
+data_RPScore<-merge(x = psfs_data_tocombine, 
+             y = RPScore_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
+
+#Social functioning Score
+data_6_subset_SFScore<-subset(data6,data6$AVISIT=="Envenomation +7 Days" |
+                                    data6$AVISIT=="Envenomation +14 Days")
+
+# getting total scoSFS
+SFScore_data_subset_total_temp1<-subset(data_6_subset_SFScore,data_6_subset_SFScore$PARAMCD=="SFSCO")
+
+SFScore_data_subset_total<-with(SFScore_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAMCD))
+
+id<-with(SFScore_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+SFScore_data_subset_total$id<-id2
+
+SFScore_data_subset_total_casted1 <- dcast(SFScore_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(SFScore_data_subset_total_casted1)[3]<-"SFScore_FUP_14"
+colnames(SFScore_data_subset_total_casted1)[4]<-"SFScore_FUP_7"
+
+#merging PSFS and DASH data for the clinimetrics assessment
+data_SFScore<-merge(x = psfs_data_tocombine, 
+             y = SFScore_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
+
+#Vitality Score
+data_6_subset_VTScore<-subset(data6,data6$AVISIT=="Envenomation +7 Days" |
+                                    data6$AVISIT=="Envenomation +14 Days")
+
+# getting total scoVTS
+VTScore_data_subset_total_temp1<-subset(data_6_subset_VTScore,data_6_subset_VTScore$PARAMCD=="VTSCO")
+
+VTScore_data_subset_total<-with(VTScore_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAMCD))
+
+id<-with(VTScore_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+VTScore_data_subset_total$id<-id2
+
+VTScore_data_subset_total_casted1 <- dcast(VTScore_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(VTScore_data_subset_total_casted1)[3]<-"VTScore_FUP_14"
+colnames(VTScore_data_subset_total_casted1)[4]<-"VTScore_FUP_7"
+
+#merging PVTS and DASH data for the clinimetrics assessment
+data_VTScore<-merge(x = psfs_data_tocombine, 
+             y = VTScore_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
+
+##Organizing PROMIS data
+####################################
+
+#PROMIS Score
+data_6_subset_COMBTSCO<-subset(data6,data6$AVISIT=="Envenomation +7 Days" |
+                                    data6$AVISIT=="Envenomation +14 Days")
+# getting total scoVTS
+COMBTSCO_data_subset_total_temp1<-subset(data_6_subset_COMBTSCO,data_6_subset_COMBTSCO$PARAMCD=="COMBTSCO")
+
+COMBTSCO_data_subset_total<-with(COMBTSCO_data_subset_total_temp1,data.frame(USUBJID,
+                                                  AVISIT,
+                                                  AVAL,
+                                                  PARAMCD))
+
+id<-with(COMBTSCO_data_subset_total,
+              strsplit(as.character(USUBJID),"-"))
+id<-as.data.frame(t(as.data.frame(id)))
+
+id2<-apply(id[,4:5],1,paste, collapse="-")
+
+COMBTSCO_data_subset_total$id<-id2
+
+COMBTSCO_data_subset_total_casted1 <- dcast(COMBTSCO_data_subset_total, 
+                          id+USUBJID ~ AVISIT,
+                                  value.var="AVAL")
+
+colnames(COMBTSCO_data_subset_total_casted1)[3]<-"COMBTSCO_FUP_14"
+colnames(COMBTSCO_data_subset_total_casted1)[4]<-"COMBTSCO_FUP_7"
+
+#merging PVTS and DASH data for the clinimetrics assessment
+data_COMBTSCO<-merge(x = psfs_data_tocombine, 
+             y = COMBTSCO_data_subset_total_casted1, 
+             by = "id", 
+             all.y = TRUE)
 
 ######################################################################
 #TABLE 1
@@ -449,15 +939,18 @@ table
 prop.table(table)
 
 ######################################################################
+#TABLE 2
+######################################################################
+
 #FLOORING AND CEILING EFFECT
 ######################################################################
 # Categorical Descriptives
-table<-with(descriptive_data,table(score,time_2measures))
+table<-with(data_psfs_combined,table(psfs_FUP_14))
 table
-prop.table(table,2)
+prop.table(table)
 
 # Categorical Descriptives
-with(descriptive_data,describeBy(score,time_2measures))
+with(data_psfs_combined,psych::describe(psfs_FUP_14))
 
 # Comparison by time
 
@@ -477,18 +970,9 @@ descriptive_data_T1<-subset(data,data$time_2measures=="T3paper" |
 with(descriptive_data_T1,t.test(score~time_2measures))
 
 
-
-##############################################################
-#PSFS
+#Reliability
 ##############################################################
 
-#TAXONOMETRIC ANALAYSIS
-
-#Taxonometric Scale
-# MAMBAC(scale(NeckDisabilityIndexNA)[,1:3], Comp.Data = T)
-
-#RELIABILITY
-##############################################################
 ### INTERNAL CONSISTENCY
 #RELIABILITY
 #psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
@@ -532,9 +1016,6 @@ dev.off()
 
 # SEM<-()
 
-########################################################
-#ROC Plot with Sensitivity and Specificity
-########################################################
 cor(na.omit(icc_data[,c(2,3)]))
 
 plot<-ggplot(icc_data, aes(icc_data[,2],icc_data[,3])) +
@@ -553,757 +1034,38 @@ ggsave("figure2.eps", #change .eps to .pdf for different format
     height = 6, 
     device=cairo_ps) #cairo_ps is a device to save eps with transparecy
 
-#Initial ROC analysis
-x<-roc(psfs_data_phone[,2],psfs_data_paper[,1]) #first argument = outcome; second = predictor
-print(roc(agree_data_sl[,2],agree_data_sl[,1])) #first argument = outcome; second = predictor
-icc_data<-na.omit(icc_data)
-#CI and Plotting
-roc1 <- roc(icc_data[,2],
-            icc_data[,3], percent=TRUE,
-            # arguments for auc
-            # partial.auc=c(100, 90), partial.auc.correct=TRUE,
-            #partial.auc.focus="sens",
-            # arguments for ci
-            ci=TRUE, boot.n=100, ci.alpha=0.9, stratified=FALSE,
-            # arguments for plot
-            plot=TRUE, auc.polygon=FALSE, max.auc.polygon=FALSE, grid=TRUE,
-            print.auc=TRUE, show.thres=TRUE,col=c("black"),print.thres=T,print.auc.x=39, print.auc.y=60)
+########################################################
+#TABLE 3
+########################################################
+
+#correlation between PSFS and SF36 Measures
+# library(Hmisc)
+rcorr(as.matrix(data_BPScore[,c(3,4,5,8,9)]), type="spearman")
+rcorr(as.matrix(data_GHScore[,c(3,4,5,8,9)]), type="spearman")
+rcorr(as.matrix(data_HTScore[,c(3,4,5,8,9)]), type="spearman")
+rcorr(as.matrix(data_MHScore[,c(3,4,5,8,9)]), type="spearman")
+rcorr(as.matrix(data_PFScore[,c(3,4,5,8,9)]), type="spearman")
+rcorr(as.matrix(data_REScore[,c(3,4,5,8,9)]), type="spearman")
+rcorr(as.matrix(data_RPScore[,c(3,4,5,8,9)]), type="spearman")
+rcorr(as.matrix(data_SFScore[,c(3,4,5,8,9)]), type="spearman")
+rcorr(as.matrix(data_VTScore[,c(3,4,5,8,9)]), type="spearman")
+
+#correlation between PSFS and PROMIS-10
+rcorr(as.matrix(data_COMBTSCO[,c(3,4,5,8,9)]), type="spearman")
+
+#correlation between PSFS and LEFS
+rcorr(as.matrix(data_lefs[,c(3,4,5,8,9,10)]), type="spearman")
+
+#correlation between PSFS and DASH
+rcorr(as.matrix(data_dash[,c(3,4,5,8,9,10)]), type="spearman")
+
+#correlation between PSFS and PGIC
+cor_auto(data_mcid2[,c(3,8)])
+
+########################################################
+#TABLE 4
+########################################################
 
-#NETWORK 
-##############################################################
-# # Define the amout of factor to retain
-# #Group of functinos to determine the number os items to be extracted
-# #calculate correlation matrix
-# cor_data<-cor_auto(kessler_data) 
-
-# #extract thresholds
-# polycor_data<-polychoric(na.omit(kessler_data),correct=.01) # crossvalidate
-# cor<-polycor_data$rho #extract correlation matrix
-# tau<-rowMeans(polycor_data$tau) #extract thresholds
-
-# #Community analysis - Walking Trap
-# #Generate glasso network
-# network_glasso<-qgraph(
-#                     cor_data,
-# 	                  layout="spring", 
-# 	                  vsize=tau,
-#                     # esize=20,
-#                     graph="glasso",
-# 	                  sampleSize=nrow(kessler_data),
-# 	                  legend.cex = 0.5,
-#                     GLratio=1.5,
-#                     minimum=0.1,
-#                     cut=0,
-#                     border.width=1.5,
-#                     shape="square"
-#                     )
-
-# # #Calculating Community measures
-# g<-as.igraph(network_glasso) #creating igraph object
-# h<-walktrap.community(g) #creatin community object
-# h<-spinglass.community(g, weights=NA) #creatin community object
-# # h<-fastgreedy.community(g, weights=NA) #creatin community object
-# # h<-edge.betweenness.community(g, weights=NA) #creatin community object
-# h<-cluster_leading_eigen(g,weights=NA) #creatin community object
-# plot(h,g) #plotting community network
-# h$membership #extracting community membership for each node on the network
-# community<-data.frame(h$membership,rownames(cor_data))
-
-# #listing grouping variables in the network resulting from the community analysis
-# # network_groups<-list(
-# # Component1=as.numeric(rownames(community)[community[,1]==1]),
-# # Component2=as.numeric(rownames(community)[community[,1]==2]),
-# # Component3=as.numeric(rownames(community)[community[,1]==3])
-# # )
-
-# # network_groups<-list(
-# # Component1=c(1,3,4,5,15,14),
-# # Component2=c(2,16,6,7),
-# # Component3=c(11,12,13,10),
-# # Component4=c(19,20,21,23),
-# # Component5=c(9,17,18,22,8)
-# # )
-
-# # creating vectors for labels
-# # node_labels<-c(
-# # "What is the area of the roadway?",
-# # "What type of roadway?",
-# # "Is this point at an intersection/junction?",
-# # "How many lanes in the roadway?",
-# # "Is there an auxiliary/other lane?",
-# # "How is the road surface conditions?",
-# # "Is there space on the side of the road 
-# # for any reason or use?",
-# # "Are there pedestrian pathways?",
-# # "Is there a Bus Stop?",
-# # "Is there a Speed bump?",
-# # "Is there a traffic light at this location?",
-# # "Are there road traffic signs at this hotspot?",
-# # "Is there a sign for speed limit of road?",
-# # "Road visibility is influenced by curves?",
-# # "Is the visibility influenced by 
-# # environmental factors?",
-# # "Are there bridges on the road?",
-# # "Is there a safe area for pedestrians 
-# # to cross the road?",
-# # "Is there a safe area for pedestrians
-# # to in the center of the road?",
-# # "Count the number of cars",
-# # "Count the number of moto",
-# # "Count the number of bike",
-# # "Count the number of pedestrians",
-# # "Count the number of bus/trucks"
-# # )
-
-# # creating nodes labels vector
-# node_names<-c("Q1",
-#               "Q2",
-#               "Q3",
-#               "Q4",
-#               "Q5",
-#               "Q6",
-#               "Q7",
-#               "Q8",
-#               "Q9",
-#               "Q10")
-
-# # creating vector with mean values for each node
-# #mean_data<-sapply(network_data,mean)
-
-# #creating vector with mean values adjusted to proportional sizes to be plotted
-# #importance_vSize<-c(mean_data[1:14]/min(mean_data[1:14]),1.81)
-
-# #building network figures 
-# # 3 types are created to get an avarege position and layout
-# #GLASSO NETWORK
-# # network_glasso<-qgraph(cor_data,layout="spring",
-# # 	vsize=6,esize=20,graph="glasso",
-# # 	sampleSize=nrow(bea_data),
-# # 	legend.cex = 0.5,GLratio=1.5)
-
-# # #PARTIAL CORRELATION NETWORK
-# # network_pcor<-qgraph(cor_data,layout="spring",
-# # 	vsize=6,esize=20,graph="pcor",threshold="holm",
-# # 	sampleSize=nrow(bea_data),
-# # 	legend.cex = 0.5,GLratio=1.5)
-
-# # #CORRELATION NETWORK
-# # network_cor<-qgraph(cor_data,layout="spring",
-# # 	vsize=6,esize=20,legend.cex = 0.5,GLratio=1.5)
-# # #layout1<-averageLayout(network_glasso,network_pcor,network_cor)
-
-# # # Organizing both figures to be with the same layout
-# # layout_final<-averageLayout(network_glasso,
-# # 	network_pcor,
-# # 	network_cor)
-
-# # postscript("/home/joao/Desktop/info_consent_figure2.eps",
-# # 	width = 1500, height = 1200,horizontal = FALSE, 
-# # 	onefile = FALSE)
-# # postscript("/Users/joaovissoci/Desktop/info_consent_figure2.eps",
-# # 	width = 1500, height = 1200,horizontal = FALSE, 
-# # 	onefile = FALSE)
-# # tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
-#  # height = 700,compression = 'lzw')
-#   network_glasso<-qgraph(cor_data,
-# 	layout='spring',
-# 	# esize=20,
-# 	graph="glasso",
-# 	sampleSize=nrow(kessler_data),
-# 	legend.cex = 0.5,
-# 	cut = 0.3,
-# 	# maximum = 1, 
-# 	minimum = 0.1,
-# 	# esize = 20,
-# 	vsize = tau, 
-# 	# repulsion = 0.8,
-#   # nodeNames=node_labels,
-#   shape="square",
-#   border.width=5,
-# 	# groups=network_groups,
-# 	# color=c("gold","steelblue","red","grey80","green"),borders = FALSE,
-# 	labels=node_names
-#   #gray=T,
-#   )
-# # dev.off()
-# #legend(0.8,-0.8, bty=".",c("Ensaio Clínico","Medicamentos","Outras Razões"),cex=1.2,fill=c("lightblue","red","yellow"))
-
-# centrality_auto(network_glasso)
-# eigen_centrality(as.igraph(network_glasso), 
-#                  directed = FALSE,
-#                  scale = TRUE,
-#                  # weights = NA,
-#                  options = arpack_defaults)
-# # Directed network
-# # library(pcalg)
-# # names <- node_names
-# # n = nrow(kessler_data)
-# # p = ncol(kessler_data)
-# # indepTest <- gaussCItest
-# # suffStat <- list(C = cor(data), n = nrow(data)
-# # alpha <- 0.01
-# # pc.fit <- pc(suffStat, indepTest, p, alpha)
-# # qgraph(pc.fit, labels = names, colour = groups)
-
-# #Directed Acyclic Graph / require package bnlearn
-# # dag_data <- data.frame(apply(kessler_data, 2, as.factor))
-# # res<-rsmax2(dag_data,
-# #             restrict = "si.hiton.pc",
-# #             maximize = "tabu")
-# # res2<-(res$arcs)
-# # qgraph(res2)
-
-#ANALISE PARALELA E EIGEN VALUES
-#############################################################
-#MODEL 1 - Risk due to road deisgn
-# cor_data<-cor_auto(model1_bea)
-
-#Function to calculate the KMO values - colocar link par ao gist
-kmo<-kmo(na.omit(kessler_data)) #Run the Kmo function for the data you want to calculate
-kmo$overall
-kmo$AIR #anti-image matrix
-
-cortest.bartlett(cor_auto(kessler_data), n = 297,diag=FALSE)
-
-# par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
-# ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
-# ev # Show eigend values
-# ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
-# summary(ap)
-# nS <- nScree(ev$values) #Set up the Scree Plot 
-# # plotnScree(nS) # Plot the ScreePlot Graph
-# my.vss <- VSS(cor_data,title="VSS of BEA data")
-# #print(my.vss[,1:12],digits =2)
-# VSS.plot(my.vss, title="VSS of 24 mental tests")
-# scree(cor_data)
-# VSS.scree(cor_data)
-fa.parallel(kessler_data,cor="poly")
-
-#EXPLORATORY FACTOR ANALYSIS
-#############################################################
-#Functino to exctract the factor loadings. 
-#Arguments are DATA, Number of factors, rotation method. 
-#Look here http://goo.gl/kY3ln for different met
-
-#holds of estimations or rotations
-# fa(cor_data,2,rotate="promax")
-# fa(NeckDisabilityIndex,1,fm="pa",rotate="oblimin")
-
-#based on a polychoric correlation matrix
-fa.poly(cor_data,1,fm="uls",rotate="oblimin")
-fa.poly(cor_data,2,fm="uls",rotate="oblimin")
-
-#efa_LOD <- efa(motivation, method="cor.polycor")
-#efa.plotCorr (efa_LOD)
-#efa_LOD <- efa.compute(efa_LOD,factors =3,method="extract.uls", rotate="promax", horn=T)
-#efa.plotScree(efa_LOD)
-#efa_LOD<-efa.setMinLoad(efa_LOD, minload=0.40, col="black")
-#efa.plotFactor(efa_LOD)
-#qgraph(efa_LOD)
-
-#CONFIRMATORY FACTOR ANALYSIS
-#############################################################
-# kessler_data<-lapply(kessler_data,ordered)
-
-# 1 factor model
-cfa_model <- '
-Kessler =~  d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10
-
-#
-Kessler ~~ Kessler
-
-#cov
-# d2 ~~  d9
-d5 ~~  d6
-# d8 ~~  d10
-'
-
-fit <- lavaan::cfa(cfa_model,
-                   data = kessler_data,
-                   estimator="WLSMV",
-                   ordered=colnames(kessler_data)
-                   )
-summary(fit, fit.measures=TRUE)
-lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
-                                          "rmsea.ci.lower.scaled",
-                                          "rmsea.ci.upper.scaled",
-                                          "cfi.scaled",
-                                          "tli.scaled",
-                                          "nnfi.scaled",
-                                          "chisq.scaled",
-                                          "pvalue.scaled"
-                                          )
-                    )
-# AIC(fit)
-parameterEstimates(fit)
-Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
-subset(Est, op == "=~")
-subset(Est, op == "~~")
-lavInspect(fit,what="th")
-
-### Modification Indexes
-Mod <- lavaan::modificationIndices(fit)
-subset(Mod)#, mi > 10)
-
-### By Group analysis
-# fit <- lavaan::cfa(cfa_model, data = data,
-# estimator="ULSM",group = "female")
-# summary(fit, fit.measures=TRUE)
-# lavaan::fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
-# parameterEstimates(fit)
-# lavaan::inspect(fit,"rsquare")
-# Est <- standardizedSolution(fit)
-# subset(Est, op == "=~")
-# subset(Est, op == "~")
-# subset(Est, op == ":=")
-# measurementInvariance(cfa_model, data = data, group = "female")
-
-nodeLabels<-c("Q1",
-              "Q2",
-              "Q3",
-              "Q4",
-              "Q5",
-              "Q6",
-              "Q7",
-              "Q8",
-              "Q9",
-              "Q10",
-              "General")
-
-color<-c(rep("grey",10),rep("white",1))
-borders<-c(rep("FALSE",10),rep("TRUE",1))
-labelcex<-c(rep(0.7,10),rep(1,1))
-
-tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-  width = 15,
- height = 10,compression = 'lzw',res=1200,bg = "white")
-semPlot::semPaths(fit,
-                  "model",
-                  "std",
-                  layout="tree2",
-                  style="lisrel",
-                  residuals=FALSE,
-                  # cut=1,
-                  # equalizeManifests=TRUE,
-                  # edge.color="black",
-                  exoCov=FALSE,
-                  intercepts=FALSE,
-                  nodeLabels=nodeLabels,
-                  label.scale=FALSE,
-                  edge.label.cex=0.8,
-                  label.cex=labelcex,
-                  color=color,
-                  borders=borders)
-                  # bifactor="general")
-dev.off()
-
-#Composite Reliabilty
-sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+sum(Est$std.all[51:60]))
-
-#Average Extracted Variance
-sum(Est$std.all[1:10]^2)/length(Est$std.all[1:10])
-
-#Thresholds
-by(Est$std.all[13:50],Est$lhs[13:50],mean)
-
-#Factor scores
-kessler_overall<-lavaan::predict(fit)
-
-# 2 factors model ###########################
-cfa_model <- '
-Depression =~  d1 + d4 + d7 + d8 + d9 + d10
-Anxiety =~ d2 + d3 + d5 + d6
-
-#
-# Depression ~~ Depression
-# Anxiety ~~ Anxiety
-
-#cov
-# d2 ~~  d9
-# d5 ~~  d6
-# d7 ~~  d8
-       '
-
-fit <- lavaan::cfa(cfa_model,
-  data = kessler_data,
-  estimator="WLSMV",
-  ordered=colnames(kessler_data))
-summary(fit, fit.measures=TRUE)
-lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
-                                          "rmsea.ci.lower.scaled",
-                                          "rmsea.ci.upper.scaled",
-                                          "cfi.scaled",
-                                          "tli.scaled",
-                                          "nnfi.scaled",
-                                          "chisq.scaled",
-                                          "pvalue.scaled",
-                                          "df.scaled"
-                                          ))
-parameterEstimates(fit)
-Est <- lavaan::parameterEstimates(fit,
-                                  ci = TRUE,
-                                  standardized = TRUE)
-subset(Est, op == "=~")
-lavInspect(fit,what="th")
-
-### Modification Indexes
-Mod <- lavaan::modificationIndices(fit)
-subset(Mod)#, mi > 10)
-
-### By Group analysis
-fit <- lavaan::cfa(cfa_model, data = data,
-estimator="ULS",group = "female")
-summary(fit, fit.measures=TRUE)
-fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
-parameterEstimates(fit)
-lavaan::inspect(fit,"rsquare")
-Est <- standardizedSolution(fit)
-subset(Est, op == "=~")
-subset(Est, op == "~")
-subset(Est, op == ":=")
-measurementInvariance(cfa_model, data = data, group = "female")
-
-nodeLabels<-c("Q1",
-              "Q2",
-              "Q3",
-              "Q4",
-              "Q5",
-              "Q6",
-              "Q7",
-              "Q8",
-              "Q9",
-              "Q10",
-              "Depression",
-              "Anxiety")
-
-color<-c(rep("grey",10),rep("white",2))
-borders<-c(rep("FALSE",10),rep("TRUE",2))
-labelcex<-c(rep(0.7,10),rep(1,2))
-
-tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-  width = 15,
- height = 10,compression = 'lzw',res=1200,bg = "white")
-semPlot::semPaths(fit,
-                  "model",
-                  "std",
-                  layout="tree2",
-                  style="lisrel",
-                  residuals=FALSE,
-                  # cut=1,
-                  # equalizeManifests=TRUE,
-                  # edge.color="black",
-                  exoCov=FALSE,
-                  intercepts=FALSE,
-                  nodeLabels=nodeLabels,
-                  label.scale=FALSE,
-                  edge.label.cex=0.8,
-                  label.cex=labelcex,
-                  color=color,
-                  borders=borders)
-                  # bifactor="general")
-dev.off()
-
-#Composite Reliabilty - Depression
-sum(Est$std.all[1:6])^2/(sum(Est$std.all[1:6])^2+
-  sum(Est$std.all[48:54]))
-
-#Composite Reliabilty
-sum(Est$std.all[7:10])^2/(sum(Est$std.all[7:10])^2+
-  sum(Est$std.all[55:58]))
-
-#Average Extracted Variance
-sum(Est$std.all[1:6]^2)/length(Est$std.all[1:6])
-
-#Average Extracted Variance
-sum(Est$std.all[7:10]^2)/length(Est$std.all[7:10])
-
-#Factor scores
-kessler_dimensions<-lavaan::predict(fit)
-
-# Second ordered factor model ###########################
-# cfa_model <- '
-# # general =~  d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10
-# Depression =~  d1 + d4 + d7 + d8 + d9 + d10
-# Anxiety =~ d2 + d3 + d5 + d6
-# general =~ Depression + Anxiety
-
-# #cov
-# general ~~ general
-# Anxiety ~~ Anxiety
-# Depression ~~ Depression
-
-# #cov
-# # d2 ~~  d9
-# # d5 ~~  d6
-# # d4 ~~  d8
-# '
-
-# fit <- lavaan::cfa(cfa_model,
-#   data = kessler_data,
-#   estimator="WLSMV",
-#   ordered=names(kessler_data))
-#   # verbose = TRUE)
-# summary(fit, fit.measures=TRUE)
-# lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
-#                                           "rmsea.ci.lower.scaled",
-#                                           "rmsea.ci.upper.scaled",
-#                                           "cfi.scaled",
-#                                           "tli.scaled",
-#                                           "nnfi.scaled",
-#                                           "chisq.scaled",
-#                                           "pvalue.scaled",
-#                                           "df.scaled"
-#                                           ))
-# parameterEstimates(fit)
-# Est <- lavaan::parameterEstimates(fit,
-#                                   ci = TRUE,
-#                                   standardized = TRUE)
-# subset(Est, op == "=~")
-# lavInspect(fit,what="th")
-# subset(Est, op == "=~")
-# lavInspect(fit,what="th")
-
-# ### Modification Indexes
-# Mod <- lavaan::modificationIndices(fit)
-# subset(Mod)#, mi > 10)
-
-# ### By Group analysis
-# fit <- lavaan::cfa(cfa_model, data = data,
-# estimator="ULS",group = "female")
-# summary(fit, fit.measures=TRUE)
-# fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
-# parameterEstimates(fit)
-# lavaan::inspect(fit,"rsquare")
-# Est <- standardizedSolution(fit)
-# subset(Est, op == "=~")
-# subset(Est, op == "~")
-# subset(Est, op == ":=")
-# measurementInvariance(cfa_model, data = data, group = "female")
-
-# nodeLabels<-c("Q1",
-#               "Q2",
-#               "Q3",
-#               "Q4",
-#               "Q5",
-#               "Q6",
-#               "Q7",
-#               "Q8",
-#               "Q9",
-#               "Q10",
-#               "General",
-#               "Depression",
-#               "Anxiety")
-
-# color<-c(rep("grey",10),rep("white",3))
-# borders<-c(rep("FALSE",10),rep("TRUE",3))
-# labelcex<-c(rep(0.7,10),rep(1,3))
-
-# tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-#   width = 15,
-#  height = 10,compression = 'lzw',res=1200,bg = "white")
-# semPlot::semPaths(fit,
-#                   "model",
-#                   "std",
-#                   layout="tree2",
-#                   style="lisrel",
-#                   residuals=TRUE,
-#                   # cut=1,
-#                   # equalizeManifests=TRUE,
-#                   # edge.color="black",
-#                   exoCov=FALSE,
-#                   # intercepts=FALSE,
-#                   nodeLabels=nodeLabels,
-#                   label.scale=FALSE,
-#                   edge.label.cex=0.8,
-#                   label.cex=labelcex,
-#                   color=color,
-#                   borders=borders,
-#                   bifactor="general")
-
-# dev.off()
-
-# #Composite Reliabilty
-# sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+sum(Est$std.all[11:20]))
-
-
-# Bi-factor model ###########################
-# cfa_model <- '
-# general =~  d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10
-# Depression =~  d1 + d4 + d7 + d8 + d9 + d10
-# Anxiety =~ d2 + d3 + d5 + d6
-# # general =~ Depression + Anxiety
-
-# #cov
-# # general ~~ general
-# # Anxiety ~~ Anxiety
-# # Depression ~~ Depression
-
-# #cov
-# # d1 ~~  d8
-# # d2 ~~  d9
-# # d4 ~~  d8
-# '
-
-# fit <- lavaan::cfa(cfa_model,
-#                    data = kessler_data,
-#                    orthogonal=TRUE,
-#                    estimator="WLSMV",
-#                    ordered=names(kessler_data))
-# summary(fit, fit.measures=TRUE)
-# lavaan::fitMeasures(fit, fit.measures = "all")
-# parameterEstimates(fit)
-# Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
-# subset(Est, op == "=~")
-# lavInspect(fit,what="th")
-
-# ### Modification Indexes
-# Mod <- lavaan::modificationIndices(fit)
-# subset(Mod)#, mi > 10)
-
-# ### By Group analysis
-# fit <- lavaan::cfa(cfa_model, data = data,
-# estimator="ULS",group = "female")
-# summary(fit, fit.measures=TRUE)
-# fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
-# parameterEstimates(fit)
-# lavaan::inspect(fit,"rsquare")
-# Est <- standardizedSolution(fit)
-# subset(Est, op == "=~")
-# subset(Est, op == "~")
-# subset(Est, op == ":=")
-# measurementInvariance(cfa_model, data = data, group = "female")
-
-# nodeLabels<-c("Q1",
-#               "Q2",
-#               "Q3",
-#               "Q4",
-#               "Q5",
-#               "Q6",
-#               "Q7",
-#               "Q8",
-#               "Q9",
-#               "Q10",
-#               "General",
-#               "Depression",
-#               "Anxiety")
-
-# color<-c(rep("grey",10),rep("white",3))
-# borders<-c(rep("FALSE",10),rep("TRUE",3))
-# labelcex<-c(rep(0.7,10),rep(1,3))
-
-# tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-#   width = 15,
-#  height = 10,compression = 'lzw',res=1200,bg = "white")
-# semPlot::semPaths(fit,
-#                   "model",
-#                   "std",
-#                   layout="tree2",
-#                   style="lisrel",
-#                   residuals=TRUE,
-#                   # cut=1,
-#                   # equalizeManifests=TRUE,
-#                   # edge.color="black",
-#                   exoCov=FALSE,
-#                   # intercepts=FALSE,
-#                   nodeLabels=nodeLabels,
-#                   label.scale=FALSE,
-#                   edge.label.cex=0.8,
-#                   label.cex=labelcex,
-#                   color=color,
-#                   borders=borders,
-#                   bifactor="general")
-
-# dev.off()
-
-# #Composite Reliabilty
-# sum(Est$std.all[1:10])^2/(sum(Est$std.all[1:10])^2+sum(Est$std.all[11:20]))
-
-
-#ITEM RESPONSE THEORY
-##############################################################
-
-# #### USING eRM Package
-# IRTRolandMorris <- PCM(kessler_data)
-# diff_index<-thresholds(IRTRolandMorris)
-# summary(diff_index$threshtable[[1]][,1])
-# sd(diff_index$threshtable[[1]][,1])/sqrt(length(diff_index$threshtable[[1]][,1]))
-# plotICC(IRTRolandMorris,item.subset=3,ask=F,empICC=list("raw"),empCI=list(lty="solid"))
-# plotPImap(IRTRolandMorris, sorted=FALSE)
-# plotPWmap(IRTRolandMorris)
-# pp<-eRm::person.parameter(IRTRolandMorris)
-# #lrt<-LRtest(IRTRolandMorris,se=TRUE)
-# #Waldtest(IRTRolandMorris)
-# eRm::itemfit(pp)
-# summary(eRm::itemfit(pp)$i.outfitMSQ)
-# sd(eRm::itemfit(pp)$i.outfitMSQ)
-# summary(eRm::itemfit(pp)$i.infitMSQ)
-# sd(eRm::itemfit(pp)$i.infitMSQ)
-#NPtest(IRTRolandMorris,method="T11")
-#plotGOF(lrt,conf=list())
-#fscores(NeckDisabilityIndex, rotate = "oblimin", Target = NULL, full.scores = FALSE,method = "EAP", quadpts = NULL, response.pattern = NULL,plausible.draws = 0, returnER = FALSE, return.acov = FALSE,mean = NULL, cov = NULL, verbose = TRUE, full.scores.SE = FALSE,theta_lim = c(-6, 6), MI = 0, QMC = FALSE, custom_den = NULL, custom_theta = NULL, min_expected = 1)
-
-#Dichotomous items
-# IRTRolandMorris <- RM(neckdisability2)
-# plotICC(IRTRolandMorris,item.subset=1:4,ask=F,empICC=list("raw"),empCI=list(lty="solid"))
-# plotPImap(IRTRolandMorris)
-# pp<-person.parameter(IRTRolandMorris)
-# lrt<-LRtest(IRTRolandMorris,se=TRUE)
-# Waldtest(IRTRolandMorris)
-# eRm::itemfit(pp)
-# summary(itemfit(pp)$i.outfitMSQ)
-# sd(itemfit(pp)$i.outfitMSQ)
-# summary(itemfit(pp)$i.infitMSQ)
-# sd(itemfit(pp)$i.infitMSQ)
-# NPtest(IRTRolandMorris,method="T11")
-# plotGOF(lrt,conf=list())
-
-#############################################################################
-#CAT
-#############################################################################
-# install.packages("catR")
-# require(catR)
-# c<-coef(irt_model)
-# itemBank <- cbind(c[,2], c[,1], 0, 1)
-# catBank<-createItemBank(irt_model, model="2pl")
-# catBank
-# catBank$itemPar
-# plot(catBank$infoTab[,1])
-# plot(my2pl, type = "IIC", items=1)
-
-# items_administered<-c(4)
-# responses<-c(1)
-# it<-itemBank[items_administered, 1:4,drop=F ]
-# theta<-thetaEst(it, responses)
-# q<-nextItem(catBank, theta,out=items_administered)
-# q$item
-
-#############################################################################
-#GENERATING SCORES
-#############################################################################
-boxplot_data<-subset(data,data$time=="3days" | data$time=="7days" |
-  data$time=="10days")
-
-# Basic box plot
-p <- ggplot(boxplot_data, aes(x=severity, y=score, fill=time)) + 
-  geom_boxplot()
-# p <- p + scale_fill_manual(name="FUP Times",
-#                        breaks=c("3days", "7days", "10days"),
-#                        labels=c("Day 3", "Day 7", "Day 10"))
-p <- p + scale_color_grey() + theme_classic()
-p
-
-# # Rotate the box plot
-# p + coord_flip()
-# # Notched box plot
-# ggplot(ToothGrowth, aes(x=dose, y=len)) + 
-#   geom_boxplot(notch=TRUE)
-# # Change outlier, color, shape and size
-# ggplot(ToothGrowth, aes(x=dose, y=len)) + 
-#   geom_boxplot(outlier.colour="red", outlier.shape=8,
-#                 outlier.size=4)
-
-
-#############################################################
 # MDC - Minimal Detectable Change
 #############################################################
 
@@ -1396,11 +1158,9 @@ SEM*1.96
 # MDC
 MDC<-1.68*sqrt(2)*SEM
 MDC
-#############################################################
-# MCID - Minimal Clinical Important Change
-#############################################################
 
 #ANCHOR Based
+############################################################
 
 # The anchor-based approach applying a relevant external
 # criterion provides meaningful estimates of the measure’s
@@ -1474,29 +1234,36 @@ auc = performance(pred, "auc")
 library(pROC)
 library(Epi)
 
-with(data_mcid2,by(change_score,change_cat_PGIC1_mild,summary))
-with(data_mcid2,by(data_mcid2[,4],change_cat_PGIC1_mild,summary))
-with(data_mcid2,by(change_score,change_cat_PGIC1_moderate,summary))
-with(data_mcid2,by(data_mcid2[,4],change_cat_PGIC1_moderate,summary))
-with(data_mcid2,by(change_score,change_cat_PGIC1_severe,summary))
-with(data_mcid2,by(data_mcid2[,4],change_cat_PGIC1_severe,summary))
-with(data_mcid2,by(change_score,change_cat_PGIC2,summary))
-with(data_mcid2,by(data_mcid2[,4],change_cat_PGIC2,summary))
+with(data_mcid,table(change_cat_PGIC1_large))
+with(data_mcid,prop.table(table(change_cat_PGIC1_large)))
 
-data_mcid2$change_cat_PGIC2<-as.factor(data_mcid2$change_cat_PGIC2)
-data_mcid2$change_cat_PGIC1_mild<-as.factor(data_mcid2$change_cat_PGIC1_mild)
-data_mcid2$change_cat_PGIC1_moderate<-as.factor(data_mcid2$change_cat_PGIC1_moderate)
-data_mcid2$change_cat_PGIC1_severe<-as.factor(data_mcid2$change_cat_PGIC1_severe)
 
-ROC(form=change_cat_PGIC1_mild~data_mcid2[,5], data=data_mcid2)
-ROC(form=change_cat_PGIC1_moderate~data_mcid2[,5], data=data_mcid2)
-ROC(form=change_cat_PGIC1_severe~data_mcid2[,5], data=data_mcid2)
-ROC(form=change_cat_PGIC2~data_mcid2[,5], data=data_mcid2)
+with(data_mcid,by(data_mcid[,4],change_cat_PGIC1_mild,summary))
+with(data_mcid,by(change_score,change_cat_PGIC1_moderate,summary))
+with(data_mcid,by(data_mcid[,4],change_cat_PGIC1_moderate,summary))
+with(data_mcid,by(change_score,change_cat_PGIC1_severe,summary))
+with(data_mcid,by(data_mcid[,4],change_cat_PGIC1_severe,summary))
+with(data_mcid,by(change_score,change_cat_PGIC2,summary))
+with(data_mcid,by(data_mcid[,4],change_cat_PGIC2,summary))
 
-ROC(form=change_cat_PGIC1_mild~change_score, data=data_mcid2)
-ROC(form=change_cat_PGIC1_moderate~change_score, data=data_mcid2)
-ROC(form=change_cat_PGIC1_severe~change_score, data=data_mcid2)
-ROC(form=change_cat_PGIC2~change_score, data=data_mcid2)
+data_mcid$change_cat_PGIC1_small<-as.factor(data_mcid$change_cat_PGIC1_small)
+data_mcid$change_cat_PGIC1_medium<-as.factor(data_mcid$change_cat_PGIC1_medium)
+data_mcid$change_cat_PGIC1_large<-as.factor(data_mcid$change_cat_PGIC1_large)
+
+#change from 0 to T3
+ROC(form=change_cat_PGIC1_small~psfs_FUP_3, data=data_mcid)
+ROC(form=change_cat_PGIC1_medium~psfs_FUP_3, data=data_mcid)
+ROC(form=change_cat_PGIC1_large~psfs_FUP_3, data=data_mcid)
+
+#change from T3 to T7
+ROC(form=change_cat_PGIC1_small~change_score_t7t3, data=data_mcid[-c(36,37),])
+ROC(form=change_cat_PGIC1_medium~change_score_t7t3, data=data_mcid[-c(36,37),])
+ROC(form=change_cat_PGIC1_large~change_score_t7t3, data=data_mcid[-c(36,37),])
+
+#change from T3 to t14
+ROC(form=change_cat_PGIC1_small~change_score_t14t3, data=data_mcid)
+ROC(form=change_cat_PGIC1_medium~change_score_t14t3, data=data_mcid)
+ROC(form=change_cat_PGIC1_large~change_score_t14t3, data=data_mcid)
 
 install.packages("OptimalCutpoints")
 
@@ -1504,10 +1271,10 @@ library(OptimalCutpoints)
 data(elas)
 
 optimal.cutpoint.Youden <- optimal.cutpoints(X = "psfs_FUP_3", 
-                                             status = "change_cat_PGIC1_severe", 
+                                             status = "change_cat_PGIC1_large", 
                                              tag.healthy = "stable",
                                              methods = "Youden", 
-                                             data = data_mcid2, 
+                                             data = data_mcid, 
                                              pop.prev = NULL, 
                                              categorical.cov = NULL, #"gender",
                                              control = control.cutpoints(), 
@@ -1528,7 +1295,7 @@ optimal.cutpoint.Youden <- optimal.cutpoints(X = "psfs_FUP_3",
 #                                              trace = FALSE)
 
 summary(optimal.cutpoint.Youden)
-
+0
 plot(optimal.cutpoint.Youden)
 
 # ROC
@@ -1566,7 +1333,7 @@ mean(data_mcid_improved$change_score)-mean(data_mcid_stable$change_score)
 # Cohen suggested
 # that score differences of 0.2SD units correspond to
 # small but important changes in treatment-effectiveness research
-#############################################################
+
 #SRM - Standardized Response Mean - Cohen's D
 #############################################################
 
@@ -1586,3 +1353,5 @@ mean(data_mcid_improved$change_score)-mean(data_mcid_stable$change_score)
 
 CohenD<-pooled_mean/pooled_sd
 CohenD
+
+

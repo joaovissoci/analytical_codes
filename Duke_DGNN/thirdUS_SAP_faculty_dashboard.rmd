@@ -714,7 +714,7 @@ data<-subset(data_0,data_0$resident == resident() &
 })
 ```
 
-### **ZPD 1** - *Highest level on case* {.value-box}
+### ZPD highest level on case {.value-box}
 
 ```{r}
 # usrCount is a reactive expression that keeps an approximate
@@ -744,60 +744,47 @@ data<-subset(data_0,data_0$resident == resident() &
                   data_0$case == case())
 
 #recoding ZPDs
-# spd_rec<-car::recode(data$zpd,"
-#                                     'ZPD1'=1;
-#                                     'ZPD2'=2;
-#                                     'ZPD3'=3;
-#                                     'ZPD4'=4;
-#                                     'ZPD 4'=4;
-#                                     ''=NA
-#                           ")
+spd_rec<-car::recode(data$zpd,"
+                                    'ZPD1'=1;
+                                    'ZPD2'=2;
+                                    'ZPD3'=3;
+                                    'ZPD4'=4;
+                                    'ZPD 4'=4;
+                                    ''=NA
+                          ")
 
 #getting the highest
-highest_zpd <- max(as.numeric(na.omit(as.character(data$aZPD1))))
+highest_zpd <- max(as.numeric(na.omit(as.character(spd_rec))))
 
 #recoding back to category
 usrCount <- car::recode(highest_zpd,"
-                                    1='Show and tell';
-                                    2='Active help';
-                                    3='Passive help';
-                                    4='No help'
-                          ")
-
-color <- car::recode(highest_zpd,"
-                                    1='red';
-                                    2='orange';
-                                    3='blue';
-                                    4='green'
+                                    1='ZPD1';
+                                    2='ZPD2';
+                                    3='ZPD3';
+                                    4='ZPD4'
                           ")
 
 #plot value
-valueBox(value = usrCount, 
-         icon = "fa-users",
-         color = color)
+valueBox(value = usrCount, icon = "fa-users")
 })
 ```
 
-### **ZPD 2** - *Highest level on case* {.value-box}
 
+### ZPD description 
+  
 ```{r}
-# usrCount is a reactive expression that keeps an approximate
-# count of all of the unique users that have been seen since the
-# app started.
+renderTable({
 
-# Emit the user count
-renderValueBox({
+    #   data <- data_0
+    # if (input$attending != "All") {
+    #   data <- data[data$attending == input$attending,]
+    # }
+    
+    # if (all(is.na(data$q7_suggestion_for_improvement))==TRUE) {
 
-    # data <- data_0
-    # if (input$resident != "All") {
-    #   data <- data[data$resident == input$resident,]
-    # }
-    # if (input$subspecialty != "All") {
-    #   data <- data[data$subspecialty == input$subspecialty,]
-    # }
-    # if (input$case != "All") {
-    #   data <- data[data$case == input$case,]
-    # }
+    #   "No comments"
+
+    # } else{
 
 resident<-reactive({input$resident})
 subspecialty<-reactive({input$subspecialty})
@@ -807,136 +794,46 @@ data<-subset(data_0,data_0$resident == resident() &
                   data_0$subspecialty == subspecialty() &
                   data_0$case == case())
 
-#getting the highest
-highest_zpd <- max(as.numeric(na.omit(as.character(data$aZPD2))))
 
-#recoding back to category
-usrCount <- car::recode(highest_zpd,"
-                                    1='Show and tell';
-                                    2='Active help';
-                                    3='Passive help';
-                                    4='No help'
-                          ")
+data_zpd<-with(data,data.frame(aZPD1,aZPD2,aZPD3,aZPD4))
 
-color <- car::recode(highest_zpd,"
-                                    1='red';
-                                    2='orange';
-                                    3='blue';
-                                    4='green'
-                          ")
+    # pkgData() %>%
+    data_zpd %>%
+    # tally() %>%
+    # arrange(desc(n), tolower(package)) %>%
+    gather() %>%
+    group_by(key) %>%
+    summarise(mean=mean(na.omit(value)),sd=sd(na.omit(value))) -> group_by_zpd
+  # mutate(percentage = n / nrow(pkgData()) * 100) %>%
 
-#plot value
-valueBox(value = usrCount, 
-         icon = "fa-users",
-         color = color)
-})
-```
 
-### **ZPD 3** - *Highest level on case* {.value-box}
+  group_by_zpd$cat<-car::recode(group_by_zpd$mean,"
+    1:1.999='Show/Tell';
+    2:2.999='Active Help';
+    3:3.999='Passive Help';
+    4='No Help'") 
 
-```{r}
-# usrCount is a reactive expression that keeps an approximate
-# count of all of the unique users that have been seen since the
-# app started.
+ group_by_zpd$key<-car::recode(group_by_zpd$key,"
+      'aZPD1'='ZPD 1';
+      'aZPD2'='ZPD 2';
+      'aZPD3'='ZPD 3';
+      'aZPD4'='ZPD 4'")
 
-# Emit the user count
-renderValueBox({
+ group_by_zpd[,2]<-round(group_by_zpd[,2],2)
 
-    # data <- data_0
-    # if (input$resident != "All") {
-    #   data <- data[data$resident == input$resident,]
-    # }
-    # if (input$subspecialty != "All") {
-    #   data <- data[data$subspecialty == input$subspecialty,]
-    # }
-    # if (input$case != "All") {
-    #   data <- data[data$case == input$case,]
-    # }
+colnames(group_by_zpd)<-c("ZPDs","Average score", "Sd Score","Category")
 
-resident<-reactive({input$resident})
-subspecialty<-reactive({input$subspecialty})
-case<-reactive({input$case})
+group_by_zpd
 
-data<-subset(data_0,data_0$resident == resident() &
-                  data_0$subspecialty == subspecialty() &
-                  data_0$case == case())
+group_by_tbl<-group_by_zpd[,-c(3)]
 
-#getting the highest
-highest_zpd <- max(as.numeric(na.omit(as.character(data$aZPD3))))
+group_by_tbl
+# 
 
-#recoding back to category
-usrCount <- car::recode(highest_zpd,"
-                                    1='Show and tell';
-                                    2='Active help';
-                                    3='Passive help';
-                                    4='No help'
-                          ")
 
-color <- car::recode(highest_zpd,"
-                                    1='red';
-                                    2='orange';
-                                    3='blue';
-                                    4='green'
-                          ")
+    # select("Status" = q7_suggestion_for_improvement) %>%
+    # as.data.frame() %>%
 
-#plot value
-valueBox(value = usrCount, 
-         icon = "fa-users",
-         color = color)
-})
-```
-
-### **ZPD 4** - *Highest level on case* {.value-box}
-
-```{r}
-# usrCount is a reactive expression that keeps an approximate
-# count of all of the unique users that have been seen since the
-# app started.
-
-# Emit the user count
-renderValueBox({
-
-    # data <- data_0
-    # if (input$resident != "All") {
-    #   data <- data[data$resident == input$resident,]
-    # }
-    # if (input$subspecialty != "All") {
-    #   data <- data[data$subspecialty == input$subspecialty,]
-    # }
-    # if (input$case != "All") {
-    #   data <- data[data$case == input$case,]
-    # }
-
-resident<-reactive({input$resident})
-subspecialty<-reactive({input$subspecialty})
-case<-reactive({input$case})
-
-data<-subset(data_0,data_0$resident == resident() &
-                  data_0$subspecialty == subspecialty() &
-                  data_0$case == case())
-
-#getting the highest
-highest_zpd <- max(as.numeric(na.omit(as.character(data$aZPD4))))
-
-#recoding back to category
-usrCount <- car::recode(highest_zpd,"
-                                    1='Show and tell';
-                                    2='Active help';
-                                    3='Passive help';
-                                    4='No help'
-                          ")
-
-color <- car::recode(highest_zpd,"
-                                    1='red';
-                                    2='orange';
-                                    3='blue';
-                                    4='green'
-                          ")
-
-#plot value
-valueBox(value = usrCount, 
-         icon = "fa-users",
-         color = color)
 })
 ```
 
@@ -944,7 +841,7 @@ Column
 -----------------------------------------------------------
 
 
-### ZPD evolving overtime {data-height=1550}
+### ZPD evolving overtime
 
 ```{r}
 # data <- data_0
@@ -1087,94 +984,16 @@ tryout_NAtozero$key<-recode(tryout_NAtozero$key,
 toplot<-plot_ly(tryout_NAtozero,type = "bar", 
           x = ~key, 
           y = ~show_tell,
-          text = tryout_NAtozero$show_tell, 
-          textposition = 'auto',
           name='Show and Tell') %>%
-      add_trace(y = ~active_help, 
-                name = 'Active Help',
-                text = tryout_NAtozero$active_help, 
-                textposition = 'auto') %>%
-      add_trace(y = ~passive_help,
-                name = 'Passive Help',
-                text = tryout_NAtozero$passive_help, 
-                textposition = 'auto') %>%
-      add_trace(y = ~no_help,
-                name = 'No Help',
-                text = tryout_NAtozero$no_help, 
-                textposition = 'auto') %>%
-      layout(yaxis = list(title = 'Days'),
+      add_trace(y = ~active_help, name = 'Active Help') %>%
+      add_trace(y = ~passive_help, name = 'Passive Help') %>%
+      add_trace(y = ~no_help, name = 'No Help') %>%
+      layout(yaxis = list(title = 'Count'),
            xaxis = list(title = 'Zones of Proximal Development'), 
-            barmode = 'stack',
+            barmode = 'group',
             legend=list(orientation='h'))
 })
 
-```
-
-### Average ZPD level
-  
-```{r}
-renderTable({
-
-    #   data <- data_0
-    # if (input$attending != "All") {
-    #   data <- data[data$attending == input$attending,]
-    # }
-    
-    # if (all(is.na(data$q7_suggestion_for_improvement))==TRUE) {
-
-    #   "No comments"
-
-    # } else{
-
-resident<-reactive({input$resident})
-subspecialty<-reactive({input$subspecialty})
-case<-reactive({input$case})
-
-data<-subset(data_0,data_0$resident == resident() &
-                  data_0$subspecialty == subspecialty() &
-                  data_0$case == case())
-
-
-data_zpd<-with(data,data.frame(aZPD1,aZPD2,aZPD3,aZPD4))
-
-    # pkgData() %>%
-    data_zpd %>%
-    # tally() %>%
-    # arrange(desc(n), tolower(package)) %>%
-    gather() %>%
-    group_by(key) %>%
-    summarise(mean=mean(na.omit(value)),sd=sd(na.omit(value))) -> group_by_zpd
-  # mutate(percentage = n / nrow(pkgData()) * 100) %>%
-
-
-  group_by_zpd$cat<-car::recode(group_by_zpd$mean,"
-    1:1.999='Show/Tell';
-    2:2.999='Active Help';
-    3:3.999='Passive Help';
-    4='No Help'") 
-
- group_by_zpd$key<-car::recode(group_by_zpd$key,"
-      'aZPD1'='ZPD 1';
-      'aZPD2'='ZPD 2';
-      'aZPD3'='ZPD 3';
-      'aZPD4'='ZPD 4'")
-
- group_by_zpd[,2]<-round(group_by_zpd[,2],2)
-
-colnames(group_by_zpd)<-c("ZPDs","Average score", "Sd Score","Category")
-
-group_by_zpd
-
-group_by_tbl<-group_by_zpd[,-c(2,3)]
-
-group_by_tbl
-# 
-
-
-    # select("Status" = q7_suggestion_for_improvement) %>%
-    # as.data.frame() %>%
-
-})
 ```
 
 <!-- 

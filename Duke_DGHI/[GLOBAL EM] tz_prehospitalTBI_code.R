@@ -722,7 +722,6 @@ exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95)))
 #residuals(model1_death, type="deviance") # residuals
 #logistic.display(baselineXFUP3)
 
-
 logmodel_gos<-glm(gos_cat ~ time_to_care_cat + 
 						transport_legs_cat + 
 						age + 
@@ -736,7 +735,6 @@ summary(logmodel_gos)
 #anova(reglogGEU)
 #exp(coef(model1_death)) # exponentiated coefficients
 #exp(confint(model1_death)) # 95% CI for exponentiated coefficients
-exp(cbind(Odds=coef(logmodel_gos),confint(logmodel_gos,level=0.95))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 # logistic.display(logmodel)

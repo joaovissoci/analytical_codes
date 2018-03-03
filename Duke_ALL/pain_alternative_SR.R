@@ -19,7 +19,7 @@ library, character.only=T)
 #IMPORTING DATA
 #################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/Pain_SR/pain_sr_data-sae.csv")
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/Pain_SR/pain_sr_data-sae.csv")
 #information between " " are the path to the directory in your computer where the data is stored
 
 #############################################################################
@@ -101,7 +101,7 @@ meta_model<-with(data,data.frame(study_name,
 #
 #############################################################################
 
-#First fup model with post treatment data
+# First fup model with post treatment data
 
 # #extracting studies with suicide ideation measures
 meta_firstFUP_post<-subset(meta_model,
@@ -163,20 +163,21 @@ meta_fig1_suppl <- metacont(post_intervention_samplesize,
   studlab=study_name)
 # summary(meta1)
 
+# tiff("/Users/Joao/Desktop/figure1_POST.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
 setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/figure1_POST.eps",
-	width = 14, height = 12)
+postscript("/Users/Joao/Desktop/figure1_POST.eps",
+	width = 12, height = 9)
 forest(meta_fig1_suppl,sortvar=meta_fig1_suppl$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
-					   digits.sd=2)
+					   digits.sd=2,
+					   label.right="Favours control", 
+					   label.left="Favours experimental")
 dev.off()
 
-
 setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/Suppl_figure1_POST_funnel.eps",
+# tiff("/Users/Joao/Desktop/Suppl_figure1_POST_funnel.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
+postscript("/Users/Joao/Desktop/Suppl_figure1_POST_funnel.eps",
 	width = 8, height = 8)
 funnel(meta_fig1_suppl)
 dev.off()
@@ -252,37 +253,44 @@ meta_direct_post <- metacont(post_intervention_samplesize,
 summary(meta_direct_post)
 
 setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/figure2a_POST.eps",
-	width = 14, height = 12)
+# tiff("/Users/Joao/Desktop/figure2a_POST.tiff", width = 10, height = 7, units='in',compression = 'lzw', res = 600)
+postscript("/Users/Joao/Desktop/figure2a_POST.eps",
+	width = 12, height = 7)
 forest(meta_direct_post,sortvar=meta_direct_post$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
 					   digits.sd=2,
-					   overall=FALSE)
+					   overall=FALSE,
+					   label.right="Favours control", 
+					   label.left="Favours experimental")
 dev.off()
 
 
-setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/igure2a_POST_funnel.eps",
-	width = 8, height = 8)
-funnel(meta_direct_post)
-dev.off()
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/joaovissoci/Desktop/igure2a_POST_funnel.eps",
+# 	width = 8, height = 8)
+# funnel(meta_direct_post)
+# dev.off()
 
 metainf(meta_direct_post)
 metainf(meta_direct_post, pooled="random")
 
+
+
 # #excluding Goertz 2006 reduces Hˆ2 to 61.4% and the estimate to -0.276
-# meta1 <- metacont(intervention_1, 
-# 	mean_post_intervention_adj,
-# 	sd_post_intervention_adj,
-# 	control_1,
-# 	mean_post_control_adj,
-# 	sd_post_control_adj, 
-#   data=meta_model_direct[-3,], sm="SMD",
-#   print.byvar=FALSE,byvar=pain_outcome_time_cat,
-#   comb.fixed=FALSE,studlab=study_name)
+meta_direct_post_bias <- metacont(post_intervention_samplesize,
+	mean_post_intervention_adj,
+	sd_post_intervention_adj,
+	post_control_samplesize,
+	mean_post_control_adj,
+	sd_post_control_adj, 
+  data=meta_model_direct, 
+  sm="SMD",
+  # byvar=pain_outcome_time_cat,
+  print.byvar=FALSE,
+  comb.fixed=FALSE,
+  studlab=study_name)
 # summary(meta1)
 
 # tiff("/Users/jnv4/Desktop/painSR_figure3a.tiff",
@@ -294,6 +302,7 @@ metainf(meta_direct_post, pooled="random")
 # funnel(meta1)
 # metainf(meta1)
 # metainf(meta1, pooled="random")
+metabias(meta_direct_post_bias)
 
 #############################################################################
 #Figure. 3 - Models for INDIRECT interventions
@@ -443,23 +452,25 @@ meta_physical_post <- metacont(post_intervention_samplesize,
 summary(meta_physical_post)
 
 setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/figure2b_POST.eps",
-	width = 14, height = 12)
+# tiff("/Users/Joao/Desktop/figure2b_POST.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
+postscript("/Users/Joao/Desktop/figure2b_POST.eps",
+	width = 10, height = 8)
 forest(meta_physical_post,sortvar=meta_physical_post$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
 					   digits.sd=2,
-					   overall=FALSE)
+					   overall=FALSE,
+					   label.right="Favours control", 
+					   label.left="Favours experimental")
 dev.off()
 
 
-setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/figure2b_POST_funnel.eps",
-	width = 8, height = 8)
-funnel(meta_physical_post)
-dev.off()
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/joaovissoci/Desktop/figure2b_POST_funnel.eps",
+# 	width = 8, height = 8)
+# funnel(meta_physical_post)
+# dev.off()
 
 metainf(meta3c)
 metainf(meta3c, pooled="random")
@@ -532,22 +543,24 @@ meta_firstFUP_DIFF <- metacont(post_intervention_samplesize,
 summary(meta_firstFUP_DIFF)
 
 setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/suppl_figure1_DIFF.eps",
-	width = 14, height = 12)
+# tiff("/Users/Joao/Desktop/suppl_figure1_DIFF.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
+postscript("/Users/Joao/Desktop/suppl_figure1_DIFF.eps",
+	width = 11, height = 8)
 forest(meta_firstFUP_DIFF,sortvar=meta_firstFUP_DIFF$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
-					   digits.sd=2)
+					   digits.sd=2,
+					   label.right="Favours control", 
+					   label.left="Favours experimental")
 dev.off()
 
 
-setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/suppl_figure1_funnel_DIFF.eps",
-	width = 8, height = 8)
-funnel(meta_firstFUP_DIFF)
-dev.off()
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/joaovissoci/Desktop/suppl_figure1_funnel_DIFF.eps",
+# 	width = 8, height = 8)
+# funnel(meta_firstFUP_DIFF)
+# dev.off()
 
 metainf(meta1)
 metainf(meta1, pooled="random")
@@ -617,24 +630,26 @@ meta_direct_DIFF <- metacont(post_intervention_samplesize,
   comb.fixed=FALSE,
   studlab=study_name)
 
-setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/suppl_figure2a_DIFF.eps",
-	width = 14, height = 12)
+# setEPS()
+tiff("/Users/Joao/Desktop/suppl_figure2a_DIFF.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
+# postscript("/Users/joaovissoci/Desktop/suppl_figure2a_DIFF.eps",
+# 	width = 14, height = 12)
 forest(meta_direct_DIFF,sortvar=meta_direct_DIFF$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
 					   digits.sd=2,
-					   overall=FALSE)
+					   overall=FALSE,
+					   label.right="Favours control", 
+					   label.left="Favours experimental")
 dev.off()
 
 
-setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/suppl_figure2a_DIFF_funnel.eps",
-	width = 8, height = 8)
-funnel(meta_direct_DIFF)
-dev.off()
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/joaovissoci/Desktop/suppl_figure2a_DIFF_funnel.eps",
+# 	width = 8, height = 8)
+# funnel(meta_direct_DIFF)
+# dev.off()
 
 metainf(meta1)
 metainf(meta1, pooled="random")
@@ -815,24 +830,26 @@ meta_physical_DIFF <- metacont(post_intervention_samplesize,
   comb.fixed=FALSE,
   studlab=study_name)
 
-setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/suppl_figure2b_DIFF.eps",
-	width = 14, height = 12)
+# setEPS()
+tiff("/Users/Joao/Desktop/suppl_figure2b_DIFF.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
+# postscript("/Users/joaovissoci/Desktop/suppl_figure2b_DIFF.eps",
+# 	width = 14, height = 12)
 forest(meta_physical_DIFF,sortvar=meta_physical_DIFF$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
 					   digits.sd=2,
-					   overall=FALSE)
+					   overall=FALSE,
+					   label.right="Favours control", 
+					   label.left="Favours experimental")
 dev.off()
 
 
-setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/suppl_figure2b_DIFF_funnel.eps",
-	width = 8, height = 8)
-funnel(meta_physical_DIFF)
-dev.off()
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/joaovissoci/Desktop/suppl_figure2b_DIFF_funnel.eps",
+# 	width = 8, height = 8)
+# funnel(meta_physical_DIFF)
+# dev.off()
 
 metainf(meta3c)
 metainf(meta3c, pooled="random")

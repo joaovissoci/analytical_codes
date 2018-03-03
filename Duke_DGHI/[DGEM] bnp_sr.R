@@ -38,7 +38,7 @@ lapply(c("meta"), library, character.only=T)
 
 # bnp_sr_data<-read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/BNP SR/bnp_SR_data.csv")
 
-bnp_sr_metadata<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/SRs/BNP SR/US_bnpmetaanalysis_data2.csv")
+bnp_sr_metadata<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/SRs/BNP SR/US_bnpmetaanalysis_data.csv")
 
 
 #############################################################################
@@ -93,6 +93,13 @@ delat_data<-data.frame(mean_exp,
 					   study=meta_temp_normal$Authors,
 					   group=meta_temp_normal$group)
 
+
+total_sample<-rowSums(data.frame(delat_data$sample_exp,
+	   								  delat_data$sample_control))
+
+delat_data$study_2<-paste(delat_data$study, " (n=",total_sample,")",sep = "")
+
+#sensitivity analysis
 #run metanalysis model for continuous data
 #FULL MODEL
 meta1 <- metacont(	
@@ -106,12 +113,12 @@ meta1 <- metacont(
 				    label.c="Normal",
 				    complab="SMD, Hodges' G",
 				    comb.random=TRUE,
-				    comb.fixed=FALSE,
-  					data=delat_data,
+				    comb.fixed=TRUE,
+  					data=delat_data[-3,],
   					sm="SMD",
  				    byvar=group,
  				    print.byvar=FALSE,
-  					studlab=study)
+  					studlab=study_2)
 summary(meta1)
 
 # #Excluding Marumoto et al., 1995
@@ -135,7 +142,8 @@ summary(meta1)
 #   					studlab=meta_bnp_ischemic$Authors[1:3])
 # summary(meta1)
 
-tiff("/Users/joaovissoci/Desktop/figure2.tiff",
+#sensitivity analysis
+tiff("/Users/Joao/Desktop/figure2.tiff",
   width = 800, height = 400,compression = 'lzw')
 forest(meta1,
 	   leftcols=c("studlab"),
@@ -147,9 +155,75 @@ forest(meta1,
 	   just.studlab="left",
 	   layout="JAMA",
 	   # leftlabs=c("Author", "N", "Delta", "SD"),
-	   # comb.fixed=TRUE,
+	   comb.fixed=TRUE,
 	   xlim=c(-3, 3),
-	   overall=FALSE
+	   sortvar=rev(rowSums(data.frame(delat_data$sample_exp,
+	   								  delat_data$sample_control)))
+	   # colgap.forest.left=unit(3.5,"cm")
+	   )
+dev.off()
+
+funnel(meta1)
+metainf(meta1)
+metainf(meta1, pooled="random")
+
+#FULL MODEL
+meta1 <- metacont(	
+					sample_exp, 
+					mean_exp,
+					sd_exp,
+					sample_control,
+					mean_control,
+					sd_control,
+					label.e="Ischemic",
+				    label.c="Normal",
+				    complab="SMD, Hodges' G",
+				    comb.random=TRUE,
+				    comb.fixed=TRUE,
+  					data=delat_data,
+  					sm="SMD",
+ 				    byvar=group,
+ 				    print.byvar=FALSE,
+  					studlab=study_2)
+summary(meta1)
+
+# #Excluding Marumoto et al., 1995
+# meta1 <- metacont(	
+# 					sample_exp, 
+# 					mean_exp,
+# 					sd_exp,
+# 					sample_control,
+# 					mean_control,
+# 					sd_control,
+# 					label.e="Ischemic",
+# 				    label.c="Normal",
+# 				    complab="SMD, Hodges' G",
+# 				    # label.left=TRUE,
+# 				    comb.random=FALSE,
+# 				    comb.fixed=TRUE,
+#   					data=delat_data_bnp[1:3,],
+#   					sm="SMD",
+#   					# keepdata=FALSE,
+#  				    # byvar=intervention,print.byvar=FALSE,
+#   					studlab=meta_bnp_ischemic$Authors[1:3])
+# summary(meta1)
+
+tiff("/Users/Joao/Desktop/figure2.tiff",
+  width = 800, height = 400,compression = 'lzw')
+forest(meta1,
+	   leftcols=c("studlab"),
+	   rigthcols=c("w.fixed"),
+	   # overall=FALSE, #A logical indicating whether overall summaries should be plotted
+	   xlab="Delta Hedges' g",
+	   leftlabs=c("Study"),
+	   just="center",
+	   just.studlab="left",
+	   layout="JAMA",
+	   # leftlabs=c("Author", "N", "Delta", "SD"),
+	   comb.fixed=TRUE,
+	   xlim=c(-3, 3),
+	   sortvar=rev(rowSums(data.frame(delat_data$sample_exp,
+	   								  delat_data$sample_control)))
 	   # colgap.forest.left=unit(3.5,"cm")
 	   )
 dev.off()
