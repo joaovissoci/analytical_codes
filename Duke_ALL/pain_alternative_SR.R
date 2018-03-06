@@ -165,22 +165,22 @@ meta_fig1_suppl <- metacont(post_intervention_samplesize,
 
 # tiff("/Users/Joao/Desktop/figure1_POST.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
 setEPS()
-postscript("/Users/Joao/Desktop/figure1_POST.eps",
-	width = 12, height = 9)
+postscript("/Users/Joao/Desktop/figure2_POST.eps",
+	width = 11, height = 9)
 forest(meta_fig1_suppl,sortvar=meta_fig1_suppl$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
 					   digits.sd=2,
-					   label.right="Favours control", 
-					   label.left="Favours experimental")
+					   label.right="Favors control", 
+					   label.left="Favors intervention")
 dev.off()
 
-setEPS()
-# tiff("/Users/Joao/Desktop/Suppl_figure1_POST_funnel.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
-postscript("/Users/Joao/Desktop/Suppl_figure1_POST_funnel.eps",
-	width = 8, height = 8)
-funnel(meta_fig1_suppl)
-dev.off()
+# setEPS()
+# # tiff("/Users/Joao/Desktop/Suppl_figure1_POST_funnel.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
+# postscript("/Users/Joao/Desktop/Suppl_figure1_POST_funnel.eps",
+# 	width = 8, height = 8)
+# funnel(meta_fig1_suppl)
+# dev.off()
 
 metainf(meta1)
 metainf(meta1, pooled="random")
@@ -254,15 +254,15 @@ summary(meta_direct_post)
 
 setEPS()
 # tiff("/Users/Joao/Desktop/figure2a_POST.tiff", width = 10, height = 7, units='in',compression = 'lzw', res = 600)
-postscript("/Users/Joao/Desktop/figure2a_POST.eps",
-	width = 12, height = 7)
+postscript("/Users/Joao/Desktop/figure3a_POST.eps",
+	width = 10, height = 7)
 forest(meta_direct_post,sortvar=meta_direct_post$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
 					   digits.sd=2,
 					   overall=FALSE,
-					   label.right="Favours control", 
-					   label.left="Favours experimental")
+					   label.right="Favors control", 
+					   label.left="Favors intervention")
 dev.off()
 
 
@@ -453,15 +453,15 @@ summary(meta_physical_post)
 
 setEPS()
 # tiff("/Users/Joao/Desktop/figure2b_POST.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
-postscript("/Users/Joao/Desktop/figure2b_POST.eps",
+postscript("/Users/Joao/Desktop/figure3b_POST.eps",
 	width = 10, height = 8)
 forest(meta_physical_post,sortvar=meta_physical_post$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
 					   digits.sd=2,
 					   overall=FALSE,
-					   label.right="Favours control", 
-					   label.left="Favours experimental")
+					   label.right="Favors control", 
+					   label.left="Favors intervention")
 dev.off()
 
 
@@ -550,8 +550,8 @@ forest(meta_firstFUP_DIFF,sortvar=meta_firstFUP_DIFF$TE,
 					   bysort=FALSE,
 					   digits.mean=2,
 					   digits.sd=2,
-					   label.right="Favours control", 
-					   label.left="Favours experimental")
+					   label.right="Favors intervention", 
+					   label.left="Favors control")
 dev.off()
 
 
@@ -630,18 +630,18 @@ meta_direct_DIFF <- metacont(post_intervention_samplesize,
   comb.fixed=FALSE,
   studlab=study_name)
 
-# setEPS()
-tiff("/Users/Joao/Desktop/suppl_figure2a_DIFF.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
-# postscript("/Users/joaovissoci/Desktop/suppl_figure2a_DIFF.eps",
-# 	width = 14, height = 12)
-forest(meta_direct_DIFF,sortvar=meta_direct_DIFF$TE,
-					   bysort=FALSE,
-					   digits.mean=2,
-					   digits.sd=2,
-					   overall=FALSE,
-					   label.right="Favours control", 
-					   label.left="Favours experimental")
-dev.off()
+# # setEPS()
+# tiff("/Users/Joao/Desktop/suppl_figure2a_DIFF.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
+# # postscript("/Users/joaovissoci/Desktop/suppl_figure2a_DIFF.eps",
+# # 	width = 14, height = 12)
+# forest(meta_direct_DIFF,sortvar=meta_direct_DIFF$TE,
+# 					   bysort=FALSE,
+# 					   digits.mean=2,
+# 					   digits.sd=2,
+# 					   overall=FALSE,
+# 					   label.right="Favors control", 
+# 					   label.left="Favors intervention")
+# dev.off()
 
 
 # setEPS()
@@ -830,21 +830,21 @@ meta_physical_DIFF <- metacont(post_intervention_samplesize,
   comb.fixed=FALSE,
   studlab=study_name)
 
-# setEPS()
-tiff("/Users/Joao/Desktop/suppl_figure2b_DIFF.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
-# postscript("/Users/joaovissoci/Desktop/suppl_figure2b_DIFF.eps",
-# 	width = 14, height = 12)
-forest(meta_physical_DIFF,sortvar=meta_physical_DIFF$TE,
-					   bysort=FALSE,
-					   digits.mean=2,
-					   digits.sd=2,
-					   overall=FALSE,
-					   label.right="Favours control", 
-					   label.left="Favours experimental")
-dev.off()
+# # setEPS()
+# tiff("/Users/Joao/Desktop/suppl_figure2b_DIFF.tiff", width = 12, height = 9, units='in',compression = 'lzw', res = 600)
+# # postscript("/Users/joaovissoci/Desktop/suppl_figure2b_DIFF.eps",
+# # 	width = 14, height = 12)
+# forest(meta_physical_DIFF,sortvar=meta_physical_DIFF$TE,
+# 					   bysort=FALSE,
+# 					   digits.mean=2,
+# 					   digits.sd=2,
+# 					   overall=FALSE,
+# 					   label.right="Favors control", 
+# 					   label.left="Favors intervention")
+# dev.off()
 
 
-# setEPS()
+# # setEPS()
 # # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
 # postscript("/Users/joaovissoci/Desktop/suppl_figure2b_DIFF_funnel.eps",
 # 	width = 8, height = 8)
