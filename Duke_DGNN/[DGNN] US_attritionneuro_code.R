@@ -69,7 +69,13 @@ data$date_of_birth_recoded<-as.POSIXct(data$date_of_birth,
                       format='%m/%d/%Y')
 
 #SUBSET ONLY RESIDENTS
-data_residents <- subset(data,data$employee_title=="Resident")
+data_2000_2017 <- subset(data,data$start_recoded > as.Date("2000-01-01"))
+
+year(data_2000_2017$start_recoded)
+
+schools<-unique(data_2000_2017$affiliation)
+
+write.csv(schools,"/Users/Joao/Desktop/schools.csv")
 
 #
 

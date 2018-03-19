@@ -33,8 +33,10 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-file <- file("/Users/joaovissoci/Downloads/exported_data.txt",
-             open="r",
+library(jsonlite)
+
+file <- file("/Users/Joao/Box Sync/Home Folder jnv4/Data/consultation/UCB/exported_data.txt",
+             open="rb",
              encoding="UTF-8-BOM")
 
 df <- read.delim(file=file,
