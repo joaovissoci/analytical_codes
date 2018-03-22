@@ -44,9 +44,9 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data_patients<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
+data_patients<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
 
-data_family<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAfamily_data.csv")
+data_family<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAfamily_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -851,20 +851,25 @@ network_glasso<-qgraph(
 # Mediation analysis
 
 model <- ' # direct effect
-             talked_dr ~ c*audit_total
+             talked_dr ~ a*audit_total
+             talked_dr ~ b*stigma
+             talked_dr ~ c*drinc_data_score
            # mediator
-             drinc_data_score ~ a*audit_total
-             talked_dr ~ b*drinc_data_score
+             stigma ~ d*audit_total
+             drinc_data_score ~ e*audit_total
+             stigma ~ f*drinc_data_score
            # indirect effect (a*b)
-             ab := a*b
+             db := d*b
+             efb := e*f*b
+             ec := e*c
            # total effect
-             total := c + (a*b)
+             # total := c + (a*b)
          '
 
-fit <- lavaan::sem(model, data = network_data,
+fit <- lavaan::sem(model, data = data_nonabst,
 					estimator="WLSMV",
-					ordered=colnames(network_data$talked_dr))
-summary(fit,standardized=TRUE,
+					ordered=colnames(data_nonabst$talked_dr))
+lavaan::summary(fit,standardized=TRUE,
 					fit.measures=TRUE,
 					rsq=TRUE)
 lavaan::fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
@@ -898,8 +903,8 @@ model <- ' # direct effect
 
 fit <- lavaan::sem(model, data = network_data,
 					estimator="WLSMV",
-					ordered=colnames(network_data$talked_dr))
-summary(fit,standardized=TRUE,
+					ordered=colnames(data_nonabst$talked_dr))
+lavaan::summary(fit,standardized=TRUE,
 					fit.measures=TRUE,
 					rsq=TRUE)
 lavaan::fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
