@@ -116,6 +116,67 @@ colnames(data)<-c("day",
 				  "deleteme9"
 				 )
 
+#recoding data
+
+data$gcs_observation<-car::recode(data$gcs_observation,"
+								 '11T'=11;
+								 '13T'=13
+								 ")
+data$gcs_observation<-as.numeric(as.character(data$gcs_observation))
+
+data$gcs_observation_cat<-car::recode(data$gcs_observation,"
+								 3:8='mild';
+								 9:12='moderate';
+								 13:15='severe'
+								 ")
+
+
+#Creating outcome variable
+data$minimal_activity<-with(data,rowSums(data.frame(lying_in_bed,
+													prom,
+													non_purpose_movement,
+													purpose_head_trunk_upper,
+													purpose_lower_extremity)))
+
+data$minimal_activity_recoded<-car::recode(data$minimal_activity,"
+	0='No';
+	else='Yes'")
+
+
+data$low_intensity<-with(data,rowSums(data.frame(sit_exercisein_bed,
+													sitting_edge_bed)))
+
+data$low_intensity_recoded<-car::recode(data$low_intensity,"
+	0='No';
+	else='Yes'")
+
+data$moderate_intensity<-with(data,rowSums(data.frame(sitting_bucket,
+													standing,
+													moving_bedtobucket)))
+
+data$moderate_intensity_recoded<-car::recode(data$moderate_intensity,"
+	0='No';
+	else='Yes'")
+
+data$high_intensity<-with(data,rowSums(data.frame(walking_assistance_2,
+													walking_assistance_1,
+													walking_contact_guard,
+													walking_independently_w_assistance,
+													walking_independently)))
+
+data$high_intensity_recoded<-car::recode(data$high_intensity,"
+	0='No';
+	else='Yes'")
+
+
+
+# create morbidity variable
+data <- mutate(data, morbidity = case_when(gos <=3 | gose<=4 ~ "Negative Outcome",
+                                       gos >3 | gose>4 ~ "Positive Outcome"))
+
+
+
+
 # Getting unique data to calculate descriptives
 
 data_descriptives<-NULL
@@ -125,9 +186,11 @@ for(i in 1:8){
 	temp<-subset(data,data$day==i)
 	temp2<-temp[1:10,]
 
-	data_descriptives<-rbind(data_test,temp2)
+	data_descriptives<-rbind(data_descriptives,temp2)
 
 }
+
+
 
 #######################################################
 #ANALYZING MISSING DATA
@@ -280,31 +343,31 @@ assocstats(table) #vcd package
 with(data_descriptives,describe(los_hospitalization))
 # with(data_descriptives,describeBy(los_hospitalization,class_crash))
 # t-test: # independent 2-group, 2 level IV
-with(data_descriptives,t.test(los_hospitalization ~ class_crash))
+# with(data_descriptives,t.test(los_hospitalization ~ class_crash))
 
 # LOS general unit
 with(data_descriptives,describe(los_gu))
 # with(data_descriptives,describeBy(los_gu,class_crash))
 # t-test: # independent 2-group, 2 level IV
-with(data_descriptives,t.test(los_gu ~ class_crash))
+# with(data_descriptives,t.test(los_gu ~ class_crash))
 
 # LOS High dependency
 with(data_descriptives,describe(los_hd))
 # with(data_descriptives,describeBy(los_hd,class_crash))
 # t-test: # independent 2-group, 2 level IV
-with(data_descriptives,t.test(los_hd ~ class_crash))
+# with(data_descriptives,t.test(los_hd ~ class_crash))
 
 # LOS ICU
 with(data_descriptives,describe(los_icu))
 # with(data_descriptives,describeBy(los_icu,class_crash))
 # t-test: # independent 2-group, 2 level IV
-with(data_descriptives,t.test(los_icu ~ class_crash))
+# with(data_descriptives,t.test(los_icu ~ class_crash))
 
 # LOS Casualty
 with(data_descriptives,describe(los_trauma))
 # with(data_descriptives,describeBy(los_trauma,class_crash))
 # t-test: # independent 2-group, 2 level IV
-with(data_descriptives,t.test(los_trauma ~ class_crash))
+# with(data_descriptives,t.test(los_trauma ~ class_crash))
 
 # # of patients previously on MV (sedetaion)?
 # with(data_descriptives,describe(los_trauma))
@@ -319,8 +382,7 @@ with(data_descriptives,describe(los_mv))
 # with(data_descriptives,t.test(los_mv ~ class_crash))
 
 # number of patients sedated during hospitalization
-with(data_descriptives,describe(sedation))
-table<-with(data_descriptives,table(current_unit))
+table<-with(data_descriptives,table(sedation))
 table
 prop.table(table)
 # table<-with(data_descriptives,table(current_unit,outcome))
@@ -336,24 +398,48 @@ with(data_descriptives,describe(los_sedation))
 # t-test: # independent 2-group, 2 level IV
 # with(data_descriptives,t.test(los_mv ~ class_crash))
 
-#OUTCOME ASSOCIATION AND BIVARIATE ANALYSIS
-###########################################
-#PARAMETRIC
-# one sample t-test
-t.test(data$IMC,mu=25) # Ho: mu=3
 
-# independent 2-group t-test
-t.test(data$IMC~data$Sexo,paired=FALSE) # where y is numeric and x is a binary factor
+######################################################################
+#TABLE 2
+######################################################################
 
-# paired t-test
-IMC2<-data$IMC*2
-t.test(data$IMC,IMC2,paired=TRUE) # where y is numeric and x is a binary factor
+# minimal_activity_recoded
+table<-with(data,table(minimal_activity_recoded))
+table
+prop.table(table)
+table<-with(data,table(minimal_activity_recoded,surgery))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,gcs_observation_cat))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,current_unit))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,current_unit))
+table
+prop.table(table,2)
 
-#NONPARAMETRIC
-wilcox.test(data$IMC~data$Sexo,paired=FALSE) # where y is numeric and x is a binary factor
+# minimal_activity_recoded
+table<-with(data,table(low_intensity))
+table
+prop.table(table)
+table<-with(data,table(low_intensity,surgery))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,gcs_observation_cat))
+table
+prop.table(table,2)
 
-# paired t-test
-wilcox.test(data$IMC,IMC2,paired=TRUE) 
+# minimal_activity_recoded
+table<-with(data,table(moderate_intensity))
+table
+prop.table(table)
+
+# minimal_activity_recoded
+table<-with(data,table(high_intensity))
+table
+prop.table(table)
 
 ######################################################################
 #MULTIVARIATE ANALYSIS
