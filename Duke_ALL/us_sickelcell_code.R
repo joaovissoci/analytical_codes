@@ -31,7 +31,7 @@ library("ggplot2")
 #LOADING DATA FROM A .CSV FILE
 # data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_dukescikecell_data.csv")
 
-data<-read_excel("/Users/Joao/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_EDOUsicklecell_data.xlsx")
+data<-read_excel("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_EDOUsicklecell_data.xlsx")
 
 #information between " " are the path to the directory in your computer where the data is stored
 
@@ -42,7 +42,7 @@ data<-read_excel("/Users/Joao/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_
 #                                  sep = ",",
 #                                  header = TRUE)
 
-# write.csv(data,"/Users/Joao/Desktop/sickle_cell_data.csv")
+# write.csv(data,"/Users/joaovissoci/Desktop/sickle_cell_data.csv")
 #############################################################################
 #DATA MANAGEMENT
 #############################################################################
@@ -116,15 +116,35 @@ colnames(data)<-c("recordID",
 				  )
 
 #Adjusting time based variables
-data$time_first_dose_drug<-with(data,drug_initial_time-arrival_time)/60
-data$time_first_pca<-with(data,pca_time-arrival_time)/60
-data$time_ed_tratment<-with(data,disposition-room_disposition_date)/60
-data$los_ed<-with(data,disposition-arrival_time)/60
-data$los_ceu<-with(data,ceu_dischrage_date-ceu_disposition_date)/60
+data$time_first_dose_drug<-with(data,drug_initial_time-arrival_time)
+data$time_first_pca<-with(data,pca_time-arrival_time)
+# data$time_ed_tratment<-with(data,disposition-room_disposition_date)
+data$los_ed<-with(data,ceu_dischrage_date-arrival_time)
+data$los_ceu<-with(data,ceu_dischrage_date-ceu_disposition_date)
 
 #recoding or creating new variables
 data$number_pca_tirations<-car::recode(data$number_pca_tirations,"NA=0")
+
+data$number_pca_tirations_cat<-car::recode(data$number_pca_tirations,"NA='none';
+																1:3='yes';
+																 else='yes'")
+
 data$pca_order_allow_tirations<-car::recode(data$pca_order_allow_tirations,"NA='No'")
+
+data$time_first_dose_drug_cat<-car::recode(data$time_first_dose_drug,"
+							0:60='A less than 60 min';
+							61:361='B more than 60 min'")
+
+
+data$number_prior_ED_visits_year_cat<-car::recode(data$number_prior_ED_visits_year,"
+	0:5='ALess than 5';
+	6:10='BSex to Ten';
+	11:60='CEleven to Twenty'")
+
+data$number_prior_hosp_year_cat<-car::recode(data$number_prior_hosp_year,"
+	0:5='ALess than 5';
+	6:10='BSex to Ten';
+	11:60='CEleven to Twenty'")
 
 #creating # of acute care visits
 data$number_prior_acutecare_visits_year<-with(data,rowSums(data.frame(number_prior_ED_visits_year,
@@ -195,10 +215,6 @@ with(data,by(number_prior_ED_visits_year,disposition,summary))
 # t-test: # independent 2-group, 2 level IV
 with(data,t.test(number_prior_ED_visits_year ~ disposition))
 
-data$number_prior_ED_visits_year_cat<-car::recode(data$number_prior_ED_visits_year,"
-	0:5='ALess than 5';
-	6:10='BSex to Ten';
-	11:60='CEleven to Twenty'")
 
 # current_unit
 table<-with(data,table(number_prior_ED_visits_year_cat))
@@ -216,11 +232,6 @@ with(data,summary(number_prior_hosp_year))
 with(data,by(number_prior_hosp_year,disposition,summary))
 # t-test: # independent 2-group, 2 level IV
 with(data,t.test(number_prior_hosp_year ~ disposition))
-
-data$number_prior_hosp_year_cat<-car::recode(data$number_prior_hosp_year,"
-	0:5='ALess than 5';
-	6:10='BSex to Ten';
-	11:60='CEleven to Twenty'")
 
 table<-with(data,table(number_prior_hosp_year_cat))
 table
@@ -298,7 +309,7 @@ logmodel<-glm(as.factor(disposition) ~
 						# gender +
 						# age +
 						# sicke_cell_severity_score +
-						number_prior_ED_visits_year_cat
+						number_prior_ED_visits_year
 						# number_prior_hosp_year +
 						# time_first_dose_drug +
 						# as.numeric(pain_score_change) +
@@ -318,7 +329,7 @@ logmodel<-glm(as.factor(disposition) ~
 						# age +
 						# sicke_cell_severity_score +
 						# number_prior_ED_visits_year_cat +
-						number_prior_hosp_year_cat
+						number_prior_hosp_year
 						# time_first_dose_drug +
 						# as.numeric(pain_score_change) +
 						# number_pca_tirations +
@@ -338,7 +349,7 @@ logmodel<-glm(as.factor(disposition) ~
 						# sicke_cell_severity_score +
 						# number_prior_ED_visits_year_cat +
 						# number_prior_hosp_year_cat +
-						time_first_dose_drug
+						time_first_dose_drug_cat
 						# as.numeric(pain_score_change) +
 						# number_pca_tirations +
 						# nsaids_used +
@@ -419,7 +430,7 @@ logmodel<-glm(as.factor(disposition) ~
 						# number_pca_tirations
 						# nsaids_used
 						# time_ed_tratment
-						# # los_ed +
+						los_ed
 						# los_ceu
 			,family=binomial, data=data)
 
@@ -438,8 +449,8 @@ logmodel<-glm(as.factor(disposition) ~
 						# number_pca_tirations
 						# nsaids_used
 						# time_ed_tratment
-						los_ed
-						# los_ceu
+						# los_ed
+						los_ceu
 			,family=binomial, data=data)
 
 summary(logmodel)
@@ -470,26 +481,65 @@ exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95)))
 # age and gender becaise the missing rate wsa to high
 
 logmodel<-glm(as.factor(disposition) ~ 
-						gender +
-						age +
-						sicke_cell_severity_score +
-						number_prior_ED_visits_year_cat +
-						number_prior_hosp_year_cat +
-						time_first_dose_drug +
-						as.numeric(pain_score_change) +
-						number_pca_tirations +
-						nsaids_used +
-						time_ed_tratment
-						# los_ed +
+						# gender + #significant for los_ed
+						# age + #need tokeep
+						sicke_cell_severity_score + #need to keep
+						number_prior_ED_visits_year + #need to keep
+						number_prior_hosp_year + #need to keep
+						time_first_dose_drug_cat + #potential influence on LOS
+						# as.numeric(pain_score_change) + #also improves the model
+						number_pca_tirations + # small improve the model
+						as.factor(nsaids_used) + #need to keep
+						time_first_pca +
+						# time_ed_tratment +
+						los_ed
 						# los_ceu
 			,family=binomial, data=data)
 
 summary(logmodel)
 #anova(reglogGEU)
-odds<-exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
-#predict(model1_death, type="response") # predicted values
-#residuals(model1_death, type="deviance") # residuals
-logistic.display(logmodel)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
+logmodel<-glm(as.factor(readmission_30days) ~ 
+						# gender + #significant for los_ed
+						# age + #need tokeep
+						sicke_cell_severity_score + #need to keep
+						number_prior_ED_visits_year_cat + #need to keep
+						number_prior_hosp_year_cat + #need to keep
+						time_first_dose_drug_cat + #potential influence on LOS
+						# as.numeric(pain_score_change) + #also improves the model
+						number_pca_tirations + # small improve the model
+						as.factor(nsaids_used) + #need to keep
+						time_first_pca +
+						# disposition +
+						los_ed
+						# los_ceu
+			,family=binomial, data=data)
+
+summary(logmodel)
+#anova(reglogGEU)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
+logmodel<-glm(as.factor(readmission_7days) ~ 
+						# gender + #significant for los_ed
+						# age + #need tokeep
+						sicke_cell_severity_score + #need to keep
+						number_prior_ED_visits_year_cat + #need to keep
+						number_prior_hosp_year_cat + #need to keep
+						time_first_dose_drug_cat + #potential influence on LOS
+						# as.numeric(pain_score_change) + #also improves the model
+						number_pca_tirations + # small improve the model
+						as.factor(nsaids_used) + #need to keep
+						time_first_pca +
+						# disposition +
+						los_ed
+						# los_ceu
+			,family=binomial, data=data)
+
+summary(logmodel)
+#anova(reglogGEU)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
 
 
 logmodel<-glm(as.factor(readmission_30days) ~ 
@@ -499,7 +549,7 @@ logmodel<-glm(as.factor(readmission_30days) ~
 						# number_prior_ED_visits_year_cat +
 						number_prior_hosp_year +
 						time_first_dose_drug +
-						as.numeric(pain_score_change) +
+						# as.numeric(pain_score_change) +
 						number_pca_tirations +
 						nsaids_used +
 						time_ed_tratment
@@ -578,7 +628,7 @@ readmission_7days_cat<-c(rep("Hospital",length(data$readmission_7days_hosp)),
 						 rep("CEU",length(data$readmission_7days_CEU)),
 						 rep("ED",length(data$readmission_7days_ED)))
 
-readmission_7days_label<-rep("7 days",length(readmission_7days_cat))
+readmission_7days_label<-rep(" 7 days",length(readmission_7days_cat))
 
 readmission_30days_data<-with(data,c(
 						readmission_30days_hosp,
@@ -594,6 +644,9 @@ readmission_30days_cat<-c(rep("Hospital",length(data$readmission_30days_hosp)),
 
 readmission_30days_label<-rep("30 days",length(readmission_30days_cat))
 
+readmission_30days_disposition<-with(data,c(disposition,disposition,disposition,disposition))
+
+readmission_7days_disposition<-with(data,c(disposition,disposition,disposition,disposition))
 
 readmission_data<-c(readmission_7days_data,readmission_30days_data)
 
@@ -601,14 +654,87 @@ readmission_cat<-c(readmission_7days_cat,readmission_30days_cat)
 
 readmission_label<-c(readmission_7days_label,readmission_30days_label)
 
-readmission_plotdata<-data.frame(readmission_data,readmission_cat,readmission_label)
+readmission_disposition<-c(readmission_7days_disposition,readmission_30days_disposition)
 
+readmission_plotdata<-data.frame(readmission_data,readmission_cat,readmission_label,readmission_disposition)
+
+readmission_plotdata_yes<-subset(readmission_plotdata,readmission_plotdata$readmission_data=='Checked')
 
 # g <- ggplot(readmission_plotdata, aes(as.character(readmission_cat)))
 # g
 
-ggplot(mpg, aes(class)) + 
-geom_bar(aes(fill=readmission_data))
+ggplot(readmission_plotdata_yes, aes(readmission_cat)) + 
+geom_bar(aes(fill=readmission_disposition),position = "dodge",) +
+facet_grid(.~readmission_label, scales="free_y")+
+labs(x='Visit type', y='# of visits') + 
+scale_fill_discrete(name='Initial CEU\ndisposition')
+
+
+#30 days readmission
+#day hospital
+table<-with(data,table(disposition,readmission_30days_hosp))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+#hospital
+table<-with(data,table(disposition,readmission_30days_dayhospital))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+#hospital
+table<-with(data,table(disposition,readmission_30days_CEU))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+#hospital
+table<-with(data,table(disposition,readmission_30days_ED))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+#7 days readmission
+#day hospital
+table<-with(data,table(disposition,readmission_7days_hosp))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+#hospital
+table<-with(data,table(disposition,readmission_7days_dayhospital))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+#hospital
+table<-with(data,table(disposition,readmission_7days_CEU))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+#hospital
+table<-with(data,table(disposition,readmission_7days_ED))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
 ##############################################################################
 #END
 ##############################################################################
