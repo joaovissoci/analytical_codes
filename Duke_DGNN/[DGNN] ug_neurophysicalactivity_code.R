@@ -45,7 +45,7 @@ data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/DGNN/Ug_neuropatients
 ######################################################################
 
 # Changing the names of the vectors
-colnames(data)<-c("day",
+colnames(data)<-c(
 				  "patient_id",
 				  "time",
 				  "no_movement",
@@ -124,12 +124,40 @@ data$gcs_observation<-car::recode(data$gcs_observation,"
 								 ")
 data$gcs_observation<-as.numeric(as.character(data$gcs_observation))
 
-data$gcs_observation_cat<-car::recode(data$gcs_observation,"
-								 3:8='mild';
-								 9:12='moderate';
-								 13:15='severe'
+data$surgery_recoded<-car::recode(data$surgery,"
+								 '1'='other';
+								 '2'='brain bleeds';
+								 '3'='rti';
+								 '4'='surgical management';
+								 '5'='surgical management';
+								 '6'='rti';
+								 '7'='other';
+								 '8'='surgical management';
+								 '9'='other';
+								 '10'='brain bleeds';
+								 '3,10'='rti';
+								 '5,10'='surgical management'
 								 ")
 
+data$medical_activity_restriction_recoded<-car::recode(
+	data$medical_activity_restriction,"
+								 '1'='arms constrained';
+								 '2'='legs constrained';
+								 '3'='mixed constraints';
+								 '4'='broken limb';
+								 '5'='broken limb';
+								 '6'='pregnant';
+								 '0'='no constraints';
+								 '1,5'='mixed constraints';
+								 '4,5'='mixed constraints';
+								 else='NA'
+								 ")
+
+data$gcs_observation_cat<-car::recode(data$gcs_observation,"
+								 3:8='severe';
+								 9:12='moderate';
+								 13:15='mild'
+								 ")
 
 #Creating outcome variable
 data$minimal_activity<-with(data,rowSums(data.frame(lying_in_bed,
@@ -175,21 +203,28 @@ data <- mutate(data, morbidity = case_when(gos <=3 | gose<=4 ~ "Negative Outcome
                                        gos >3 | gose>4 ~ "Positive Outcome"))
 
 
+# temp_day<-strsplit(as.character(data$patient_id), " ")
+# temp_day2<-as.data.frame(t(as.data.frame(temp_day)))
+# temp_day3<-str_split(as.character(data$patient_id), "Pat",simplify=TRUE)
+# temp_day3 <- t(sapply(temp_day2$V2, function(x) substring(x, first=c(1,2,4), last=c(1,3,6))))
 
+data$day<-str_sub(as.character(data$patient_id),-3,-3)
 
 # Getting unique data to calculate descriptives
 
-data_descriptives<-NULL
+temp3<-NULL
 
 for(i in 1:8){
 
 	temp<-subset(data,data$day==i)
 	temp2<-temp[1:10,]
 
-	data_descriptives<-rbind(data_descriptives,temp2)
+	temp3<-rbind(temp3,temp2)
 
 }
 
+#recode for demographics only
+data_descriptives<-subset(temp3,temp3$freq_observations==1)
 
 
 #######################################################
@@ -268,9 +303,9 @@ for(i in 1:8){
 
 # Age
 with(data_descriptives,describe(age))
-with(data_descriptives,describeBy(age,class_crash))
+# with(data_descriptives,describeBy(age,class_crash))
 # t-test: # independent 2-group, 2 level IV
-with(data_descriptives,t.test(age ~ class_crash))
+# with(data_descriptives,t.test(age ~ class_crash))
 
 # Gender
 table<-with(data_descriptives,table(gender))
@@ -279,12 +314,12 @@ prop.table(table)
 # table<-with(data_descriptives,table(gender,outcome))
 # table
 # prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
 
 # Diagnosis
-table<-with(data_descriptives,table(surgery))
+table<-with(data_descriptives,table(surgery_recoded))
 table
 prop.table(table)
 # table<-with(data_descriptives,table(surgery,outcome))
@@ -298,24 +333,24 @@ assocstats(table) #vcd package
 with(data_descriptives,describe(gcs_admission))
 # with(data_descriptives,describeBy(gcs_admission,class_crash))
 # t-test: # independent 2-group, 2 level IV
-with(data_descriptives,t.test(gcs_admission ~ class_crash))
+# with(data_descriptives,t.test(gcs_admission ~ class_crash))
 
 # GCS at observation
 with(data_descriptives,describe(gcs_observation))
 # with(data_descriptives,describeBy(gcs_observation,class_crash))
 # t-test: # independent 2-group, 2 level IV
-with(data_descriptives,t.test(gcs_observation ~ class_crash))
+# with(data_descriptives,t.test(gcs_observation ~ class_crash))
 
 # medical_activity_restriction
-table<-with(data_descriptives,table(medical_activity_restriction))
+table<-with(data_descriptives,table(medical_activity_restriction_recoded))
 table
 prop.table(table)
 # table<-with(data_descriptives,table(medical_activity_restriction,outcome))
 # table
 # prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
 
 # Mechanical Ventilation 02_type
 table<-with(data_descriptives,table(mv02_type))
@@ -324,9 +359,9 @@ prop.table(table)
 # table<-with(data_descriptives,table(mv02_type,outcome))
 # table
 # prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
 
 # current_unit
 table<-with(data_descriptives,table(current_unit))
@@ -335,9 +370,9 @@ prop.table(table)
 # table<-with(data_descriptives,table(current_unit,outcome))
 # table
 # prop.table(table,2)
-chisq.test(table)
-fisher.test(table)
-assocstats(table) #vcd package
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
 
 # los_hospitalization
 with(data_descriptives,describe(los_hospitalization))
@@ -407,7 +442,7 @@ with(data_descriptives,describe(los_sedation))
 table<-with(data,table(minimal_activity_recoded))
 table
 prop.table(table)
-table<-with(data,table(minimal_activity_recoded,surgery))
+table<-with(data,table(minimal_activity_recoded,surgery_recoded))
 table
 prop.table(table,2)
 table<-with(data,table(minimal_activity_recoded,gcs_observation_cat))
@@ -416,18 +451,84 @@ prop.table(table,2)
 table<-with(data,table(minimal_activity_recoded,current_unit))
 table
 prop.table(table,2)
-table<-with(data,table(minimal_activity_recoded,current_unit))
+table<-with(data,table(minimal_activity_recoded,bed))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,patient_room))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,off_unit))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,or))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,alone))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,family))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,nursing))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,neurosurgeon))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,pt))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,social_worker))
+table
+prop.table(table,2)
+table<-with(data,table(minimal_activity_recoded,other_medical))
 table
 prop.table(table,2)
 
-# minimal_activity_recoded
+# low_intensity
 table<-with(data,table(low_intensity))
 table
 prop.table(table)
-table<-with(data,table(low_intensity,surgery))
+table<-with(data,table(low_intensity,surgery_recoded))
 table
 prop.table(table,2)
 table<-with(data,table(low_intensity,gcs_observation_cat))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,current_unit))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,bed))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,patient_room))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,off_unit))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,or))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,alone))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,family))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,nursing))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,neurosurgeon))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,pt))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,social_worker))
+table
+prop.table(table,2)
+table<-with(data,table(low_intensity,other_medical))
 table
 prop.table(table,2)
 
@@ -435,11 +536,95 @@ prop.table(table,2)
 table<-with(data,table(moderate_intensity))
 table
 prop.table(table)
+table<-with(data,table(moderate_intensity,surgery_recoded))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,gcs_observation_cat))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,current_unit))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,bed))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,patient_room))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,off_unit))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,or))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,alone))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,family))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,nursing))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,neurosurgeon))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,pt))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,social_worker))
+table
+prop.table(table,2)
+table<-with(data,table(moderate_intensity,other_medical))
+table
+prop.table(table,2)
 
 # minimal_activity_recoded
 table<-with(data,table(high_intensity))
 table
 prop.table(table)
+table<-with(data,table(high_intensity,surgery_recoded))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,gcs_observation_cat))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,current_unit))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,bed))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,patient_room))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,off_unit))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,or))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,alone))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,family))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,nursing))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,neurosurgeon))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,pt))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,social_worker))
+table
+prop.table(table,2)
+table<-with(data,table(high_intensity,other_medical))
+table
+prop.table(table,2)
 
 ######################################################################
 #MULTIVARIATE ANALYSIS
