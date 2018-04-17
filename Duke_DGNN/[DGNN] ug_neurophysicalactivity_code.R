@@ -37,7 +37,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/DGNN/Ug_neuropatientsphysicalactivity/ug_neurophysicalactivity_data.csv",sep=",")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/DGNN/Ug_neuropatientsphysicalactivity/ug_neurophysicalactivity_data.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -123,6 +123,12 @@ data$gcs_observation<-car::recode(data$gcs_observation,"
 								 '13T'=13
 								 ")
 data$gcs_observation<-as.numeric(as.character(data$gcs_observation))
+
+data$gcs_observation_cat<-car::recode(data$gcs_observation,"
+								 3:8='mild';
+								 9:12='moderate';
+								 13:15='severe'
+								 ")
 
 data$gcs_observation_cat<-car::recode(data$gcs_observation,"
 								 3:8='mild';

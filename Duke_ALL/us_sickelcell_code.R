@@ -504,14 +504,14 @@ logmodel<-glm(as.factor(readmission_30days) ~
 						# gender + #significant for los_ed
 						# age + #need tokeep
 						sicke_cell_severity_score + #need to keep
-						number_prior_ED_visits_year_cat + #need to keep
-						number_prior_hosp_year_cat + #need to keep
+						number_prior_ED_visits_year + #need to keep
+						number_prior_hosp_year + #need to keep
 						time_first_dose_drug_cat + #potential influence on LOS
 						# as.numeric(pain_score_change) + #also improves the model
 						number_pca_tirations + # small improve the model
 						as.factor(nsaids_used) + #need to keep
 						time_first_pca +
-						# disposition +
+						disposition +
 						los_ed
 						# los_ceu
 			,family=binomial, data=data)
@@ -524,14 +524,14 @@ logmodel<-glm(as.factor(readmission_7days) ~
 						# gender + #significant for los_ed
 						# age + #need tokeep
 						sicke_cell_severity_score + #need to keep
-						number_prior_ED_visits_year_cat + #need to keep
-						number_prior_hosp_year_cat + #need to keep
+						number_prior_ED_visits_year + #need to keep
+						number_prior_hosp_year + #need to keep
 						time_first_dose_drug_cat + #potential influence on LOS
 						# as.numeric(pain_score_change) + #also improves the model
 						number_pca_tirations + # small improve the model
 						as.factor(nsaids_used) + #need to keep
 						time_first_pca +
-						# disposition +
+						disposition +
 						los_ed
 						# los_ceu
 			,family=binomial, data=data)
