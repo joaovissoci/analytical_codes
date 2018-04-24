@@ -44,9 +44,9 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data_patients<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
+data_patients<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
 
-data_family<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAfamily_data.csv")
+data_family<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAfamily_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -139,6 +139,10 @@ audit_data$audit_score_D3<-rowSums(audit_data_NAto0[,7:10])/4
 audit_data$audit_score_cat<-car::recode(
 	audit_data$audit_score,
 	"0:8='No';else='Yes'")
+
+audit_data$audit_score_severe_cat<-car::recode(
+	audit_data$audit_score,
+	"0:19='No';else='Yes'")
 
 # audit_data_cleaned<-audit_data[-c(1:10)]
 # audit_data_cleaned<-cbind(audit_data_cleaned,
@@ -520,13 +524,13 @@ data_full<-mice::complete(imp,4)
 data_nonabst<-subset(data_full,data_patients$consumption!=0)
 
 
+
 ######################################################################
 #POWER 
 ######################################################################
 
 library(pwr)
 pwr.t.test(n=NULL, d = 0.4, sig.level = .05, power = .8, type = c("two.sample"))
-
 
 
 ######################################################################

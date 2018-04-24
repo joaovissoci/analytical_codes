@@ -31,7 +31,7 @@ library("ggplot2")
 #LOADING DATA FROM A .CSV FILE
 # data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_dukescikecell_data.csv")
 
-data<-read_excel("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_EDOUsicklecell_data.xlsx")
+data<-read_excel("/Users/Joao/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_EDOUsicklecell_data.xlsx")
 
 #information between " " are the path to the directory in your computer where the data is stored
 
@@ -117,7 +117,7 @@ colnames(data)<-c("recordID",
 
 #Adjusting time based variables
 data$time_first_dose_drug<-with(data,drug_initial_time-arrival_time)
-data$time_first_pca<-with(data,pca_time-arrival_time)
+data$time_first_pca<-with(data,pca_time-arrival_time)*60
 # data$time_ed_tratment<-with(data,disposition-room_disposition_date)
 data$los_ed<-with(data,ceu_dischrage_date-arrival_time)
 data$los_ceu<-with(data,ceu_dischrage_date-ceu_disposition_date)
@@ -242,6 +242,53 @@ prop.table(table,2)
 chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
+
+# prior ED visits
+with(data,summary(as.numeric(time_first_dose_drug)))
+with(data,by(as.numeric(time_first_dose_drug),disposition,summary))
+# t-test: # independent 2-group, 2 level IV
+with(data,t.test(as.numeric(time_first_dose_drug) ~ disposition))
+
+#time_first_pca
+with(data,summary(as.numeric(time_first_pca)))
+with(data,by(as.numeric(time_first_pca),disposition,summary))
+# t-test: # independent 2-group, 2 level IV
+with(data,t.test(as.numeric(time_first_pca) ~ disposition))
+
+# prior pain score change
+with(data,summary(as.numeric(pain_score_change)))
+with(data,by(as.numeric(pain_score_change),disposition,summary))
+# t-test: # independent 2-group, 2 level IV
+with(data,t.test(as.numeric(pain_score_change) ~ disposition))
+
+# number of PCA tirastions
+with(data,summary(as.numeric(number_pca_tirations)))
+with(data,by(as.numeric(number_pca_tirations),disposition,summary))
+# t-test: # independent 2-group, 2 level IV
+with(data,t.test(as.numeric(number_pca_tirations) ~ disposition))
+
+# nsaids_used used
+table<-with(data,table(nsaids_used))
+table
+prop.table(table)
+table<-with(data,table(nsaids_used,disposition))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# prior ED LOS
+with(data,summary(as.numeric(los_ed)))
+with(data,by(as.numeric(los_ed),disposition,summary))
+# t-test: # independent 2-group, 2 level IV
+with(data,t.test(as.numeric(los_ed) ~ disposition))
+
+# prior ED LOS
+with(data,summary(as.numeric(los_ceu)))
+with(data,by(as.numeric(los_ceu),disposition,summary))
+# t-test: # independent 2-group, 2 level IV
+with(data,t.test(as.numeric(los_ceu) ~ disposition))
 
 #############################################################################
 #TABLE 2
@@ -499,6 +546,12 @@ logmodel<-glm(as.factor(disposition) ~
 summary(logmodel)
 #anova(reglogGEU)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
+data$prob=predict(logmodel,type=c("response"))
+
+library(pROC)
+g <- roc(as.factor(disposition) ~ prob, data = data)
+plot(g) 
 
 logmodel<-glm(as.factor(readmission_30days) ~ 
 						# gender + #significant for los_ed

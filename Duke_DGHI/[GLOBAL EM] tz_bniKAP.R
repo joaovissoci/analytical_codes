@@ -37,7 +37,7 @@ character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAPprofessionals_data.csv",sep=",")
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAPprofessionals_data.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -1183,7 +1183,7 @@ figure4<-ggplot(plot_data, aes(y=variable, x=value)) +
 
  ggsave("figure4.eps", #change .eps to .pdf for different format
 		figure4, #plot is the name of the fig, but the function assumes the last plot if argument is NULL
-		path="/Users/joaovissoci/Desktop", #path to save the plot
+		path="/Users/Joao/Desktop", #path to save the plot
 		width = 8, 
 		height = 8, 
 		device=cairo_ps) #cairo_ps is a d
