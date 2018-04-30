@@ -24,6 +24,7 @@
 library("readxl")
 library("writexl")
 library("ggplot2")
+library("psych")
 
 #################################################################
 #IMPORTING DATA
@@ -31,7 +32,7 @@ library("ggplot2")
 #LOADING DATA FROM A .CSV FILE
 # data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_dukescikecell_data.csv")
 
-data<-read_excel("/Users/Joao/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_EDOUsicklecell_data.xlsx")
+data<-read_excel("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_EDOUsicklecell_data.xlsx")
 
 #information between " " are the path to the directory in your computer where the data is stored
 
@@ -527,6 +528,28 @@ exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95)))
 #traffic control was not added because had cases with 0 observations
 # age and gender becaise the missing rate wsa to high
 
+data_logmodel<-with(data,data.frame(
+						disposition,
+						sicke_cell_severity_score,
+						number_prior_ED_visits_year,
+						number_prior_hosp_year,
+						time_first_dose_drug_cat,
+						number_pca_tirations,
+						nsaids_used,
+						time_first_pca,
+						los_ed,
+						readmission_30days,
+						readmission_7days))
+
+data_logmodel$los_ed<-as.numeric(data_logmodel$los_ed)
+data_logmodel$time_first_pca<-as.numeric(data_logmodel$time_first_pca)
+data_logmodel$time_first_dose_drug_cat<-as.factor(data_logmodel$time_first_dose_drug_cat)
+data_logmodel$disposition<-as.factor(data_logmodel$disposition)
+
+summary(data_logmodel)
+
+data_logmodel<-na.omit(data_logmodel)
+
 logmodel<-glm(as.factor(disposition) ~ 
 						# gender + #significant for los_ed
 						# age + #need tokeep
@@ -547,11 +570,12 @@ summary(logmodel)
 #anova(reglogGEU)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
-data$prob=predict(logmodel,type=c("response"))
+data_logmodel$prob=predict(logmodel,type=c("response"))
 
 library(pROC)
-g <- roc(as.factor(disposition) ~ prob, data = data)
+g <- roc(as.factor(disposition) ~ prob, data = data_logmodel)
 plot(g) 
+g
 
 logmodel<-glm(as.factor(readmission_30days) ~ 
 						# gender + #significant for los_ed
@@ -573,6 +597,13 @@ summary(logmodel)
 #anova(reglogGEU)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
+data_logmodel$prob=predict(logmodel,type=c("response"))
+
+library(pROC)
+g <- roc(as.factor(disposition) ~ prob, data = data_logmodel)
+plot(g) 
+g
+
 logmodel<-glm(as.factor(readmission_7days) ~ 
 						# gender + #significant for los_ed
 						# age + #need tokeep
@@ -593,7 +624,12 @@ summary(logmodel)
 #anova(reglogGEU)
 exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
+data_logmodel$prob=predict(logmodel,type=c("response"))
 
+library(pROC)
+g <- roc(as.factor(disposition) ~ prob, data = data_logmodel)
+plot(g) 
+g
 
 logmodel<-glm(as.factor(readmission_30days) ~ 
 						gender +
