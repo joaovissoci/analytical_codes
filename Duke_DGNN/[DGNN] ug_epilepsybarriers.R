@@ -36,7 +36,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/DGNN/epilepsy/bass_epilepsy_mergeddata.csv",sep=",")
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/DGNN/epilepsy/bass_epilepsy_mergeddata.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 # data<-data[-409,]
@@ -89,6 +89,23 @@ data<-mutate(data,dm_education_combined =
 					dem_patient_edu_cat,
 					  dem_dm_edu_cat))
 
+
+
+data$dm_education_combined<-car::recode(data$dm_education_combined,"
+	4:6=4")
+
+table(data$dm_education_combined)
+prop.table(table(data$dm_education_combined))
+
+#Literacy
+#################################################
+
+data<-as_data_frame(data)
+data<-mutate(data,dm_literacyn_combined =
+			ifelse(dem_decisions==2,
+					dem_patient_literacy,
+					  dem_dm_literacy))
+
 table(data$dm_education_combined)
 prop.table(table(data$dm_education_combined))
 
@@ -121,6 +138,16 @@ prop.table(table(data$dm_education_combined))
 #                              ")
 
 data$dem_household_weekinc_cat<-car::recode(
+			data$dem_household_weekinc,"
+								0:5000='0 to 5000';
+								5001:30000='5001 to 30000';
+								30001:60000='30001 to 60000';
+								60001:90000='60001 to 90000';
+								90001:7000000='90001 ot more'
+                             ")
+
+
+data$dem_household_weekinc_cat2<-car::recode(
 			data$dem_household_weekinc,"
 								0:5000='0 to 5000';
 								5001:10000='05001 to 10000';
@@ -1208,7 +1235,7 @@ data<-as.data.frame(data)
 names(data)
 
 data$first_help_sought_bin<-car::recode(
-	data$first_help_sought,"1='BMC';2:3='other'")
+	data$first_help_sought,"1='BMC';2:3='Aother'")
 
 data$first_help_sought_bin<-as.factor(data$first_help_sought_bin)
 
@@ -1218,12 +1245,42 @@ data$bb_age_seizures<-car::recode(
 data$bb_age_seizures<-as.numeric(as.character(data$bb_age_seizures))
 
 logmodel_gcs<-glm(first_help_sought_bin ~
-						as.factor(dem_patient_gender) + 
-						# bb_age_seizures + 
-						# seizure_onsent_freq_adjusted + 
-						# as.factor(dem_patient_urban) + 
+						# as.factor(dem_patient_gender) + 
+						bb_age_seizures + 
+						seizure_onsent_freq_adjusted + 
+						as.factor(dem_patient_urban) + 
 						ses_index +
+						bb_seiz_hlthctr_dist +
                         # as.factor(dem_dm_literacy) + 
+                        epilepsycause_scores_1_biological +
+						epilepsycause_scores_2_behavior +
+						epilepsycause_scores_3_spiritual +
+                        epilepsybarriers_scores_1_biological +
+                        epilepsybarriers_scores_2_stigma +
+                        epilepsybarriers_scores_3_access +
+                        epilepsybarriers_scores_4_medication +
+                        epilepsybarriers_scores_5_trust
+                       ,family=binomial, 
+                       	data=data)
+summary(logmodel_gcs)
+#anova(reglogGEU)
+#exp(coef(model1_death)) # exponentiated coefficients
+#exp(confint(model1_death)) # 95% CI for exponentiated coefficients
+exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+#predict(model1_death, type="response") # predicted values
+#residuals(model1_death, type="deviance") # residuals
+#logistic.display(baselineXFUP3)
+
+logmodel_gcs<-glm(first_help_sought_bin ~
+						as.factor(dem_patient_gender) + 
+						bb_age_seizures + 
+						seizure_onsent_freq_adjusted + 
+						bb_seiz_hlthctr_dist +
+						as.factor(dem_household_weekinc_cat) +
+						as.factor(dm_occupation_combined) +
+						as.factor(dem_patient_urban) + 
+						as.factor(dm_education_combined) +
+                        as.factor(dm_literacyn_combined) + 
                         epilepsycause_scores_1_biological +
 						epilepsycause_scores_2_behavior +
 						epilepsycause_scores_3_spiritual +
