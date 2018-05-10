@@ -811,19 +811,18 @@ exp(cbind(Odds=coef(linearmodel),confint(linearmodel,level=0.95)))
 ######################################################################
 
 #
-network_data<-with(data_full,data.frame(#age=data_nonabst$age,
+network_data<-with(data_nonabst,data.frame(#age=data_nonabst$age,
 					  #female=data_nonabst$female,
 					  # pos_etoh=data_nonabst$pos_etoh,
 					  # daily_drink=data_nonabst$daily_drink,
 					  # # number_drinks_day=data_nonabst$number_drinks_day,
-					  drinking_interferes=as.numeric(as.factor(data_nonabst$drinking_interferes)),
-					  drinking_arguments=as.numeric(as.factor(data_nonabst$drinking_arguments)),
-					  could_get_hurt=as.numeric(as.factor(data_nonabst$could_get_hurt)),
+					  # drinking_interferes=as.numeric(as.factor(data_nonabst$drinking_interferes)),
+					  # drinking_arguments=as.numeric(as.factor(data_nonabst$drinking_arguments)),
+					  # could_get_hurt=as.numeric(as.factor(data_nonabst$could_get_hurt)),
 					  # police_bc_drink=as.numeric(as.factor(data_nonabst$police_bc_drink)),
-					  pas_scores_scaled,
+					  stigma,
 					  # devaluation,
 					  # discrimination,
-					  talked_dr=as.numeric(as.factor(talked_dr)),
 					  # helpful_treatment=data_nonabst$helpful_treatment,
 					  # recent_trtmnt=data_nonabst$recent_trtmnt,
 					  # hospital_alc=data_nonabst$hospital_alc,
@@ -833,26 +832,72 @@ network_data<-with(data_full,data.frame(#age=data_nonabst$age,
 					  # audit_alcoholdependence=audit_data$audit_score_D2,
 					  # audit_alcoholrisk=audit_data$audit_score_D3.
 					  drinc_data_score
+					  # talked_dr=as.factor(talked_dr)
 					  ))
 
-cor<-cor_auto(network_data)
+# cor<-cor_auto(network_data)
 
-network_glasso<-qgraph(
-                    cor,
-                    layout="spring", 
-                    # vsize=tau,
-                    # esize=20,
-                    graph="glasso",
-                    sampleSize=nrow(network_data),
-                    legend.cex = 0.5,
-                    GLratio=1.5,
-                    minimum=0.1,
-                    cut=0.1,
-                    border.width=1.5,
-                    shape="square"
-                    )
+# network_glasso<-qgraph(
+#                     cor,
+#                     layout="spring", 
+#                     # vsize=tau,
+#                     # esize=20,
+#                     graph="glasso",
+#                     sampleSize=nrow(network_data),
+#                     legend.cex = 0.5,
+#                     GLratio=1.5,
+#                     minimum=0.1,
+#                     cut=0.1,
+#                     border.width=1.5,
+#                     shape="square"
+#                     )
 
+
+
+
+library("GGally")
+data(iris)
+
+my_fn <- function(data, mapping, method="loess", ...){
+      p <- ggplot(data = data, mapping = mapping) + 
+      geom_point() + 
+      geom_smooth(method=method, ...)
+      p
+	}
+
+my_fn2 <- function(data, mapping, method="boxplot", ...){
+      p <- ggplot(data = data, mapping = mapping) + 
+      geom_boxplot(y=y, group=data_nonabst$talked_dr)
+      # geom_smooth(method=method, ...)
+      p
+	}
+
+names(network_data)<-c("PAS",
+					   "AUDIT",
+					   "DrinC")
+
+ggpairs(network_data, 
+		lower=list(continuous=my_fn,colour="blue"),
+  		# diag=list(continuous=my_fn2,colour="blue"), 
+  		upper=list(corSize=6), axisLabels='show') +
+theme(legend.position = "none", 
+        panel.grid.major = element_blank(), 
+        axis.ticks = element_blank(), 
+        panel.border = element_rect(linetype = "dashed", colour = "black", fill = NA))
+
+
+ggpairs(network_data, aes(colours=talked_dr),
+				lower=list(continuous=my_fn,colour="blue")) +
+theme(legend.position = "none", 
+        panel.grid.major = element_blank(), 
+        axis.ticks = element_blank(), 
+        panel.border = element_rect(linetype = "dashed", colour = "black", fill = NA))
+
+######################################################################
 # Mediation analysis
+######################################################################
+
+
 
 model <- ' # direct effect
              talked_dr ~ a*audit_total
