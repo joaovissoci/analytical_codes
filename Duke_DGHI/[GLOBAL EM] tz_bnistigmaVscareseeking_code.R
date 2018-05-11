@@ -36,7 +36,8 @@ lapply(c("Hmisc",
 		 "polycor",
 		 "mice",
 		 "semPlot",
-		 "tidyverse"), 
+		 "tidyverse",
+		 "gridExtra"), 
 library, character.only=T)
 
 ######################################################################
@@ -44,9 +45,9 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data_patients<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
+data_patients<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
 
-data_family<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAfamily_data.csv")
+data_family<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAfamily_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -835,7 +836,7 @@ network_data<-with(data_nonabst,data.frame(#age=data_nonabst$age,
 					  # talked_dr=as.factor(talked_dr)
 					  ))
 
-# cor<-cor_auto(network_data)
+cor<-cor_auto(network_data)
 
 # network_glasso<-qgraph(
 #                     cor,
@@ -854,146 +855,281 @@ network_data<-with(data_nonabst,data.frame(#age=data_nonabst$age,
 
 
 
+#TRY ONE
+# library("GGally")
+# data(iris)
 
-library("GGally")
-data(iris)
+# my_fn <- function(data, mapping, method="loess", ...){
+#       p <- ggplot(data = data, mapping = mapping) + 
+#       geom_point() + 
+#       geom_smooth(method=method, ...)
+#       p
+# 	}
 
-my_fn <- function(data, mapping, method="loess", ...){
-      p <- ggplot(data = data, mapping = mapping) + 
-      geom_point() + 
-      geom_smooth(method=method, ...)
-      p
-	}
+# my_fn2 <- function(data, mapping, method="boxplot", ...){
+#       p <- ggplot(data = data, mapping = mapping) + 
+#       geom_boxplot(y=y, group=data_nonabst$talked_dr)
+#       # geom_smooth(method=method, ...)
+#       p
+# 	}
 
-my_fn2 <- function(data, mapping, method="boxplot", ...){
-      p <- ggplot(data = data, mapping = mapping) + 
-      geom_boxplot(y=y, group=data_nonabst$talked_dr)
-      # geom_smooth(method=method, ...)
-      p
-	}
+# names(network_data)<-c("PAS",
+# 					   "AUDIT",
+# 					   "DrinC")
 
-names(network_data)<-c("PAS",
-					   "AUDIT",
-					   "DrinC")
-
-ggpairs(network_data, 
-		lower=list(continuous=my_fn,colour="blue"),
-  		# diag=list(continuous=my_fn2,colour="blue"), 
-  		upper=list(corSize=6), axisLabels='show') +
-theme(legend.position = "none", 
-        panel.grid.major = element_blank(), 
-        axis.ticks = element_blank(), 
-        panel.border = element_rect(linetype = "dashed", colour = "black", fill = NA))
+# ggpairs(network_data, 
+# 		lower=list(continuous=my_fn,colour="blue"),
+#   		# diag=list(continuous=my_fn2,colour="blue"), 
+#   		upper=list(corSize=6), axisLabels='show') +
+# theme(legend.position = "none", 
+#         panel.grid.major = element_blank(), 
+#         axis.ticks = element_blank(), 
+#         panel.border = element_rect(linetype = "dashed", colour = "black", fill = NA))
 
 
-ggpairs(network_data, aes(colours=talked_dr),
-				lower=list(continuous=my_fn,colour="blue")) +
-theme(legend.position = "none", 
-        panel.grid.major = element_blank(), 
-        axis.ticks = element_blank(), 
-        panel.border = element_rect(linetype = "dashed", colour = "black", fill = NA))
+# ggpairs(network_data, aes(colours=talked_dr),
+# 				lower=list(continuous=my_fn,colour="blue")) +
+# theme(legend.position = "none", 
+#         panel.grid.major = element_blank(), 
+#         axis.ticks = element_blank(), 
+#         panel.border = element_rect(linetype = "dashed", colour = "black", fill = NA))
+names(network_data)
+
+# TRY 2
+cor_plot_1<- ggplot(network_data, 
+				  aes(x=stigma, 
+				  	  y=audit_total)) +
+    geom_point(size=network_data$audit_total/5) + 
+    geom_jitter() +
+    # scale_colour_hue(l=50) + # Use a slightly darker palette than normal
+    geom_smooth(method=lm,color="grey50") +
+    theme_bw() +
+    ylab("Harmful alcohol use") +
+    xlab("Perceived alcohol stigma") +
+    geom_text(aes(label="A)", x=0, y=45)) +
+    geom_text(aes(label="R=-0.05", x=10, y=42)) +
+    scale_y_continuous(breaks=seq(0,35,5),
+    	limits=c(0, 45)) + 
+    theme(panel.grid.minor=element_blank(),
+           panel.grid.major=element_blank())
+    # scale_y_continuous(breaks=seq(0,40,10))
+
+# TRY 2
+cor_plot_2<- ggplot(network_data, 
+				  aes(x=stigma, 
+				  	  y=drinc_data_score)) +
+    geom_point(size=network_data$drinc_data_score/5) + 
+    geom_jitter() +
+    # scale_colour_hue(l=50) + # Use a slightly darker palette than normal
+    geom_smooth(method=lm,color="grey50") +
+    theme_bw() +
+    ylab("Alcohol related consequences") +
+    xlab("Perceived Alcohol Stigma") +
+    geom_text(aes(label="B)", x=0, y=60)) +
+    geom_text(aes(label="R=-0.09", x=10, y=55))  +
+    scale_y_continuous(breaks=seq(0,50,5),
+    	limits=c(0, 60)) + 
+    theme(panel.grid.minor=element_blank(),
+           panel.grid.major=element_blank())
+    # scale_y_continuous(breaks=seq(0,40,10))
+
+# TRY 2
+cor_plot_3<- ggplot(network_data, 
+				  aes(x=drinc_data_score, 
+				  	  y=audit_total)) +
+    geom_point(size=network_data$audit_total/5) + 
+    geom_jitter() +
+    # scale_colour_hue(l=50) + # Use a slightly darker palette than normal
+    geom_smooth(method=lm,color="grey50") +
+    theme_bw() +
+    xlab("Alcohol related consequences") +
+    ylab("Harmful alcohol use") +
+    geom_text(aes(label="C)", x=0, y=40)) +
+    geom_text(aes(label="R=0.60", x=5, y=37))  +
+    scale_y_continuous(breaks=seq(0,35,5),
+    	limits=c(0, 40)) + 
+    theme(panel.grid.minor=element_blank(),
+           panel.grid.major=element_blank())
+    # scale_y_continuous(breaks=seq(0,40,10))
+
+scatter_plots<-grid.arrange(cor_plot_1,
+						cor_plot_2,
+						cor_plot_3,
+						ncol=3)
+
+# p + theme(legend.position="left")
+
+# p + scale_fill_grey() + theme_classic()
+
+# ggsave("figure2.eps", #change .eps to .pdf for different format
+# 		bothplots, #plot is the name of the fig, but the function assumes the last plot if argument is NULL
+# 		path="/Users/jnv4/Desktop", #path to save the plot
+# 		width = 12, 
+# 		height = 6, 
+# 		device=cairo_ps) #
 
 ######################################################################
 # Mediation analysis
 ######################################################################
 
-
-
+#model 1 - direct audit outcome
 model <- ' # direct effect
              talked_dr ~ a*audit_total
-             talked_dr ~ b*stigma
-             talked_dr ~ c*drinc_data_score
+             # talked_dr ~ b*stigma
+             # talked_dr ~ c*drinc_data_score
+           # mediator
+             # stigma ~ d*audit_total
+             # drinc_data_score ~ e*audit_total
+           # indirect effect (a*b)
+             # ind1 := d*b
+             # ind2 := e*c
+           # total effect
+             # total := c + ind1 + ind2
+         '
+
+fit <- lavaan::sem(model, data = data_nonabst,
+					estimator="DWLS",
+					ordered="talked_dr",
+					se = 'bootstrap')
+# lavaan::summary(fit,standardized=TRUE,
+# 					fit.measures=TRUE,
+# 					rsq=TRUE)
+# lavaan::fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
+Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+# subset(Est, op == "~")
+subset(Est, op == "~")
+# subset(Est, op == ":=")
+
+#model 2 - indirect stigma
+model <- ' # direct effect
+             talked_dr ~ a*audit_total + b*stigma
+             # talked_dr ~ c*drinc_data_score
            # mediator
              stigma ~ d*audit_total
-             drinc_data_score ~ e*audit_total
-             stigma ~ f*drinc_data_score
+             # drinc_data_score ~ e*audit_total
            # indirect effect (a*b)
-             db := d*b
-             efb := e*f*b
-             ec := e*c
+             ind1 := d*b
+             # ind2 := e*c
            # total effect
-             # total := c + (a*b)
+             total := a + (d*b)
+         '
+
+fit <- lavaan::sem(model, data = data_nonabst,
+					estimator="DWLS",
+					ordered="talked_dr",
+					se = 'bootstrap')
+
+# lavaan::summary(fit,standardized=TRUE,
+# 					fit.measures=TRUE,
+# 					rsq=TRUE)
+
+# lavaan::fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
+Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+# subset(Est, op == "~")
+subset(Est, op == "~")
+subset(Est, op == ":=")
+
+#model 3
+model <- ' # direct effect
+             talked_dr ~ a*audit_total
+             # talked_dr ~ b*stigma
+             talked_dr ~ c*drinc_data_score
+           # mediator
+             # stigma ~ d*audit_total
+             drinc_data_score ~ e*audit_total
+           # indirect effect (a*b)
+             # ind1 := d*b
+             ind2 := e*c
+           # total effect
+             total := a + (e*c)
          '
 
 fit <- lavaan::sem(model, data = data_nonabst,
 					estimator="WLSMV",
-					ordered=colnames(data_nonabst$talked_dr))
-lavaan::summary(fit,standardized=TRUE,
-					fit.measures=TRUE,
-					rsq=TRUE)
-lavaan::fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
+					ordered="talked_dr")
+
+# lavaan::summary(fit,standardized=TRUE,
+# 					fit.measures=TRUE,
+# 					rsq=TRUE)
+
+# lavaan::fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
 Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+# subset(Est, op == "~")
 subset(Est, op == "~")
 subset(Est, op == ":=")
 
-# Mediation analysis - STIGMA
+# #model 4
+# model <- ' # direct effect
+#              talked_dr ~ a*audit_total
+#              talked_dr ~ b*stigma
+#              talked_dr ~ c*drinc_data_score
+#            # mediator
+#              stigma ~ d*audit_total
+#              drinc_data_score ~ e*audit_total
+#            # indirect effect (a*b)
+#              ind1 := d*b
+#              ind2 := e*c
+#            # total effect
+#              total := a + ind1 + ind2
+#          '
 
-model <- ' # direct effect
-             talked_dr ~ dA*audit_total
-             talked_dr ~ dB*drinc_data_score
-             talked_dr ~ dC*pas_scores_scaled
-             # talked_dr ~ dC*devaluation
-             # talked_dr ~ dD*discrimination
-           
-           # mediator
-             drinc_data_score ~ indA*audit_total
-             pas_scores_scaled ~ indB*drinc_data_score
-             audit_total ~ indC*pas_scores_scaled             
-             # devaluation ~ indB*drinc_data_score
-             # audit_total ~ indC*devaluation
-             # discrimination ~ indD*drinc_data_score
-             # audit_total ~ indE*discrimination
-            
-           # # indirect effect (a*b)
-           #   ab := a*b
-           # # total effect
-           #   total := c + (a*b)
-         '
+# fit <- lavaan::sem(model, data = data_nonabst,
+# 					estimator="DWLS",
+# 					ordered="talked_dr",
+# 					se = 'bootstrap')
 
-fit <- lavaan::sem(model, data = network_data,
-					estimator="WLSMV",
-					ordered=colnames(data_nonabst$talked_dr))
-lavaan::summary(fit,standardized=TRUE,
-					fit.measures=TRUE,
-					rsq=TRUE)
-lavaan::fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
-Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
-subset(Est, op == "~")
-subset(Est, op == ":=")
+# # lavaan::summary(fit,standardized=TRUE,
+# # 					fit.measures=TRUE,
+# # 					rsq=TRUE)
+
+# # lavaan::fitMeasures(fit, fit.measures = "all", baseline.model = NULL)
+# Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+# # subset(Est, op == "~")
+# subset(Est, op == "~")
+# subset(Est, op == ":=")
 
 
-# tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-#   width = 15,
-#  height = 10,compression = 'lzw',res=1200,bg = "white")
-# semPaths(fit,"std",residuals=TRUE, cut=1,
-#   equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
-#   intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
-#   edge.label.cex=1, label.cex=labelcex, color=color,borders=borders)
-# dev.off()
+# semPlot::semPaths(fit,
+#                   "model",
+#                   "std",
+#                   layout="tree2",
+#                   style="lisrel",
+#                   residuals=FALSE,
+#                   # cut=1,
+#                   # equalizeManifests=TRUE,
+#                   # edge.color="black",
+#                   exoCov=FALSE,
+#                   intercepts=FALSE,
+#                   # nodeLabels=colnames(network_data),
+#                   label.scale=FALSE,
+#                   edge.label.cex=0.8
+#                   # label.cex=labelcex,
+#                   # color=color,
+#                   # borders=borders
+# 				  )
 
-# ### Modification Indexes
-# Mod <- modificationIndices(fit)
-# subset(Mod, mi > 10)
+# Mediation model
+logmodel<-glm(talked_dr ~ audit_total
+			,family=binomial, data=data_nonabst)
+summary(logmodel)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
+logmodel<-glm(talked_dr ~ stigma*audit_total
+			,family=binomial, data=data_nonabst)
+summary(logmodel)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 
-semPlot::semPaths(fit,
-                  "model",
-                  "std",
-                  layout="tree2",
-                  style="lisrel",
-                  residuals=FALSE,
-                  # cut=1,
-                  # equalizeManifests=TRUE,
-                  # edge.color="black",
-                  exoCov=FALSE,
-                  intercepts=FALSE,
-                  # nodeLabels=colnames(network_data),
-                  label.scale=FALSE,
-                  edge.label.cex=0.8
-                  # label.cex=labelcex,
-                  # color=color,
-                  # borders=borders
-				  )
+logmodel<-glm(talked_dr ~ drinc_data_score*audit_total
+			,family=binomial, data=data_nonabst)
+summary(logmodel)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
+logmodel<-glm(talked_dr ~ drinc_data_score*audit_total + 
+						  stigma*audit_total
+			,family=binomial, data=data_nonabst)
+summary(logmodel)
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
 ######################################################################
 #FIGURE 2
 ######################################################################
