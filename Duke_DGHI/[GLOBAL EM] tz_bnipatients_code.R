@@ -310,7 +310,7 @@ invertStigma<-function(x){
 	car::recode(x,"1=6;2=5;3=4;4=3;5=2;6=1")
 	}
 
-data_stigma_inverted<-lapply(data_stigma,invertStigma)
+data_stigma_inverted<-lapply(stigma_data,invertStigma)
 data_stigma_inverted<-as.data.frame(data_stigma_inverted)
 
 
@@ -336,11 +336,11 @@ data_stigma_inverted<-as.data.frame(data_stigma_inverted)
 # BNI_Discrimination<-with(BNI_data_stigma,data_stigma.frame(alcoholic_close_friend,recovered_alcoholic_teacher,recover_alcoholic_chldrn,
                                                # recover_alcoholic_hired,non_alcoholic_hired,recovered_alc_treat_same,no_date_hospital_for_alc))
 
-# # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
+# argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
 
-# imp <- mice(data_stigma_inverted, seed = 2222, m=5)
+imp <- mice(data_stigma_inverted, seed = 2222, m=5)
 
-# data_stigma_inverted<-mice::complete(imp,4)
+data_stigma_inverted<-mice::complete(imp,4)
 
 # Find factor scores for stigma
 
@@ -386,7 +386,7 @@ pas_scores_scaled<-scales::rescale(as.data.frame(pas_scores)$BNI,
 
 #Extracting scores for patients only
 
-pas_scores_patients<-pas_scores_scaled[data_stigma_inverted$group=="Patients"]
+# pas_scores_patients<-pas_scores_scaled[data_stigma_inverted$group=="Patients"]
 
 #Non-Abstainners = everyone who responded 1 or 2 in the consumption question
 data_nonabst<-subset(data.frame(age=data$age,
@@ -395,7 +395,7 @@ data_nonabst<-subset(data.frame(age=data$age,
 							positive_breath=data$pos_etoh,
 							mvc=data$ibc_10,
 							audit_data_cleaned,
-							pas_scores_scale=pas_scores_patients,
+							pas_scores_scaled,
 							drinc_data_score,
 							drinc_data_score_cat,
 							drink_drive=data$drink_drive),							
@@ -409,7 +409,7 @@ data_abst<-subset(data.frame(age=data$age,
 							positive_breath=data$pos_etoh,
 							mvc=data$ibc_10,
 							audit_data_cleaned,
-							pas_scores_scale=pas_scores_patients,
+							pas_scores_scaled,
 							drinc_data_score,
 							drinc_data_score_cat,
 							drink_drive=data$drink_drive),							
@@ -534,81 +534,44 @@ with(data_full,
 # 	15.01:36.00='d'")
 
 ######################################################################
-#FIGURE 1
-######################################################################
-
-#
-p <- ggplot(subset(data_full,data_full$groups!=3),
-			aes(as.factor(groups),audit_score))
-p <- p + geom_boxplot(fill="grey")
-p <- p + xlab("Drink and drive") + ylab("AUDIT Score")
-p <- p + theme_bw()
-p <- p + scale_x_discrete(breaks=c("0", "2"),
-                      labels=c("No", "Yes"))
-p
-
-######################################################################
 #TABLE 2
 ######################################################################
 
-#PDD summary
-with(data_full,
-	summary(pas_scores_scale))
-with(data_full,
-	by(pas_scores_scale,groups,summary))
-with(data_full,
-	kruskal.test(pas_scores_scale~groups))
+data_nonabst$gender[2]<-1
 
-#mvc
-with(data_full,table(pas_score_cat))
-with(data_full,prop.table(table(pas_score_cat)))
-x<-with(data_full,table(pas_score_cat,groups))
-with(data_full,prop.table(table(pas_score_cat,groups),2))
-assocstats(x)
-fisher.test(x)
+data_nonabst$gender<-car::recode(data_nonabst$gender,"0=2")
 
-summary(data_full$discrimination)
-with(data_full,
-	by(discrimination,groups,summary))
-with(data_full,
-	kruskal.test(discrimination~groups))
+data_nonabst$mvc<-car::recode(data_nonabst$mvc,"2=1")
 
-summary(data_full$devaluation)
-with(data_full,
-	by(devaluation,groups,summary))
-with(data_full,
-	kruskal.test(devaluation~groups))
 
-with(data_full,cor(data.frame(pas_score,audit_score)))
-
-######################################################################
-#TABLE 2
-######################################################################
-
-model<-glm(as.factor(drink_drive) ~ audit_score*pas_score,
+model<-glm(as.factor(drink_drive) ~ age +
+									gender +
+									mvc +
+									audit_score +
+									pas_scores_scaled,
 			data=data_nonabst,
 			family=binomial())
 summary(model)
 
 exp(coef(model)) # exponentiated coefficients
 exp(confint(model)) # 95% CI for exponentiated coefficients
-
+1
 #Stigma and care seeking
 
-care<-data.frame(care_seeking=data$talked_dr,pas_score)
-care_seeking<-car::recode(care$care_seeking,"8=NA")
-# x_clean<-subset(x,audit_data[2]==2)
-with(care,
-	by(devaluation,care_seeking,summary))
+# care<-data.frame(care_seeking=data$talked_dr,pas_score)
+# care_seeking<-car::recode(care$care_seeking,"8=NA")
+# # x_clean<-subset(x,audit_data[2]==2)
+# with(care,
+# 	by(devaluation,care_seeking,summary))
 
-wilcox.test(pas_score~care_seeking)
+# wilcox.test(pas_score~care_seeking)
 
-# x_clean<-subset(x,audit_data[2]==2)
-with(care,
-	by(discrimination,care_seeking,summary))
+# # x_clean<-subset(x,audit_data[2]==2)
+# with(care,
+# 	by(discrimination,care_seeking,summary))
 
-with(care,
-	wilcox.test(discrimination~care_seeking))
+# with(care,
+# 	wilcox.test(discrimination~care_seeking))
 
 ######################################################################
 #FIGURE 2
