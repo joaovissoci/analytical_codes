@@ -20,13 +20,9 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", 
-	"moments","GPArotation","nFactors","boot","psy", "car",
-	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
-	"reshape2","mclust","foreign","survival","memisc","lme4",
-	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
-	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
-  "mice","haven"),
+lapply(c("ggplot2","car", "vcd", "gridExtra","epicalc","gdata",
+	"reshape2","dplyr","devtools","reshape","mice","haven",
+  "data.table"),
 library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
@@ -96,22 +92,22 @@ library, character.only=T)
 # write.csv(adys,"/Users/Joao/Desktop/deleteme_adys.csv")
 
 # add the path to you computer between " "
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
 
 #DASH, PGIC and LEFS
-data2<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adqs.sas7bdat"))
+data2<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adqs.sas7bdat"))
 
 #PSFS
-data3<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
+data3<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
 
 #PSFS Pilot
-data4<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
+data4<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
 
 #PGIC Pilot
-data5<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/pgic.sas7bdat"))
+data5<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/pgic.sas7bdat"))
 
 #SF36/PROMIS
-data6<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adys.sas7bdat"))
+data6<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adys.sas7bdat"))
 
 ######################################################
 #DATA MANAGEMENT
@@ -120,19 +116,22 @@ data6<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global 
 #Organizing PSFS data
 ######################################################
 
+#subsetting data_3 to isolade the PSFS data only for the 4 data points
 data_3_subset0<-subset(data3,data3$AVISIT=="Envenomation +14 Days" |
                              data3$AVISIT=="Envenomation +3 Days"  |
                              data3$AVISIT=="Envenomation +7 Days"  |
                              data3$AVISIT=="Envenomation +10 Days")
 
-# getting total scores
+# subsetting the data to include only the summed PSFS score
 psfs_data_subset_total_temp1<-subset(data_3_subset0,data_3_subset0$PARAM=="PSFS Total Score")
 
+#aggregating a data frame with the total PSFS score (AVAL), time of data collection (AVISIT), subjcet ID  and treatment groups 
 psfs_data_subset_total<-with(psfs_data_subset_total_temp1,data.frame(USUBJID,
                                                   TRTP,
                                                   AVAL,
                                                   AVISIT))
 
+#Isolating the id value for dcasting data sets
 id<-with(psfs_data_subset_total,
               strsplit(as.character(USUBJID),"-"))
 id<-as.data.frame(t(as.data.frame(id)))
@@ -141,6 +140,7 @@ id2<-apply(id[,4:5],1,paste, collapse="-")
 
 psfs_data_subset_total$id<-id2
 
+#spreading the dataframe for psychometric analysis
 psfs_data_subset_total_casted1 <- dcast(psfs_data_subset_total, 
                           id+USUBJID+TRTP ~ AVISIT,
                                   value.var="AVAL")
@@ -150,6 +150,7 @@ colnames(psfs_data_subset_total_casted1)[5]<-"psfs_FUP_14_total"
 colnames(psfs_data_subset_total_casted1)[6]<-"psfs_FUP_3_total"
 colnames(psfs_data_subset_total_casted1)[7]<-"psfs_FUP_7_total"
 
+#Repeating procedures to isolate the score for response option
 # getting values for score 1
 psfs_data_subset_score1_temp1<-subset(data_3_subset0,data_3_subset0$PARAM=="Score 1")
 
@@ -226,6 +227,7 @@ colnames(psfs_data_subset_score3_casted1)[5]<-"psfs_FUP_14_score3"
 colnames(psfs_data_subset_score3_casted1)[6]<-"psfs_FUP_3_score3"
 colnames(psfs_data_subset_score3_casted1)[7]<-"psfs_FUP_7_score3"
 
+#Repeating procedures to isolate activity #1
 # getting values for activity 1 chosen in the PSFS
 data_3_subset_activity_1_temp1<-subset(data3, data3$AVISIT=="Envenomation +3 Days")
 
@@ -233,7 +235,7 @@ psfs_data_subset_data_3_subset_activity_1_temp1<-subset(data_3_subset_activity_1
 
 psfs_data_subset_data_3_subset_activity_1<-with(psfs_data_subset_data_3_subset_activity_1_temp1,data.frame(USUBJID,
                                                   TRTP,
-                                                  AVAL,
+                                                  AVALC,
                                                   AVISIT))
 
 id_data_3_subset_activity_1<-with(psfs_data_subset_data_3_subset_activity_1,
@@ -246,7 +248,7 @@ psfs_data_subset_data_3_subset_activity_1$id<-id_data_3_subset_activity_12
 
 psfs_data_subset_data_3_subset_activity_1_casted1 <- dcast(psfs_data_subset_data_3_subset_activity_1, 
                           id+USUBJID+TRTP ~ AVISIT,
-                                  value.var="AVAL")
+                                  value.var="AVALC")
 
 colnames(psfs_data_subset_data_3_subset_activity_1_casted1)[4]<-"psfs_FUP_3_data_3_subset_activity_1"
 
@@ -257,7 +259,7 @@ psfs_data_subset_data_3_subset_activity_2_temp1<-subset(data_3_subset_activity_2
 
 psfs_data_subset_data_3_subset_activity_2<-with(psfs_data_subset_data_3_subset_activity_2_temp1,data.frame(USUBJID,
                                                   TRTP,
-                                                  AVAL,
+                                                  AVALC,
                                                   AVISIT))
 
 id_data_3_subset_activity_2<-with(psfs_data_subset_data_3_subset_activity_2,
@@ -270,18 +272,18 @@ psfs_data_subset_data_3_subset_activity_2$id<-id_data_3_subset_activity_22
 
 psfs_data_subset_data_3_subset_activity_2_casted1 <- dcast(psfs_data_subset_data_3_subset_activity_2, 
                           id+USUBJID+TRTP ~ AVISIT,
-                                  value.var="AVAL")
+                                  value.var="AVALC")
 
 colnames(psfs_data_subset_data_3_subset_activity_2_casted1)[4]<-"psfs_FUP_3_data_3_subset_activity_2"
 
 # getting values for activity 3 chosen in the PSFS
 data_3_subset_activity_3_temp1<-subset(data3, data3$AVISIT=="Envenomation +3 Days")
 
-psfs_data_subset_data_3_subset_activity_3_temp1<-subset(data_3_subset_activity_3_temp1,data_3_subset_activity_3_temp1$PARAM=="Activity 2")
+psfs_data_subset_data_3_subset_activity_3_temp1<-subset(data_3_subset_activity_3_temp1,data_3_subset_activity_3_temp1$PARAM=="Activity 3")
 
 psfs_data_subset_data_3_subset_activity_3<-with(psfs_data_subset_data_3_subset_activity_3_temp1,data.frame(USUBJID,
                                                   TRTP,
-                                                  AVAL,
+                                                  AVALC,
                                                   AVISIT))
 
 id_data_3_subset_activity_3<-with(psfs_data_subset_data_3_subset_activity_3,
@@ -294,7 +296,7 @@ psfs_data_subset_data_3_subset_activity_3$id<-id_data_3_subset_activity_32
 
 psfs_data_subset_data_3_subset_activity_3_casted1 <- dcast(psfs_data_subset_data_3_subset_activity_3, 
                           id+USUBJID+TRTP ~ AVISIT,
-                                  value.var="AVAL")
+                                  value.var="AVALC")
 
 colnames(psfs_data_subset_data_3_subset_activity_3_casted1)[4]<-"psfs_FUP_3_data_3_subset_activity_3"
 
@@ -309,6 +311,7 @@ psfs_data_1<-data.frame(psfs_data_subset_total_casted1,
 psfs_data_2<-data.frame(psfs_data_subset_score2_casted1,
                       psfs_data_subset_score3_casted1[,-1])
 
+#FINAL DATA FOR PSFS
 psfs_data<-merge(psfs_data_1,psfs_data_2, by="id",all.x = TRUE)
 
 #organizing data from the pilos study
@@ -482,7 +485,7 @@ data_globalchange_casted<-rbind(data_globalchange_casted1,data_pgic_pilot)
 
 #merging PSFS and PGIC data for the clinimetrics assessment
 data_mcid<-merge(x = psfs_data_tocombine, 
-             y = data_globalchange_casted, 
+             y = data_globalchange_casted1, 
              by = "id", 
              all.x = TRUE)
 
@@ -1299,7 +1302,72 @@ summary(optimal.cutpoint.Youden)
 
 plot(optimal.cutpoint.Youden)
 
+mcidofchange3to7<-data_mcid$psfs_FUP_7-data_mcid$psfs_FUP_3
+
+mcidof1<-car::recode(mcidofchange3to7,"0:1='below';
+                                 else='above'")
+
+table(mcidof1)
+
+externalvaliditymcid<-data.frame(mcidof1,
+                                 # data_BPScore,
+                                 # data_GHScore,
+                                 # data_HTScore,
+                                 # data_MHScore,
+                                 # data_PFScore,
+                                 # data_REScore,
+                                 # data_RPScore,
+                                 # data_SFScore,
+                                 # data_VTScore,
+                                 data_COMBTSCO)
+                                 # data_lefs,
+                                 # data_dash)
 # ROC
+
+
+by(data_COMBTSCO$COMBTSCO_FUP_7,mcidof1,summary)
+
+by(data_COMBTSCO$COMBTSCO_FUP_14,mcidof1,summary)
+wilcox.test(data_COMBTSCO$COMBTSCO_FUP_7 ~ mcidof1)
+wilcox.test(data_COMBTSCO$COMBTSCO_FUP_14 ~ mcidof1)
+
+
+boxplot<-data.frame(promis=data_COMBTSCO$COMBTSCO_FUP_14,mcidof1)
+
+
+
+library(ggplot2)
+# Use single color
+
+
+
+p<-ggplot(boxplot, 
+      aes(x=mcidof1, 
+      y=promis)) +
+  geom_boxplot(fill='white', 
+           color="grey20",
+           alpha=0.5) +
+  theme_bw() +
+  xlab("PSFS MCID") +
+  ylab("PROMIS") +
+  # ylim(0, 35) +
+  scale_x_discrete(labels=c("Above 1.0","Below 1.0")) +
+  geom_text(aes(label="*P<.05", x=1.5, y=23, label= "boat")) + 
+  geom_segment(aes(x=1.2,
+             y=20,
+             xend=1.8,
+             yend=20)) +
+  geom_segment(aes(x=1.2,
+             y=20,
+             xend=1.2,
+             yend=18)) +
+  geom_segment(aes(x=1.8,
+             y=20,
+             xend=1.8,
+             yend=18)) +
+  geom_text(aes(label="B)", x=0.5, y=32))
+
+p
 
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3068975/
 # https://www.ncbi.nlm.nih.gov/pubmed/2509379/
@@ -1354,5 +1422,413 @@ mean(data_mcid_improved$change_score)-mean(data_mcid_stable$change_score)
 
 CohenD<-pooled_mean/pooled_sd
 CohenD
+
+########################################################
+#CONTENT TEXT ANALYSIS
+########################################################
+
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library(ggplot2)
+library(textreg)
+
+#recodeing activities item 1
+psfs_act1<-Corpus(VectorSource(psfs_data$psfs_FUP_3_data_3_subset_activity_1))
+#primeiras manipulações
+
+#removing punctuations
+psfs_act1<-tm_map(psfs_act1,removePunctuation)
+
+#transforminf upper to lowercase
+psfs_act1 <- tm_map(psfs_act1,content_transformer(tolower))
+
+#removing numbers
+psfs_act1 <- tm_map(psfs_act1, removeNumbers)
+
+#removing "stopwords" (https://en.wikipedia.org/wiki/Stop_words) 
+psfs_act1 <- tm_map(psfs_act1, removeWords, stopwords("en"))
+
+#reducing words to stems
+psfs_act1 <- tm_map(psfs_act1, stemDocument, language = "english")
+
+# #casos específicos pt-br
+# psfs_act1 <- tm_map(psfs_act1, content_transformer(gsub),
+#                pattern = " walk", replacement = "walk")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "é", replacement = "e")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "í", replacement = "i")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ó", replacement = "o")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ú", replacement = "u")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ã", replacement = "a")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "õ", replacement = "o")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ç", replacement = "c")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ê", replacement = "e")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "â", replacement = "a")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "à", replacement = "a")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ô", replacement = "o")
+# writeLines(as.character(psfs_act1))
+
+psfs_act1_vector <- data.frame(text=sapply(psfs_act1, identity), 
+    stringsAsFactors=F)
+
+table(psfs_act1_vector)
+unique(psfs_act1_vector)
+
+
+psfs_data$psfs_FUP_3_data_3_subset_activity_1_RECODED<-car::recode(psfs_act1_vector$text,"
+'put pant' = 'Put on clothes';
+'climb stair' = 'Climb stairs';
+'shower' = 'Self-care';
+'make fist' = 'Higher extremitiy function';
+'buckl belt' = 'Put on clothes';
+'walk' = 'Walk/run';
+'open jar' = 'Eat/Cook';
+'spread finger' = 'Higher extremitiy function';
+'run' = 'Walk/run';
+'footbal' = 'Play/sports';
+'tie knot' = 'Put on clothes';
+'go step' = 'Climb stairs';
+'exercisewalkrun' = 'Walk/run';
+'work paint' = 'Work';
+'play farm anim' = 'Play/sports';
+'walk dog' = 'Walk/run';
+'drive manual car' = 'Drive';
+'morn exercis' = 'Play/sports';
+'walk upstair' = 'Climb stairs';
+'work construct' = 'Work';
+'work painter' = 'Work';
+'jog' = 'Play/sports';
+'drive' = 'Drive';
+'exercis' = 'Play/sports';
+'work nurseri' = 'Work';
+'carri heavi item' = 'Carry items';
+'take shower abl wash' = 'Self-care';
+'stand wash dish' = 'Carry items';
+'tenni' = 'Play/sports';
+'write' = 'Higher extremitiy function';
+'drive car' = 'Drive';
+'go stair' = 'Climb stairs';
+'use mous work' = 'Work';
+'type' = 'Higher extremitiy function';
+'use bathroom groom' = 'Self-care';
+'put sock shoe' = 'Put on clothes';
+'ski' = 'Play/sports';
+'light cigarett' = 'Light cigarett';
+'get dress' = 'Put on clothes';
+'wash hair' = 'Self-care';
+'laundri' = 'House care';
+'bike ride' = 'Drive';
+'put shoe' = 'Put on clothes';
+'get bed' = 'Bend down';
+'cut veget' = 'Eat/Cook';
+'eat' = 'Eat/Cook';
+'cook' = 'Eat/Cook';
+'grip small object' = 'Higher extremitiy function';
+'chang tire' = 'Carry items';
+'play basketbal' = 'Play/sports';
+'play video game' = 'Play/sports';
+'carri object' = 'Carry items'
+")
+
+#recodeing activities item 2
+psfs_act2<-Corpus(VectorSource(psfs_data$psfs_FUP_3_data_3_subset_activity_2))
+#primeiras manipulações
+
+#removing punctuations
+psfs_act2<-tm_map(psfs_act2,removePunctuation)
+
+#transforminf upper to lowercase
+psfs_act2 <- tm_map(psfs_act2,content_transformer(tolower))
+
+#removing numbers
+psfs_act2 <- tm_map(psfs_act2, removeNumbers)
+
+#removing "stopwords" (https://en.wikipedia.org/wiki/Stop_words) 
+psfs_act2 <- tm_map(psfs_act2, removeWords, stopwords("en"))
+
+#reducing words to stems
+psfs_act2 <- tm_map(psfs_act2, stemDocument, language = "english")
+
+# #casos específicos pt-br
+# psfs_act1 <- tm_map(psfs_act1, content_transformer(gsub),
+#                pattern = " walk", replacement = "walk")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "é", replacement = "e")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "í", replacement = "i")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ó", replacement = "o")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ú", replacement = "u")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ã", replacement = "a")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "õ", replacement = "o")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ç", replacement = "c")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ê", replacement = "e")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "â", replacement = "a")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "à", replacement = "a")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ô", replacement = "o")
+# writeLines(as.character(psfs_act1))
+
+psfs_act2_vector <- data.frame(text=sapply(psfs_act2, identity), 
+    stringsAsFactors=F)
+
+table(psfs_act2_vector)
+unique(psfs_act2_vector)
+
+psfs_data$psfs_FUP_3_data_3_subset_activity_2_RECODED<-car::recode(psfs_act2_vector$text,"
+        'brush teeth' = 'Self-care';
+        'squat' = 'Lower extremity function';
+        'exercis' = 'Play/sports';
+        'scratch back' = 'Higher extremitiy function';
+        'button shirt' = 'Put on clothes';
+        'shower' = 'Self-care';
+        'write' = 'Higher extremitiy function';
+        'go stair' = 'Climb stairs';
+        'sweep floor' = 'House care';
+        'swim' = 'Play/sports';
+        'dig yard' = 'Play/sports';
+        'stand fix hair' = 'Self-care';
+        'food prep' = 'Eat/Cook';
+        'cookingfood prep' = 'Eat/Cook';
+        'yard work' = 'House care';
+        'workout' = 'Play/sports';
+        'load unload equip' = 'Carry items';
+        'prepar breakfast' = 'Eat/Cook';
+        'exerciserun' = 'Play/sports';
+        'play ball son' = 'Play/sports';
+        'walk dog' = 'Walk/run';
+        'wash dish' = 'House care';
+        'walk' = 'Walk/run';
+        'cook' = 'Eat/Cook';
+        'construct task' = 'Work';
+        'play basketbal' = 'Play/sports';
+        'open medicin bottl' = 'Self-care';
+        'take trash' = 'House care';
+        'golf' = 'Play/sports';
+        'drive' = 'Drive';
+        'type' = 'Higher extremity function';
+        'clean floor' = 'House care';
+        'play dog' = 'Play/sports';
+        'move foot' = 'Lower extremity function';
+        'run' = 'Walk/run';
+        'garden' = 'House care';
+        'work weight' = 'Work';
+        'weightsworkout' = 'Play/sports';
+        'pray' = 'Pray';
+        'shoe' = 'Put on clothes';
+        'drive tractor' = 'Drive';
+        'open pill bottl' = 'Self-care';
+        'hang cloth line' = 'Put on clothes';
+        'swim lap' = 'Play/sports';
+        'mow lawn' = 'House care';
+        'tie shoe' = 'Put on clothes';
+        'use arm drink' = 'Eat/Cook';
+        'put boot' = 'Put on clothes';
+        'put pant' = 'Put on clothes';
+        'collect' = 'House care';
+        'pick object' = 'Carry item';
+        'tie shoelac' = 'Put on clothes';
+        'grip cup' = 'Eat/Coord';
+        'move hand freeli play' = 'Higher extremity function'
+    ")
+
+
+#recodeing activities item 3
+psfs_act3<-Corpus(VectorSource(psfs_data$psfs_FUP_3_data_3_subset_activity_3))
+#primeiras manipulações
+
+#removing punctuations
+psfs_act3<-tm_map(psfs_act3,removePunctuation)
+
+#transforminf upper to lowercase
+psfs_act3 <- tm_map(psfs_act3,content_transformer(tolower))
+
+#removing numbers
+psfs_act3 <- tm_map(psfs_act3, removeNumbers)
+
+#removing "stopwords" (https://en.wikipedia.org/wiki/Stop_words) 
+psfs_act3 <- tm_map(psfs_act3, removeWords, stopwords("en"))
+
+#reducing words to stems
+psfs_act3 <- tm_map(psfs_act3, stemDocument, language = "english")
+
+# #casos específicos pt-br
+# psfs_act1 <- tm_map(psfs_act1, content_transformer(gsub),
+#                pattern = " walk", replacement = "walk")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "é", replacement = "e")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "í", replacement = "i")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ó", replacement = "o")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ú", replacement = "u")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ã", replacement = "a")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "õ", replacement = "o")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ç", replacement = "c")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ê", replacement = "e")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "â", replacement = "a")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "à", replacement = "a")
+# ppgp <- tm_map(ppgp, content_transformer(gsub),
+#                pattern = "ô", replacement = "o")
+# writeLines(as.character(psfs_act1))
+
+psfs_act3_vector <- data.frame(text=sapply(psfs_act3, identity), 
+    stringsAsFactors=F)
+
+table(psfs_act3_vector)
+unique(psfs_act3_vector)
+
+psfs_data$psfs_FUP_3_data_3_subset_activity_3_RECODED<-car::recode(psfs_act3_vector$text,"
+              'shower'='Self-care';
+              'walk'='Walk/run';
+              'go toilet'='Self-care';
+              'hold tool'='Work';
+              'put pant'='Work';
+              'turn key'='Higher extremity function';
+              'get'='Carry item';
+              'get bathtub'='Self-care';
+              'open lid'='Higher extremity function';
+              'pe class'='Play/sports';
+              'drive'='Drive';
+              'drive hand wheel'='Drive';
+              'walk unassist'='Walk/run';
+              'drive car'='Drive';
+              'yard work'='House care';
+              'food prep'='Eat/Cook';
+              'garden'='House care';
+              'run'='Walk/run';
+              'walk stair'='Climb stairs';
+              'hous chore'='House care';
+              'cook'='Eat/Cook';
+              'walk school'='Walk/run';
+              'hike'='Play/sports';
+              'shop'='Shop';
+              'draw'='Higher extremity function';
+              'go stair'='Climb stairs';
+              'run walk behind lawn mower'='Walk/run';
+              'type keyboard'='Higher extremity function';
+              'tub'='Self-care';
+              'walk dog'='Walk/run';
+              'swim'='Play/sports';
+              'door handl turn'='Higher extremity function';
+              'move'='Walk/run';
+              'make dinner'='Eat/Cook';
+              'work'='Work';
+              'button shirt'='Put on clothes';
+              'get bed'='Self-care';
+              'pullup'='Play/sports';
+              'stair'='Climb stairs';
+              'teethbrushingcook'='Self-care';
+              'hold heavi object'='Carry items';
+              'jet ski'='Play/sports';
+              'workout'='Play/sports';
+              'work nurs'='Work';
+              'write'='Higher extremity function';
+              'text'='Higher extremity function';
+              'fish'='Play/sports';
+              'walk updown stair'='';
+              'go bathroom'='Self-care';
+              'put shirt'='Put on clothes';
+              'use cell phone'='Higher extremity function';
+              'exercis'='Play/sports';
+              'get dress'='Put on clothes';
+              'collect'='Carry items';
+              'small motor function'='Higher extremity function';
+              'lift car door handl'='Higher extremity function';
+              'walkingget around normal'='Walk/run';
+              'pick box'='Carry items';
+              'throw object'='Higher extremity function'
+    ")
+
+
+
+
+#Graph data
+content_graph_data<-NULL
+content_graph_data$content<-with(psfs_data,c(
+    psfs_FUP_3_data_3_subset_activity_1_RECODED,
+    psfs_FUP_3_data_3_subset_activity_2_RECODED,
+    psfs_FUP_3_data_3_subset_activity_3_RECODED))
+
+content_graph_data$item<-c(rep("Item 1",length(psfs_data[,1])),
+                           rep("Item 2",length(psfs_data[,1])),
+                           rep("Item 3",length(psfs_data[,1]))
+                          )
+
+content_graph_data<-as.data.frame(content_graph_data)
+ 
+
+plot_data<-plyr::count(content_graph_data, vars=c("content","item"))
+
+plot_data$prop<-(plot_data$freq/73)*100
+
+unique(plot_data$content)
+
+limits0<-plot_data[plot_data$item=="Item 1",]
+limits<-unique(limits0$content)[order(limits0$prop)]
+
+# Library
+library(tidyverse)
+ 
+# Create data
+# data=data.frame(x=LETTERS[1:26], y=abs(rnorm(26)))
+ 
+# 1 - Custom markers (left)
+# note: shape = integer between 0 and 25
+# note: stroke exists only for shapes between 1 and 24
+ggplot(data, aes(x=x, y=y)) +
+  geom_segment( aes(x=x, xend=x, y=0, yend=y)) +
+  geom_point( size=5, color="red", fill=alpha("orange", 0.3), alpha=0.7, shape=21, stroke=2)
+ 
+# 2 - Custom stems (right)
+# note: size is the width in mm
+# note: style can be in: "blank", "solid", "dashed", "dotted", "dotdash", "longdash","twodash"
+ggplot(data, aes(x=x, y=y)) +
+  geom_segment( aes(x=x, xend=x, y=0, yend=y) , size=1, color="blue", linetype="dotted" ) +
+  geom_point()
+
+
+ggplot(plot_data, aes(x=content, y=prop)) +
+  geom_segment( aes(x=content, xend=content, y=0, yend=prop), color="grey") +
+  geom_point( color="orange", size=4) +
+  theme_light() +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.x = element_blank()) +
+  xlab("") +
+  ylab("Value of Y") +
+  facet_grid(~item) +
+  coord_flip() +
+  scale_y_discrete(breaks=limits(plot_data$content),
+                      labels=c("Control", "Treat 1", "Treat 2"))
+
+
+
 
 

@@ -62,23 +62,23 @@ data$dem_patient_ocupation_cat<-car::recode(data$dem_patient_occ___1,"
 				0=0;
 				1=1")
 
-table(data$dem_patient_ocupation_cat)
-prop.table(table(data$dem_patient_ocupation_cat))
+# table(data$dem_patient_ocupation_cat)
+# prop.table(table(data$dem_patient_ocupation_cat))
 
 data$dem_decisionmaker_ocupation_cat<-car::recode(data$dem_dm_occ___1,"
 				0=0;
 				1=1")
 
-table(data$dem_decisionmaker_ocupation_cat)
-prop.table(table(data$dem_decisionmaker_ocupation_cat))
+# table(data$dem_decisionmaker_ocupation_cat)
+# prop.table(table(data$dem_decisionmaker_ocupation_cat))
 
 data<-mutate(data,dm_occupation_combined =
 			ifelse(dem_decisions==2,
 					dem_patient_ocupation_cat,
 					  dem_decisionmaker_ocupation_cat))
 
-table(data$dm_occupation_combined)
-prop.table(table(data$dm_occupation_combined))
+# table(data$dm_occupation_combined)
+# prop.table(table(data$dm_occupation_combined))
 
 #Education
 #################################################
@@ -90,12 +90,63 @@ data<-mutate(data,dm_education_combined =
 					  dem_dm_edu_cat))
 
 
-
 data$dm_education_combined<-car::recode(data$dm_education_combined,"
 	4:6=4")
 
-table(data$dm_education_combined)
-prop.table(table(data$dm_education_combined))
+data<-mutate(data,dm_education_combined_numeric =
+			ifelse(dem_decisions==1,
+					ifelse(dem_dm_edu_cat==1,
+						   0,
+						   ifelse(dem_dm_edu_cat==2,
+						   		  dem_dm_edu_grade,
+						   		  ifelse(dem_dm_edu_cat==3,
+						   		  		 dem_dm_edu_grade,
+						   		  		 ifelse(dem_dm_edu_cat==4,
+						   		  		 		dem_dm_edu_grade,
+						   		  		 		ifelse(dem_dm_edu_cat==5,
+						   		  		 			   dem_dm_edu_vocyear,
+					dem_dm_edu_uniyear))))),
+					ifelse(dem_patient_edu_cat==1,
+						   0,
+						   ifelse(dem_patient_edu_cat==2,
+						   		  dem_patient_edu_grade,
+						   		  ifelse(dem_patient_edu_cat==3,
+						   		  		 dem_patient_edu_grade,
+						   		  		 ifelse(dem_patient_edu_cat==4,
+						   		  		 		dem_patient_edu_grade,
+						   		  		 		ifelse(dem_patient_edu_cat==5,
+						   		  		 			   dem_patient_edu_vocyear,
+					dem_patient_edu_uniyear)))))))
+
+
+data<-mutate(data,carg_education_numeric =
+			ifelse(dem_carg_edu_cat==1,
+						   0,
+						   ifelse(dem_carg_edu_cat==2,
+						   		  dem_carg_edu_grade,
+						   		  ifelse(dem_carg_edu_cat==3,
+						   		  		 dem_carg_edu_grade,
+						   		  		 ifelse(dem_carg_edu_cat==4,
+						   		  		 		dem_carg_edu_grade,
+						   		  		 		ifelse(dem_carg_edu_cat==5,
+						   		  		 			   dem_carg_edu_vocyear,
+					dem_carg_edu_uniyear))))))
+
+
+#FREQUENCY OF SEIZURE AT ONSTE
+###################################################
+
+#numeric education
+data<-mutate(data,seizure_onsent_freq_adjusted =
+			ifelse(bb_seiz_freq_unit==1,
+					bb_seiz_freq,
+				ifelse(bb_seiz_freq_unit==2,
+					bb_seiz_freq*4.5,
+					ifelse(bb_seiz_freq_unit==3,
+					bb_seiz_freq*30,
+			bb_seiz_freq))))
+# table(data$dm_education_combined)
+# prop.table(table(data$dm_education_combined))
 
 #Literacy
 #################################################
@@ -106,8 +157,8 @@ data<-mutate(data,dm_literacyn_combined =
 					dem_patient_literacy,
 					  dem_dm_literacy))
 
-table(data$dm_education_combined)
-prop.table(table(data$dm_education_combined))
+# table(data$dm_education_combined)
+# prop.table(table(data$dm_education_combined))
 
 #SES score 
 #################################################
@@ -1301,6 +1352,32 @@ exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95)))
 #logistic.display(baselineXFUP3)
 
 ######################################################################
+#EXPLORATORY DATA ANALYSIS
+######################################################################
+
+
+#Gender
+table(data$dem_patient_gender)
+prop.table(table(data$dem_patient_gender))
+
+ggplot(data=data, aes(dem_patient_gender)) + 
+  geom_histogram(breaks=seq(1, 2, by=1))
+
+table(data$dem_carg_gender)
+prop.table(table(data$dem_carg_gender))
+
+table(data$dem_patient_gender)
+prop.table(table(data$dem_patient_gender))
+
+# #Age
+# describe(data$bb_age)
+
+#Education
+table(data$dem_patient_edu_cat)
+
+
+
+######################################################################
 #EXPORTING DATA
 ######################################################################
 
@@ -1309,7 +1386,7 @@ exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95)))
 # 					  "/Users/joaovissoci/Desktop/epilepsy_data.sps", 
 # 					  package="SPSS")
 
-write.csv(data, "/Users/joaovissoci/Desktop/epilepsy_data.csv")
+write.csv(data, "/Users/Joao/Desktop/epilepsy_data.csv")
 
 ######################################################################
 #END

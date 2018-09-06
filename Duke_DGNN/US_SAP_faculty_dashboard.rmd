@@ -626,10 +626,26 @@ Column
 
 ### Faculty use of ZPDs (%)  {.value-box}
 
+
 ```{r}
 # dlCount is a reactive expression that keeps track of the total
 # number of rows that have ever appeared through pkgStream.
 # dlCount <- downloadCount(pkgStream)
+
+observe({
+    x <- input$subspecialty
+
+    if (is.null(x) || x == "All") {
+      updateSelectInput(session, "case",
+        choices = c("All", unique(as.character(data_01$case))),
+        selected="All")
+    } else {
+      updateSelectInput(session, "case",
+        choices = c("All", unique(
+          as.character(subset(data_01, subspecialty == x, case, TRUE)))),
+        selected = "All")
+    }
+  })
 
 # Emit the download count
 renderValueBox({
