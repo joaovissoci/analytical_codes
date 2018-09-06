@@ -92,22 +92,22 @@ library, character.only=T)
 # write.csv(adys,"/Users/Joao/Desktop/deleteme_adys.csv")
 
 # add the path to you computer between " "
-data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
 
 #DASH, PGIC and LEFS
-data2<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adqs.sas7bdat"))
+data2<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adqs.sas7bdat"))
 
 #PSFS
-data3<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
+data3<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
 
 #PSFS Pilot
-data4<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
+data4<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
 
 #PGIC Pilot
-data5<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/pgic.sas7bdat"))
+data5<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/pgic.sas7bdat"))
 
 #SF36/PROMIS
-data6<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adys.sas7bdat"))
+data6<-setDT(read_sas("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adys.sas7bdat"))
 
 ######################################################
 #DATA MANAGEMENT
@@ -115,7 +115,6 @@ data6<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/s
 
 #Organizing PSFS data
 ######################################################
-
 #subsetting data_3 to isolade the PSFS data only for the 4 data points
 data_3_subset0<-subset(data3,data3$AVISIT=="Envenomation +14 Days" |
                              data3$AVISIT=="Envenomation +3 Days"  |
@@ -1113,7 +1112,7 @@ colnames(icc_clinimetric_data)<-c("id","t1","t2")
 
 
 # Calculate SEM
-install.packages("effsize")
+# install.packages("effsize")
 library(effsize)
 treatment = rnorm(100,mean=10)
 control = rnorm(100,mean=12)
@@ -1270,11 +1269,26 @@ ROC(form=change_cat_PGIC1_small~change_score_t14t3, data=data_mcid)
 ROC(form=change_cat_PGIC1_medium~change_score_t14t3, data=data_mcid)
 ROC(form=change_cat_PGIC1_large~change_score_t14t3, data=data_mcid)
 
-install.packages("OptimalCutpoints")
+# install.packages("OptimalCutpoints")
 
 library(OptimalCutpoints)
 
-optimal.cutpoint.Youden <- optimal.cutpoints(X = "psfs_FUP_3", 
+optimal_psfs_FUP3 <- optimal.cutpoints(X = "psfs_FUP_3", 
+                                             status = "change_cat_PGIC1_large", 
+                                             tag.healthy = "stable",
+                                             methods = "Youden", 
+                                             data = data_mcid, 
+                                             pop.prev = NULL, 
+                                             categorical.cov = NULL, #"gender",
+                                             control = control.cutpoints(), 
+                                             ci.fit = FALSE, 
+                                             conf.level = 0.95, 
+                                             trace = FALSE)
+
+summary(optimal_psfs_FUP3)
+
+
+optimal_psfs_FUP3to7 <- optimal.cutpoints(X = "change_score_t7t3", 
                                              status = "change_cat_PGIC1_large", 
                                              tag.healthy = "stable",
                                              methods = "Youden", 
@@ -1298,9 +1312,9 @@ optimal.cutpoint.Youden <- optimal.cutpoints(X = "psfs_FUP_3",
 #                                              conf.level = 0.95, 
 #                                              trace = FALSE)
 
-summary(optimal.cutpoint.Youden)
+summary(optimal_psfs_FUP3to7)
 
-plot(optimal.cutpoint.Youden)
+plot(optimal_psfs_FUP3to7)
 
 mcidofchange3to7<-data_mcid$psfs_FUP_7-data_mcid$psfs_FUP_3
 
@@ -1322,17 +1336,17 @@ externalvaliditymcid<-data.frame(mcidof1,
                                  data_COMBTSCO)
                                  # data_lefs,
                                  # data_dash)
-# ROC
 
-
+#External validity - PROMIS
 by(data_COMBTSCO$COMBTSCO_FUP_7,mcidof1,summary)
 
 by(data_COMBTSCO$COMBTSCO_FUP_14,mcidof1,summary)
+
 wilcox.test(data_COMBTSCO$COMBTSCO_FUP_7 ~ mcidof1)
 wilcox.test(data_COMBTSCO$COMBTSCO_FUP_14 ~ mcidof1)
 
 
-boxplot<-data.frame(promis=data_COMBTSCO$COMBTSCO_FUP_14,mcidof1)
+boxplot<-data.frame(promis=data_COMBTSCO$COMBTSCO_FUP_7,mcidof1)
 
 
 
@@ -1341,7 +1355,7 @@ library(ggplot2)
 
 
 
-p<-ggplot(boxplot, 
+ggplot(boxplot, 
       aes(x=mcidof1, 
       y=promis)) +
   geom_boxplot(fill='white', 
@@ -1349,9 +1363,9 @@ p<-ggplot(boxplot,
            alpha=0.5) +
   theme_bw() +
   xlab("PSFS MCID") +
-  ylab("PROMIS") +
+  ylab("PROMIS at 7 Days") +
   # ylim(0, 35) +
-  scale_x_discrete(labels=c("Above 1.0","Below 1.0")) +
+  scale_x_discrete(labels=c("Above 1.0","Below 1.0")) #+
   geom_text(aes(label="*P<.05", x=1.5, y=23, label= "boat")) + 
   geom_segment(aes(x=1.2,
              y=20,
@@ -1367,7 +1381,157 @@ p<-ggplot(boxplot,
              yend=18)) +
   geom_text(aes(label="B)", x=0.5, y=32))
 
-p
+
+#External validity - SF36 PF
+
+table(data_PFScore$mcidof1)
+
+
+data_PFScore$mcidofchange3to7<-data_PFScore$psfs_FUP_7-data_PFScore$psfs_FUP_3
+
+data_PFScore$mcidof1<-car::recode(data_PFScore$mcidofchange3to7,
+                                "0:1='below';
+                                 else='above'")
+
+by(data_PFScore$PFScore_FUP_7,data_PFScore$mcidof1,summary)
+by(data_PFScore$PFScore_FUP_14,data_PFScore$mcidof1,summary)
+
+wilcox.test(data_PFScore$PFScore_FUP_7 ~ data_PFScore$mcidof1)
+wilcox.test(data_PFScore$PFScore_FUP_14 ~ data_PFScore$mcidof1)
+
+boxplot<-data.frame(promis=data_PFScore$PFScore_FUP_7,mcidof1=data_PFScore$mcidof1)
+
+library(ggplot2)
+# Use single color
+
+ggplot(boxplot, 
+      aes(x=mcidof1, 
+      y=promis)) +
+  geom_boxplot(fill='white', 
+           color="grey20",
+           alpha=0.5) +
+  theme_bw() +
+  xlab("PSFS MCID") +
+  ylab("SF 36 - Physical Function at 7 days") +
+  # ylim(0, 35) +
+  scale_x_discrete(labels=c("Above 1.0","Below 1.0")) #+
+  geom_text(aes(label="*P<.05", x=1.5, y=23, label= "boat")) #+ 
+  # geom_segment(aes(x=1.2,
+  #            y=20,
+  #            xend=1.8,
+  #            yend=20)) +
+  # geom_segment(aes(x=1.2,
+  #            y=20,
+  #            xend=1.2,
+  #            yend=18)) +
+  # geom_segment(aes(x=1.8,
+  #            y=20,
+  #            xend=1.8,
+  #            yend=18)) +
+  # geom_text(aes(label="B)", x=0.5, y=32))
+
+#External validity - LEFS
+
+data_lefs$mcidofchange3to7<-data_lefs$psfs_FUP_7-data_lefs$psfs_FUP_3
+
+data_lefs$mcidof1<-car::recode(data_lefs$mcidofchange3to7,
+                                "0:1='below';
+                                 else='above'")
+
+by(data_lefs$lefs_FUP_3,data_lefs$mcidof1,summary)
+by(data_lefs$lefs_FUP_7,data_lefs$mcidof1,summary)
+by(data_lefs$lefs_FUP_14,data_lefs$mcidof1,summary)
+
+wilcox.test(data_lefs$lefs_FUP_3 ~ data_lefs$mcidof1)
+wilcox.test(data_lefs$lefs_FUP_7 ~ data_lefs$mcidof1)
+wilcox.test(data_lefs$lefs_FUP_14 ~ data_lefs$mcidof1)
+
+boxplot<-data.frame(promis=data_lefs$lefs_FUP_14,mcidof1=data_lefs$mcidof1)
+
+library(ggplot2)
+# Use single color
+
+ggplot(boxplot, 
+      aes(x=mcidof1, 
+      y=promis)) +
+  geom_boxplot(fill='white', 
+           color="grey20",
+           alpha=0.5) +
+  theme_bw() +
+  xlab("PSFS MCID") +
+  ylab("LEFS at 14 days") +
+  # ylim(0, 35) +
+  scale_x_discrete(labels=c("Above 1.0","Below 1.0")) #+
+  # geom_text(aes(label="*P<.05", x=1.5, y=23, label= "boat")) #+ 
+  # geom_segment(aes(x=1.2,
+  #            y=20,
+  #            xend=1.8,
+  #            yend=20)) +
+  # geom_segment(aes(x=1.2,
+  #            y=20,
+  #            xend=1.2,
+  #            yend=18)) +
+  # geom_segment(aes(x=1.8,
+  #            y=20,
+  #            xend=1.8,
+  #            yend=18)) +
+  # geom_text(aes(label="B)", x=0.5, y=32))
+
+#External validity - DASH
+
+data_dash$mcidofchange3to7<-data_dash$psfs_FUP_7-data_dash$psfs_FUP_3
+
+data_dash$mcidof1<-car::recode(data_dash$mcidofchange3to7,
+                                "0:1='below';
+                                 else='above'")
+
+by(data_dash$dash_FUP_3,data_dash$mcidof1,summary)
+by(data_dash$dash_FUP_7,data_dash$mcidof1,summary)
+by(data_dash$dash_FUP_14,data_dash$mcidof1,summary)
+
+wilcox.test(data_dash$dash_FUP_3 ~ data_dash$mcidof1)
+wilcox.test(data_dash$dash_FUP_7 ~ data_dash$mcidof1)
+wilcox.test(data_dash$dash_FUP_14 ~ data_dash$mcidof1)
+
+boxplot<-data.frame(promis=data_dash$dash_FUP_14,mcidof1=data_dash$mcidof1)
+
+library(ggplot2)
+# Use single color
+
+ggplot(boxplot, 
+      aes(x=mcidof1, 
+      y=promis)) +
+  geom_boxplot(fill='white', 
+           color="grey20",
+           alpha=0.5) +
+  theme_bw() +
+  xlab("PSFS MCID") +
+  ylab("DASH at 14 days") +
+  # ylim(0, 35) +
+  scale_x_discrete(labels=c("Above 1.0","Below 1.0")) #+
+  # geom_text(aes(label="*P<.05", x=1.5, y=23, label= "boat")) #+ 
+  # geom_segment(aes(x=1.2,
+  #            y=20,
+  #            xend=1.8,
+  #            yend=20)) +
+  # geom_segment(aes(x=1.2,
+  #            y=20,
+  #            xend=1.2,
+  #            yend=18)) +
+  # geom_segment(aes(x=1.8,
+  #            y=20,
+  #            xend=1.8,
+  #            yend=18)) +
+  # geom_text(aes(label="B)", x=0.5, y=32))
+
+
+
+
+
+
+
+
+
 
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3068975/
 # https://www.ncbi.nlm.nih.gov/pubmed/2509379/
@@ -1830,5 +1994,33 @@ ggplot(plot_data, aes(x=content, y=prop)) +
 
 
 
+content<-with(psfs_data,c(
+    psfs_FUP_3_data_3_subset_activity_1_RECODED,
+    psfs_FUP_3_data_3_subset_activity_2_RECODED,
+    psfs_FUP_3_data_3_subset_activity_3_RECODED))
 
+content_2<-car::recode(content,"
+          'Bend down' = 'Daily activities';
+          'Carry item' = 'Daily activities';
+          'Carry items' = 'Daily activities';
+          'Climb stairs' = 'Daily activities';
+          'Drive' = 'Drive';
+          'Eat/Cook' = 'Eat/Cook';
+          'Eat/Coord' = 'Eat/Cook';
+          'Higher extremitiy function' = 'Body movement';
+          'Higher extremity function' = 'Body movement';
+          'House care' = 'Daily activities';
+          'Light cigarett' = 'Body movement';
+          'Lower extremity function' = 'Body movement';
+          'Play/sports' = 'Play/sports';
+          'Pray' = 'Play/sports';
+          'Put on clothes' = 'Daily activities';
+          'Self-care' = 'Daily activities';
+          'Shop' = 'Daily activities';
+          'Walk/run' = 'Play/sports';
+          'Work' = 'Work';
+          else='Daily activities'"
+          )
 
+table(content_2)
+prop.table(table(content_2))

@@ -25,16 +25,22 @@
 #library(Hmisc)
 
 #All packages must be installes with install.packages() function
-lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis",
-	"mvnormtest","polycor","MASS"), 
+lapply(c("Hmisc","car","psych","nortest","ggplot2","pastecs","repmis"
+  ,"polycor","MASS"), 
 library, character.only=T)
 
 ######################################################################
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/baltimore_gis/paper 2/balticsv.csv",sep=",")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/baltimore_gis/paper 2/balticsv.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
+
+data_race<-read.csv("/Users/joaovissoci/Downloads/baltimore race data.csv")
+
+
+data_merged<- merge(data, data_race, by.x = "GEOID", by.y = "GEO.id2", all.x = TRUE)
+
 
 ######################################################################
 #DATA MANAGEMENT
@@ -97,8 +103,12 @@ exp(confint(fm_nbin,level=0.95))
 
 
 fm_nbin <- glm.nb(PNT_IMP_13 ~ PNTCNT_PUB + 
-		lenght_km + population, 
-	data = data)
+		                           lenght_km + 
+                               population + 
+                               black_raw + 
+                               indian_raw + 
+                               asian_raw, 
+	data = data_merged)
 summary(fm_nbin)
 exp(coef(fm_nbin))
 exp(confint(fm_nbin,level=0.95))
@@ -108,8 +118,12 @@ exp(confint(fm_nbin,level=0.95))
            )
 
 fm_nbin <- glm.nb(PNT_IMP_13 ~ agglomeration + 
-    lenght_km + population, 
-  data = data)
+                              lenght_km + 
+                              population +
+                                black_raw + 
+                               indian_raw + 
+                               asian_raw, 
+  data = data_merged)
 summary(fm_nbin)
 exp(coef(fm_nbin))
 exp(confint(fm_nbin,level=0.95))
@@ -120,9 +134,24 @@ exp(confint(fm_nbin,level=0.95))
 
 PNTCNT_noIMP <- with(data,PNTCNT-PNT_IMP_13)
 
-fm_nbin <- glm.nb(PNTCNT_noIMP ~ PNTCNT_PUB + agglomeration + 
-    lenght_km + population, 
-  data = data)
+fm_nbin <- glm.nb(PNTCNT_noIMP ~    PNTCNT_PUB + 
+                              lenght_km + 
+                              population +
+                                black_raw + 
+                               indian_raw + 
+                               asian_raw, 
+  data = data_merged)
+summary(fm_nbin)
+exp(coef(fm_nbin))
+exp(confint(fm_nbin,level=0.95))
+
+fm_nbin <- glm.nb(PNTCNT_noIMP ~    agglomeration + 
+                              lenght_km + 
+                              population +
+                                black_raw + 
+                               indian_raw + 
+                               asian_raw, 
+  data = data_merged)
 summary(fm_nbin)
 exp(coef(fm_nbin))
 exp(confint(fm_nbin,level=0.95))
