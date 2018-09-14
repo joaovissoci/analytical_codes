@@ -12,7 +12,7 @@
  #install.packages("miP")
  #install.packages("gWidgetsRGtk2")
  #install.packages("mi")
- # install.packages("tidyverse")
+ # install.packages("eeptools")
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
@@ -35,8 +35,8 @@ library, character.only=T)
 
 library(jsonlite)
 
-file <- file("/Users/Joao/Box Sync/Home Folder jnv4/Data/consultation/UCB/exported_data.txt",
-             open="rb",
+file <- file("/Users/Joao/Downloads/exported_data.txt",
+             open="r",
              encoding="UTF-8-BOM")
 
 df <- read.delim(file=file,
@@ -81,7 +81,136 @@ df_short_questionnaire <- dataTransform(df[df$V3 == "ShortQuestionnaire",])
 rm(dataTransform)
 
 ######################################################
-#DATA MANAGEMENT
+#Sociodemographics
+######################################################
+
+#age
+library(lubridate)
+
+df_questionnaire$Date.de.naissance %>%
+    recode("00-00-1970"="01-01-1970",
+           "00-00-1978"="01-01-1978",
+           "00-00-1960"="01-01-1960",
+           "00-00-1982"="01-01-1982",
+           "00-00-1983"="01-01-1983",
+           "00-00-1984"="01-01-1984",
+           "00-00-1985"="01-01-1985",
+           "00-00-1986"="01-01-1986",
+           "00-00-1987"="01-01-1987",
+           "00-00-1988"="01-01-1988",
+           "00-00-1989"="01-01-1989",
+           "00-00-1990"="01-01-1990",
+           "00-00-1991"="01-01-1991",
+           "00-00-1992"="01-01-1992",
+           "00-00-1993"="01-01-1993",
+           "00-00-1994"="01-01-1994",
+           "00-00-1995"="01-01-1995",
+           "00-00-1996"="01-01-1996",
+           "00-00-1997"="01-01-1997",
+           "00-00-1998"="01-01-1998",
+           "00-00-1999"="01-01-1999",
+           "00-00-1979"="01-01-1979",
+           "00-00-1980"="01-01-1980",
+           "00-00-1959"="01-01-1959",
+           "00-00-1969"="01-01-1969",
+           "00-00-1974"="01-01-1974",
+           "00-00-1964"="01-01-1964",
+           "00-00-1951"="01-01-1951",
+           "00-00-1966"="01-01-1966",
+           "00-00-1944"="01-01-1944",
+           "00-00-1973"="01-01-1973",
+           "00-00-1952"="01-01-1952",
+           "00-00-1955"="01-01-1955",
+           "00-00-1946"="01-01-1946",
+           "01-01-197"="01-01-1970",
+           "8-10-202"=" 8-10-2002",
+           "00-00-2002"="01-01-2002",
+           "11-11-1111"=NA_character_) %>%
+    dmy() -> data_birth
+
+library(eeptools)
+current_date<-rep(mdy("01-01-2018"),length(df_questionnaire$Date.de.naissance)-1)
+age<-age_calc(na.omit(data_birth),current_date,units = "years")
+
+describe(age)
+#gender
+
+table(df_questionnaire$Sexe)
+prop.table(table(df_questionnaire$Sexe))
+
+#employment
+unique(df_questionnaire$Fonction.professionnelle)
+
+level_key <- list(
+                  "Cuisinier"= "employed",
+                  "En chômage"= "unemployed",
+                  "enfant"= "unemployed",
+                  "cultivateur"= "employed",
+                  "fonctionnaire de l’état"= "employed",
+                  "etudiant"= "unemployed",
+                  "commerçant/entrepreneur indépendant"= "employed",
+                  "Pas d'emploi"= "unemployed",
+                  "Chaumeur"= "employed",
+                  "Ménage"= "unemployed",
+                  "Menage"= "unemployed",
+                  "Aucune"= "unemployed",
+                  "PAS D'emploi"= "unemployed",
+                  "Chômage"= "unemployed",
+                  "Passionnée"= "unemployed",
+                  "Pasteur pensionné"= "unemployed",
+                  "Chomeur"= "unemployed",
+                  "Incapable"= "unemployed",
+                  "Travaux ménager"= "unemployed",
+                  "Démobilisé"= "unemployed",
+                  "Ménagère"= "unemployed",
+                  "Business"= "employed",
+                  "Chauffeur"= "employed",
+                  "Sans emploi"= "unemployed",
+                  "Pas d,emploi"= "unemployed",
+                  "Housekeeper"= "unemployed",
+                  "Secteur privé"= "employed",
+                  "Aide maçon"= "employed",
+                  "Pas emploi"= "unemployed",
+                  "Such events"= "unemployed",
+                  "Militaire"= "employed",
+                  "Atelier de couture"= "employed",
+                  "Passionné"= "unemployed")
+
+employment<-recode_factor(df_questionnaire$Fonction.professionnelle, !!!level_key)
+
+table(employment)
+prop.table(table(employment))
+
+#education
+table(df_questionnaire$Niveau.d.éducation)
+prop.table(table(df_questionnaire$Niveau.d.éducation))
+
+#age of first onset
+
+age_onset<-gsub("^ans"," ",df_questionnaire$Age.du.patient.au.moment.de.la.première.crise)
+
+table(df_questionnaire$Age.du.patient.au.moment.de.la.première.crise)
+
+#type of epilepsy
+df <- data.frame(matrix(unlist(df_questionnaire$Type.de.crise.épileptiques), nrow=434, byrow=T))
+
+table(df$X1)
+table(df$X2)
+table(df$X3)
+table(df$X4)
+table(df$X5)
+table(df$X6)
+
+
+partial_epilepsy <- 71 + 118
+general_epilepsy <- 55 + 177 + 116
+unknown <- 11
+
+table(df_questionnaire$Est.ce.que.le.patient.a.utilisé.des.traitements.traditionnels.)
+prop.table(table(df_questionnaire$Est.ce.que.le.patient.a.utilisé.des.traitements.traditionnels.))
+
+######################################################
+#PHQ9
 ######################################################
 
 str(df_hdrs)
@@ -211,6 +340,165 @@ phq9_data$phq9_sum<-with(phq9_data,rowSums(data.frame(phq1_num,
                             phq7_num,
                             phq8_num,
                             phq9_num)))
+
+######################LIKERT SCALE GRAPH
+#######################################
+
+phq9_data[,c(15:23)][phq9_data[,c(15:23)]==0]<-"Nta na rimwe"
+phq9_data[,c(15:23)][phq9_data[,c(15:23)]==1]<-"Rimwe na rimwe"
+phq9_data[,c(15:23)][phq9_data[,c(15:23)]==2]<-"Birenze igice cy'umunsi"
+phq9_data[,c(15:23)][phq9_data[,c(15:23)]==3]<-"Hafi ya buri muns"
+
+phq9_likertplot<-with(phq9_data,data.frame(phq1_num,
+                                           phq2_num,
+                                           phq3_num,
+                                           phq4_num,
+                                           phq5_num,
+                                           phq6_num,
+                                           phq7_num,
+                                           phq8_num,
+                                           phq9_num
+                                           ))
+
+phq9_likertplot_transformed<-likert(na.omit(phq9_likertplot))
+
+library(likert)
+phq9_plot<-plot(phq9_likertplot_transformed,
+           colors=c(
+                "#D33F6A",
+                "#E07B91",
+                "lightgrey",
+                "#8595E1"))
+
+phq9_plot<- phq9_plot + scale_x_discrete(breaks=c(
+                "phq1_num",
+                "phq2_num",
+                "phq3_num",
+                "phq4_num",
+                "phq5_num",
+                "phq6_num",
+                "phq7_num",
+                "phq8_num",
+                "phq9_num"),
+                                        labels=c(
+                "Question #1",
+                "Question #2",
+                "Question #3",
+                "Question #4",
+                "Question #5",
+                "Question #6",
+                "Question #7",
+                "Question #8",
+                "Question #9"
+                )) +
+        theme_bw() +
+        theme(legend.position="bottom")
+
+# summary_data<-summary(knowledge_data)
+
+# mean_plot<-ggplot(summary_data, aes(y=mean,x=Item)) + 
+#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.1) +
+#     geom_line() +
+#     geom_point() +
+#     coord_flip() +
+#     xlab("") +
+#     ylab("Mean/Standard Deviation") +
+#     scale_x_discrete(limits=rev(c("talking_can_be_successful",
+#                     "discuss_risky_alc",
+#                     "discuss_counsel_pts",
+#                     "not_my_role",
+#                     "called_harmful_drinkers"))) +
+#     expand_limits(y=c(1:5)) +
+#     theme_bw() +
+#     theme(panel.background = element_rect(colour = 'grey'))
+
+
+phq9_network<-with(phq9_data,data.frame(phq1_num,
+                                           phq2_num,
+                                           phq3_num,
+                                           phq4_num,
+                                           phq5_num,
+                                           phq6_num,
+                                           phq7_num,
+                                           phq8_num,
+                                           phq9_num
+                                           ))
+
+#organizing datasets
+library(qgraph)
+# phq9_network_data<-data.frame(Under,Respo)#,reading_scores$scores)
+phq9_network_data<-na.omit(phq9_network) #omitting NAs
+
+#creating correlation matrix
+phq9_cor_data<-cor_auto(phq9_network_data)
+#qsgc<-qsgc$rho
+
+#listing grouping variables in the network resulting from the 
+#community analysis
+# phq9_node_groups<-list(Under1=c(1,2,3,4,5,6,7,15),
+#   Under2=c(8,9,10,11,12,13,14))
+
+# creating vectors for labels
+phq9_node_labels<-c("Question #1",
+                "Question #2",
+                "Question #3",
+                "Question #4",
+                "Question #5",
+                "Question #6",
+                "Question #7",
+                "Question #8",
+                "Question #9")
+
+# creating nodes labels vector
+phq9_node_names<-c("Q1","Q2","Q3","Q4","Q5","Q6","Q7",
+  "Q8","Q9")
+
+# creating vector with mean values for each node
+mean_data<-sapply(phq9_network_data,mean)
+
+#creating vector with mean values adjusted to proportional 
+#sizes to be plotted
+phq9_vSize<-c(mean_data/min(mean_data))
+
+#building network figures 
+# 3 types are created to get an avarege position and layout
+
+#GLASSO NETWORK
+# tiff("/Users/joaovissoci/Desktop/importance_network.tiff", width = 1200,
+#  height = 700,compression = 'lzw')
+network<-qgraph(phq9_cor_data,
+  layout="spring",
+  vsize=phq9_vSize*6,
+  graph="glasso",
+  sampleSize=nrow(phq9_network_data),
+  legend.cex = 0.6,
+  cut = 0.1, 
+  maximum = 1, 
+  minimum = 0, 
+  # esize = 20,
+  repulsion = 0.8,
+  # groups=importance_network_groups,
+  nodeNames=phq9_node_names,
+  #color=c("gold","steelblue","red","grey80",
+  # layoutScale=c(2,2),
+  # borders = FALSE,
+  labels=phq9_node_labels)#,gray=T,)#,nodeNames=nomesqsg
+# dev.off()
+
+#layout2<-averageLayout(network_glasso,network_pcor,network_cor)
+
+#Calculating Community measures
+g<-as.igraph(phq9_network_glasso) #creating igraph object
+#h<-walktrap.community(g) #creatin community object
+h<-spinglass.community(g, weights=NA)
+plot(h,g) #plotting community network
+h$membership #extracting community membership for each node on the network
+
+#Identify SPLs within the graph and extract direct paths to WP
+predictors<-centrality(phq9_network_glasso)$ShortestPaths[,15]
+predictors
+
+
 
 # data.frame(phq9_data$phq9_sum,phq9_data$phq9_score)
 
