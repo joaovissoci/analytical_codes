@@ -37,7 +37,7 @@ character.only=T)
 #Pulling data from dropbox
 #data_hamilton <- repmis::source_DropboxData("lena_hamilton.csv","r31zt5zeiygsc23",sep = ",",header = TRUE)
 
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -503,7 +503,7 @@ logmodel<-glm(rtc_involvement ~
 								years_work_onbodaboda +
 								hours_work_week + 
 								work_night +
-								helmet_cracks + 
+								# helmet_cracks + 
 								safety_helmet_use +
 								safety_buckle_helmet + 
 								helmet_obscure_face_shield + 
@@ -511,15 +511,14 @@ logmodel<-glm(rtc_involvement ~
 								helmet_fit +
 								safety_headlight_use_day + 
 								safety_headlight_use_night + 
-								safety_purchase_helmet_after_use +
+								# safety_purchase_helmet_after_use +
 								safety_belief_helmet_reduce_risk +
 								safety_buckle_helmet +
 								safety_belief_helmetstraps_reduce_risk,
 	family=binomial, data=data_all)
 summary(logmodel)
 #anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
@@ -776,7 +775,7 @@ logmodel<-glm(injury ~
 								age +
 								years_work_onbodaboda +
 								hours_work_week + 
-								helmet_cracks +
+								# helmet_cracks +
 								work_night + 
 								safety_helmet_use +
 								safety_buckle_helmet + 
@@ -785,15 +784,14 @@ logmodel<-glm(injury ~
 								helmet_fit +
 								safety_headlight_use_day + 
 								safety_headlight_use_night + 
-								safety_purchase_helmet_after_use +
+								# safety_purchase_helmet_after_use +
 								safety_belief_helmet_reduce_risk +
 								safety_buckle_helmet +
 								safety_belief_helmetstraps_reduce_risk,
 	family=binomial, data=data_all)
 summary(logmodel)
 #anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
@@ -1055,21 +1053,20 @@ logmodel<-glm(nearmissmonth ~
 								hours_work_week + 
 								safety_helmet_use +
 								work_night +								
-								helmet_cracks + 
+								# helmet_cracks + 
 								safety_buckle_helmet + 
 								helmet_obscure_face_shield + 
 								helmet_face_shield + 
 								# helmet_fit +
 								safety_headlight_use_day + 
 								safety_headlight_use_night +
-								safety_purchase_helmet_after_use +
+								# safety_purchase_helmet_after_use +
 								# safety_belief_helmet_reduce_risk +
 								safety_belief_helmetstraps_reduce_risk,
 	family=binomial, data=data_all)
 summary(logmodel)
 #anova(reglogGEU)
-exp(coef(logmodel)) # exponentiated coefficients
-exp(confint(logmodel)) # 95% CI for exponentiated coefficients
+exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
 #predict(model1_death, type="response") # predicted values
 #residuals(model1_death, type="deviance") # residuals
 logistic.display(logmodel)
@@ -1165,113 +1162,12 @@ pca_demographics<-
 # ######################################################
 # #PATH ANALYSIS - From lavaan package - https://gist.github.com/joaovissoci/7838f4808885e506527e
 # ######################################################
-# logistic_data<-data.frame(outcome=outcomes$injury,
-# 	rtc=outcomes$rtc_involvement,
-# 	nm=outcomes$nearmissmonth,
-# 	pca1,
-# 	# age=demographics$age,
-# 	# hours=work_experience$hours,
-# 	# years=work_experience$years,
-# 	hosp=outcomes$hospitalization)
 
-# logmodel<-glm(outcome ~ PCA1 +
-# 						PCA2 +
-# 						PCA3 +
-# 						PCA4,
-# 		family=binomial, data=logistic_data)
-# summary(logmodel)
-# #anova(reglogGEU)
-# exp(coef(logmodel)) # exponentiated coefficients
-# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-# #predict(model1_death, type="response") # predicted values
-# #residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
+names(data_all)
 
-# logmodel<-glm(rtc ~ PCA1 +
-# 						PCA2 +
-# 						PCA3 +
-# 						PCA4,
-# 		family=binomial, data=logistic_data)
-# summary(logmodel)
-# #anova(reglogGEU)
-# exp(coef(logmodel)) # exponentiated coefficients
-# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-# #predict(model1_death, type="response") # predicted values
-# #residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
-
-# logmodel<-glm(nm ~ PCA1 +
-# 						PCA2 +
-# 						PCA3 +
-# 						PCA4,
-# 		family=binomial, data=logistic_data)
-# summary(logmodel)
-# #anova(reglogGEU)
-# exp(coef(logmodel)) # exponentiated coefficients
-# exp(confint(logmodel)) # 95% CI for exponentiated coefficients
-# #predict(model1_death, type="response") # predicted values
-# #residuals(model1_death, type="deviance") # residuals
-# logistic.display(logmodel)
-
-# ######################################################
-# #NETWORK ANALYSIS
-# ####################################################
-
-# safety_use<-safety_scores[,1]
-# helmet_condition<-safety_scores[,2]
-# peer_safety<-safety_scores[,3]
-# safety_belief<-safety_scores[,4]
-# outcome1<-outcomes$rtc_involvement
-# outcome2<-outcomes$nearmissmonth
-# exp<-experience_scores[,1]#work_experience$years_work_onbodaboda#car::recode(work_experience$years_work_onbodaboda,"0:3=0;else=1")
-# #hours<-work_experience$hours_work_onbodaboda#car::recode(work_experience$hours_work_onbodaboda,"0:8=0;else=1")
+data_all[,c(1:18,24)] <- data.frame(apply(data_all[c(1:18,24)], 2, as.numeric))
 
 
-# network_data<-data.frame(safety_use,helmet_condition,
-# 	peer_safety,safety_belief,outcome1,outcome2,exp)#,hours)
+cor_matrix<-cor_auto(data_all)
 
-# cor_data<-cor_auto(network_data)
-
-# groups<-list(Outcomes=c(5,6),Work_Hours=c(7),Safety_Behavior=c(1,2,3,4))
-# varLabels<-c("Safety use","Helmet condition","Peer safety",
-# 	"Safety belief","Road Traffic Crash","Near miss","Work hours")
-# #varNames<-c("SF1","SF2","SF3","SF4","OUT1","OUT2","EXP")
-# #normalize<-function(x){(x-min(x))/(max(x)-min(x))}
-# #mean_data<-sapply(as.data.frame(sapply(network_data,normalize)),mean)
-# #vSize<-normalize(colSums(reasons_danger))*7
-
-# tiff("/home/joao/Desktop/tz_safehabits_figure3.tiff", units='in', width = 11, height = 6,compression = 'lzw',res=1200,bg = "white")
-# PcorGRAPH<-qgraph(cor_data,layout="spring",
-# 	graph="pcor",sampleSize=nrow(network_data),
-# 	legend.cex = 0.6,cut = 0.1, maximum = 0.4,
-# 	 minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8,
-# 	 labels=varLabels,borders = FALSE,legend=TRUE,
-# 	 groups=groups,color=c("brown1","gold3","royalblue"),
-# 	 label.scale=FALSE,label.cex=2,edge.labels=FALSE,
-# 	 posCol="black",negCol="gray50")#,gray=T,)
-# 	 #,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3
-#      #,,color=c("gold","steelblue","red","grey80"),
-#      #labels=rownames(pca_data)
-# dev.off()
-
-# #not run
-# #blabla<-function(x){
-# #	as.numeric(as.character(x))
-# #}
-# #
-# #blabla2<-lapply(safe_habits,blabla)
-
-# #network_data<-data.frame(work_experience,outcome1,outcome2,blabla2)#,hours)
-
-# #cor_data<-cor_auto(network_data)
-
-# #PcorGRAPH<-qgraph(cor_data,layout="spring",graph="glasso",sampleSize=nrow(network_data),legend.cex = 0.6,cut = 0.1, maximum = 0.4, minimum = 0.1, esize = 5,vsize = 5, repulsion = 0.8)#,labels=varLabels,borders = FALSE,legend=TRUE,groups=groups,color=c("brown1","gold3","royalblue"),label.scale=FALSE,label.cex=2,edge.labels=TRUE,posCol="black",negCol="gray50")#,gray=T,)#,nodeNames=nomesqsg, layout=Lqsg,,groups=qsggr,vsize=vSize*3,,color=c("gold","steelblue","red","grey80"),labels=rownames(pca_data)
-
-# # Para identificar no qgraph o resultado do algortimo de comunidade, criar objeto de "groups"
-# # com o resultado de wcG1
-# predictors<-centrality(PcorGRAPH)$ShortestPaths[,5]
-# predictors
-# #centralityPlot(qsgG3)
-
-# predictors<-centrality(PcorGRAPH)$ShortestPaths[,6]
-# predictors
+write.csv(cor_matrix,"/Users/Joao/Desktop/cor_matrix.csv")
