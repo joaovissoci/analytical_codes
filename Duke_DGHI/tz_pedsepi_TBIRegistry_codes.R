@@ -96,7 +96,7 @@ df_c$gcs_tot_cat <- as.factor(df_c$gcs_tot_cat)
 df_c$breath_cat <- as.factor(df_c$breath)
 df_c$oxygen_cat <- as.factor(df_c$oxygen)
 df_c$cxr_cat <- as.factor(df_c$cxr)
-df_c$fluids <- car::recode(df_c$fluids_cat,"2=0")
+df_c$fluids <- car::recode(df_c$fluids,"2=0")
 df_c$fluids_cat <- as.factor(df_c$fluids)
 df_c$move_ext <- car::recode(df_c$move_ext,"2=0")
 df_c$move_ext_cat <- as.factor(df_c$move_ext)
@@ -120,7 +120,7 @@ df_c$other_surgery <- as.factor(df_c$other_surgery)
 df_c$alcohol_cat<-car::recode(df_c$alcohol_cat, "2=NA")
 df_c$alcohol_cat<-droplevels(df_c$alcohol_cat)
 
-df_c$avpu_cat %>% fct_collapse("1" = c ("1","2"))
+df_c$avpu_cat %>% fct_collapse("1" = c ("1","2")) -> df_c$avpu_cat
 df_c$avpu_cat <- car::recode(df_c$avpu_cat, "3:2")
 df_c$avpu_cat<-car::recode(df_c$avpu_cat, "3=NA")
 df_c$avpu_cat<-droplevels(df_c$avpu_cat)
@@ -164,6 +164,7 @@ impData <- dplyr::select(df_c, age, male,
 
 #Perform imputation using mice and pediatricdata dataset
 tempdf<-mice(impData,m=1,maxit=50,seed=500)
+
 # summary(tempdf)
 df_d <- mice::complete(tempdf,1)
 
@@ -261,7 +262,7 @@ chisq.test(m.gcs_tot)
 fisher.test(d.gcs_tot)
 fisher.test(m.gcs_tot)
 
-d.airway=table(df$airway, df$death)
+d.airway=table(df_d$airway_cat, df_d$death)
 chisq.test(d.airway)
 m.airway=table(df$airway, df$morbidity)
 chisq.test(m.airway)
@@ -269,8 +270,9 @@ chisq.test(m.airway)
 fisher.test(d.airway)
 fisher.test(m.airway)
 
-d.airway_mgmt=table(df$airway_mgmt, df$death)
+d.airway_mgmt=table(df_d$airway_mgmt_cat, df_d$death)
 chisq.test(d.airway_mgmt)
+fisher.test(d.airway_mgmt)
 m.airway_mgmt=table(df$airway_mgmt, df$morbidity)
 chisq.test(m.airway_mgmt)
 #Fishers
@@ -447,7 +449,7 @@ model1 <- glm(death ~
                #oxygen_cat+
                fluids_cat+
                move_ext_cat +
-               airway_cat +
+               # airway_cat +
                airway_mgmt_cat +
                # labs +
                seizure_cat+
@@ -499,23 +501,25 @@ ggplot(odds, aes(y=OR , x = reorder(vars, OR))) +
 
 
 #multivariate logistic regression for all red variables
+#multivariate logistic regression for all red variables
 model2 <- glm(morbidity ~ 
-               alcohol_cat+
+               age +
+               male +
+               moi +
+               # alcohol_cat+
                gcs_tot_cat+
                breath_cat+
                #oxygen_cat+
                fluids_cat+
-               move_ext_cat+
-               #airway_cat + 
-               #airway_mgmt_cat +
+               move_ext_cat +
+               # airway_cat +
+               airway_mgmt_cat +
                # labs +
                seizure_cat+
                skull_cat+
                ct_brain_cat+
                tbi_surgery_cat+
-               surgtoicu_cat+
-                gcs_tot_cat*surgtoicu_cat
-                , 
+               surgtoicu_cat,
              data = df.model,family = binomial(link="logit"))
 
 summary(model2)
@@ -560,23 +564,26 @@ ggplot(odds, aes(y=OR , x = reorder(vars, OR))) +
 
 # subgroup analysis
 mild <- subset(df_d, df_d$gcs_tot_cat=="mild")
+#multivariate logistic regression for all red variables
 model3 <- glm(death ~ 
-                alcohol_cat+
-                #gcs_tot_cat+
-                breath_cat+
-               # oxygen_cat+
-                fluids_cat+
-               # move_ext_cat+
-                airway_cat + 
-               # airway_mgmt_cat +
-                # labs +
-                seizure_cat+
-               # skull_cat+
-                ct_brain_cat+
-                tbi_surgery_cat+
-                surgtoicu_cat+ 
-              other_surgery,
-              data = mild,family = binomial(link="logit"))
+               age +
+               male +
+               moi +
+               alcohol_cat+
+               # gcs_tot_cat+
+               breath_cat+
+               #oxygen_cat+
+               fluids_cat+
+               move_ext_cat +
+               # airway_cat +
+               airway_mgmt_cat +
+               # labs +
+               seizure_cat+
+               skull_cat+
+               ct_brain_cat+
+               tbi_surgery_cat+
+               surgtoicu_cat,
+             data = mild,family = binomial(link="logit"))
 
 summary(model3)
 round(exp(cbind(Odds=coef(model3),confint(model3,level=0.95))), 3)
