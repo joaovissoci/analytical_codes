@@ -510,8 +510,8 @@ data_mcid$change_cat_PGIC1_large<-car::recode(data_mcid$pgic_FUP_14,"1:6='stable
 
 # data_mcid2<-na.omit(data_mcid[-c(22,79),])
 
-data_mcid_stable<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='stable')
-data_mcid_improved<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='improved')
+# data_mcid_stable<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='stable')
+# data_mcid_improved<-subset(data_mcid2,data_mcid2$change_cat_PGIC1_severe=='improved')
 
 ##Organizing DASH data
 ####################################
@@ -922,6 +922,18 @@ data_COMBTSCO<-merge(x = psfs_data_tocombine,
              y = COMBTSCO_data_subset_total_casted1, 
              by = "id", 
              all.y = TRUE)
+
+
+# full dataset
+
+
+data_merged_1 <- merge(data_mcid,data_psfs_combined,all.y=TRUE,by.x="USUBJID.x",by.y="USUBJID")
+data_merged_2 <- merge(data_dash,data_merged_1,all.y=TRUE,by.x="USUBJID.x",by.y="USUBJID.x")
+data_merged_3 <- merge(data_lefs,data_merged_2,all.y=TRUE,by.x="USUBJID.x",by.y="USUBJID.x")
+data_merged_4 <- merge(data_COMBTSCO,data_merged_3,all.y=TRUE,by.x="USUBJID.x",by.y="USUBJID.x")
+data_merged_5 <- merge(data_PFScore,data_merged_4,all.y=TRUE,by.x="USUBJID.x",by.y="USUBJID.x")
+
+write.csv(data_merged_5,"/Users/Joao/Desktop/psfs_data.csv")
 
 ######################################################################
 #TABLE 1

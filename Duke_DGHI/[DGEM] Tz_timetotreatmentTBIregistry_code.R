@@ -82,7 +82,7 @@ lapply(c("mice"),library, character.only=T)
 #
 ######################################################
 
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistry_data.csv")
+data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tbi_registry/tz_TBIregistry_data.csv")
 
 ######################################################
 #
@@ -1890,7 +1890,6 @@ exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95)))
 
 gcs1 <- subset(data, data$gcs == "severe" )
 gcs2 <- subset(data, data$gcs == "moderate" )
-gcs3 <- subset(data, data$gcs == "mild" )
 
 sapply(with(gcs1,data.frame(time_to_care_cat, 
                             time_to_care_cdmd_cat , 
@@ -1914,7 +1913,7 @@ gcs1$time_to_care_ct_cat<-car::recode(gcs1$time_to_care_ct_cat,"
                                         else='less 4'
                                         ")
 
-logmodel_gcs<-glm(outcome ~ time_to_care_cat+ 
+logmodel_gcs_1<-glm(outcome ~ time_to_care_cat+ 
                             # time_to_care_cdmd_cat + 
                             time_to_care_labor_cat + 
                             time_to_care_tbis_cat + 
@@ -1930,6 +1929,93 @@ logmodel_gcs<-glm(outcome ~ time_to_care_cat+
                   family=binomial, data=gcs1)
 summary(logmodel_gcs)
 exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+tmp_gos1<-data.frame(cbind(exp(coef(logmodel_gcs_1)),
+                           exp(confint(logmodel_gcs_1))))
+
+tmp_gos1<-tmp_gos1[-c(1,17:22),]
+
+#tmp<-rbind(tmp_gos, tmp_gos1, tmp_gos2, tmp_gos3)
+odds<-tmp_gos1
+names(odds)<-c('OR', 'lower', 'upper')
+
+odds$vars<-c("Time to Arrival: ≤1h vs. >12h",
+                 "Time to Arrival: ≤1h vs. 1.1-4h",
+                 "Time to Arrival: ≤1h vs. 4.1-12h",
+                 # "Time to Physician: ≤1h vs. >4h",
+                 # "Time to Physician: ≤1h vs. 1.1-4h",
+                 "Time to Laboratory: ≤1h vs. >12h",
+                 "Time to Laboratory: ≤1h vs. 1.1-4h",
+                 "Time to Laboratory: ≤1h vs. 4.1-12h",
+                 "Time to Surgery: ≤1h vs. >12h",
+                 "Time to Surgery: ≤1h vs. 4.1-12h",
+                 "Time to Surgery: ≤1h vs. NA",
+                 # "Time to Oxygen: ≤1h vs. >1h",
+                 # "Time to Oxygen: ≤1h vs. no did and no need",
+                 "Time to Oxygen: ≤1h vs. no did but need",
+                 "Time to Fluids: ≤1h vs. 1.1-4h",
+                 "Time to Fluids: ≤1h vs. >4h",
+                 "Time to Fluids: ≤1h vs. no did and no need",
+                 "Time to Fluids: ≤1h vs. no did but need",
+                 # "Time to CT: ≤1h vs. 1.1-4h",
+                 # "Time to CT: ≤1h vs. >4h",
+                 # "Time to CT: ≤1h vs. no did and no need",
+                 "Time to CT: ≤1h vs. no did but need")
+                 # "Time to X-r: ≤1h vs. 1.1-4h",
+                 # "Time to X-r: ≤1h vs. >4h",
+                 # "Time to X-r: ≤1h vs. no did and no need",
+                 # "Time to X-r: ≤1h vs. no did but need"),4)
+#odds$groups<-rep(c(rep("Time to care",4),
+#                   "Course points",
+#                   "Age", 
+#                   "Gender",
+#                   "MOI",
+#                   "Alcohol use",
+#                   rep("District",5)),2)
+odds$models<-c("Severe GCS")
+
+grafico4<-ggplot(odds, aes(y= OR, x = reorder(vars, OR))) +
+  geom_point() +
+  geom_errorbar(aes(ymin=lower, ymax=upper), width=.2) +
+  #scale_y_log10(breaks=ticks, labels = ticks) +
+  geom_hline(yintercept = 1, linetype=2) +
+  scale_x_discrete(limits=c(
+    "Time to Arrival: ≤1h vs. >12h",
+    "Time to Arrival: ≤1h vs. 1.1-4h",
+    "Time to Arrival: ≤1h vs. 4.1-12h",
+    # "Time to Physician: ≤1h vs. >4h",
+    # "Time to Physician: ≤1h vs. 1.1-4h",
+    "Time to Laboratory: ≤1h vs. >12h",
+    "Time to Laboratory: ≤1h vs. 1.1-4h",
+    "Time to Laboratory: ≤1h vs. 4.1-12h",
+    "Time to Surgery: ≤1h vs. >12h",
+    "Time to Surgery: ≤1h vs. 4.1-12h",
+    "Time to Surgery: ≤1h vs. NA",
+    # "Time to Oxygen: ≤1h vs. >1h",
+    # "Time to Oxygen: ≤1h vs. no did and no need",
+    "Time to Oxygen: ≤1h vs. no did but need",
+    "Time to Fluids: ≤1h vs. 1.1-4h",
+    "Time to Fluids: ≤1h vs. >4h",
+    "Time to Fluids: ≤1h vs. no did and no need",
+    "Time to Fluids: ≤1h vs. no did but need",
+    # "Time to CT: ≤1h vs. 1.1-4h",
+    # "Time to CT: ≤1h vs. >4h",
+    # "Time to CT: ≤1h vs. no did and no need",
+    "Time to CT: ≤1h vs. no did but need"
+    # "Time to X-r: ≤1h vs. 1.1-4h",
+    # "Time to X-r: ≤1h vs. >4h",
+    # "Time to X-r: ≤1h vs. no did and no need",
+    # "Time to X-r: ≤1h vs. no did but need"
+    )) +
+  facet_grid(.~models, scales="free_y") +
+  coord_flip() +
+  labs(x = 'Wait Times as Predictors of TBI Outcomes', y = 'OR (CI 95%)') +
+  theme_bw()
+
+grafico4
+
+
+
 
 sapply(with(gcs2,data.frame(time_to_care_cat, 
                             time_to_care_cdmd_cat , 
@@ -1964,7 +2050,7 @@ gcs2$time_to_care_ct_cat<-car::recode(gcs2$time_to_care_ct_cat,
                                         'nao_fez_e_nao_precisava'='nao_fez_e_nao_precisava';
                                         else='yes'") 
 
-logmodel_gcs<-glm(outcome ~ time_to_care_cat+ 
+logmodel_gcs_2<-glm(outcome ~ time_to_care_cat+ 
                             time_to_care_cdmd_cat + 
                             time_to_care_labor_cat + 
                             time_to_care_tbis_cat + 
@@ -1980,6 +2066,92 @@ logmodel_gcs<-glm(outcome ~ time_to_care_cat+
                   family=binomial, data=gcs2)
 summary(logmodel_gcs)
 exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+tmp_gos2<-data.frame(cbind(exp(coef(logmodel_gcs_2)),
+                           exp(confint(logmodel_gcs_2))))
+
+tmp_gos2<-tmp_gos2[-c(1,17:22),]
+
+#tmp<-rbind(tmp_gos, tmp_gos2, tmp_gos2, tmp_gos3)
+odds<-tmp_gos2
+names(odds)<-c('OR', 'lower', 'upper')
+
+odds$vars<-c("Time to Arrival: ≤1h vs. >12h",
+                 "Time to Arrival: ≤1h vs. 1.1-4h",
+                 "Time to Arrival: ≤1h vs. 4.1-12h",
+                 "Time to Physician: ≤1h vs. >4h",
+                 # "Time to Physician: ≤1h vs. 1.1-4h",
+                 # "Time to Laboratory: ≤1h vs. >12h",
+                 "Time to Laboratory: ≤1h vs. 1.1-4h",
+                 "Time to Laboratory: ≤1h vs. 4.1-12h",
+                 # "Time to Surgery: ≤1h vs. >12h",
+                 "Time to Surgery: ≤1h vs. 4.1-12h",
+                 "Time to Surgery: ≤1h vs. NA",
+                 # "Time to Oxygen: ≤1h vs. >1h",
+                 "Time to Oxygen: ≤1h vs. no did and no need",
+                 "Time to Oxygen: ≤1h vs. no did but need",
+                 "Time to Fluids: ≤1h vs. 1.1-4h",
+                 "Time to Fluids: ≤1h vs. >4h",
+                 "Time to Fluids: ≤1h vs. no did and no need",
+                 "Time to Fluids: ≤1h vs. no did but need",
+                 # "Time to CT: ≤1h vs. 1.1-4h",
+                 # "Time to CT: ≤1h vs. >4h",
+                 # "Time to CT: ≤1h vs. no did and no need",
+                 "Time to CT: ≤1h vs. no did but need")
+                 # "Time to X-r: ≤1h vs. 1.1-4h",
+                 # "Time to X-r: ≤1h vs. >4h",
+                 # "Time to X-r: ≤1h vs. no did and no need",
+                 # "Time to X-r: ≤1h vs. no did but need"),4)
+#odds$groups<-rep(c(rep("Time to care",4),
+#                   "Course points",
+#                   "Age", 
+#                   "Gender",
+#                   "MOI",
+#                   "Alcohol use",
+#                   rep("District",5)),2)
+odds$models<-c("Moderate GCS")
+
+grafico4<-ggplot(odds, aes(y= OR, x = reorder(vars, OR))) +
+  geom_point() +
+  geom_errorbar(aes(ymin=lower, ymax=upper), width=.2) +
+  #scale_y_log10(breaks=ticks, labels = ticks) +
+  geom_hline(yintercept = 1, linetype=2) +
+  scale_x_discrete(limits=c(
+    "Time to Arrival: ≤1h vs. >12h",
+    "Time to Arrival: ≤1h vs. 1.1-4h",
+    "Time to Arrival: ≤1h vs. 4.1-12h",
+    "Time to Physician: ≤1h vs. >4h",
+    # "Time to Physician: ≤1h vs. 1.1-4h",
+    # "Time to Laboratory: ≤1h vs. >12h",
+    "Time to Laboratory: ≤1h vs. 1.1-4h",
+    "Time to Laboratory: ≤1h vs. 4.1-12h",
+    # "Time to Surgery: ≤1h vs. >12h",
+    "Time to Surgery: ≤1h vs. 4.1-12h",
+    "Time to Surgery: ≤1h vs. NA",
+    # "Time to Oxygen: ≤1h vs. >1h",
+    "Time to Oxygen: ≤1h vs. no did and no need",
+    "Time to Oxygen: ≤1h vs. no did but need",
+    "Time to Fluids: ≤1h vs. 1.1-4h",
+    "Time to Fluids: ≤1h vs. >4h",
+    "Time to Fluids: ≤1h vs. no did and no need",
+    "Time to Fluids: ≤1h vs. no did but need",
+    # "Time to CT: ≤1h vs. 1.1-4h",
+    # "Time to CT: ≤1h vs. >4h",
+    # "Time to CT: ≤1h vs. no did and no need",
+    "Time to CT: ≤1h vs. no did but need"
+    # "Time to X-r: ≤1h vs. 1.1-4h",
+    # "Time to X-r: ≤1h vs. >4h",
+    # "Time to X-r: ≤1h vs. no did and no need",
+    # "Time to X-r: ≤1h vs. no did but need"
+    )) +
+  facet_grid(.~models, scales="free_y") +
+  coord_flip() +
+  labs(x = 'Wait Times as Predictors of TBI Outcomes', y = 'OR (CI 95%)') +
+  theme_bw()
+
+grafico4
+
+gcs3 <- subset(data, data$gcs == "mild" )
 
 sapply(with(gcs3,data.frame(time_to_care_cat, 
                             time_to_care_cdmd_cat , 
@@ -1997,7 +2169,14 @@ gcs3$time_to_care_oxyg_cat<-car::recode(gcs3$time_to_care_oxyg_cat,"
                                         else='less 1'
                                         ")
 
-logmodel_gcs<-glm(outcome ~ time_to_care_cat+ 
+gcs3$time_to_care_cdmd_cat<-car::recode(gcs3$time_to_care_cdmd_cat,"
+                                        '>4h'='1.1 - 4h'
+                                        ")
+
+gcs3$time_to_care_ct_cat<-car::recode(gcs3$time_to_care_ct_cat,"
+                                        '>4h'='1.1-4h'")
+
+logmodel_gcs_3<-glm(outcome ~ time_to_care_cat+ 
                             time_to_care_cdmd_cat + 
                             time_to_care_labor_cat + 
                             time_to_care_tbis_cat + 
@@ -2011,189 +2190,271 @@ logmodel_gcs<-glm(outcome ~ time_to_care_cat+
                             sys_bp_imp + 
                             resp_rate_imp,
                   family=binomial, data=gcs3)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+summary(logmodel_gcs_3)
+exp(cbind(Odds=coef(logmodel_gcs_3),confint(logmodel_gcs_3,level=0.95))) 
+
+tmp_gos3<-data.frame(cbind(exp(coef(logmodel_gcs_3)),
+                           exp(confint(logmodel_gcs_3))))
+
+tmp_gos3<-tmp_gos3[-c(1,21:28),]
+
+#tmp<-rbind(tmp_gos, tmp_gos3, tmp_gos3, tmp_gos3)
+odds<-tmp_gos3
+names(odds)<-c('OR', 'lower', 'upper')
+
+odds$vars<-c("Time to Arrival: ≤1h vs. >12h",
+                 "Time to Arrival: ≤1h vs. 1.1-4h",
+                 "Time to Arrival: ≤1h vs. 4.1-12h",
+                 # "Time to Physician: ≤1h vs. >4h",
+                 "Time to Physician: ≤1h vs. 1.1-4h",
+                 "Time to Laboratory: ≤1h vs. >12h",
+                 "Time to Laboratory: ≤1h vs. 1.1-4h",
+                 "Time to Laboratory: ≤1h vs. 4.1-12h",
+                 "Time to Surgery: ≤1h vs. >12h",
+                 "Time to Surgery: ≤1h vs. 4.1-12h",
+                 "Time to Surgery: ≤1h vs. NA",
+                 # "Time to Oxygen: ≤1h vs. >1h",
+                 "Time to Oxygen: ≤1h vs. no did and no need",
+                 "Time to Oxygen: ≤1h vs. no did but need",
+                 "Time to Fluids: ≤1h vs. 1.1-4h",
+                 "Time to Fluids: ≤1h vs. >4h",
+                 "Time to Fluids: ≤1h vs. no did and no need",
+                 "Time to Fluids: ≤1h vs. no did but need",
+                 # "Time to CT: ≤1h vs. 1.1-4h",
+                 "Time to CT: ≤1h vs. >4h",
+                 "Time to CT: ≤1h vs. no did and no need",
+                 "Time to CT: ≤1h vs. no did but need")
+                 # "Time to X-r: ≤1h vs. 1.1-4h",
+                 # "Time to X-r: ≤1h vs. >4h",
+                 # "Time to X-r: ≤1h vs. no did and no need",
+                 # "Time to X-r: ≤1h vs. no did but need"),4)
+#odds$groups<-rep(c(rep("Time to care",4),
+#                   "Course points",
+#                   "Age", 
+#                   "Gender",
+#                   "MOI",
+#                   "Alcohol use",
+#                   rep("District",5)),2)
+odds$models<-c("Mild GCS")
+
+grafico4<-ggplot(odds, aes(y= OR, x = reorder(vars, OR))) +
+  geom_point() +
+  geom_errorbar(aes(ymin=lower, ymax=upper), width=.2) +
+  #scale_y_log10(breaks=ticks, labels = ticks) +
+  geom_hline(yintercept = 1, linetype=2) +
+  scale_x_discrete(limits=c(
+    "Time to Arrival: ≤1h vs. >12h",
+    "Time to Arrival: ≤1h vs. 1.1-4h",
+    "Time to Arrival: ≤1h vs. 4.1-12h",
+    # "Time to Physician: ≤1h vs. >4h",
+    "Time to Physician: ≤1h vs. 1.1-4h",
+    "Time to Laboratory: ≤1h vs. >12h",
+    "Time to Laboratory: ≤1h vs. 1.1-4h",
+    "Time to Laboratory: ≤1h vs. 4.1-12h",
+    "Time to Surgery: ≤1h vs. >12h",
+    "Time to Surgery: ≤1h vs. 4.1-12h",
+    "Time to Surgery: ≤1h vs. NA",
+    # "Time to Oxygen: ≤1h vs. >1h",
+    "Time to Oxygen: ≤1h vs. no did and no need",
+    "Time to Oxygen: ≤1h vs. no did but need",
+    "Time to Fluids: ≤1h vs. 1.1-4h",
+    "Time to Fluids: ≤1h vs. >4h",
+    "Time to Fluids: ≤1h vs. no did and no need",
+    "Time to Fluids: ≤1h vs. no did but need",
+    # "Time to CT: ≤1h vs. 1.1-4h",
+    "Time to CT: ≤1h vs. >4h",
+    "Time to CT: ≤1h vs. no did and no need",
+    "Time to CT: ≤1h vs. no did but need"
+    # "Time to X-r: ≤1h vs. 1.1-4h",
+    # "Time to X-r: ≤1h vs. >4h",
+    # "Time to X-r: ≤1h vs. no did and no need",
+    # "Time to X-r: ≤1h vs. no did but need"
+    )) +
+  facet_grid(.~models, scales="free_y") +
+  coord_flip() +
+  labs(x = 'Wait Times as Predictors of TBI Outcomes', y = 'OR (CI 95%)') +
+  theme_bw()
+
+grafico4
+
+# table(data$ttc_tomo)
+# logmodel_gcs<-glm(outcome ~ ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
+#                     male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs1)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+
+# logmodel_gcs<-glm(outcome ~ ttc_cirurgia + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs1)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+
+# logmodel_gcs<-glm(outcome ~ ttc_oxigenio + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs1)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+# logmodel_gcs<-glm(outcome ~ ttc_fluidos + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs1)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+# logmodel_gcs<-glm(outcome ~ ttc_tomo + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs1)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+# logmodel_gcs<-glm(outcome ~ ttc_rxtorax + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs1)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+
+# table(data$gcs)
+# gcs2 <- subset(data, data$gcs == "moderate" )
+# summary(gcs2)
+
+# ###ADJUSTED
+# logmodel_gcs<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
+#                     ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs2)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+
+# table(data$ttc_tomo)
+# logmodel_gcs<-glm(outcome ~ ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
+#                     male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs2)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+
+# logmodel_gcs<-glm(outcome ~ ttc_cirurgia + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs2)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+
+# logmodel_gcs<-glm(outcome ~ ttc_oxigenio + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs2)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+# logmodel_gcs<-glm(outcome ~ ttc_fluidos + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs2)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+# logmodel_gcs<-glm(outcome ~ ttc_tomo + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs2)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+
+# logmodel_gcs<-glm(outcome ~ ttc_rxtorax + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs2)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
 
 
 
-table(data$ttc_tomo)
-logmodel_gcs<-glm(outcome ~ ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
-                    male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs1)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+# table(data$gcs)
+# gcs3 <- subset(data, gcs = "mild" )
+# summary(gcs3)
+
+# ###ADJUSTED
+# logmodel_gcs<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
+#                     ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs3)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
 
 
-logmodel_gcs<-glm(outcome ~ ttc_cirurgia + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs1)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+# table(data$ttc_tomo)
+# logmodel_gcs<-glm(outcome ~ ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
+#                     male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs3)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
 
 
-logmodel_gcs<-glm(outcome ~ ttc_oxigenio + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs1)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-logmodel_gcs<-glm(outcome ~ ttc_fluidos + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs1)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-logmodel_gcs<-glm(outcome ~ ttc_tomo + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs1)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-logmodel_gcs<-glm(outcome ~ ttc_rxtorax + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs1)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+# logmodel_gcs<-glm(outcome ~ ttc_cirurgia + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs3)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
 
 
-table(data$gcs)
-gcs2 <- subset(data, data$gcs == "moderate" )
-summary(gcs2)
+# logmodel_gcs<-glm(outcome ~ ttc_oxigenio + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs3)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
 
-###ADJUSTED
-logmodel_gcs<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
-                    ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs2)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+# logmodel_gcs<-glm(outcome ~ ttc_fluidos + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs3)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
 
+# logmodel_gcs<-glm(outcome ~ ttc_tomo + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs3)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
 
-table(data$ttc_tomo)
-logmodel_gcs<-glm(outcome ~ ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
-                    male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs2)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-
-logmodel_gcs<-glm(outcome ~ ttc_cirurgia + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs2)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+# logmodel_gcs<-glm(outcome ~ ttc_rxtorax + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs3)
+# summary(logmodel_gcs)
+# exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
 
 
-logmodel_gcs<-glm(outcome ~ ttc_oxigenio + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs2)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-logmodel_gcs<-glm(outcome ~ ttc_fluidos + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs2)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-logmodel_gcs<-glm(outcome ~ ttc_tomo + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs2)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-logmodel_gcs<-glm(outcome ~ ttc_rxtorax + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs2)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+# ####### FOREST PLOT ########
+# #TODOS OS 4 GRUPOS
+# logmodel_gos<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
+#                     ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=data)
+# summary(logmodel_gos)
+# exp(cbind(Odds=coef(logmodel_gos),confint(logmodel_gos,level=0.95))) 
 
 
-
-table(data$gcs)
-gcs3 <- subset(data, gcs = "mild" )
-summary(gcs3)
-
-###ADJUSTED
-logmodel_gcs<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
-                    ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs3)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+# logmodel_gos1<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
+#                     ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
+#                   family=binomial, data=gcs1)
+# summary(logmodel_gos1)
+# exp(cbind(Odds=coef(logmodel_gos1),confint(logmodel_gos1,level=0.95))) 
 
 
-table(data$ttc_tomo)
-logmodel_gcs<-glm(outcome ~ ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
-                    male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs3)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
+# logmodel_gos2<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
+#                      ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
+#                    family=binomial, data=gcs2)
+# summary(logmodel_gos2)
+# exp(cbind(Odds=coef(logmodel_gos2),confint(logmodel_gos2,level=0.95))) 
 
-
-logmodel_gcs<-glm(outcome ~ ttc_cirurgia + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs3)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-
-logmodel_gcs<-glm(outcome ~ ttc_oxigenio + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs3)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-logmodel_gcs<-glm(outcome ~ ttc_fluidos + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs3)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-logmodel_gcs<-glm(outcome ~ ttc_tomo + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs3)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-logmodel_gcs<-glm(outcome ~ ttc_rxtorax + male_imp + age_imp + moi_imp + gcs_tot_imp + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs3)
-summary(logmodel_gcs)
-exp(cbind(Odds=coef(logmodel_gcs),confint(logmodel_gcs,level=0.95))) 
-
-
-####### FOREST PLOT ########
-#TODOS OS 4 GRUPOS
-logmodel_gos<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
-                    ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=data)
-summary(logmodel_gos)
-exp(cbind(Odds=coef(logmodel_gos),confint(logmodel_gos,level=0.95))) 
-
-
-logmodel_gos1<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
-                    ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
-                  family=binomial, data=gcs1)
-summary(logmodel_gos1)
-exp(cbind(Odds=coef(logmodel_gos1),confint(logmodel_gos1,level=0.95))) 
-
-
-logmodel_gos2<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
-                     ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
-                   family=binomial, data=gcs2)
-summary(logmodel_gos2)
-exp(cbind(Odds=coef(logmodel_gos2),confint(logmodel_gos2,level=0.95))) 
-
-logmodel_gos3<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
-                     ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
-                   family=binomial, data=gcs3)
-summary(logmodel_gos3)
-exp(cbind(Odds=coef(logmodel_gos3),confint(logmodel_gos3,level=0.95))) 
+# logmodel_gos3<-glm(outcome ~ ttc2 + ttc_cdmd2 + ttc_labor2 + ttc_cirurgia + ttc_oxigenio + ttc_fluidos +
+#                      ttc_tomo + ttc_rxtorax + male_imp + age_imp + moi_imp + gcs + sys_bp_imp + resp_rate_imp,
+#                    family=binomial, data=gcs3)
+# summary(logmodel_gos3)
+# exp(cbind(Odds=coef(logmodel_gos3),confint(logmodel_gos3,level=0.95))) 
 
 # plot_odds<-function(x, title = NULL){
-tmp_gos<-data.frame(cbind(exp(coef(logmodel_gos)),
-                          exp(confint(logmodel_gos))))
+tmp_gos<-data.frame(cbind(exp(coef(logmodel_gcs)),
+                          exp(confint(logmodel_gcs))))
 
-tmp_gos<-tmp_gos[-c(1,28:35),]
+tmp_gos<-tmp_gos[-c(1,23:35),]
 
-tmp_gos1<-data.frame(cbind(exp(coef(logmodel_gos1)),
-                           exp(confint(logmodel_gos1))))
+tmp_gos1<-data.frame(cbind(exp(coef(logmodel_gcs_1)),
+                           exp(confint(logmodel_gcs_1))))
 
-tmp_gos1<-tmp_gos1[-c(1,28:35),]
+tmp_gos1<-tmp_gos1[-c(1,23:35),]
 
-tmp_gos2<-data.frame(cbind(exp(coef(logmodel_gos2)),
-                           exp(confint(logmodel_gos2))))
+tmp_gos2<-data.frame(cbind(exp(coef(logmodel_gcs_2)),
+                           exp(confint(logmodel_gcs_2))))
 
-tmp_gos2<-tmp_gos2[-c(1,28:35),]
+tmp_gos2<-tmp_gos2[-c(1,23:35),]
 
-tmp_gos3<-data.frame(cbind(exp(coef(logmodel_gos3)),
-                           exp(confint(logmodel_gos3))))
+tmp_gos3<-data.frame(cbind(exp(coef(logmodel_gcs_3)),
+                           exp(confint(logmodel_gcs_3))))
 
-tmp_gos3<-tmp_gos3[-c(1,28:35),]
+tmp_gos3<-tmp_gos3[-c(1,23:35),]
 
 #tmp<-rbind(tmp_gos, tmp_gos1, tmp_gos2, tmp_gos3)
 odds<-rbind(tmp_gos, tmp_gos1, tmp_gos2, tmp_gos3)
@@ -2220,11 +2481,11 @@ odds$vars<-rep(c("Time to Arrival: ≤1h vs. >12h",
                  "Time to CT: ≤1h vs. 1.1-4h",
                  "Time to CT: ≤1h vs. >4h",
                  "Time to CT: ≤1h vs. no did and no need",
-                 "Time to CT: ≤1h vs. no did but need",
-                 "Time to X-r: ≤1h vs. 1.1-4h",
-                 "Time to X-r: ≤1h vs. >4h",
-                 "Time to X-r: ≤1h vs. no did and no need",
-                 "Time to X-r: ≤1h vs. no did but need"),4)
+                 "Time to CT: ≤1h vs. no did but need"),4)
+                 # "Time to X-r: ≤1h vs. 1.1-4h",
+                 # "Time to X-r: ≤1h vs. >4h",
+                 # "Time to X-r: ≤1h vs. no did and no need",
+                 # "Time to X-r: ≤1h vs. no did but need"),4)
 #odds$groups<-rep(c(rep("Time to care",4),
 #                   "Course points",
 #                   "Age", 

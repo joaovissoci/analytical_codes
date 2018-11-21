@@ -15,7 +15,7 @@ library, character.only=T)
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
-data <- read_dta("/Users/joaovissoci/OneDrive - Duke University/datasets/DGNN/SOSAS/sosas_data.dta")
+data <- read_dta("/Users/Joao/Box Sync/Home Folder jnv4/Data/DGNN/SOSAS/sosas_data.dta")
 # data<-as.data.frame(data)
 
 data[] <- lapply(data, unclass)

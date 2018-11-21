@@ -35,7 +35,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data_raw<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/US/AMPED/US_AMPEDPain_data.csv",sep=",")
+data_raw<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/AMPED/US_AMPEDPain_data.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -44,7 +44,7 @@ data_raw<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/
 #Creating a data frame (group of variables)
 
 data<-with(data_raw,data.frame(
- 					age=X...age,
+ 					age=age,
  					gender,
  					race,
  					eDx_Primary,
@@ -150,9 +150,9 @@ propmiss(data)
 
 # # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
 imp <- mice(data, seed = 2222, m=5)
-
+ 
 # # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-data_imputed<-complete(imp,4)
+data_imputed<-mice::complete(imp,3)
 
 # #Plost the distrbution of each of the 5 possibilities of imputations
 # #stripplot(imp,pch=20,cex=1.2)
@@ -183,7 +183,7 @@ for (i in 1:nrow(data_imputed))
      {
        data_imputed$unscheduled_visits[i] <-"no"
      } # else if (v1[i] == "Sim" || 
-} # for (i in 1:nrow(dataframe)
+} # for (i in 1:nrow(data_imputedframe)
 
 
 for (i in 1:nrow(data_imputed))
@@ -211,7 +211,7 @@ for (i in 1:nrow(data_imputed))
      {
        data_imputed$unscheduled_visits_day[i] <- NA
      } # else if (v1[i] == "Sim" || 
-} # for (i in 1:nrow(dataframe)
+} # for (i in 1:nrow(data_imputedframe)
 
 #side effects
 for (i in 1:nrow(data_imputed))
@@ -227,7 +227,7 @@ for (i in 1:nrow(data_imputed))
      {
        data_imputed$side_effects_bin_nausea[i] <-"no"
      } # else if (v1[i] == "Sim" || 
-} # for (i in 1:nrow(dataframe)
+} # for (i in 1:nrow(data_imputedframe)
 
 #side effects
 for (i in 1:nrow(data_imputed))
@@ -244,7 +244,7 @@ for (i in 1:nrow(data_imputed))
      {
        data_imputed$side_effects_bin_vomit[i] <-"no"
      } # else if (v1[i] == "Sim" || 
-} # for (i in 1:nrow(dataframe)
+} # for (i in 1:nrow(data_imputedframe)
 
 #side effects
 for (i in 1:nrow(data_imputed))
@@ -261,7 +261,7 @@ for (i in 1:nrow(data_imputed))
      {
        data_imputed$side_effects_bin_constip[i] <-"no"
      } # else if (v1[i] == "Sim" || 
-} # for (i in 1:nrow(dataframe)
+} # for (i in 1:nrow(data_imputedframe)
 
 #side effects
 for (i in 1:nrow(data_imputed))
@@ -278,7 +278,7 @@ for (i in 1:nrow(data_imputed))
      {
        data_imputed$side_effects_bin_nasalirrit[i] <-"no"
      } # else if (v1[i] == "Sim" || 
-} # for (i in 1:nrow(dataframe)
+} # for (i in 1:nrow(data_imputedframe)
 
 #side effects
 for (i in 1:nrow(data_imputed))
@@ -295,7 +295,7 @@ for (i in 1:nrow(data_imputed))
      {
        data_imputed$side_effects_bin_rash[i] <-"no"
      } # else if (v1[i] == "Sim" || 
-} # for (i in 1:nrow(dataframe)
+} # for (i in 1:nrow(data_imputedframe)
 
 #side effects
 for (i in 1:nrow(data_imputed))
@@ -312,7 +312,7 @@ for (i in 1:nrow(data_imputed))
      {
        data_imputed$side_effects_bin_abdpain[i] <-"no"
      } # else if (v1[i] == "Sim" || 
-} # for (i in 1:nrow(dataframe)
+} # for (i in 1:nrow(data_imputedframe)
 
 #side effects
 for (i in 1:nrow(data_imputed))
@@ -329,7 +329,7 @@ for (i in 1:nrow(data_imputed))
      {
        data_imputed$side_effects_bin_drowsiness[i] <-"no"
      } # else if (v1[i] == "Sim" || 
-} # for (i in 1:nrow(dataframe)
+} # for (i in 1:nrow(data_imputedframe)
 
 
 #side_effects count
@@ -350,7 +350,7 @@ for (i in 1:nrow(data_imputed))
      {
        data_imputed$side_effects_bin_all[i] <-"no"
      } # else if (v1[i] == "Sim" || 
-} # for (i in 1:nrow(dataframe)
+} # for (i in 1:nrow(data_imputedframe)
 
 
 
@@ -456,6 +456,22 @@ chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
 
+#Treatment Regimin
+table<-with(data_imputed,table(unscheduled_visits))
+table
+prop.table(table)
+
+# Gender
+table<-with(data_imputed,table(treatreg))
+table
+prop.table(table)
+table<-with(data_imputed,table(treatreg,unscheduled_visits))
+table
+prop.table(table,1)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
 ######################################################################
 #Figure 1
 ######################################################################
@@ -488,7 +504,7 @@ plot_data$outcome<-c("yes","no",
 
 plot_data2<-NULL
 plot_data2$prop<-c(plot_data[,1],plot_data[,2],plot_data[,3])
-plot_data2$med<-c(rep("OPO",8),rep("SPO",8),rep("SPP",8))
+plot_data2$med<-c(rep("ASPP",8),rep("OPO",8),rep("SOP",8))
 plot_data2$out<-c(plot_data$outcome,plot_data$outcome,plot_data$outcome)
 plot_data2$fup<-c(plot_data$FUP,plot_data$FUP,plot_data$FUP)
 plot_data2<-as.data.frame(plot_data2)
@@ -525,10 +541,10 @@ ggplot(data=plot_data2[plot_data2$out=="yes",],
   geom_point(aes(shape=med),
   			 size=2) +
   scale_color_manual(values=c("gray75","gray50","black"),
-  					 labels=c("Opioids","NSAID","Combo"),
+  					 labels=c("Sprix","Opioid","Combo"),
   					 name="Treatment\n regimen")+
   scale_shape_discrete(name="Treatment\n regimen",
-  			 		   labels=c("Opioids","NSAID","Combo")) +
+  			 		   labels=c("Sprix","Opioid","Combo")) +
   theme_minimal() +
   xlab("Follow up day") +
   ylab("% of patients with unscheduled visits") +
@@ -542,15 +558,17 @@ dev.off()
 # data_imputed$treatreg<-car::recode(data_imputed$treatreg, 
 # 	"'SPP'='ASPP'")
 
+data_imputed$treatreg<-car::recode(data_imputed$treatreg,"'SPO'='ASPO'")
 
-reg_model<-glm(as.factor(unscheduled_visits) ~ treatreg*PainScore + 
+
+reg_model<-glm(as.factor(unscheduled_visits) ~ treatreg + 
 									gender + 
 									age + 
-                  side_effects_bin_all +
+                  PainScore +
+                  # side_effects_bin_all +
 									# race +
                   eDx_Primary
-                            		# PainScore
-                            ,family=binomial, data=data_imputed)
+                  ,family=binomial, data=data_imputed)
 summary(reg_model)
 #anova(reglogGEU)
 #exp(coef(model1_death)) # exponentiated coefficients

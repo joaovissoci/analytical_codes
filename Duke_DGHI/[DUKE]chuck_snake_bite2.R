@@ -52,10 +52,10 @@ lapply(c("ggplot2", "psych", "RCurl", "irr", "nortest",
 #data_rs  <- get_via_lf(sheet_rs, ws = "Coagulation Data")
 #demographics_rs<-get_via_lf(sheet_rs, ws = "Demographics") 
 
-data_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/snakebite_longitudinal/data_rs.csv")
-demographics_rs <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/snakebite_longitudinal/demographics_rs.csv")
-data_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/snakebite_longitudinal/data_cp.csv")
-demographics_cp <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/Global EM/snakebite_longitudinal/demographics_cp.csv")
+data_rs <- read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebite_longitudinal/data_rs.csv")
+demographics_rs <- read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebite_longitudinal/demographics_rs.csv")
+data_cp <- read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebite_longitudinal/data_cp.csv")
+demographics_cp <- read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebite_longitudinal/demographics_cp.csv")
 
 #sheet_cp <- register_ss("Copy of Copperhead data")#
 #data_cp <- get_via_lf(sheet_cp, ws = "Coagulation Data") 
@@ -233,6 +233,29 @@ assocstats(table) #vcd package
 ### Bonferroni correction
 p.adjust(c(0.38,0.57,0.03,0.01,0.87,0.19), 
 	method = "bonferroni")
+
+cp_data<-NULL
+cp_data$platelets<-data_cp$baselineplateletcountkmm3
+cp_data$fibrinogen<-data_cp$baselinefibrinogencountmgdl
+cp_data$severity_score<-demographics_cp$severity_score
+cp_data<-as.data.frame(cp_data)
+
+ggplot(cp_data, aes(x=platelets, y=severity_score)) +
+    geom_point(shape=1) +    # Use hollow circles
+    geom_smooth(method=lm)    # Don't add shaded confidence region
+
+ggplot(cp_data, aes(x=fibrinogen, y=severity_score)) +
+    geom_point(shape=1) +    # Use hollow circles
+    geom_smooth(method=lm) 
+
+cor(with(cp_data,na.omit(data.frame(severity_score,fibrinogen,platelets))))
+
+demographics_cp$fibrinogen<-cp_data$fibrinogen
+demographics_cp$platelets<-cp_data$platelets
+
+model<-lm(severity_score ~ fibrinogen, data=demographics_cp)
+model<-lm(severity_score ~ fibrinogen + platelets + Age + Gender + Ethnicity, data=demographics_cp)
+summary(model)
 
 ########## PLATELETS #####################
 data_rs_table2<-with(data_rs,data.frame(baselineplateletcountkmm3,nadir_platelets_rs,day5followupplateletskmm3,day8followupplateletskmm3,day15followupplateletskmm3))	
