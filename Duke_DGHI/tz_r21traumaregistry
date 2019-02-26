@@ -1,0 +1,93 @@
+#################################################################
+#IHD GEO EPI - BRAZIL
+#################################################################
+#
+#
+#
+#
+#
+#################################################################
+#SETTING ENVIRONMENT
+#################################################################
+#All packages must be installes with install.packages() function
+lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments",
+	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
+	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust",
+	"foreign","survival","memisc","foreign","mice","MissMech"), 
+library, character.only=T)
+#################################################################
+#IMPORTING DATA
+#################################################################
+#LOADING DATA FROM A .CSV FILE
+data_screening<-read.csv("/Users/Joao/Downloads/ToCTraumaRegistry_DATA_LABELS_2019-01-16_0132.csv",sep=",")
+
+data_enrollment<-read.csv("/Users/Joao/Downloads/TransitionOfCareStud_DATA_LABELS_2019-01-17_0337.csv",sep=",")
+#information between " " are the path to the directory in your computer where the data is stored
+
+#Import data from Dropbox, in .csv format
+#Instructions here http://goo.gl/Ofa7gQ
+#data1 <- repmis::source_DropboxData(".csv",
+#                                  "",
+#                                  sep = ",",
+#                                  header = TRUE)
+#############################################################################
+#DATA MANAGEMENT
+#############################################################################
+
+#Calculating frequency of missing data per variable
+propmiss <- function(dataframe) lapply(dataframe,function(x) data.frame(nmiss=sum(is.na(x)), n=length(x), propmiss=sum(is.na(x))/length(x)))
+
+
+spacetoNA<-function(x){
+	car::recode(x,"''=NA")
+	}
+
+data_screening_changed<-lapply(data_screening,spacetoNA)
+
+propmiss(data_screening_changed)
+
+
+data_enrollment_changed<-lapply(data_enrollment,spacetoNA)
+
+data_enrollment_changed<-as.data.frame(data_enrollment_changed)
+
+data_enrollment_changed_subset<-subset(data_enrollment_changed,data_enrollment_changed$Event.Name=="TOC 400 enrollment questionnia")
+
+
+propmiss(data_enrollment_changed_subset)
+
+
+data_enrollmentplusscreening<-merge(x = data_enrollment_changed, 
+					   y = data_screening_changed, 
+					   by = "Participant.ID", 
+					   all.x = TRUE)
+
+propmiss(data_screening_changed)
+
+md.pattern(as.matrix(as.data.frame(data_changed)))
+
+library(Amelia)
+
+missmap(as.data.frame(data_changed))
+
+#############################################################################
+#BASIC DESCRIPTIVES and EXPLORATORY ANALYSIS
+#############################################################################
+
+
+##############################################################################
+#END
+##############################################################################
+
+table(data$Who.was.the.PHQ2.reported.by..1)
+
+table(data$Toileting)
+
+data$For.what.diagnosis.will.you.follow.up.with.Medicine..1
+
+data$Memory
+
+data@Glasgow.Outcome.Score
+
+table(data_changed$HIV.status)
+
