@@ -33,7 +33,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################
 
-library(jsonlite)
+# library(jsonlite)
 
 file <- file("/Users/Joao/Downloads/exported_data.txt",
              open="r",
@@ -87,54 +87,54 @@ rm(dataTransform)
 #age
 library(lubridate)
 
-df_questionnaire$Date.de.naissance %>%
-    recode("00-00-1970"="01-01-1970",
-           "00-00-1978"="01-01-1978",
-           "00-00-1960"="01-01-1960",
-           "00-00-1982"="01-01-1982",
-           "00-00-1983"="01-01-1983",
-           "00-00-1984"="01-01-1984",
-           "00-00-1985"="01-01-1985",
-           "00-00-1986"="01-01-1986",
-           "00-00-1987"="01-01-1987",
-           "00-00-1988"="01-01-1988",
-           "00-00-1989"="01-01-1989",
-           "00-00-1990"="01-01-1990",
-           "00-00-1991"="01-01-1991",
-           "00-00-1992"="01-01-1992",
-           "00-00-1993"="01-01-1993",
-           "00-00-1994"="01-01-1994",
-           "00-00-1995"="01-01-1995",
-           "00-00-1996"="01-01-1996",
-           "00-00-1997"="01-01-1997",
-           "00-00-1998"="01-01-1998",
-           "00-00-1999"="01-01-1999",
-           "00-00-1979"="01-01-1979",
-           "00-00-1980"="01-01-1980",
-           "00-00-1959"="01-01-1959",
-           "00-00-1969"="01-01-1969",
-           "00-00-1974"="01-01-1974",
-           "00-00-1964"="01-01-1964",
-           "00-00-1951"="01-01-1951",
-           "00-00-1966"="01-01-1966",
-           "00-00-1944"="01-01-1944",
-           "00-00-1973"="01-01-1973",
-           "00-00-1952"="01-01-1952",
-           "00-00-1955"="01-01-1955",
-           "00-00-1946"="01-01-1946",
-           "01-01-197"="01-01-1970",
-           "8-10-202"=" 8-10-2002",
-           "00-00-2002"="01-01-2002",
-           "11-11-1111"=NA_character_) %>%
-    dmy() -> data_birth
+df_questionnaire$data_birth<-
+    dmy(car::recode(df_questionnaire$Date.de.naissance,
+           "'00-00-1970'='01-01-1970';
+           '00-00-1978'='01-01-1978';
+           '00-00-1960'='01-01-1960';
+           '00-00-1982'='01-01-1982';
+           '00-00-1983'='01-01-1983';
+           '00-00-1984'='01-01-1984';
+           '00-00-1985'='01-01-1985';
+           '00-00-1986'='01-01-1986';
+           '00-00-1987'='01-01-1987';
+           '00-00-1988'='01-01-1988';
+           '00-00-1989'='01-01-1989';
+           '00-00-1990'='01-01-1990';
+           '00-00-1991'='01-01-1991';
+           '00-00-1992'='01-01-1992';
+           '00-00-1993'='01-01-1993';
+           '00-00-1994'='01-01-1994';
+           '00-00-1995'='01-01-1995';
+           '00-00-1996'='01-01-1996';
+           '00-00-1997'='01-01-1997';
+           '00-00-1998'='01-01-1998';
+           '00-00-1999'='01-01-1999';
+           '00-00-1979'='01-01-1979';
+           '00-00-1980'='01-01-1980';
+           '00-00-1959'='01-01-1959';
+           '00-00-1969'='01-01-1969';
+           '00-00-1974'='01-01-1974';
+           '00-00-1964'='01-01-1964';
+           '00-00-1951'='01-01-1951';
+           '00-00-1966'='01-01-1966';
+           '00-00-1944'='01-01-1944';
+           '00-00-1973'='01-01-1973';
+           '00-00-1952'='01-01-1952';
+           '00-00-1955'='01-01-1955';
+           '00-00-1946'='01-01-1946';
+           '01-01-197'='01-01-1970';
+           '8-10-202'=' 8-10-2002';
+           '00-00-2002'='01-01-2002';
+           '11-11-1111'=NA"))
+    # dmy() -> data_birth
 
 library(eeptools)
-current_date<-rep(mdy("01-01-2018"),length(df_questionnaire$Date.de.naissance)-1)
-age<-age_calc(na.omit(data_birth),current_date,units = "years")
+current_date<-rep(mdy("01-01-2018"),length(df_questionnaire$Date.de.naissance))
+df_questionnaire$age<-with(df_questionnaire,age_calc(na.omit(data_birth),current_date,units = "years"))
 
 describe(age)
 #gender
-
 table(df_questionnaire$Sexe)
 prop.table(table(df_questionnaire$Sexe))
 
@@ -187,9 +187,40 @@ prop.table(table(df_questionnaire$Niveau.d.éducation))
 
 #age of first onset
 
-age_onset<-gsub("^ans"," ",df_questionnaire$Age.du.patient.au.moment.de.la.première.crise)
+df_questionnaire<-
+df_questionnaire %>%
+    as.tibble() %>%
+      mutate(age_onset_numerictemp = gsub("[^0-9\\.]", "",
+            Age.du.patient.au.moment.de.la.première.crise)) %>%
+      mutate(age_onset_numerictemp = as.numeric(age_onset_numerictemp)) %>% 
+      mutate(age_onset_numerictemp2 = ifelse(age_onset_numerictemp < 1000 ~ data_birth,
+                                          as.numeric(age_onset_numerictemp))) %>%
+      mutate(age_onset_numerictemp3 = age_calc(data_birth,mdy(as.character(age_onset_numerictemp2)))) %>%
+      # mutate(ade_at_onset = )
+      pull(age_onset_numerictemp2)
 
-table(df_questionnaire$Age.du.patient.au.moment.de.la.première.crise)
+
+as.Date(as.character(df_questionnaire$age_onset_numerictemp2))
+
+
+
+df_questionnaire$age_onset0<-gsub("[^0-9\\.]", "",
+            df_questionnaire$Age.du.patient.au.moment.de.la.première.crise)
+            # gsub("*ans","") %>%
+            # gsub("*mois","") %>%
+            # gsub("*Depuis","") %>%
+            # gsub("*an","") %>%
+            # gsub("Test","") %>%
+            # gsub(" ","")
+
+df_questionnaire %>%
+        as.numeric() %>%
+          case_when(age2=age_onset0 < 1000 ~ 0)
+
+age_onset_temp2<-
+
+
+table(age_onset)
 
 #type of epilepsy
 df <- data.frame(matrix(unlist(df_questionnaire$Type.de.crise.épileptiques), nrow=434, byrow=T))
@@ -248,7 +279,7 @@ phq9_data<-remove.vars(df_phq9,c(
                                 "deleteme4",
                                 "deleteme5"))
 
-str(phq9_data)
+# str(phq9_data)
 
 phq9_data$phq1_num<-car::recode(phq9_data$phq1,"
                     'Nta na rimwe'=0;
@@ -497,8 +528,6 @@ h$membership #extracting community membership for each node on the network
 #Identify SPLs within the graph and extract direct paths to WP
 predictors<-centrality(phq9_network_glasso)$ShortestPaths[,15]
 predictors
-
-
 
 # data.frame(phq9_data$phq9_sum,phq9_data$phq9_score)
 

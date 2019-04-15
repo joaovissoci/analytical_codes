@@ -485,7 +485,10 @@ fa(cor_data,2,rotate="promax")
 #############################################################
 #1factor model ###########
 audit_model <- '
-Audit =~  h1 + h2 + h3 + h4 + h5 + h6 + h7 + h8 + h9 + h10
+Audit =~  h1 + h2 + h3 
+Audit =~   h4 + h5 + h6 
+Audit =~   h7 + h8 + h9 
+Audit =~  h4 + h9 + h10
 			 '
 fit <- lavaan::cfa(audit_model,
 				   data = audit_data,
@@ -503,41 +506,41 @@ subset(Est, op == "=~")
 subset(Est, op == "~~")
 
 
-nodeLabels<-c("Q1",
-              "Q2",
-              "Q3",
-              "Q4",
-              "Q5",
-              "Q6",
-              "Q7",
-              "Q8",
-              "Q9",
-              "Q10",
-              "AUDIT")
+# nodeLabels<-c("Q1",
+#               "Q2",
+#               "Q3",
+#               "Q4",
+#               "Q5",
+#               "Q6",
+#               "Q7",
+#               "Q8",
+#               "Q9",
+#               "Q10",
+#               "AUDIT")
 
-color<-c(rep("grey30",10),rep("white",1))
-borders<-c(rep("FALSE",10),rep("TRUE",1))
-labelcex<-c(rep(1.5,10),rep(1.5,1))
+# color<-c(rep("grey30",10),rep("white",1))
+# borders<-c(rep("FALSE",10),rep("TRUE",1))
+# labelcex<-c(rep(1.5,10),rep(1.5,1))
 
-tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-  width = 15,
- height = 10,compression = 'lzw',res=1200,bg = "white")
-semPlot::semPaths(fit,
-		"model")#,
-		# residuals=TRUE,
-		cut=1,
-  		equalizeManifests=TRUE,
-  		edge.color="black",
-  		exoCov=FALSE,
-  		intercepts=FALSE,
-  		# nodeLabels=nodeLabels,
-  		label.scale=FALSE,
-  		edge.label.cex=1,
-  		# label.cex=labelcex,
-  		# color=color,
-  		# borders=borders,
-  		curvePivot = TRUE)
-dev.off()
+# tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
+#   width = 15,
+#  height = 10,compression = 'lzw',res=1200,bg = "white")
+# semPlot::semPaths(fit,
+# 		"model")#,
+# 		# residuals=TRUE,
+# 		cut=1,
+#   		equalizeManifests=TRUE,
+#   		edge.color="black",
+#   		exoCov=FALSE,
+#   		intercepts=FALSE,
+#   		# nodeLabels=nodeLabels,
+#   		label.scale=FALSE,
+#   		edge.label.cex=1,
+#   		# label.cex=labelcex,
+#   		# color=color,
+#   		# borders=borders,
+#   		curvePivot = TRUE)
+# dev.off()
 
 ### Modification Indexes
 Mod <- modificationIndices(fit)
@@ -597,40 +600,41 @@ summary(fit,
 		fit.measures=TRUE)
 lavaan::fitMeasures(fit,
 					fit.measures = "all")
-parameterEstimates(fit)
+lavaan::parameterEstimates(fit)
 Est <- lavaan::parameterEstimates(fit,
 								  ci = TRUE,
 								  standardized = TRUE)
 subset(Est, op == "=~")
 subset(Est, op == "~~")
 
-nodeLabels<-c("Q1",
-              "Q2",
-              "Q3",
-              "Q4",
-              "Q5",
-              "Q6",
-              "Q7",
-              "Q8",
-              "Q9",
-              "Q10",
-              "AUDIT1",
-              "AUDIT2")
+# nodeLabels<-c("Q1",
+#               "Q2",
+#               "Q3",
+#               "Q4",
+#               "Q5",
+#               "Q6",
+#               "Q7",
+#               "Q8",
+#               "Q9",
+#               "Q10",
+#               "AUDIT1",
+#               "AUDIT2")
 
-color<-c(rep("grey",10),rep("white",1))
-borders<-c(rep("FALSE",10),rep("TRUE",1))
-labelcex<-c(rep(0.7,10),rep(1,1))
+# color<-c(rep("grey",10),rep("white",1))
+# borders<-c(rep("FALSE",10),rep("TRUE",1))
+# labelcex<-c(rep(0.7,10),rep(1,1))
 
-tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
-  width = 15,
- height = 10,compression = 'lzw',res=1200,bg = "white")
-semPlot::semPaths(fit,"std")#,residuals=TRUE, cut=1,
-  equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
-  intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
-  edge.label.cex=1, label.cex=labelcex)
-sdev.off()
+# tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
+#   width = 15,
+#  height = 10,compression = 'lzw',res=1200,bg = "white")
+# semPlot::semPaths(fit,"std")#,residuals=TRUE, cut=1,
+#   equalizeManifests=TRUE,edge.color="black",exoCov=FALSE,
+#   intercepts=FALSE, nodeLabels=nodeLabels,label.scale=FALSE,
+#   edge.label.cex=1, label.cex=labelcex)
+# sdev.off()
+
 ### Modification Indexes
-Mod <- modificationIndices(fit)
+Mod <- lavaan::modificationIndices(fit)
 subset(Mod, mi > 10)
 
 #Composite Reliabilty

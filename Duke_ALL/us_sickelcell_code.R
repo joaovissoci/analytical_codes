@@ -32,7 +32,7 @@ library("psych")
 #LOADING DATA FROM A .CSV FILE
 # data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_dukescikecell_data.csv")
 
-data<-read_excel("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/DUEM/sicke_cell/us_EDOUsicklecell_data.xlsx")
+data<-read_excel("/Users/Joao/Box/Home Folder jnv4/Data/DUEM/sicke_cell/us_EDOUsicklecell_data.xlsx")
 
 #information between " " are the path to the directory in your computer where the data is stored
 
@@ -713,7 +713,7 @@ readmission_7days_data<-with(data,c(
 						))
 
 readmission_7days_cat<-c(rep("Hospital",length(data$readmission_7days_hosp)),
-						 rep("Day Hospital",length(data$readmission_7days_dayhospital)),
+						 rep("Infusion center",length(data$readmission_7days_dayhospital)),
 						 rep("CEU",length(data$readmission_7days_CEU)),
 						 rep("ED",length(data$readmission_7days_ED)))
 
@@ -727,7 +727,7 @@ readmission_30days_data<-with(data,c(
 						))
 
 readmission_30days_cat<-c(rep("Hospital",length(data$readmission_30days_hosp)),
-						 rep("Day Hospital",length(data$readmission_30days_dayhospital)),
+						 rep("Infusion center",length(data$readmission_30days_dayhospital)),
 						 rep("CEU",length(data$readmission_30days_CEU)),
 						 rep("ED",length(data$readmission_30days_ED)))
 
@@ -752,11 +752,16 @@ readmission_plotdata_yes<-subset(readmission_plotdata,readmission_plotdata$readm
 # g <- ggplot(readmission_plotdata, aes(as.character(readmission_cat)))
 # g
 
+setEPS()
+# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/caroline_",
+	width = 8, height = 8)
 ggplot(readmission_plotdata_yes, aes(readmission_cat)) + 
 geom_bar(aes(fill=readmission_disposition),position = "dodge",) +
 facet_grid(.~readmission_label, scales="free_y")+
 labs(x='Visit type', y='# of visits') + 
 scale_fill_discrete(name='Initial CEU\ndisposition')
+dev.off()
 
 
 #30 days readmission
