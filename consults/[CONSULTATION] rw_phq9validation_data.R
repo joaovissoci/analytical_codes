@@ -35,7 +35,7 @@ library, character.only=T)
 
 # library(jsonlite)
 
-file <- file("/Users/Joao/Downloads/exported_data.txt",
+file <- file("/Users/joaovissoci/Downloads/exported_data.txt",
              open="r",
              encoding="UTF-8-BOM")
 
@@ -133,7 +133,8 @@ library(eeptools)
 current_date<-rep(mdy("01-01-2018"),length(df_questionnaire$Date.de.naissance))
 df_questionnaire$age<-with(df_questionnaire,age_calc(na.omit(data_birth),current_date,units = "years"))
 
-describe(age)
+describe(df_questionnaire$age)
+
 #gender
 table(df_questionnaire$Sexe)
 prop.table(table(df_questionnaire$Sexe))
@@ -182,8 +183,8 @@ table(employment)
 prop.table(table(employment))
 
 #education
-table(df_questionnaire$Niveau.d.éducation)
-prop.table(table(df_questionnaire$Niveau.d.éducation))
+table(df_questionnaire$Niveau.d.education)
+prop.table(table(df_questionnaire$Niveau.d.education))
 
 #age of first onset
 
@@ -191,39 +192,18 @@ df_questionnaire<-
 df_questionnaire %>%
     as.tibble() %>%
       mutate(age_onset_numerictemp = gsub("[^0-9\\.]", "",
-            Age.du.patient.au.moment.de.la.première.crise)) %>%
+            Age.du.patient.au.moment.de.la.premiere.crise)) %>%
       mutate(age_onset_numerictemp = as.numeric(age_onset_numerictemp)) %>% 
-      mutate(age_onset_numerictemp2 = ifelse(age_onset_numerictemp < 1000 ~ data_birth,
-                                          as.numeric(age_onset_numerictemp))) %>%
-      mutate(age_onset_numerictemp3 = age_calc(data_birth,mdy(as.character(age_onset_numerictemp2)))) %>%
-      # mutate(ade_at_onset = )
-      pull(age_onset_numerictemp2)
+      mutate(age_onset_numerictemp2 = ifelse(age_onset_numerictemp < 1000, age_onset_numerictemp,
+                                          (2017-age_onset_numerictemp))) %>%
+      # mutate(age_onset_numerictemp3 = age_calc(data_birth,mdy(as.character(age_onset_numerictemp2)))) %>%
+      # # mutate(ade_at_onset = )
+      # pull(age_onset_numerictemp2)
 
-
-as.Date(as.character(df_questionnaire$age_onset_numerictemp2))
-
-
-
-df_questionnaire$age_onset0<-gsub("[^0-9\\.]", "",
-            df_questionnaire$Age.du.patient.au.moment.de.la.première.crise)
-            # gsub("*ans","") %>%
-            # gsub("*mois","") %>%
-            # gsub("*Depuis","") %>%
-            # gsub("*an","") %>%
-            # gsub("Test","") %>%
-            # gsub(" ","")
-
-df_questionnaire %>%
-        as.numeric() %>%
-          case_when(age2=age_onset0 < 1000 ~ 0)
-
-age_onset_temp2<-
-
-
-table(age_onset)
+describe(df_questionnaire$age_onset_numerictemp2)
 
 #type of epilepsy
-df <- data.frame(matrix(unlist(df_questionnaire$Type.de.crise.épileptiques), nrow=434, byrow=T))
+df <- data.frame(matrix(unlist(df_questionnaire$Type.de.crise.epileptiques), nrow=434, byrow=T))
 
 table(df$X1)
 table(df$X2)
@@ -234,11 +214,28 @@ table(df$X6)
 
 
 partial_epilepsy <- 71 + 118
+partial_epilepsy
+partial_epilepsy/434
 general_epilepsy <- 55 + 177 + 116
+general_epilepsy
+general_epilepsy/434
 unknown <- 11
+unknown
+unknown/434
 
-table(df_questionnaire$Est.ce.que.le.patient.a.utilisé.des.traitements.traditionnels.)
-prop.table(table(df_questionnaire$Est.ce.que.le.patient.a.utilisé.des.traitements.traditionnels.))
+unique(df_questionnaire$Veuillez.preciser.les.traitements.non.anti.epileptiques..actuels..veuillez.mentionner.le.nom.generique.du.produit..par.example.amitryptilline..)
+
+epilepsy_treatment<-car::recode(df_questionnaire$Veuillez.preciser.les.traitements.non.anti.epileptiques..actuels..veuillez.mentionner.le.nom.generique.du.produit..par.example.amitryptilline..,"
+                                                                         "Clomipramine "                                                                              "Pipemperon"                                                                                 "Fluonxetine et chlorazepate dipotasique"                                                    "Pas mentionnes"                                                                             "Pas autre traitement pour le moment "                                                       "Pas"                                                                                        "Anti hypertension (amilodepine5mg)"                                                         "Risperdone"                                                                                 "Halloperidol 5mg/j"                                                                         "Topamax et omeprazole "                                                                     "Inconnu"                                                                                    "Pas d'autre traitement"                                                                     "Insuline lente et rapide"                                                                   "Cinarzine 75mg 2cp/jour"                                                                    "Stugeron 2*75mg/Jrs et cafergot 1 cp par jour"                                              "ARVS"                                                                                       "Pas d' autres medicaments utilise à long terme"                                             "Contaceptifs pilure q'elle ne connaît pas les noms"                                         "Cinarzine "                                                                                 "Halloperidol "                                                                              "Amitryptilline,Xanax,cinnarizine,citalopram"                                                "Tryptizol 50mg/jr et Akineton 2mg "                                                         "Amitriptylline et cinarzine "                                                               "Tryptisol 50mg/jrs  et stagneron 75x2/Jrs"                                                  "Pas autre traitement mentionne"                                                             "Amitriptylline 50mg/j"                                                                      "Amitriptilline 25mg/j, cinarzine 75mgx2/j"                                                  "AMITRYPTILLINE,CINNARIZINE "                                                                "Cinnarizine "                                                                               "Halperdol"                                                                                  "Pas mentionne"                                                                              "Spas mentionne "                                                                            "Aucun traitement antiepileptiques utilise "                                                 "Orap 1mg /Jrs/30jrs"                                                                        "Risperidone"                                                                                "Gut"                                                                                        "Risperdal 1mg/ j/30jrs"                                                                     "Pas autre medicaments actuels"                                                              "Amoxicilline "                                                                              "Tryptizol 50mg/ mg "                                                                        "Risperidone et biperidene(akineton)"                                                        "Pas autres medicaments "                                                                    "Propanolol"                                                                                 "Bipe perron"                                                                                "Propanolol "                                                                                "Cotrimoxazole forte 960mg/j comme prophylaxie et nevirapine et TDF+3TC+TEnofovir comme ARV" "Pas autre medicament actuellement"                                                          "TEnofovir, lamividine, nevirapine, cotrimoxazole, insuline, dipiperon et vitamine B complex""Pas d'autres medicaments utilises "                                                         "Pas des autres medicaments a prendre "                                                      "Pas de medicaments mentionne "                                                              "Pas autres traitement a actuels"                                                            "Risperidone 2mg/j"                                                                          "Antibiotiques pas precis"                                                                   "Diclofenac"                                                                                 "Halloperidol et chlorpromazine "                                                            adone 100mg"                                                                            "Amitryptilline,cinnarizine"                                                                 "Courtemanche"                                                                               "Aucune traitement traditionnel "                                                            "Nifedipine 40mg/j et propanolol 40mg/j"                                                     "Dogmatil 200mg/jour"                                                                        "Amitriptylline et ci narine"                                                                "Pas d'autre medicament"                                                                     "Pas d'autres traitement reçu "                                                              "Amitryptilline,cinnarizine,Propanolol"                                                      "Solo idem"                                                                                  "Coartem,paracetamol"                                                                        "Dipiperon"                                                                                  "Halloperidol deconanoas"                                                                    "Pas autre medicament actuel"                                                                "Amoxycilline gels 500mgx2/j et ibuprofene 400mgx2/j"                                        "Antiretroviraux et cotrimoxazole " 
+
+df_questionnaire$Traitement.antiepileptique
+
+
+
+prop.table(table(df_questionnaire$Traitement.antiepileptique))
+
+table(df_questionnaire$Probleme.de.sante.mentale.)
+prop.table(table(df_questionnaire$Traitement.antiepileptique))
 
 ######################################################
 #PHQ9
@@ -411,6 +408,16 @@ phq9_plot<- phq9_plot + scale_x_discrete(breaks=c(
                 "phq7_num",
                 "phq8_num",
                 "phq9_num"),
+                                        limits=c(
+                "phq1_num",
+                "phq2_num",
+                "phq3_num",
+                "phq4_num",
+                "phq5_num",
+                "phq6_num",
+                "phq7_num",
+                "phq8_num",
+                "phq9_num"),
                                         labels=c(
                 "Question #1",
                 "Question #2",
@@ -443,16 +450,15 @@ phq9_plot<- phq9_plot + scale_x_discrete(breaks=c(
 #     theme_bw() +
 #     theme(panel.background = element_rect(colour = 'grey'))
 
-
 phq9_network<-with(phq9_data,data.frame(phq1_num,
-                                           phq2_num,
-                                           phq3_num,
-                                           phq4_num,
-                                           phq5_num,
-                                           phq6_num,
-                                           phq7_num,
-                                           phq8_num,
-                                           phq9_num
+                                        phq2_num,
+                                        phq3_num,
+                                        phq4_num,
+                                        phq5_num,
+                                        phq6_num,
+                                        phq7_num,
+                                        phq8_num,
+                                        phq9_num
                                            ))
 
 #organizing datasets
@@ -509,25 +515,41 @@ network<-qgraph(phq9_cor_data,
   # esize = 20,
   repulsion = 0.8,
   # groups=importance_network_groups,
-  nodeNames=phq9_node_names,
+  # nodeNames=phq9_node_names,
   #color=c("gold","steelblue","red","grey80",
   # layoutScale=c(2,2),
   # borders = FALSE,
-  labels=phq9_node_labels)#,gray=T,)#,nodeNames=nomesqsg
+  labels=phq9_node_labels,
+  threshold=TRUE)#,gray=T,)#,nodeNames=nomesqsg
 # dev.off()
 
 #layout2<-averageLayout(network_glasso,network_pcor,network_cor)
 
-#Calculating Community measures
-g<-as.igraph(phq9_network_glasso) #creating igraph object
-#h<-walktrap.community(g) #creatin community object
-h<-spinglass.community(g, weights=NA)
-plot(h,g) #plotting community network
-h$membership #extracting community membership for each node on the network
+# library(igraph)
+# #Calculating Community measures
+# g<-as.igraph(network) #creating igraph object
+# #h<-walktrap.community(g) #creatin community object
+# h<-spinglass.community(g, weights=NA)
+# plot(h,g) #plotting community network
+# h$membership #extracting community membership for each node on the network
 
 #Identify SPLs within the graph and extract direct paths to WP
-predictors<-centrality(phq9_network_glasso)$ShortestPaths[,15]
+predictors<-centrality(network)
+# predictors<-centrality(network)$ShortestPaths[,15]
 predictors
+
+# require(ggpubr)
+# library(gridExtra)
+
+# vp <- viewport(height = unit(1,"npc"), width=unit(0.5, "npc"), 
+#               just = c("left","top"),
+#               y = 1, x = 0)
+
+# print(phq9_plot, vp = vp)
+
+####################################
+# ICC
+####################################
 
 # data.frame(phq9_data$phq9_sum,phq9_data$phq9_score)
 
