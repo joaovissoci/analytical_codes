@@ -23,7 +23,7 @@ library(rlang)
 library(lsa)
 
 
-data<-read.csv("/Users/Joao/Downloads/Titulos_csv2.csv",
+data<-read.csv("/Users/joaovissoci/Downloads/Titulos_csv2 (1).csv",
                stringsAsFactors=FALSE)
 
 #minerar o texto em poetugues
@@ -102,6 +102,8 @@ corpus_ef
 
 #outras correções no texto
 corpus_ef <- tm_map(corpus_ef, content_transformer(function(x) gsub(x,
+               pattern = "dor fisica", replacement = "dor")))
+corpus_ef <- tm_map(corpus_ef, content_transformer(function(x) gsub(x,
                pattern = "atividade fisica", replacement = "atividade_fisica")))
 corpus_ef <- tm_map(corpus_ef, content_transformer(function(x) gsub(x,
                pattern = "aptidao fisica", replacement = "aptidao_fisica")))
@@ -136,7 +138,7 @@ corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
                pattern = "aspectos psicologicos", replacement = "aspectos_psicologicos")
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
-               pattern = "atleta", replacement = "atletas")
+               pattern = "atletas", replacement = "atleta")
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
                pattern = "cardiorrespiratoria", replacement = "cardiaca")
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
@@ -250,7 +252,7 @@ corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
                pattern = "psicossocial", replacement = "psicologicas")
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
-               pattern = "questionario", replacement = "intrumentos")
+               pattern = "questionario", replacement = "instrumentos")
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
                pattern = "recuperacao", replacement = "reabilitacao")
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
@@ -264,7 +266,9 @@ corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
                pattern = "satisfaction", replacement = "satisfacao")
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
-               pattern = "scale", replacement = "intrumentos")
+               pattern = "scale", replacement = "instrumentos")
+corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
+               pattern = "intrumentos", replacement = "instrumentos")
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
                pattern = "overtraining", replacement = "sobrecarga")
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
@@ -283,385 +287,35 @@ corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
                pattern = "universitaria", replacement = "estudantes")
 corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
                pattern = "universitarios", replacement = "estudantes")
+corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
+               pattern = "bem estar", replacement = "bemestar")
+corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
+               pattern = "chen yang tai chi chuan", replacement = "exercicio")
+corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
+               pattern = "futebol de campo", replacement = "futebol")
+corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
+               pattern = "futebol campo", replacement = "futebol")
+corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
+               pattern = "futsal", replacement = "futebol")
+corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
+               pattern = "football", replacement = "futebol")
+corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
+               pattern = "cognitiva comportamental", replacement = "cognitiva_comportamental")
+corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
+               pattern = "padrao sono", replacement = "padrao_sono")
 
 #exclusão de stopwords manulamente
-# corpus_ef <- tm_map(corpus_ef, removeWords, c("acaso",
-#                                               "acinte",
-#                                               "alto",
-#                                               "relacao",
-#                                               "relacionados",
-#                                               "sujeitos",
-#                                               "relacoes",
-#                                               "variaveis",
-#                                               "variavel",
-#                                               "alta",
-#                                               "niveis",
-#                                               "influencia",
-#                                               "parametros",
-#                                               "pre",
-#                                               "analise",
-#                                               "individuos",
-#                                               "pioram",
-#                                               "melhoria",
-#                                               "perfil",
-#                                               "lafisaef",
-#                                               "atraves",
-#                                               "adiante",
-#                                               "aplicada",
-#                                               "iefd",
-#                                               "iii",
-#                                               "atribuidos",
-#                                               "explicativo",
-#                                               "fator",
-#                                               "fatores",
-#                                               "estudo",
-#                                               "apoio",
-#                                               "adrede",
-#                                               "afinal",
-#                                               "afora",
-#                                               "agora",
-#                                               "algures",
-#                                               "alem",
-#                                               "ali",
-#                                               "amanha",
-#                                               "antes",
-#                                               "aqui",
-#                                               "assim",
-#                                               "atras",
-#                                               "bem",
-#                                               "breve",
-#                                               "cedo",
-#                                               "certamente",
-#                                               "efetivamente",
-#                                               "enfim",
-#                                               "hoje",
-#                                               "mal",
-#                                               "mais",
-#                                               "melhor",
-#                                               "menos",
-#                                               "muito",
-#                                               "nao",
-#                                               "ontem",
-#                                               "pior",
-#                                               "pouco",
-#                                               "quanto",
-#                                               "quao",
-#                                               "quase",
-#                                               "realmente",
-#                                               "sera",
-#                                               "sim",
-#                                               "talvez",
-#                                               "tanto",
-#                                               "e",
-#                                               "nem",
-#                                               "mas",
-#                                               "tambem",
-#                                               "como",
-#                                               "bem",
-#                                               "porem",
-#                                               "todavia",
-#                                               "contudo",
-#                                               "entretanto",
-#                                               "entanto",
-#                                               "ou",
-#                                               "ora",
-#                                               "quer",
-#                                               "ja",
-#                                               "logo",
-#                                               "portanto",
-#                                               "por",
-#                                               "assim",
-#                                               "conseguinte",
-#                                               "que",
-#                                               "porque",
-#                                               "porquanto",
-#                                               "pois",
-#                                               "sendo",
-#                                               "visto",
-#                                               "como",
-#                                               "tal",
-#                                               "tao",
-#                                               "tanto",
-#                                               "assim",
-#                                               "conforme",
-#                                               "segundo",
-#                                               "consoante",
-#                                               "mesmo",
-#                                               "mais",
-#                                               "ainda",
-#                                               "se",
-#                                               "bem",
-#                                               "embora",
-#                                               "se",
-#                                               "caso",
-#                                               "contanto",
-#                                               "salvo",
-#                                               "medida",
-#                                               "quanto",
-#                                               "fim",
-#                                               "quando",
-#                                               "enquanto",
-#                                               "sempre",
-#                                               "depois",
-#                                               "a",
-#                                               "ante",
-#                                               "apos",
-#                                               "ate",
-#                                               "com",
-#                                               "contra",
-#                                               "de",
-#                                               "desde",
-#                                               "para",
-#                                               "per",
-#                                               "perante",
-#                                               "por",
-#                                               "sem",
-#                                               "sob",
-#                                               "sobre",
-#                                               "tras",
-#                                               "algo",
-#                                               "alguem",
-#                                               "algum",
-#                                               "alguns",
-#                                               "cada",
-#                                               "cujo",
-#                                               "muitos",
-#                                               "nada",
-#                                               "nenhum",
-#                                               "nenhuns",
-#                                               "ninguem",
-#                                               "outrem",
-#                                               "outros",
-#                                               "poucos",
-#                                               "quaisquer",
-#                                               "qualquer",
-#                                               "quantos",
-#                                               "quem",
-#                                               "tantos",
-#                                               "todos",
-#                                               "tudo",
-#                                               "que",
-#                                               "nao",
-#                                               "para",
-#                                               "varios",
-#                                               "de",
-#                                               "a",
-#                                               "o",
-#                                               "que",
-#                                               "e",
-#                                               "do",
-#                                               "da",
-#                                               "em",
-#                                               "um",
-#                                               "para",
-#                                               "com",
-#                                               "nao",
-#                                               "uma",
-#                                               "os",
-#                                               "no",
-#                                               "se",
-#                                               "na",
-#                                               "por",
-#                                               "mais",
-#                                               "as",
-#                                               "dos",
-#                                               "como",
-#                                               "mas",
-#                                               "ao",
-#                                               "ele",
-#                                               "das",
-#                                               "a",
-#                                               "seu",
-#                                               "sua",
-#                                               "ou",
-#                                               "quando",
-#                                               "muito",
-#                                               "nos",
-#                                               "ja",
-#                                               "eu",
-#                                               "tambem",
-#                                               "so",
-#                                               "pelo",
-#                                               "pela",
-#                                               "ate",
-#                                               "isso",
-#                                               "ela",
-#                                               "entre",
-#                                               "depois",
-#                                               "sem",
-#                                               "mesmo",
-#                                               "aos",
-#                                               "seus",
-#                                               "quem",
-#                                               "nas",
-#                                               "me",
-#                                               "esse",
-#                                               "eles",
-#                                               "voce",
-#                                               "essa",
-#                                               "num",
-#                                               "nem",
-#                                               "suas",
-#                                               "meu",
-#                                               "as",
-#                                               "minha",
-#                                               "numa",
-#                                               "pelos",
-#                                               "elas",
-#                                               "qual",
-#                                               "nos",
-#                                               "lhe",
-#                                               "deles",
-#                                               "essas",
-#                                               "esses",
-#                                               "pelas",
-#                                               "este",
-#                                               "dele",
-#                                               "tu",
-#                                               "te",
-#                                               "voces",
-#                                               "vos",
-#                                               "lhes",
-#                                               "meus",
-#                                               "minhas",
-#                                               "teu",
-#                                               "tua",
-#                                               "teus",
-#                                               "tuas",
-#                                               "nosso",
-#                                               "nossa",
-#                                               "nossos",
-#                                               "nossas",
-#                                               "dela",
-#                                               "delas",
-#                                               "esta",
-#                                               "estes",
-#                                               "estas",
-#                                               "aquele",
-#                                               "aquela",
-#                                               "aqueles",
-#                                               "aquelas",
-#                                               "isto",
-#                                               "aquilo",
-#                                               "efeito",
-#                                               "efeitos",
-#                                               "estou",
-#                                               "esta",
-#                                               "estamos",
-#                                               "estao",
-#                                               "estive",
-#                                               "esteve",
-#                                               "estivemos",
-#                                               "estiveram",
-#                                               "estava",
-#                                               "estavamos",
-#                                               "estavam",
-#                                               "estivera",
-#                                               "estiveramos",
-#                                               "esteja",
-#                                               "estejamos",
-#                                               "estejam",
-#                                               "estivesse",
-#                                               "estivessemos",
-#                                               "estivessem",
-#                                               "estiver",
-#                                               "estivermos",
-#                                               "estiverem",
-#                                               "hei",
-#                                               "ha",
-#                                               "havemos",
-#                                               "hao",
-#                                               "houve",
-#                                               "houvemos",
-#                                               "houveram",
-#                                               "houvera",
-#                                               "houveramos",
-#                                               "haja",
-#                                               "hajamos",
-#                                               "hajam",
-#                                               "houvesse",
-#                                               "houvessemos",
-#                                               "houvessem",
-#                                               "houver",
-#                                               "houvermos",
-#                                               "houverem",
-#                                               "houverei",
-#                                               "houvera",
-#                                               "houveremos",
-#                                               "houverao",
-#                                               "houveria",
-#                                               "houveriamos",
-#                                               "houveriam",
-#                                               "sou",
-#                                               "somos",
-#                                               "sao",
-#                                               "era",
-#                                               "eramos",
-#                                               "eram",
-#                                               "fui",
-#                                               "foi",
-#                                               "fomos",
-#                                               "foram",
-#                                               "fora",
-#                                               "foramos",
-#                                               "seja",
-#                                               "sejamos",
-#                                               "sejam",
-#                                               "fosse",
-#                                               "fossemos",
-#                                               "fossem",
-#                                               "for",
-#                                               "formos",
-#                                               "forem",
-#                                               "serei",
-#                                               "sera",
-#                                               "seremos",
-#                                               "serao",
-#                                               "seria",
-#                                               "seriamos",
-#                                               "seriam",
-#                                               "tenho",
-#                                               "tem",
-#                                               "temos",
-#                                               "tem",
-#                                               "tinha",
-#                                               "tinhamos",
-#                                               "tinham",
-#                                               "tive",
-#                                               "teve",
-#                                               "tivemos",
-#                                               "tiveram",
-#                                               "tivera",
-#                                               "tiveramos",
-#                                               "tenha",
-#                                               "tenhamos",
-#                                               "tenham",
-#                                               "tivesse",
-#                                               "tivessemos",
-#                                               "tivessem",
-#                                               "tiver",
-#                                               "tivermos",
-#                                               "tiverem",
-#                                               "terei",
-#                                               "tera",
-#                                               "teremos",
-#                                               "terao",
-#                                               "teria",
-#                                               "teriamos",
-#                                               "teriam",
-#                                               "pessoas",
-#                                               "durante",
-#                                               "nivel"))
+corpus_ef <- tm_map(corpus_ef, removeWords, c("diferentes","correlacao","longitudinal","sindrome","freq","uencia","sub","brasileiros","restq","acaso","pos","estado","acinte","alto","relacao","relacionados","sujeitos","relacoes","variaveis","variavel","alta","niveis","influencia","parametros","pre","analise","individuos","pioram","melhoria","perfil","lafisaef","atraves","adiante","aplicada","iefd","iii","atribuidos","explicativo","fator","fatores","estudo","apoio","adrede","afinal","afora","agora","algures","alem","ali","amanha","antes","aqui","assim","atras","bem","breve","cedo","certamente","efetivamente","enfim","hoje","mal","mais","melhor","menos","muito","nao","ontem","pior","pouco","quanto","quao","quase","realmente","sera","sim","talvez","tanto","e","nem","mas","tambem","como","bem","porem","todavia","contudo","entretanto","entanto","ou","ora","quer","ja","logo","portanto","por","assim","conseguinte","que","porque","porquanto","pois","sendo","visto","como","tal","tao","tanto","assim","conforme","segundo","consoante","mesmo","mais","ainda","se","bem","embora","se","caso","contanto","salvo","medida","quanto","fim","quando","enquanto","sempre","depois","a","ante","apos","ate","com","contra","de","desde","para","per","perante","por","sem","sob","sobre","tras","algo","alguem","algum","alguns","cada","cujo","muitos","nada","nenhum","nenhuns","ninguem","outrem","outros","poucos","quaisquer","qualquer","quantos","quem","tantos","todos","tudo","que","nao","para","varios","de","a","o","que","e","do","da","em","um","para","com","nao","uma","os","no","se","na","por","mais","as","dos","como","mas","ao","ele","das","a","seu","sua","ou","quando","muito","nos","ja","eu","tambem","so","pelo","pela","ate","isso","ela","entre","depois","sem","mesmo","aos","seus","quem","nas","me","esse","eles","voce","essa","num","nem","suas","meu","as","minha","numa","pelos","elas","qual","nos","lhe","deles","essas","esses","pelas","este","dele","tu","te","voces","vos","lhes","meus","minhas","teu","tua","teus","tuas","nosso","nossa","nossos","nossas","dela","delas","esta","estes","estas","aquele","aquela","aqueles","aquelas","isto","aquilo","efeito","efeitos","estou","esta","estamos","estao","estive","esteve","estivemos","estiveram","estava","estavamos","estavam","estivera","estiveramos","esteja","estejamos","estejam","estivesse","estivessemos","estivessem","estiver","estivermos","estiverem","hei","ha","havemos","hao","houve","houvemos","houveram","houvera","houveramos","haja","hajamos","hajam","houvesse","houvessemos","houvessem","houver","houvermos","houverem","houverei","houvera","houveremos","houverao","houveria","houveriamos","houveriam","sou","somos","sao","era","eramos","eram","fui","foi","fomos","foram","fora","foramos","seja","sejamos","sejam","fosse","fossemos","fossem","for","formos","forem","serei","sera","seremos","serao","seria","seriamos","seriam","tenho","tem","temos","tem","tinha","tinhamos","tinham","tive","teve","tivemos","tiveram","tivera","tiveramos","tenha","tenhamos","tenham","tivesse","tivessemos","tivessem","tiver","tivermos","tiverem","terei","tera","teremos","terao","teria","teriamos","teriam","pessoas","durante","nivel","sao","luiz","resposta","respostas","jose","mato","grosso","psicologicas","atletas","continua","durante","cem","status","municipio","atraves","associados","fatores","brasil","principal","novas","interna","resqt","relacoes","caracterização","apos","nao","niveis","teorico","parana","santa","catarina","iefd","uberaraba","florianopolis","usuarios","atraves","brazilian","regiao","uso","pernambuco"))
 
 #selecionando o texto para visualizar
-writeLines(as.character(corpus_ef))
+# writeLines(as.character(corpus_ef))
 
 #lista de transformações
 getTransformations()
 
 #cria uma matriz de documentos e termos (https://en.wikipedia.org/wiki/Document-term_matrix)
 dtm_ppgp <- DocumentTermMatrix(corpus_ef)
-dtm_ppgp
+# dtm_ppgp
 #visualizando a matriz
 # inspect(dtm_ppgp)
 
@@ -702,10 +356,10 @@ p
 
 #wordcloud
 #setting the same seed each time ensures consistent look across clouds
-set.seed(30)
-#limit words by specifying min frequency
-wordcloud(names(freq),freq,min.freq=5,#scale=c(1,.01), max.words =100
-          random.order = F,random.color=F,rot.per=.5,colors = freq)
+# set.seed(30)
+# #limit words by specifying min frequency
+# wordcloud(names(freq),freq,min.freq=5,#scale=c(1,.01), max.words =100
+#           random.order = FALSE,random.color=FALSE,rot.per=.5,colors = freq)
 
 
 
@@ -752,84 +406,500 @@ ggplot(points,aes(x=x, y=y)) +
 
 
 #Kmeans 
-# install.packages("skmeans")
-library(skmeans)
-
-clust<-kmeans(points,10) #dividir estes dados em 3 clusters 
-clust
-plot(points[,1],points[,2],col= clust$cluster)
-text(points[,1],points[,2],row.names(df))
 
 
 #Model Based Clustering
 # install.packages("mclust")
 library(mclust)
-fit2 <- Mclust(points)
+# install.packages("skmeans")
+library(skmeans)
+
+wss <- (nrow(points)-1)*sum(apply(points,2,var))
+for (i in 2:15) wss[i] <- sum(kmeans(points, 
+   centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters",
+  ylab="Within groups sum of squares")
+
+#Cluster analysis
+set.seed(123456)
+clust<-kmeans(points,8) #dividir estes dados em 3 clusters 
+clust
+plot(points[,1],points[,2],col= clust$cluster)
+text(points[,1],points[,2],row.names(df))
+# rect.hclust(clust, k=5, border="red")
+
+# fit2 <- Mclust(points)
 
 #Plot das classifica??es com base em Escalonamento Multidimensional com LSA, duas dimens?es (k=2)
-plot(points[,1],points[,2],col= fit2$classification)
+# plot(points[,1],points[,2],col= fit2$classification)
 
-#numero de classifica??es
-summary(fit2)
-
+# #numero de classifica??es
+print(clust)
 
 class <- clust$cluster
-
 
 #Tabela final com as classifica??es 
 table_final = data.frame(originalText = cleaned_data[,1][cleaned_data$area=="Educacao fisica"],
                    # PointX  = fit$points[,1],
                    # PointY  = fit$points[,2],
                     class =  clust$cluster)
-#View(table_final)
 
-#write.csv2(table_final,"table_final.csv",row.names = F)
-
-#associações 
-findAssocs(dtm_ppgp,"fisica",corlimit = 0.3)
-#dtm2<-removeSparseTerms(dtm,0.99)
-cor_t<- cor(as.matrix(dtm_ppgp),method = "spearman")
-#View(cor_t)
-qgraph(cor_t,layout="spring",labels=colnames(cor_t),threshold=0.3)
-
-
-# Análise por cluster
-#Corpus
+########################################
+#By Cluster Analysis - Cluster 1
+########################################
 # Análise por cluster
 #Corpus
 df_c1 <- data.frame(table_final$originalText[which(table_final$class==1)], stringsAsFactors=FALSE)
-View(df_c1)
+# View(df_c1)
 corpus_c1 <- VCorpus(VectorSource(df_c1$table_final.originalText.which.table_final.class....1..))
-corpus_c1
+
+corpus_c1 <- tm_map(corpus_c1, content_transformer(function(x) gsub(x,
+               pattern = "dor fisica", replacement = "dor")))
+corpus_c1 <- tm_map(corpus_c1, content_transformer(function(x) gsub(x,
+               pattern = "atividade fisica", replacement = "atividade_fisica")))
+corpus_c1 <- tm_map(corpus_c1, content_transformer(function(x) gsub(x,
+               pattern = "aptidao fisica", replacement = "aptidao_fisica")))
+corpus_c1 <- tm_map(corpus_c1, content_transformer(function(x) gsub(x,
+               pattern = "dor fisica", replacement = "dor")))
+corpus_c1 <- tm_map(corpus_c1, content_transformer(function(x) gsub(x,
+               pattern = "treinamento fisica", replacement = "treinamento")))
+# corpus_c1 <- tm_map(corpus_c1, content_transformer(function(x) gsub(x,
+#                pattern = "atividade", replacement = "atividade_fisica")))
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "exercicio fisica", replacement = "exercicio")
+# corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+#                pattern = "exercicio", replacement = "exercicio_fisica")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "educacao fisica", replacement = "educacao_fisica")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "condicionamento fisica", replacement = "condicionamento")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "qualidade vida", replacement = "qualidade_vida")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "estilo vida", replacement = "estilo_vida")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "efeitos", replacement = "efeito")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "adaptacao", replacement = "adaptado")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "adolescencia", replacement = "adolescentes")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "aerobias", replacement = "aerobio")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "arbitros", replacement = "arbitragem")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "aspectos psicologicos", replacement = "aspectos_psicologicos")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "atletas", replacement = "atleta")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "cardiorrespiratoria", replacement = "cardiaca")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "cardiorrespiratorios", replacement = "cardiaca")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "cardiometabolicos", replacement = "cardiaca")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "cardiopulmonar", replacement = "cardiaca")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "cardiovasculares", replacement = "cardiaca")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "santa catarina", replacement = "santa_catarina")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "sao paulo", replacement = "sao_paulo")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "cognicao", replacement = "cognitivas")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "comportamento", replacement = "comportamental")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "comportamentais", replacement = "comportamental")
+# corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+#                pattern = "condicionamento", replacement = "condicionamento_fisica")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "decisao", replacement = "decisoes")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "amputados", replacement = "deficiencia")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "desportos", replacement = "esporte")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "emocionais", replacement = "emocional")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "alunos", replacement = "escolares")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "espiritualidade", replacement = "religiosidade")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "fisiologico", replacement = "fisiologicas")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "funcao", replacement = "funcional")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "funcionais", replacement = "funcional")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "funcionalidade", replacement = "funcional")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "funcoes", replacement = "funcional")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "hiperdia", replacement = "hipertensa")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "hipertensos", replacement = "hipertensa")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "imuno", replacement = "imunologicos")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "inflamacao", replacement = "inflamatorios")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "instituicoes", replacement = "instituto")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "instrumentacao", replacement = "instrumentos")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "intervencoes", replacement = "intervencao")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "jogadores", replacement = "atletas")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "juvenis", replacement = "jovens")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "lesao", replacement = "lesoes")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "lesados", replacement = "lesoes")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "lombalgia", replacement = "dor")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "marcador", replacement = "marcadores")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "marcas", replacement = "marcadores")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "metabolica", replacement = "metabolicos")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "modalidadades", replacement = "modalidades")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "motivacionais", replacement = "motivacao")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "motivacional", replacement = "motivacao")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "motivadores", replacement = "motivacao")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "motoras", replacement = "motor")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "motores", replacement = "motor")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "muscle", replacement = "muscular")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "neuromusculares", replacement = "musculo")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "neuromusculares", replacement = "musculo")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "oncologia", replacement = "doenca")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "paralimpicos", replacement = "deficiencia")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "participantes", replacement = "participacao")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "percepcoes", replacement = "percepcao")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "precursores", replacement = "preliminares")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "profissional", replacement = "profissionais")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "psicofisica", replacement = "psicobiologicas")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "psicofisiologico", replacement = "psicobiologicas")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "psicossociais", replacement = "psicologicas")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "psicossocial", replacement = "psicologicas")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "questionario", replacement = "instrumentos")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "recuperacao", replacement = "reabilitacao")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "recuperacao", replacement = "reabilitacao")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "competitiva", replacement = "rendimento")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "resqt", replacement = "restq")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "sadios", replacement = "saudaveis")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "satisfaction", replacement = "satisfacao")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "scale", replacement = "instrumentos")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "intrumentos", replacement = "instrumentos")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "overtraining", replacement = "sobrecarga")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "teorico", replacement = "teoria")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "trabalhadores", replacement = "trabalhador")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "trabalho", replacement = "trabalhador")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "tecnico", replacement = "treinador")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "treinadores", replacement = "treinador")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "treino", replacement = "treinamento")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "universitaria", replacement = "estudantes")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "universitarios", replacement = "estudantes")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "bem estar", replacement = "bemestar")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "chen yang tai chi chuan", replacement = "exercicio")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "futebol de campo", replacement = "futebol")
+corpus_ef <- tm_map(corpus_ef, content_transformer(gsub),
+               pattern = "futebol campo", replacement = "futebol")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "futsal", replacement = "futebol")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "football", replacement = "futebol")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "cognitiva comportamental", replacement = "cognitiva_comportamental")
+corpus_c1 <- tm_map(corpus_c1, content_transformer(gsub),
+               pattern = "padrao sono", replacement = "padrao_sono")
+
+#exclusão de stopwords manulamente
+corpus_c1 <- tm_map(corpus_c1, removeWords, c("campo","sao_paulo","atleta","diferentes","correlacao","longitudinal","sindrome","freq","uencia","sub","brasileiros","restq","acaso","pos","estado","acinte","alto","relacao","relacionados","sujeitos","relacoes","variaveis","variavel","alta","niveis","influencia","parametros","pre","analise","individuos","pioram","melhoria","perfil","lafisaef","atraves","adiante","aplicada","iefd","iii","atribuidos","explicativo","fator","fatores","estudo","apoio","adrede","afinal","afora","agora","algures","alem","ali","amanha","antes","aqui","assim","atras","bem","breve","cedo","certamente","efetivamente","enfim","hoje","mal","mais","melhor","menos","muito","nao","ontem","pior","pouco","quanto","quao","quase","realmente","sera","sim","talvez","tanto","e","nem","mas","tambem","como","bem","porem","todavia","contudo","entretanto","entanto","ou","ora","quer","ja","logo","portanto","por","assim","conseguinte","que","porque","porquanto","pois","sendo","visto","como","tal","tao","tanto","assim","conforme","segundo","consoante","mesmo","mais","ainda","se","bem","embora","se","caso","contanto","salvo","medida","quanto","fim","quando","enquanto","sempre","depois","a","ante","apos","ate","com","contra","de","desde","para","per","perante","por","sem","sob","sobre","tras","algo","alguem","algum","alguns","cada","cujo","muitos","nada","nenhum","nenhuns","ninguem","outrem","outros","poucos","quaisquer","qualquer","quantos","quem","tantos","todos","tudo","que","nao","para","varios","de","a","o","que","e","do","da","em","um","para","com","nao","uma","os","no","se","na","por","mais","as","dos","como","mas","ao","ele","das","a","seu","sua","ou","quando","muito","nos","ja","eu","tambem","so","pelo","pela","ate","isso","ela","entre","depois","sem","mesmo","aos","seus","quem","nas","me","esse","eles","voce","essa","num","nem","suas","meu","as","minha","numa","pelos","elas","qual","nos","lhe","deles","essas","esses","pelas","este","dele","tu","te","voces","vos","lhes","meus","minhas","teu","tua","teus","tuas","nosso","nossa","nossos","nossas","dela","delas","esta","estes","estas","aquele","aquela","aqueles","aquelas","isto","aquilo","efeito","efeitos","estou","esta","estamos","estao","estive","esteve","estivemos","estiveram","estava","estavamos","estavam","estivera","estiveramos","esteja","estejamos","estejam","estivesse","estivessemos","estivessem","estiver","estivermos","estiverem","hei","ha","havemos","hao","houve","houvemos","houveram","houvera","houveramos","haja","hajamos","hajam","houvesse","houvessemos","houvessem","houver","houvermos","houverem","houverei","houvera","houveremos","houverao","houveria","houveriamos","houveriam","sou","somos","sao","era","eramos","eram","fui","foi","fomos","foram","fora","foramos","seja","sejamos","sejam","fosse","fossemos","fossem","for","formos","forem","serei","sera","seremos","serao","seria","seriamos","seriam","tenho","tem","temos","tem","tinha","tinhamos","tinham","tive","teve","tivemos","tiveram","tivera","tiveramos","tenha","tenhamos","tenham","tivesse","tivessemos","tivessem","tiver","tivermos","tiverem","terei","tera","teremos","terao","teria","teriamos","teriam","pessoas","durante","nivel","sao","luiz","resposta","respostas","jose","mato","grosso","psicologicas","atletas","continua","durante","cem","status","municipio","atraves","associados","fatores","brasil","principal","novas","interna","resqt","relacoes","caracterização","apos","nao","niveis","teorico","parana","santa","catarina","iefd","uberaraba","florianopolis","usuarios","atraves","brazilian","regiao","uso","pernambuco"))
+
+#criando uma matrix de palavras e frequencia de palavras
 dtm_c1 <- DocumentTermMatrix(corpus_c1)
 
 # descritivos por cluster
 freq_c1 <- sort(colSums(as.matrix(dtm_c1)), decreasing=TRUE)   
-head(freq_c1, 15)
+head(freq_c1, 20)
 
 wf_c1 <- data.frame(word=names(freq_c1), freq=freq_c1)   
-head(wf_c1)  
+# head(wf_c1)  
 
-p_c1 <- ggplot(subset(wf_c1, freq>5), aes(x = reorder(word, -freq), y = freq)) +
+p_c1 <- ggplot(subset(wf_c1, freq>2), aes(x = reorder(word, -freq), y = freq)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 p_c1  
 
-set.seed(142)   
-wordcloud(names(freq_c1), freq_c1, min.freq=20)
+# set.seed(142)   
+# wordcloud(names(freq_c1), freq_c1, min.freq=20)
 
-#dtm_c1_2<-removeSparseTerms(dtm_c1,0.99)
-cor_c1 <- cor(as.matrix(dtm_c1),method = "spearman")
+dtm_c1_2<-removeSparseTerms(dtm_c1,0.93)
+cor_c1 <- cor(as.matrix(dtm_c1_2),method = "spearman")
+cor_c1 <- ifelse(cor_c1<0,0,cor_c1)
 #View(cor_c1)
-qgraph(cor_c1,layout="spring",labels=colnames(cor_c1),threshold=0.3)
+qgraph(cor_c1,layout="spring",labels=colnames(cor_c1),threshold=0.2)
 
-
+########################################
+#By Cluster Analysis - Cluster 2
+########################################
 # Análise por cluster
 #Corpus
 df_c2 <- data.frame(table_final$originalText[which(table_final$class==2)], stringsAsFactors=FALSE)
-View(df_c2)
+# View(df_c2)
 corpus_c2 <- VCorpus(VectorSource(df_c2$table_final.originalText.which.table_final.class....2..))
-corpus_c2
+
+#outras correções no texto
+corpus_c2 <- tm_map(corpus_c2, content_transformer(function(x) gsub(x,
+               pattern = "dor fisica", replacement = "dor")))
+corpus_c2 <- tm_map(corpus_c2, content_transformer(function(x) gsub(x,
+               pattern = "atividade fisica", replacement = "atividade_fisica")))
+corpus_c2 <- tm_map(corpus_c2, content_transformer(function(x) gsub(x,
+               pattern = "aptidao fisica", replacement = "aptidao_fisica")))
+corpus_c2 <- tm_map(corpus_c2, content_transformer(function(x) gsub(x,
+               pattern = "dor fisica", replacement = "dor")))
+corpus_c2 <- tm_map(corpus_c2, content_transformer(function(x) gsub(x,
+               pattern = "treinamento fisica", replacement = "treinamento")))
+# corpus_c2 <- tm_map(corpus_c2, content_transformer(function(x) gsub(x,
+#                pattern = "atividade", replacement = "atividade_fisica")))
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "exercicio fisica", replacement = "exercicio")
+# corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+#                pattern = "exercicio", replacement = "exercicio_fisica")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "educacao fisica", replacement = "educacao_fisica")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "condicionamento fisica", replacement = "condicionamento")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "qualidade vida", replacement = "qualidade_vida")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "estilo vida", replacement = "estilo_vida")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "efeitos", replacement = "efeito")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "adaptacao", replacement = "adaptado")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "adolescencia", replacement = "adolescentes")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "aerobias", replacement = "aerobio")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "arbitros", replacement = "arbitragem")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "aspectos psicologicos", replacement = "aspectos_psicologicos")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "atletas", replacement = "atleta")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "cardiorrespiratoria", replacement = "cardiaca")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "cardiorrespiratorios", replacement = "cardiaca")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "cardiometabolicos", replacement = "cardiaca")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "cardiopulmonar", replacement = "cardiaca")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "cardiovasculares", replacement = "cardiaca")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "santa catarina", replacement = "santa_catarina")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "sao paulo", replacement = "sao_paulo")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "cognicao", replacement = "cognitivas")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "comportamento", replacement = "comportamental")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "comportamentais", replacement = "comportamental")
+# corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+#                pattern = "condicionamento", replacement = "condicionamento_fisica")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "decisao", replacement = "decisoes")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "amputados", replacement = "deficiencia")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "desportos", replacement = "esporte")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "emocionais", replacement = "emocional")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "alunos", replacement = "escolares")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "espiritualidade", replacement = "religiosidade")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "fisiologico", replacement = "fisiologicas")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "funcao", replacement = "funcional")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "funcionais", replacement = "funcional")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "funcionalidade", replacement = "funcional")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "funcoes", replacement = "funcional")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "hiperdia", replacement = "hipertensa")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "hipertensos", replacement = "hipertensa")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "imuno", replacement = "imunologicos")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "inflamacao", replacement = "inflamatorios")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "instituicoes", replacement = "instituto")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "instrumentacao", replacement = "instrumentos")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "intervencoes", replacement = "intervencao")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "jogadores", replacement = "atletas")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "juvenis", replacement = "jovens")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "lesao", replacement = "lesoes")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "lesados", replacement = "lesoes")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "lombalgia", replacement = "dor")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "marcador", replacement = "marcadores")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "marcas", replacement = "marcadores")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "metabolica", replacement = "metabolicos")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "modalidadades", replacement = "modalidades")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "motivacionais", replacement = "motivacao")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "motivacional", replacement = "motivacao")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "motivadores", replacement = "motivacao")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "motoras", replacement = "motor")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "motores", replacement = "motor")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "muscle", replacement = "muscular")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "neuromusculares", replacement = "musculo")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "neuromusculares", replacement = "musculo")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "oncologia", replacement = "doenca")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "paralimpicos", replacement = "deficiencia")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "participantes", replacement = "participacao")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "percepcoes", replacement = "percepcao")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "precursores", replacement = "preliminares")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "profissional", replacement = "profissionais")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "psicofisica", replacement = "psicobiologicas")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "psicofisiologico", replacement = "psicobiologicas")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "psicossociais", replacement = "psicologicas")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "psicossocial", replacement = "psicologicas")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "questionario", replacement = "instrumentos")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "recuperacao", replacement = "reabilitacao")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "recuperacao", replacement = "reabilitacao")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "competitiva", replacement = "rendimento")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "resqt", replacement = "restq")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "sadios", replacement = "saudaveis")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "satisfaction", replacement = "satisfacao")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "scale", replacement = "instrumentos")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "intrumentos", replacement = "instrumentos")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "overtraining", replacement = "sobrecarga")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "teorico", replacement = "teoria")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "trabalhadores", replacement = "trabalhador")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "trabalho", replacement = "trabalhador")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "tecnico", replacement = "treinador")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "treinadores", replacement = "treinador")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "treino", replacement = "treinamento")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "universitaria", replacement = "estudantes")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "universitarios", replacement = "estudantes")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "bem estar", replacement = "bemestar")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "chen yang tai chi chuan", replacement = "exercicio")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "futebol de campo", replacement = "futebol")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "futebol campo", replacement = "futebol")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "futsal", replacement = "futebol")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "football", replacement = "futebol")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "cognitiva comportamental", replacement = "cognitiva_comportamental")
+corpus_c2 <- tm_map(corpus_c2, content_transformer(gsub),
+               pattern = "padrao sono", replacement = "padrao_sono")
+
+#exclusão de stopwords manulamente
+corpus_c2 <- tm_map(corpus_c2, removeWords, c("diferentes","correlacao","longitudinal","sindrome","freq","uencia","sub","brasileiros","restq","acaso","pos","estado","acinte","alto","relacao","relacionados","sujeitos","relacoes","variaveis","variavel","alta","niveis","influencia","parametros","pre","analise","individuos","pioram","melhoria","perfil","lafisaef","atraves","adiante","aplicada","iefd","iii","atribuidos","explicativo","fator","fatores","estudo","apoio","adrede","afinal","afora","agora","algures","alem","ali","amanha","antes","aqui","assim","atras","bem","breve","cedo","certamente","efetivamente","enfim","hoje","mal","mais","melhor","menos","muito","nao","ontem","pior","pouco","quanto","quao","quase","realmente","sera","sim","talvez","tanto","e","nem","mas","tambem","como","bem","porem","todavia","contudo","entretanto","entanto","ou","ora","quer","ja","logo","portanto","por","assim","conseguinte","que","porque","porquanto","pois","sendo","visto","como","tal","tao","tanto","assim","conforme","segundo","consoante","mesmo","mais","ainda","se","bem","embora","se","caso","contanto","salvo","medida","quanto","fim","quando","enquanto","sempre","depois","a","ante","apos","ate","com","contra","de","desde","para","per","perante","por","sem","sob","sobre","tras","algo","alguem","algum","alguns","cada","cujo","muitos","nada","nenhum","nenhuns","ninguem","outrem","outros","poucos","quaisquer","qualquer","quantos","quem","tantos","todos","tudo","que","nao","para","varios","de","a","o","que","e","do","da","em","um","para","com","nao","uma","os","no","se","na","por","mais","as","dos","como","mas","ao","ele","das","a","seu","sua","ou","quando","muito","nos","ja","eu","tambem","so","pelo","pela","ate","isso","ela","entre","depois","sem","mesmo","aos","seus","quem","nas","me","esse","eles","voce","essa","num","nem","suas","meu","as","minha","numa","pelos","elas","qual","nos","lhe","deles","essas","esses","pelas","este","dele","tu","te","voces","vos","lhes","meus","minhas","teu","tua","teus","tuas","nosso","nossa","nossos","nossas","dela","delas","esta","estes","estas","aquele","aquela","aqueles","aquelas","isto","aquilo","efeito","efeitos","estou","esta","estamos","estao","estive","esteve","estivemos","estiveram","estava","estavamos","estavam","estivera","estiveramos","esteja","estejamos","estejam","estivesse","estivessemos","estivessem","estiver","estivermos","estiverem","hei","ha","havemos","hao","houve","houvemos","houveram","houvera","houveramos","haja","hajamos","hajam","houvesse","houvessemos","houvessem","houver","houvermos","houverem","houverei","houvera","houveremos","houverao","houveria","houveriamos","houveriam","sou","somos","sao","era","eramos","eram","fui","foi","fomos","foram","fora","foramos","seja","sejamos","sejam","fosse","fossemos","fossem","for","formos","forem","serei","sera","seremos","serao","seria","seriamos","seriam","tenho","tem","temos","tem","tinha","tinhamos","tinham","tive","teve","tivemos","tiveram","tivera","tiveramos","tenha","tenhamos","tenham","tivesse","tivessemos","tivessem","tiver","tivermos","tiverem","terei","tera","teremos","terao","teria","teriamos","teriam","pessoas","durante","nivel","sao","luiz","resposta","respostas","jose","mato","grosso","psicologicas","atletas","continua","durante","cem","status","municipio","atraves","associados","fatores","brasil","principal","novas","interna","resqt","relacoes","caracterização","apos","nao","niveis","teorico","parana","santa","catarina","iefd","uberaraba","florianopolis","usuarios","atraves","brazilian","regiao","uso","pernambuco"))
+
+#criando uma matrix de palavras e frequencia de palavras
 dtm_c2 <- DocumentTermMatrix(corpus_c2)
 
 # descritivos por cluster
@@ -839,25 +909,236 @@ head(freq_c2, 15)
 wf_c2 <- data.frame(word=names(freq_c2), freq=freq_c2)   
 head(wf_c2)  
 
-p_c1 <- ggplot(subset(wf_c2, freq>1), aes(x = reorder(word, -freq), y = freq)) +
+p_c2 <- ggplot(subset(wf_c2, freq>5), aes(x = reorder(word, -freq), y = freq)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-p_c1  
+p_c2  
 
-set.seed(142)   
-wordcloud(names(freq_c2), freq_c2, min.freq=20)
+# set.seed(142)   
+# wordcloud(names(freq_c2), freq_c2, min.freq=20)
 
-#dtm_c2_2<-removeSparseTerms(dtm_c2,0.99)
-cor_c2 <- cor(as.matrix(dtm_c2),method = "spearman")
-#View(cor_c2)
-qgraph(cor_c2,layout="spring",labels=colnames(cor_c2),threshold=0.4)
+dtm_c2_2<-removeSparseTerms(dtm_c2,0.93)
+cor_c2 <- cor(as.matrix(dtm_c2_2),method = "spearman")
+cor_c2 <- ifelse(cor_c2<0,0,cor_c2)
+#View(cor_c1)
+qgraph(cor_c2,layout="spring",labels=colnames(cor_c2),threshold=0.2)
 
+########################################
+#By Cluster Analysis - Cluster 3
+########################################
 # Análise por cluster
 #Corpus
+
 df_c3 <- data.frame(table_final$originalText[which(table_final$class==3)], stringsAsFactors=FALSE)
-View(df_c3)
+# View(df_c3)
 corpus_c3 <- VCorpus(VectorSource(df_c3$table_final.originalText.which.table_final.class....3..))
-corpus_c3
+
+#outras correções no texto
+corpus_c3 <- tm_map(corpus_c3, content_transformer(function(x) gsub(x,
+               pattern = "dor fisica", replacement = "dor")))
+corpus_c3 <- tm_map(corpus_c3, content_transformer(function(x) gsub(x,
+               pattern = "atividade fisica", replacement = "atividade_fisica")))
+corpus_c3 <- tm_map(corpus_c3, content_transformer(function(x) gsub(x,
+               pattern = "aptidao fisica", replacement = "aptidao_fisica")))
+corpus_c3 <- tm_map(corpus_c3, content_transformer(function(x) gsub(x,
+               pattern = "dor fisica", replacement = "dor")))
+corpus_c3 <- tm_map(corpus_c3, content_transformer(function(x) gsub(x,
+               pattern = "treinamento fisica", replacement = "treinamento")))
+# corpus_c3 <- tm_map(corpus_c3, content_transformer(function(x) gsub(x,
+#                pattern = "atividade", replacement = "atividade_fisica")))
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "exercicio fisica", replacement = "exercicio")
+# corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+#                pattern = "exercicio", replacement = "exercicio_fisica")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "educacao fisica", replacement = "educacao_fisica")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "condicionamento fisica", replacement = "condicionamento")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "qualidade vida", replacement = "qualidade_vida")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "estilo vida", replacement = "estilo_vida")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "efeitos", replacement = "efeito")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "adaptacao", replacement = "adaptado")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "adolescencia", replacement = "adolescentes")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "aerobias", replacement = "aerobio")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "arbitros", replacement = "arbitragem")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "aspectos psicologicos", replacement = "aspectos_psicologicos")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "atletas", replacement = "atleta")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "cardiorrespiratoria", replacement = "cardiaca")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "cardiorrespiratorios", replacement = "cardiaca")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "cardiometabolicos", replacement = "cardiaca")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "cardiopulmonar", replacement = "cardiaca")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "cardiovasculares", replacement = "cardiaca")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "santa catarina", replacement = "santa_catarina")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "sao paulo", replacement = "sao_paulo")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "cognicao", replacement = "cognitivas")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "comportamento", replacement = "comportamental")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "comportamentais", replacement = "comportamental")
+# corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+#                pattern = "condicionamento", replacement = "condicionamento_fisica")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "decisao", replacement = "decisoes")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "amputados", replacement = "deficiencia")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "desportos", replacement = "esporte")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "emocionais", replacement = "emocional")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "alunos", replacement = "escolares")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "espiritualidade", replacement = "religiosidade")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "fisiologico", replacement = "fisiologicas")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "funcao", replacement = "funcional")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "funcionais", replacement = "funcional")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "funcionalidade", replacement = "funcional")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "funcoes", replacement = "funcional")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "hiperdia", replacement = "hipertensa")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "hipertensos", replacement = "hipertensa")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "imuno", replacement = "imunologicos")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "inflamacao", replacement = "inflamatorios")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "instituicoes", replacement = "instituto")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "instrumentacao", replacement = "instrumentos")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "intervencoes", replacement = "intervencao")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "jogadores", replacement = "atletas")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "juvenis", replacement = "jovens")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "lesao", replacement = "lesoes")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "lesados", replacement = "lesoes")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "lombalgia", replacement = "dor")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "marcador", replacement = "marcadores")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "marcas", replacement = "marcadores")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "metabolica", replacement = "metabolicos")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "modalidadades", replacement = "modalidades")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "motivacionais", replacement = "motivacao")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "motivacional", replacement = "motivacao")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "motivadores", replacement = "motivacao")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "motoras", replacement = "motor")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "motores", replacement = "motor")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "muscle", replacement = "muscular")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "neuromusculares", replacement = "musculo")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "neuromusculares", replacement = "musculo")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "oncologia", replacement = "doenca")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "paralimpicos", replacement = "deficiencia")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "participantes", replacement = "participacao")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "percepcoes", replacement = "percepcao")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "precursores", replacement = "preliminares")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "profissional", replacement = "profissionais")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "psicofisica", replacement = "psicobiologicas")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "psicofisiologico", replacement = "psicobiologicas")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "psicossociais", replacement = "psicologicas")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "psicossocial", replacement = "psicologicas")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "questionario", replacement = "instrumentos")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "recuperacao", replacement = "reabilitacao")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "recuperacao", replacement = "reabilitacao")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "competitiva", replacement = "rendimento")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "resqt", replacement = "restq")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "sadios", replacement = "saudaveis")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "satisfaction", replacement = "satisfacao")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "scale", replacement = "instrumentos")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "intrumentos", replacement = "instrumentos")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "overtraining", replacement = "sobrecarga")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "teorico", replacement = "teoria")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "trabalhadores", replacement = "trabalhador")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "trabalho", replacement = "trabalhador")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "tecnico", replacement = "treinador")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "treinadores", replacement = "treinador")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "treino", replacement = "treinamento")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "universitaria", replacement = "estudantes")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "universitarios", replacement = "estudantes")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "bem estar", replacement = "bemestar")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "chen yang tai chi chuan", replacement = "exercicio")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "futebol de campo", replacement = "futebol")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "futebol campo", replacement = "futebol")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "futsal", replacement = "futebol")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "football", replacement = "futebol")
+corpus_c3 <- tm_map(corpus_c3, content_transformer(gsub),
+               pattern = "cognitiva comportamental", replacement = "cognitiva_comportamental")
+
+#exclusão de stopwords manulamente
+corpus_c3 <- tm_map(corpus_c3, removeWords, c("diferentes","correlacao","longitudinal","sindrome","freq","uencia","sub","brasileiros","restq","acaso","pos","estado","acinte","alto","relacao","relacionados","sujeitos","relacoes","variaveis","variavel","alta","niveis","influencia","parametros","pre","analise","individuos","pioram","melhoria","perfil","lafisaef","atraves","adiante","aplicada","iefd","iii","atribuidos","explicativo","fator","fatores","estudo","apoio","adrede","afinal","afora","agora","algures","alem","ali","amanha","antes","aqui","assim","atras","bem","breve","cedo","certamente","efetivamente","enfim","hoje","mal","mais","melhor","menos","muito","nao","ontem","pior","pouco","quanto","quao","quase","realmente","sera","sim","talvez","tanto","e","nem","mas","tambem","como","bem","porem","todavia","contudo","entretanto","entanto","ou","ora","quer","ja","logo","portanto","por","assim","conseguinte","que","porque","porquanto","pois","sendo","visto","como","tal","tao","tanto","assim","conforme","segundo","consoante","mesmo","mais","ainda","se","bem","embora","se","caso","contanto","salvo","medida","quanto","fim","quando","enquanto","sempre","depois","a","ante","apos","ate","com","contra","de","desde","para","per","perante","por","sem","sob","sobre","tras","algo","alguem","algum","alguns","cada","cujo","muitos","nada","nenhum","nenhuns","ninguem","outrem","outros","poucos","quaisquer","qualquer","quantos","quem","tantos","todos","tudo","que","nao","para","varios","de","a","o","que","e","do","da","em","um","para","com","nao","uma","os","no","se","na","por","mais","as","dos","como","mas","ao","ele","das","a","seu","sua","ou","quando","muito","nos","ja","eu","tambem","so","pelo","pela","ate","isso","ela","entre","depois","sem","mesmo","aos","seus","quem","nas","me","esse","eles","voce","essa","num","nem","suas","meu","as","minha","numa","pelos","elas","qual","nos","lhe","deles","essas","esses","pelas","este","dele","tu","te","voces","vos","lhes","meus","minhas","teu","tua","teus","tuas","nosso","nossa","nossos","nossas","dela","delas","esta","estes","estas","aquele","aquela","aqueles","aquelas","isto","aquilo","efeito","efeitos","estou","esta","estamos","estao","estive","esteve","estivemos","estiveram","estava","estavamos","estavam","estivera","estiveramos","esteja","estejamos","estejam","estivesse","estivessemos","estivessem","estiver","estivermos","estiverem","hei","ha","havemos","hao","houve","houvemos","houveram","houvera","houveramos","haja","hajamos","hajam","houvesse","houvessemos","houvessem","houver","houvermos","houverem","houverei","houvera","houveremos","houverao","houveria","houveriamos","houveriam","sou","somos","sao","era","eramos","eram","fui","foi","fomos","foram","fora","foramos","seja","sejamos","sejam","fosse","fossemos","fossem","for","formos","forem","serei","sera","seremos","serao","seria","seriamos","seriam","tenho","tem","temos","tem","tinha","tinhamos","tinham","tive","teve","tivemos","tiveram","tivera","tiveramos","tenha","tenhamos","tenham","tivesse","tivessemos","tivessem","tiver","tivermos","tiverem","terei","tera","teremos","terao","teria","teriamos","teriam","pessoas","durante","nivel","sao","luiz","resposta","respostas","jose","mato","grosso","psicologicas","atletas","continua","durante","cem","status","municipio","atraves","associados","fatores","brasil","principal","novas","interna","resqt","relacoes","caracterização","apos","nao","niveis","teorico","parana","santa","catarina","iefd","uberaraba","florianopolis","usuarios","atraves","brazilian","regiao","uso","pernambuco"))
+
+#criando uma matrix de palavras e frequencia de palavras
 dtm_c3 <- DocumentTermMatrix(corpus_c3)
 
 # descritivos por cluster
@@ -867,25 +1148,223 @@ head(freq_c3, 15)
 wf_c3 <- data.frame(word=names(freq_c3), freq=freq_c3)   
 head(wf_c3)  
 
-p_c1 <- ggplot(subset(wf_c3, freq>1), aes(x = reorder(word, -freq), y = freq)) +
+p_c3 <- ggplot(subset(wf_c3, freq>2), aes(x = reorder(word, -freq), y = freq)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-p_c1  
+p_c3  
 
-set.seed(142)   
-wordcloud(names(freq_c3), freq_c3, min.freq=20)
+# set.seed(142)   
+# wordcloud(names(freq_c3), freq_c3, min.freq=20)
 
-#dtm_c3_2<-removeSparseTerms(dtm_c3,0.99)
-cor_c3 <- cor(as.matrix(dtm_c3),method = "spearman")
-#View(cor_c3)
-qgraph(cor_c3,layout="spring",labels=colnames(cor_c3))
+dtm_c3_2<-removeSparseTerms(dtm_c3,0.88)
+cor_c3 <- cor(as.matrix(dtm_c3_2),method = "spearman")
+#View(cor_c1)
+cor_c3<-ifelse(cor_c3<0,0,cor_c3)
 
+qgraph(cor_c3,layout="spring",labels=colnames(cor_c3),threshold=0.2)
+
+########################################
+#By Cluster Analysis - Cluster 4
+########################################
 # Análise por cluster
 #Corpus
+
 df_c4 <- data.frame(table_final$originalText[which(table_final$class==4)], stringsAsFactors=FALSE)
-View(df_c4)
+# View(df_c4)
 corpus_c4 <- VCorpus(VectorSource(df_c4$table_final.originalText.which.table_final.class....4..))
-corpus_c4
+
+#outras correções no texto
+corpus_c4 <- tm_map(corpus_c4, content_transformer(function(x) gsub(x,
+               pattern = "dor fisica", replacement = "dor")))
+corpus_c4 <- tm_map(corpus_c4, content_transformer(function(x) gsub(x,
+               pattern = "atividade fisica", replacement = "atividade_fisica")))
+corpus_c4 <- tm_map(corpus_c4, content_transformer(function(x) gsub(x,
+               pattern = "aptidao fisica", replacement = "aptidao_fisica")))
+corpus_c4 <- tm_map(corpus_c4, content_transformer(function(x) gsub(x,
+               pattern = "dor fisica", replacement = "dor")))
+corpus_c4 <- tm_map(corpus_c4, content_transformer(function(x) gsub(x,
+               pattern = "treinamento fisica", replacement = "treinamento")))
+# corpus_c4 <- tm_map(corpus_c4, content_transformer(function(x) gsub(x,
+#                pattern = "atividade", replacement = "atividade_fisica")))
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "exercicio fisica", replacement = "exercicio")
+# corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+#                pattern = "exercicio", replacement = "exercicio_fisica")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "educacao fisica", replacement = "educacao_fisica")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "condicionamento fisica", replacement = "condicionamento")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "qualidade vida", replacement = "qualidade_vida")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "estilo vida", replacement = "estilo_vida")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "efeitos", replacement = "efeito")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "adaptacao", replacement = "adaptado")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "adolescencia", replacement = "adolescentes")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "aerobias", replacement = "aerobio")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "arbitros", replacement = "arbitragem")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "aspectos psicologicos", replacement = "aspectos_psicologicos")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "atletas", replacement = "atleta")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "cardiorrespiratoria", replacement = "cardiaca")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "cardiorrespiratorios", replacement = "cardiaca")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "cardiometabolicos", replacement = "cardiaca")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "cardiopulmonar", replacement = "cardiaca")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "cardiovasculares", replacement = "cardiaca")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "santa catarina", replacement = "santa_catarina")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "sao paulo", replacement = "sao_paulo")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "cognicao", replacement = "cognitivas")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "comportamento", replacement = "comportamental")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "comportamentais", replacement = "comportamental")
+# corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+#                pattern = "condicionamento", replacement = "condicionamento_fisica")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "decisao", replacement = "decisoes")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "amputados", replacement = "deficiencia")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "desportos", replacement = "esporte")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "emocionais", replacement = "emocional")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "alunos", replacement = "escolares")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "espiritualidade", replacement = "religiosidade")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "fisiologico", replacement = "fisiologicas")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "funcao", replacement = "funcional")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "funcionais", replacement = "funcional")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "funcionalidade", replacement = "funcional")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "funcoes", replacement = "funcional")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "hiperdia", replacement = "hipertensa")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "hipertensos", replacement = "hipertensa")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "imuno", replacement = "imunologicos")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "inflamacao", replacement = "inflamatorios")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "instituicoes", replacement = "instituto")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "instrumentacao", replacement = "instrumentos")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "intervencoes", replacement = "intervencao")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "jogadores", replacement = "atletas")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "juvenis", replacement = "jovens")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "lesao", replacement = "lesoes")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "lesados", replacement = "lesoes")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "lombalgia", replacement = "dor")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "marcador", replacement = "marcadores")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "marcas", replacement = "marcadores")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "metabolica", replacement = "metabolicos")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "modalidadades", replacement = "modalidades")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "motivacionais", replacement = "motivacao")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "motivacional", replacement = "motivacao")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "motivadores", replacement = "motivacao")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "motoras", replacement = "motor")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "motores", replacement = "motor")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "muscle", replacement = "muscular")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "neuromusculares", replacement = "musculo")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "neuromusculares", replacement = "musculo")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "oncologia", replacement = "doenca")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "paralimpicos", replacement = "deficiencia")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "participantes", replacement = "participacao")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "percepcoes", replacement = "percepcao")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "precursores", replacement = "preliminares")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "profissional", replacement = "profissionais")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "psicofisica", replacement = "psicobiologicas")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "psicofisiologico", replacement = "psicobiologicas")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "psicossociais", replacement = "psicologicas")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "psicossocial", replacement = "psicologicas")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "questionario", replacement = "intrumentos")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "recuperacao", replacement = "reabilitacao")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "recuperacao", replacement = "reabilitacao")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "competitiva", replacement = "rendimento")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "resqt", replacement = "restq")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "sadios", replacement = "saudaveis")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "satisfaction", replacement = "satisfacao")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "scale", replacement = "intrumentos")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "overtraining", replacement = "sobrecarga")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "teorico", replacement = "teoria")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "trabalhadores", replacement = "trabalhador")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "trabalho", replacement = "trabalhador")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "tecnico", replacement = "treinador")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "treinadores", replacement = "treinador")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "treino", replacement = "treinamento")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "universitaria", replacement = "estudantes")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "universitarios", replacement = "estudantes")
+corpus_c4 <- tm_map(corpus_c4, content_transformer(gsub),
+               pattern = "bem estar", replacement = "bemestar")
+
+#exclusão de stopwords manulamente
+corpus_c4 <- tm_map(corpus_c4, removeWords, c("brasileiros","restq","acaso","pos","estado","acinte","alto","relacao","relacionados","sujeitos","relacoes","variaveis","variavel","alta","niveis","influencia","parametros","pre","analise","individuos","pioram","melhoria","perfil","lafisaef","atraves","adiante","aplicada","iefd","iii","atribuidos","explicativo","fator","fatores","estudo","apoio","adrede","afinal","afora","agora","algures","alem","ali","amanha","antes","aqui","assim","atras","bem","breve","cedo","certamente","efetivamente","enfim","hoje","mal","mais","melhor","menos","muito","nao","ontem","pior","pouco","quanto","quao","quase","realmente","sera","sim","talvez","tanto","e","nem","mas","tambem","como","bem","porem","todavia","contudo","entretanto","entanto","ou","ora","quer","ja","logo","portanto","por","assim","conseguinte","que","porque","porquanto","pois","sendo","visto","como","tal","tao","tanto","assim","conforme","segundo","consoante","mesmo","mais","ainda","se","bem","embora","se","caso","contanto","salvo","medida","quanto","fim","quando","enquanto","sempre","depois","a","ante","apos","ate","com","contra","de","desde","para","per","perante","por","sem","sob","sobre","tras","algo","alguem","algum","alguns","cada","cujo","muitos","nada","nenhum","nenhuns","ninguem","outrem","outros","poucos","quaisquer","qualquer","quantos","quem","tantos","todos","tudo","que","nao","para","varios","de","a","o","que","e","do","da","em","um","para","com","nao","uma","os","no","se","na","por","mais","as","dos","como","mas","ao","ele","das","a","seu","sua","ou","quando","muito","nos","ja","eu","tambem","so","pelo","pela","ate","isso","ela","entre","depois","sem","mesmo","aos","seus","quem","nas","me","esse","eles","voce","essa","num","nem","suas","meu","as","minha","numa","pelos","elas","qual","nos","lhe","deles","essas","esses","pelas","este","dele","tu","te","voces","vos","lhes","meus","minhas","teu","tua","teus","tuas","nosso","nossa","nossos","nossas","dela","delas","esta","estes","estas","aquele","aquela","aqueles","aquelas","isto","aquilo","efeito","efeitos","estou","esta","estamos","estao","estive","esteve","estivemos","estiveram","estava","estavamos","estavam","estivera","estiveramos","esteja","estejamos","estejam","estivesse","estivessemos","estivessem","estiver","estivermos","estiverem","hei","ha","havemos","hao","houve","houvemos","houveram","houvera","houveramos","haja","hajamos","hajam","houvesse","houvessemos","houvessem","houver","houvermos","houverem","houverei","houvera","houveremos","houverao","houveria","houveriamos","houveriam","sou","somos","sao","era","eramos","eram","fui","foi","fomos","foram","fora","foramos","seja","sejamos","sejam","fosse","fossemos","fossem","for","formos","forem","serei","sera","seremos","serao","seria","seriamos","seriam","tenho","tem","temos","tem","tinha","tinhamos","tinham","tive","teve","tivemos","tiveram","tivera","tiveramos","tenha","tenhamos","tenham","tivesse","tivessemos","tivessem","tiver","tivermos","tiverem","terei","tera","teremos","terao","teria","teriamos","teriam","pessoas","durante","nivel","sao","luiz","resposta","respostas","jose","mato","grosso","psicologicas","atletas","continua","durante","cem","status","municipio","atraves","associados","fatores","brasil","principal","instrumentos","novas","motoras","interna","resqt","relacoes","caracterização","apos","nao","niveis","teorico","parana","santa","catarina","iefd","uberaraba","florianopolis","usuarios","atraves","brazilian","regiao","uso","pernambuco"))
+
+#criando uma matrix de palavras e frequencia de palavras
 dtm_c4 <- DocumentTermMatrix(corpus_c4)
 
 # descritivos por cluster
@@ -895,25 +1374,224 @@ head(freq_c4, 15)
 wf_c4 <- data.frame(word=names(freq_c4), freq=freq_c4)   
 head(wf_c4)  
 
-p_c1 <- ggplot(subset(wf_c4, freq>1), aes(x = reorder(word, -freq), y = freq)) +
+p_c4 <- ggplot(subset(wf_c4, freq>5), aes(x = reorder(word, -freq), y = freq)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-p_c1  
+p_c4  
 
-set.seed(142)   
-wordcloud(names(freq_c4), freq_c4, min.freq=20)
+# set.seed(142)   
+# wordcloud(names(freq_c4), freq_c4, min.freq=20)
 
-#dtm_c4_2<-removeSparseTerms(dtm_c4,0.99)
-cor_c4 <- cor(as.matrix(dtm_c4),method = "spearman")
-#View(cor_c4)
-qgraph(cor_c4,layout="spring",labels=colnames(cor_c4),threshold=0.4)
+dtm_c4_2<-removeSparseTerms(dtm_c4,0.93)
+cor_c4 <- cor(as.matrix(dtm_c4_2),method = "spearman")
+cor_c4<-ifelse(cor_c4<0,0,cor_c4)
 
+#View(cor_c1)
+qgraph(cor_c4,layout="spring",labels=colnames(cor_c4),threshold=0.2)
+
+
+########################################
+#By Cluster Analysis - Cluster 5 ...
+########################################
 # Análise por cluster
 #Corpus
+
 df_c5 <- data.frame(table_final$originalText[which(table_final$class==5)], stringsAsFactors=FALSE)
-View(df_c5)
+# View(df_c5)
 corpus_c5 <- VCorpus(VectorSource(df_c5$table_final.originalText.which.table_final.class....5..))
-corpus_c5
+
+#outras correções no texto
+corpus_c5 <- tm_map(corpus_c5, content_transformer(function(x) gsub(x,
+               pattern = "dor fisica", replacement = "dor")))
+corpus_c5 <- tm_map(corpus_c5, content_transformer(function(x) gsub(x,
+               pattern = "atividade fisica", replacement = "atividade_fisica")))
+corpus_c5 <- tm_map(corpus_c5, content_transformer(function(x) gsub(x,
+               pattern = "aptidao fisica", replacement = "aptidao_fisica")))
+corpus_c5 <- tm_map(corpus_c5, content_transformer(function(x) gsub(x,
+               pattern = "dor fisica", replacement = "dor")))
+corpus_c5 <- tm_map(corpus_c5, content_transformer(function(x) gsub(x,
+               pattern = "treinamento fisica", replacement = "treinamento")))
+# corpus_c5 <- tm_map(corpus_c5, content_transformer(function(x) gsub(x,
+#                pattern = "atividade", replacement = "atividade_fisica")))
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "exercicio fisica", replacement = "exercicio")
+# corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+#                pattern = "exercicio", replacement = "exercicio_fisica")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "educacao fisica", replacement = "educacao_fisica")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "condicionamento fisica", replacement = "condicionamento")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "qualidade vida", replacement = "qualidade_vida")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "estilo vida", replacement = "estilo_vida")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "efeitos", replacement = "efeito")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "adaptacao", replacement = "adaptado")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "adolescencia", replacement = "adolescentes")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "aerobias", replacement = "aerobio")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "arbitros", replacement = "arbitragem")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "aspectos psicologicos", replacement = "aspectos_psicologicos")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "atletas", replacement = "atleta")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "cardiorrespiratoria", replacement = "cardiaca")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "cardiorrespiratorios", replacement = "cardiaca")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "cardiometabolicos", replacement = "cardiaca")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "cardiopulmonar", replacement = "cardiaca")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "cardiovasculares", replacement = "cardiaca")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "santa catarina", replacement = "santa_catarina")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "sao paulo", replacement = "sao_paulo")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "cognicao", replacement = "cognitivas")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "comportamento", replacement = "comportamental")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "comportamentais", replacement = "comportamental")
+# corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+#                pattern = "condicionamento", replacement = "condicionamento_fisica")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "decisao", replacement = "decisoes")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "amputados", replacement = "deficiencia")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "desportos", replacement = "esporte")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "emocionais", replacement = "emocional")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "alunos", replacement = "escolares")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "espiritualidade", replacement = "religiosidade")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "fisiologico", replacement = "fisiologicas")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "funcao", replacement = "funcional")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "funcionais", replacement = "funcional")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "funcionalidade", replacement = "funcional")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "funcoes", replacement = "funcional")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "hiperdia", replacement = "hipertensa")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "hipertensos", replacement = "hipertensa")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "imuno", replacement = "imunologicos")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "inflamacao", replacement = "inflamatorios")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "instituicoes", replacement = "instituto")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "instrumentacao", replacement = "instrumentos")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "intervencoes", replacement = "intervencao")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "jogadores", replacement = "atletas")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "juvenis", replacement = "jovens")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "lesao", replacement = "lesoes")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "lesados", replacement = "lesoes")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "lombalgia", replacement = "dor")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "marcador", replacement = "marcadores")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "marcas", replacement = "marcadores")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "metabolica", replacement = "metabolicos")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "modalidadades", replacement = "modalidades")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "motivacionais", replacement = "motivacao")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "motivacional", replacement = "motivacao")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "motivadores", replacement = "motivacao")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "motoras", replacement = "motor")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "motores", replacement = "motor")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "muscle", replacement = "muscular")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "neuromusculares", replacement = "musculo")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "neuromusculares", replacement = "musculo")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "oncologia", replacement = "doenca")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "paralimpicos", replacement = "deficiencia")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "participantes", replacement = "participacao")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "percepcoes", replacement = "percepcao")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "precursores", replacement = "preliminares")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "profissional", replacement = "profissionais")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "psicofisica", replacement = "psicobiologicas")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "psicofisiologico", replacement = "psicobiologicas")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "psicossociais", replacement = "psicologicas")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "psicossocial", replacement = "psicologicas")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "questionario", replacement = "intrumentos")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "recuperacao", replacement = "reabilitacao")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "recuperacao", replacement = "reabilitacao")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "competitiva", replacement = "rendimento")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "resqt", replacement = "restq")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "sadios", replacement = "saudaveis")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "satisfaction", replacement = "satisfacao")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "scale", replacement = "intrumentos")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "overtraining", replacement = "sobrecarga")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "teorico", replacement = "teoria")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "trabalhadores", replacement = "trabalhador")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "trabalho", replacement = "trabalhador")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "tecnico", replacement = "treinador")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "treinadores", replacement = "treinador")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "treino", replacement = "treinamento")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "universitaria", replacement = "estudantes")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "universitarios", replacement = "estudantes")
+corpus_c5 <- tm_map(corpus_c5, content_transformer(gsub),
+               pattern = "bem estar", replacement = "bemestar")
+
+#exclusão de stopwords manulamente
+corpus_c5 <- tm_map(corpus_c5, removeWords, c("brasileiros","restq","acaso","pos","estado","acinte","alto","relacao","relacionados","sujeitos","relacoes","variaveis","variavel","alta","niveis","influencia","parametros","pre","analise","individuos","pioram","melhoria","perfil","lafisaef","atraves","adiante","aplicada","iefd","iii","atribuidos","explicativo","fator","fatores","estudo","apoio","adrede","afinal","afora","agora","algures","alem","ali","amanha","antes","aqui","assim","atras","bem","breve","cedo","certamente","efetivamente","enfim","hoje","mal","mais","melhor","menos","muito","nao","ontem","pior","pouco","quanto","quao","quase","realmente","sera","sim","talvez","tanto","e","nem","mas","tambem","como","bem","porem","todavia","contudo","entretanto","entanto","ou","ora","quer","ja","logo","portanto","por","assim","conseguinte","que","porque","porquanto","pois","sendo","visto","como","tal","tao","tanto","assim","conforme","segundo","consoante","mesmo","mais","ainda","se","bem","embora","se","caso","contanto","salvo","medida","quanto","fim","quando","enquanto","sempre","depois","a","ante","apos","ate","com","contra","de","desde","para","per","perante","por","sem","sob","sobre","tras","algo","alguem","algum","alguns","cada","cujo","muitos","nada","nenhum","nenhuns","ninguem","outrem","outros","poucos","quaisquer","qualquer","quantos","quem","tantos","todos","tudo","que","nao","para","varios","de","a","o","que","e","do","da","em","um","para","com","nao","uma","os","no","se","na","por","mais","as","dos","como","mas","ao","ele","das","a","seu","sua","ou","quando","muito","nos","ja","eu","tambem","so","pelo","pela","ate","isso","ela","entre","depois","sem","mesmo","aos","seus","quem","nas","me","esse","eles","voce","essa","num","nem","suas","meu","as","minha","numa","pelos","elas","qual","nos","lhe","deles","essas","esses","pelas","este","dele","tu","te","voces","vos","lhes","meus","minhas","teu","tua","teus","tuas","nosso","nossa","nossos","nossas","dela","delas","esta","estes","estas","aquele","aquela","aqueles","aquelas","isto","aquilo","efeito","efeitos","estou","esta","estamos","estao","estive","esteve","estivemos","estiveram","estava","estavamos","estavam","estivera","estiveramos","esteja","estejamos","estejam","estivesse","estivessemos","estivessem","estiver","estivermos","estiverem","hei","ha","havemos","hao","houve","houvemos","houveram","houvera","houveramos","haja","hajamos","hajam","houvesse","houvessemos","houvessem","houver","houvermos","houverem","houverei","houvera","houveremos","houverao","houveria","houveriamos","houveriam","sou","somos","sao","era","eramos","eram","fui","foi","fomos","foram","fora","foramos","seja","sejamos","sejam","fosse","fossemos","fossem","for","formos","forem","serei","sera","seremos","serao","seria","seriamos","seriam","tenho","tem","temos","tem","tinha","tinhamos","tinham","tive","teve","tivemos","tiveram","tivera","tiveramos","tenha","tenhamos","tenham","tivesse","tivessemos","tivessem","tiver","tivermos","tiverem","terei","tera","teremos","terao","teria","teriamos","teriam","pessoas","durante","nivel","sao","luiz","resposta","respostas","jose","mato","grosso","psicologicas","atletas","continua","durante","cem","status","municipio","atraves","associados","fatores","brasil","principal","instrumentos","novas","motoras","interna","resqt","relacoes","caracterização","apos","nao","niveis","teorico","parana","santa","catarina","iefd","uberaraba","florianopolis","usuarios","atraves","brazilian","regiao","uso","pernambuco"))
+
+#criando uma matrix de palavras e frequencia de palavras
 dtm_c5 <- DocumentTermMatrix(corpus_c5)
 
 # descritivos por cluster
@@ -923,558 +1601,16 @@ head(freq_c5, 15)
 wf_c5 <- data.frame(word=names(freq_c5), freq=freq_c5)   
 head(wf_c5)  
 
-p_c1 <- ggplot(subset(wf_c5, freq>3), aes(x = reorder(word, -freq), y = freq)) +
+p_c5 <- ggplot(subset(wf_c5, freq>2), aes(x = reorder(word, -freq), y = freq)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-p_c1  
+p_c5  
 
-set.seed(142)   
-wordcloud(names(freq_c5), freq_c5, min.freq=20)
+# set.seed(142)   
+# wordcloud(names(freq_c5), freq_c5, min.freq=20)
 
-#dtm_c5_2<-removeSparseTerms(dtm_c5,0.99)
-cor_c5 <- cor(as.matrix(dtm_c5),method = "spearman")
-#View(cor_c5)
-qgraph(cor_c5,layout="spring",labels=colnames(cor_c5),threshold=0.4)
+dtm_c5_2<-removeSparseTerms(dtm_c5,0.95)
+cor_c5 <- cor(as.matrix(dtm_c5_2),method = "spearman")
+#View(cor_c1)
+qgraph(cor_c5,layout="spring",labels=colnames(cor_c5),threshold=0.3)
 
-# Análise por cluster
-#Corpus
-df_c6 <- data.frame(table_final$originalText[which(table_final$class==6)], stringsAsFactors=FALSE)
-# View(df_c6)
-corpus_c6 <- VCorpus(VectorSource(df_c6$table_final.originalText.which.table_final.class....6..))
-corpus_c6
-dtm_c6 <- DocumentTermMatrix(corpus_c6)
-
-# descritivos por cluster
-freq_c6 <- sort(colSums(as.matrix(dtm_c6)), decreasing=TRUE)   
-head(freq_c6, 15)
-
-wf_c6 <- data.frame(word=names(freq_c6), freq=freq_c6)   
-head(wf_c6)  
-
-p_c1 <- ggplot(subset(wf_c6, freq>3), aes(x = reorder(word, -freq), y = freq)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
-p_c1  
-
-set.seed(142)   
-wordcloud(names(freq_c6), freq_c6, min.freq=20)
-
-#dtm_c6_2<-removeSparseTerms(dtm_c6,0.99)
-cor_c6 <- cor(as.matrix(dtm_c6),method = "spearman")
-#View(cor_c6)
-qgraph(cor_c6,layout="spring",labels=colnames(cor_c6),threshold=0.4)
-
-# Análise por cluster
-#Corpus
-df_c7 <- data.frame(table_final$originalText[which(table_final$class==7)], stringsAsFactors=FALSE)
-# View(df_c7)
-corpus_c7 <- VCorpus(VectorSource(df_c7$table_final.originalText.which.table_final.class....7..))
-corpus_c7
-dtm_c7 <- DocumentTermMatrix(corpus_c7)
-
-# descritivos por cluster
-freq_c7 <- sort(colSums(as.matrix(dtm_c7)), decreasing=TRUE)   
-head(freq_c7, 15)
-
-wf_c7 <- data.frame(word=names(freq_c7), freq=freq_c7)   
-head(wf_c7)  
-
-p_c1 <- ggplot(subset(wf_c7, freq>1), aes(x = reorder(word, -freq), y = freq)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
-p_c1  
-
-set.seed(142)   
-wordcloud(names(freq_c7), freq_c7, min.freq=20)
-
-#dtm_c7_2<-removeSparseTerms(dtm_c7,0.99)
-cor_c7 <- cor(as.matrix(dtm_c7),method = "spearman")
-#View(cor_c7)
-qgraph(cor_c7,layout="spring",labels=colnames(cor_c7),threshold=0.4)
-
-# Análise por cluster
-#Corpus
-df_c8 <- data.frame(table_final$originalText[which(table_final$class==8)], stringsAsFactors=FALSE)
-# View(df_c8)
-corpus_c8 <- VCorpus(VectorSource(df_c8$table_final.originalText.which.table_final.class....8..))
-corpus_c8
-dtm_c8 <- DocumentTermMatrix(corpus_c8)
-
-# descritivos por cluster
-freq_c8 <- sort(colSums(as.matrix(dtm_c8)), decreasing=TRUE)   
-head(freq_c8, 15)
-
-wf_c8 <- data.frame(word=names(freq_c8), freq=freq_c8)   
-head(wf_c8)  
-
-p_c1 <- ggplot(subset(wf_c8, freq>1), aes(x = reorder(word, -freq), y = freq)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
-p_c1  
-
-set.seed(142)   
-wordcloud(names(freq_c8), freq_c8, min.freq=20)
-
-#dtm_c8_2<-removeSparseTerms(dtm_c8,0.99)
-cor_c8 <- cor(as.matrix(dtm_c8),method = "spearman")
-#View(cor_c8)
-qgraph(cor_c8,layout="spring",labels=colnames(cor_c8),threshold=0.4)
-
-# Análise por cluster
-#Corpus
-df_c9 <- data.frame(table_final$originalText[which(table_final$class==9)], stringsAsFactors=FALSE)
-# View(df_c9)
-corpus_c9 <- VCorpus(VectorSource(df_c9$table_final.originalText.which.table_final.class....9..))
-corpus_c9
-dtm_c9 <- DocumentTermMatrix(corpus_c9)
-
-# descritivos por cluster
-freq_c9 <- sort(colSums(as.matrix(dtm_c9)), decreasing=TRUE)   
-head(freq_c9, 15)
-
-wf_c9 <- data.frame(word=names(freq_c9), freq=freq_c9)   
-head(wf_c9)  
-
-p_c1 <- ggplot(subset(wf_c9, freq>1), aes(x = reorder(word, -freq), y = freq)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
-p_c1  
-
-set.seed(142)   
-wordcloud(names(freq_c9), freq_c9, min.freq=20)
-
-#dtm_c9_2<-removeSparseTerms(dtm_c9,0.99)
-cor_c9 <- cor(as.matrix(dtm_c9),method = "spearman")
-#View(cor_c9)
-qgraph(cor_c9,layout="spring",labels=colnames(cor_c9),threshold=0.4)
-
-# Análise por cluster
-#Corpus
-df_c10 <- data.frame(table_final$originalText[which(table_final$class==10)], stringsAsFactors=FALSE)
-# View(df_c10)
-corpus_c10 <- VCorpus(VectorSource(df_c10$table_final.originalText.which.table_final.class....10..))
-corpus_c10
-dtm_c10 <- DocumentTermMatrix(corpus_c10)
-
-# descritivos por cluster
-freq_c10 <- sort(colSums(as.matrix(dtm_c10)), decreasing=TRUE)   
-head(freq_c10, 15)
-
-wf_c10 <- data.frame(word=names(freq_c10), freq=freq_c10)   
-head(wf_c10)  
-
-p_c1 <- ggplot(subset(wf_c10, freq>3), aes(x = reorder(word, -freq), y = freq)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
-p_c1  
-
-set.seed(142)   
-wordcloud(names(freq_c10), freq_c10, min.freq=20)
-
-#dtm_c10_2<-removeSparseTerms(dtm_c10,0.99)
-cor_c10 <- cor(as.matrix(dtm_c10),method = "spearman")
-#View(cor_c10)
-qgraph(cor_c10,layout="spring",labels=colnames(cor_c10),threshold=0.4)
-
-#psicologia
-corpus_psi<-Corpus(VectorSource(cleaned_data[,1][cleaned_data$area=="Psicologia"]))
-corpus_psi
-
-corpus_psi <- tm_map(corpus_psi, removeWords,
-
-#selecionando o texto para visualizar
-writeLines(as.character(corpus_psi))
-
-#lista de transformações
-getTransformations()
-
-#outras correções no texto
-corpus_psi <- tm_map(corpus_psi, content_transformer(function(x) gsub(x,
-               pattern = "atividade fisica", replacement = "atividade_fisica")))
-corpus_psi <- tm_map(corpus_psi, content_transformer(gsub),
-               pattern = "exercicio fisica", replacement = "exercicio_fisica")
-corpus_psi <- tm_map(corpus_psi, content_transformer(gsub),
-               pattern = "educacao fisica", replacement = "educacao_fisica")
-corpus_psi <- tm_map(corpus_psi, content_transformer(gsub),
-               pattern = "condicionamento fisica", replacement = "condicionamento_fisica")
-corpus_psi <- tm_map(corpus_psi, content_transformer(gsub),
-               pattern = "qualidade vida", replacement = "qualidade_vida")
-corpus_psi <- tm_map(corpus_psi, content_transformer(gsub),
-               pattern = "estilo vida", replacement = "estilo_vida")
-
-#exclusão de stopwords manulamente
-corpus_psi <- tm_map(corpus_psi, removeWords, c("acaso",
-                                              "acinte",
-                                              "adiante",
-                                              "adrede",
-                                              "afinal",
-                                              "afora",
-                                              "agora",
-                                              "algures",
-                                              "alem",
-                                              "ali",
-                                              "amanha",
-                                              "antes",
-                                              "aqui",
-                                              "assim",
-                                              "atras",
-                                              "bem",
-                                              "breve",
-                                              "cedo",
-                                              "certamente",
-                                              "efetivamente",
-                                              "enfim",
-                                              "hoje",
-                                              "mal",
-                                              "mais",
-                                              "melhor",
-                                              "menos",
-                                              "muito",
-                                              "nao",
-                                              "ontem",
-                                              "pior",
-                                              "pouco",
-                                              "quanto",
-                                              "quao",
-                                              "quase",
-                                              "realmente",
-                                              "sera",
-                                              "sim",
-                                              "talvez",
-                                              "tanto",
-                                              "e",
-                                              "nem",
-                                              "mas",
-                                              "tambem",
-                                              "como",
-                                              "bem",
-                                              "porem",
-                                              "todavia",
-                                              "contudo",
-                                              "entretanto",
-                                              "entanto",
-                                              "ou",
-                                              "ora",
-                                              "quer",
-                                              "ja",
-                                              "logo",
-                                              "portanto",
-                                              "por",
-                                              "assim",
-                                              "conseguinte",
-                                              "que",
-                                              "porque",
-                                              "porquanto",
-                                              "pois",
-                                              "sendo",
-                                              "visto",
-                                              "como",
-                                              "tal",
-                                              "tao",
-                                              "tanto",
-                                              "assim",
-                                              "conforme",
-                                              "segundo",
-                                              "consoante",
-                                              "mesmo",
-                                              "mais",
-                                              "ainda",
-                                              "se",
-                                              "bem",
-                                              "embora",
-                                              "se",
-                                              "caso",
-                                              "contanto",
-                                              "salvo",
-                                              "medida",
-                                              "quanto",
-                                              "fim",
-                                              "quando",
-                                              "enquanto",
-                                              "sempre",
-                                              "depois",
-                                              "a",
-                                              "ante",
-                                              "apos",
-                                              "ate",
-                                              "com",
-                                              "contra",
-                                              "de",
-                                              "desde",
-                                              "para",
-                                              "per",
-                                              "perante",
-                                              "por",
-                                              "sem",
-                                              "sob",
-                                              "sobre",
-                                              "tras",
-                                              "algo",
-                                              "alguem",
-                                              "algum",
-                                              "alguns",
-                                              "cada",
-                                              "cujo",
-                                              "muitos",
-                                              "nada",
-                                              "nenhum",
-                                              "nenhuns",
-                                              "ninguem",
-                                              "outrem",
-                                              "outros",
-                                              "poucos",
-                                              "quaisquer",
-                                              "qualquer",
-                                              "quantos",
-                                              "quem",
-                                              "tantos",
-                                              "todos",
-                                              "tudo",
-                                              "que",
-                                              "nao",
-                                              "para",
-                                              "varios",
-                                              "de",
-                                              "a",
-                                              "o",
-                                              "que",
-                                              "e",
-                                              "do",
-                                              "da",
-                                              "em",
-                                              "um",
-                                              "para",
-                                              "com",
-                                              "nao",
-                                              "uma",
-                                              "os",
-                                              "no",
-                                              "se",
-                                              "na",
-                                              "por",
-                                              "mais",
-                                              "as",
-                                              "dos",
-                                              "como",
-                                              "mas",
-                                              "ao",
-                                              "ele",
-                                              "das",
-                                              "a",
-                                              "seu",
-                                              "sua",
-                                              "ou",
-                                              "quando",
-                                              "muito",
-                                              "nos",
-                                              "ja",
-                                              "eu",
-                                              "tambem",
-                                              "so",
-                                              "pelo",
-                                              "pela",
-                                              "ate",
-                                              "isso",
-                                              "ela",
-                                              "entre",
-                                              "depois",
-                                              "sem",
-                                              "mesmo",
-                                              "aos",
-                                              "seus",
-                                              "quem",
-                                              "nas",
-                                              "me",
-                                              "esse",
-                                              "eles",
-                                              "voce",
-                                              "essa",
-                                              "num",
-                                              "nem",
-                                              "suas",
-                                              "meu",
-                                              "as",
-                                              "minha",
-                                              "numa",
-                                              "pelos",
-                                              "elas",
-                                              "qual",
-                                              "nos",
-                                              "lhe",
-                                              "deles",
-                                              "essas",
-                                              "esses",
-                                              "pelas",
-                                              "este",
-                                              "dele",
-                                              "tu",
-                                              "te",
-                                              "voces",
-                                              "vos",
-                                              "lhes",
-                                              "meus",
-                                              "minhas",
-                                              "teu",
-                                              "tua",
-                                              "teus",
-                                              "tuas",
-                                              "nosso",
-                                              "nossa",
-                                              "nossos",
-                                              "nossas",
-                                              "dela",
-                                              "delas",
-                                              "esta",
-                                              "estes",
-                                              "estas",
-                                              "aquele",
-                                              "aquela",
-                                              "aqueles",
-                                              "aquelas",
-                                              "isto",
-                                              "aquilo",
-                                              "estou",
-                                              "esta",
-                                              "estamos",
-                                              "estao",
-                                              "estive",
-                                              "esteve",
-                                              "estivemos",
-                                              "estiveram",
-                                              "estava",
-                                              "estavamos",
-                                              "estavam",
-                                              "estivera",
-                                              "estiveramos",
-                                              "esteja",
-                                              "estejamos",
-                                              "estejam",
-                                              "estivesse",
-                                              "estivessemos",
-                                              "estivessem",
-                                              "estiver",
-                                              "estivermos",
-                                              "estiverem",
-                                              "hei",
-                                              "ha",
-                                              "havemos",
-                                              "hao",
-                                              "houve",
-                                              "houvemos",
-                                              "houveram",
-                                              "houvera",
-                                              "houveramos",
-                                              "haja",
-                                              "hajamos",
-                                              "hajam",
-                                              "houvesse",
-                                              "houvessemos",
-                                              "houvessem",
-                                              "houver",
-                                              "houvermos",
-                                              "houverem",
-                                              "houverei",
-                                              "houvera",
-                                              "houveremos",
-                                              "houverao",
-                                              "houveria",
-                                              "houveriamos",
-                                              "houveriam",
-                                              "sou",
-                                              "somos",
-                                              "sao",
-                                              "era",
-                                              "eramos",
-                                              "eram",
-                                              "fui",
-                                              "foi",
-                                              "fomos",
-                                              "foram",
-                                              "fora",
-                                              "foramos",
-                                              "seja",
-                                              "sejamos",
-                                              "sejam",
-                                              "fosse",
-                                              "fossemos",
-                                              "fossem",
-                                              "for",
-                                              "formos",
-                                              "forem",
-                                              "serei",
-                                              "sera",
-                                              "seremos",
-                                              "serao",
-                                              "seria",
-                                              "seriamos",
-                                              "seriam",
-                                              "tenho",
-                                              "tem",
-                                              "temos",
-                                              "tem",
-                                              "tinha",
-                                              "tinhamos",
-                                              "tinham",
-                                              "tive",
-                                              "teve",
-                                              "tivemos",
-                                              "tiveram",
-                                              "tivera",
-                                              "tiveramos",
-                                              "tenha",
-                                              "tenhamos",
-                                              "tenham",
-                                              "tivesse",
-                                              "tivessemos",
-                                              "tivessem",
-                                              "tiver",
-                                              "tivermos",
-                                              "tiverem",
-                                              "terei",
-                                              "tera",
-                                              "teremos",
-                                              "terao",
-                                              "teria",
-                                              "teriamos",
-                                              "teriam"))
-#cria uma matriz de documentos e termos (https://en.wikipedia.org/wiki/Document-term_matrix)
-dtm_ppgp <- DocumentTermMatrix(corpus_psi)
-dtm_ppgp
-#visualizando a matriz
-inspect(dtm_ppgp[1,1:5])
-
-#verificando a frequência de palavras
-freq <- colSums(as.matrix(dtm_ppgp))
-freq
-length(freq)
-ord <- order(freq,decreasing=TRUE)
-freq[head(ord)]
-freq[tail(ord)]
-
-#recriando a dtm excluindo palavras pequenas
-dtmr_ppgp <-DocumentTermMatrix(ppgp, control=list(wordLengths=c(3, Inf)))
-dtmr_ppgp
-
-freq <- colSums(as.matrix(dtmr_ppgp))
-length(freq)
-ord <- order(freq,decreasing=TRUE)
-freq[head(ord)]
-freq[tail(ord)]
-
-#frequencia de termos
-findFreqTerms(dtmr_ppgp,lowfreq=5)
-
-#visualização gráfico de freq. termos
-wf=data.frame(term=names(freq),occurrences=freq)
-wf
-p <- ggplot(subset(wf, freq>4), aes(term, occurrences))
-p <- p + geom_bar(stat="identity")
-p <- p + theme(axis.text.x=element_text(angle=45, hjust=1))
-p
-
-#wordcloud
-#setting the same seed each time ensures consistent look across clouds
-set.seed(30)
-#limit words by specifying min frequency
-wordcloud(names(freq),freq, max.words =100,min.freq=5,#scale=c(1,.01), 
-          random.order = F,random.color=F,rot.per=.5,colors = freq)
