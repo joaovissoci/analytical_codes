@@ -710,7 +710,7 @@ data$epilepsycause_scores_3_spiritual<-scales::rescale(
 
 #Time to first HELP (any help = TH, Pastor, BM)
 
-data$time_first_help<-data$bb_hsh1_time
+# data$time_first_help<-data$bb_hsh1_time
 
 #Time to first BM Help (any one BM happened)
 
@@ -804,18 +804,18 @@ summary(tox.trial)
 # 		   e=n_hsh_T1)
 
 #First BM second TH or Pastoral or BM
-data<-mutate(data,help_sought_after_BM =
-			ifelse(bb_hsh1_bmc==1,
-				ifelse(bb_hsh2_th==1,
-					"1",
-				ifelse(bb_hsh2_pastor==1,
-						"2",
-				ifelse(bb_hsh2_bmc==1,
-						"3",
-						"4"))),
-				"5"))
+# data<-mutate(data,help_sought_after_BM =
+# 			ifelse(bb_hsh1_bmc==1,
+# 				ifelse(bb_hsh2_th==1,
+# 					"1",
+# 				ifelse(bb_hsh2_pastor==1,
+# 						"2",
+# 				ifelse(bb_hsh2_bmc==1,
+# 						"3",
+# 						"4"))),
+# 				"5"))
 
-#Codes
+# #Codes
 # 1 = BM than TH
 # 2 = BM than Pastoral
 # 3 = BM than BM
@@ -832,16 +832,16 @@ data<-mutate(data,help_sought_after_BM =
 
 #First TH second TH or Pastoral or BM
 
-data<-mutate(data,help_sought_after_TH =
-			ifelse(bb_hsh1_th==1,
-				ifelse(bb_hsh2_th==1,
-					"1",
-				ifelse(bb_hsh2_pastor==1,
-						"2",
-				ifelse(bb_hsh2_bmc==1,
-						"3",
-						"4"))),
-				"5"))
+# data<-mutate(data,help_sought_after_TH =
+# 			ifelse(bb_hsh1_th==1,
+# 				ifelse(bb_hsh2_th==1,
+# 					"1",
+# 				ifelse(bb_hsh2_pastor==1,
+# 						"2",
+# 				ifelse(bb_hsh2_bmc==1,
+# 						"3",
+# 						"4"))),
+# 				"5"))
 
 #Codes
 # 1 = TH than TH
@@ -852,16 +852,16 @@ data<-mutate(data,help_sought_after_TH =
 
 #First Pastoral second TH or Pastoral or BM
 
-data<-mutate(data,help_sought_after_Pastoral =
-			ifelse(bb_hsh1_pastor==1,
-				ifelse(bb_hsh2_th==1,
-					"1",
-				ifelse(bb_hsh2_pastor==1,
-						"2",
-				ifelse(bb_hsh2_bmc==1,
-						"3",
-						"4"))),
-				"5"))
+# data<-mutate(data,help_sought_after_Pastoral =
+# 			ifelse(bb_hsh1_pastor==1,
+# 				ifelse(bb_hsh2_th==1,
+# 					"1",
+# 				ifelse(bb_hsh2_pastor==1,
+# 						"2",
+# 				ifelse(bb_hsh2_bmc==1,
+# 						"3",
+# 						"4"))),
+# 				"5"))
 
 #Codes
 # 1 = Pastoral than TH

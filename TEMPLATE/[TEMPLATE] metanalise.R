@@ -10,12 +10,11 @@
 #SETTING ENVIRONMENT
 #####################################################################################
 #command below will install individual and is only run once. remove the hash tag if this is the first time you are running the code on RStudio, and then you can add the hash tag again
-install.packages("RCurl", repos="http://cran.r-project.org")
-install.packages("metafor", repos="http://cran.r-project.org")
-install.packages("meta", repos="http://cran.r-project.org")
+# install.packages("RCurl", repos="http://cran.r-project.org")
+# install.packages("metafor", repos="http://cran.r-project.org")
+# install.packages("meta", repos="http://cran.r-project.org")
 
 #Load packages (after installed) with the library function
-library(RCurl)
 library(metafor)
 library(meta)
 
@@ -25,39 +24,40 @@ library(meta)
 #Importing data set from the Spredsheet in google docs (Insert link)
 
 ##Call continuous data dataset
-webdata1<- getURL(" "
-,ssl.verifypeer = FALSE)
-data_cont<-read.csv(textConnection(webdata1))
+heywhatsaup<-read.csv("/Users/Joao/Downloads/sr_fallsprevention_data.csv")
 
-##Call binary data dataset
-webdata2- getURL(" "
-,ssl.verifypeer = FALSE)
-data_bin<-read.csv(textConnection(webdata2))
 
-##Call proportion data dataset
-webdata3<- getURL(" "
-,ssl.verifypeer = FALSE)
-data_prop<-read.csv(textConnection(webdata3))
+heywhatsaup_balencer<-subset(heywhatsaup,
+							 heywhatsaup$intervention=="Balance Training")
 
-##Call correlation data dataset
-webdata4<- getURL(" "
-,ssl.verifypeer = FALSE)
-data_cor<-read.csv(textConnection(webdata4))
 ###########################################################################################
 #Example from Meta Package: Numeric Continuous data
 ###########################################################################################
 ## Example 1
-meta1 <- metacont(n.e, mean.e, sd.e, n.c, mean.c, sd.c, 
-  data=data_cont, sm="SMD")
-summary(meta2)
+meta1 <- metacont(intervention_samplesize,
+				  post_intervention_average,
+				  post_intervention_sd,
+				  control_samplesize,
+				  post_control_average,
+				  post_control_sd, 
+  				  data=heywhatsaup_balencer, 
+  				  sm="SMD")
+summary(meta1)
 forest(meta1)
 funnel(meta1)
 metainf(meta1)
 metainf(meta1, pooled="random")
 
 ## Example 2 with subgroup analysis
-meta2 <- metacont(n.e, mean.e, sd.e, n.c, mean.c, sd.c, 
-  data=data_cont, sm="SMD",byvar=group)
+meta2 <- metacont(intervention_samplesize,
+				  post_intervention_average,
+				  post_intervention_sd,
+				  control_samplesize,
+				  post_control_average,
+				  post_control_sd,
+  				  data=heywhatsaup,
+  				  sm="SMD",
+  				  byvar=outcome_categorized)
 summary(meta2)
 forest(meta2)
 funnel(meta2)

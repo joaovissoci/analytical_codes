@@ -1,0 +1,1949 @@
+######################################################################
+#BASIC R STATISTICS TEMPLATE
+######################################################################
+#
+#
+#
+#
+#
+######################################################################
+#SETTING ENVIRONMENT
+######################################################################
+#PASCKAGES INSTALLATION CODES
+#install.packages("Hmisc")
+#install.packages("car")
+#install.packages("psych")
+#install.packages("nortest")
+#install.packages("ggplot2")
+#install.packages("pastecs")
+#install.packages("repmis")
+#install.packages("mvnormtest")
+#install.packages("polycor")
+
+#PACKAGES LOADING CODE
+#Load packages neededz for the analysis
+#library(Hmisc)
+
+#Clear existing data and graphics
+rm(list=ls())
+graphics.off()
+
+#All packages must be installes with install.packages() function
+lapply(c("sem","ggplot2","Hmisc", "psych", "irr", "nortest", "moments",
+	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
+	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust",
+	"foreign","survival","memisc","foreign","mice","MissMech",
+	"likert",
+	"ggpubr"), 
+library, character.only=T)
+
+######################################################################
+#IMPORTING DATA
+######################################################################
+#LOADING DATA FROM A .CSV FILE
+
+#Read Data
+data_followup=read.csv('/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_400study_data.csv')
+
+data_registry<-read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_data.csv",sep=",")
+
+data_registry$study_id<-data_registry$part_id
+
+#merge both datasets
+data_aggregated<-merge(x = data_followup, 
+					   y = data_registry, 
+					   by = "study_id", 
+					   all.x = TRUE)
+
+######################################################################
+#DATA MANAGEMENT
+######################################################################
+
+#Setting Labels
+
+#Recoding and re-shaping
+data_managed <- data_aggregated %>% 
+		as_tibble() %>% 
+		mutate(
+  				enr_breathresult_cat = cut(enr_breathresult,
+  							breaks=c(-Inf,0.08,Inf),
+  						 	labels=c("negative","positive"))) %>%
+		mutate(hiv_positive = case_when(
+				 enr_priorhiv3 == 1 |
+				 enr_bioline1 == "POSITIVE" |
+				 enr_unigold1 == "POSITIVE" |
+				 enr_elisa1 == "POSITIVE" ~ "positive",
+				 	enr_priorhiv3 == 0 |
+				 	enr_bioline1 == "NEGATIVE" |
+				 	enr_unigold1 == "NEGATIVE" |
+				 	enr_elisa1 == "NEGATIVE" ~ "negative")) %>%
+		mutate(moss_total = scales::rescale(rowMeans(data.frame(wk2_ss1,
+												  wk2_ss2,
+												  wk2_ss3,
+												  wk2_ss4,
+												  wk2_ss5,
+												  wk2_ss6,
+												  wk2_ss7,
+												  wk2_ss8)),
+										to=c(0,100))) %>%
+		mutate(wk2_rr = na_if(wk2_rr, "ND")) %>%
+		mutate(wk2_wt = na_if(wk2_wt, "ND")) %>%
+		mutate_at(vars(wk2_sf1,
+						wk2_sf2,
+						wk2_sf3,
+						wk2_sf4,
+						wk2_sf5,
+						wk2_sf6,
+						wk2_sf7,
+						wk2_sf8),
+				   .funs=list(rescaled= ~scales::rescale(.,to=c(0,100)))) %>%
+		mutate(sf8_total = scales::rescale(rowMeans(data.frame(
+										  wk2_sf1,
+										  wk2_sf2,
+										  wk2_sf3,
+										  wk2_sf4,
+										  wk2_sf5,
+										  wk2_sf6,
+										  wk2_sf7,
+										  wk2_sf8)))) %>%
+		mutate(phq9_total = rowSums(data.frame(
+										  wk2_phq1,
+										  wk2_phq2,
+										  wk2_phq3,
+										  wk2_phq4,
+										  wk2_phq5,
+										  wk2_phq6,
+										  wk2_phq7,
+										  wk2_phq8,
+										  wk2_phq9))) %>%
+		mutate(depression_positive = case_when(
+				 phq9_total <= 9 ~ "negative",
+				 phq9_total > 9 ~ "positive"))  %>%
+		mutate(fim_physical = rowMeans(data.frame(
+										  wk2_fimcare,
+										  wk2_fimtoilet,
+										  wk2_fimtx,
+										  wk2_fimmotion,
+										  wk2_fimstairs))) %>%
+		mutate(fim_cog = rowMeans(data.frame(
+										  wk2_fimexpr,
+										  wk2_fimcompr,
+										  wk2_fimsocial,
+										  wk2_fimmemory,
+										  wk2_fimprob))) %>%
+		mutate(wk2_audit2_nato0 = case_when(
+				 wk2_audit1 == 0 ~ 0,
+				 wk2_audit2 == 0 ~ 0,
+				 wk2_audit2 == 1 ~ 1,
+				 wk2_audit2 == 2 ~ 2,
+				 wk2_audit2 == 3 ~ 3,
+				 wk2_audit2 == 4 ~ 4)) %>%
+		mutate(wk2_audit3_nato0 = case_when(
+				 wk2_audit1 == 0 ~ 0,
+				 wk2_audit3 == 0 ~ 0,
+				 wk2_audit3 == 1 ~ 1,
+				 wk2_audit3 == 2 ~ 2,
+				 wk2_audit3 == 3 ~ 3,
+				 wk2_audit3 == 4 ~ 4)) %>%
+		mutate(audit_total = rowSums(data.frame(
+										  wk2_audit1,
+										  wk2_audit2_nato0,
+										  wk2_audit3_nato0))) %>%
+		mutate(audit_positive = case_when(
+				 audit_total <= 4 ~ "negative",
+				 audit_total > 4 ~ "positive")) %>%
+		mutate(phq9_2_total = rowSums(data.frame(
+										  wk2_phq1,
+										  wk2_phq2))) %>%
+		mutate(depression_2_positive = case_when(
+				 phq9_2_total <= 3 ~ "negative",
+				 phq9_2_total > 3 ~ "positive"))  %>%
+		mutate(fim_physical_baseline = rowMeans(data.frame(
+										  fimcare,
+										  fimtoilet,
+										  fimtx,
+										  fimmotion,
+										  fimstairs))) %>%
+		mutate(fim_cog_baseline = rowMeans(data.frame(
+										  fimexpr,
+										  fimcompr,
+										  fimsocial,
+										  fimmemory,
+										  fimprob))) %>%
+		mutate(audit2_nato0 = case_when(
+				 audit1 == 0 ~ 0,
+				 audit2 == 0 ~ 0,
+				 audit2 == 1 ~ 1,
+				 audit2 == 2 ~ 2,
+				 audit2 == 3 ~ 3,
+				 audit2 == 4 ~ 4)) %>%
+		mutate(audit3_nato0 = case_when(
+				 audit1 == 0 ~ 0,
+				 audit3 == 0 ~ 0,
+				 audit3 == 1 ~ 1,
+				 audit3 == 2 ~ 2,
+				 audit3 == 3 ~ 3,
+				 audit3 == 4 ~ 4)) %>%
+		mutate(audit_baseline_total = rowSums(data.frame(
+										  audit1,
+										  audit2_nato0,
+										  audit3_nato0))) %>%
+		mutate(audit_baseline_positive = case_when(
+				 audit_total <= 4 ~ "negative",
+				 audit_total > 4 ~ "positive")) 
+
+
+data_managed$wk2_rr<-as.numeric(as.character(data_managed$wk2_rr))
+data_managed$wk2_wt<-as.numeric(as.character(data_managed$wk2_wt))
+
+#Subsetting data
+#baseline data
+data_baseline<-subset(data_managed,data_managed$redcap_event_name=='toc_400_enrollment_arm_1')
+
+data_baseline<-data_baseline[data_baseline$demographics_and_history_complete==2,]
+
+data_baseline_descript<-with(data_baseline,data.frame(age_baseline=age.y,
+													  female_baseline=female.x,
+													  education_baseline=education,
+													  moi_baseline=moi,
+													  toc_id
+													  ))
+
+#2 weeks data
+
+moshi_data<-data_baseline[data_baseline$live==0,]
+
+data_2weeks<-subset(data_managed,data_managed$redcap_event_name=='2_week_followup_arm_1')
+
+data_2weeks2 <- data_2weeks[data_2weeks$toc_id %in% moshi_data$toc_id, ]
+
+data_aggregated_2weeks<-merge(x = data_2weeks2, 
+					   y = data_baseline_descript, 
+					   by = "toc_id", 
+					   all.x = TRUE)
+
+#3months data
+data_3months<-subset(data_managed,data_managed$redcap_event_name=='3_month_followup_arm_1')
+
+data_aggregated_3months<-merge(x = data_3months, 
+					   y = data_baseline_descript, 
+					   by = "toc_id", 
+					   all.x = TRUE)
+#stacking up data
+
+
+######################################################################
+#TABLE 1 - Sociodemographics
+######################################################################
+
+#Baseline
+#Table one for this paper
+
+# Age
+with(data_baseline,psych::describe(age.x))
+sum(is.na(data_baseline$age.x))/length(data_baseline[,1])
+
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+# Gender
+table<-with(data_baseline,table(female.x))
+table
+prop.table(table)
+sum(is.na(data_baseline$female))
+sum(is.na(data_baseline$female))/length(data_baseline[,1])
+# table<-with(data_baseline_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Education
+with(data_baseline,psych::describe(education))
+sum(is.na(data_baseline$education))
+(sum(is.na(data_baseline$education))/length(data_baseline[,1]))*100
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash
+
+# MArital
+table<-with(data_baseline,table(marital))
+table
+prop.table(table)
+sum(is.na(data_baseline$marital))
+sum(is.na(data_baseline$marital))/length(data_baseline[,1])
+# table<-with(data_baseline_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Emplotment
+table<-with(data_baseline,table(employ))
+table
+prop.table(table)
+sum(is.na(data_baseline$employ))
+sum(is.na(data_baseline$employ))/length(data_baseline[,1])
+# table<-with(data_baseline_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Tribe
+table<-with(data_baseline,table(tribe))
+table
+prop.table(table)
+sum(is.na(data_baseline$tribe))
+sum(is.na(data_baseline$tribe))/length(data_baseline[,1])
+# table<-with(data_baseline_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Insurance
+table<-with(data_baseline,table(insurance))
+table
+prop.table(table)
+sum(is.na(data_baseline$insurance))
+sum(is.na(data_baseline$insurance))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#MOI
+table<-with(data_baseline,table(moi))
+table
+prop.table(table)
+sum(is.na(data_aggregated_2weeks$education))
+(sum(is.na(data_aggregated_2weeks$education))/length(data_aggregated_2weeks[,1]))*100
+# with(data_aggregated_2weeks_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_aggregated_2weeks_epi,t.test(age ~ class_crash
+
+
+#2weeks
+#Table one for this paper
+
+# Age
+with(data_aggregated_2weeks,psych::describe(age_baseline))
+sum(is.na(data_aggregated_2weeks$age))/length(data_aggregated_2weeks[,1])
+
+# with(data_aggregated_2weeks_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_aggregated_2weeks_epi,t.test(age ~ class_crash))
+
+# Gender
+table<-with(data_aggregated_2weeks,table(female_baseline))
+table
+prop.table(table)
+sum(is.na(data_aggregated_2weeks$female))
+sum(is.na(data_aggregated_2weeks$female))/length(data_aggregated_2weeks[,1])
+# table<-with(data_aggregated_2weeks_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Education
+with(data_aggregated_2weeks,psych::describe(education_baseline))
+sum(is.na(data_aggregated_2weeks$education))
+(sum(is.na(data_aggregated_2weeks$education))/length(data_aggregated_2weeks[,1]))*100
+# with(data_aggregated_2weeks_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_aggregated_2weeks_epi,t.test(age ~ class_crash
+
+# MArital
+table<-with(data_aggregated_2weeks,table(marital))
+table
+prop.table(table)
+sum(is.na(data_aggregated_2weeks$marital))
+sum(is.na(data_aggregated_2weeks$marital))/length(data_aggregated_2weeks[,1])
+# table<-with(data_aggregated_2weeks_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Emplotment
+table<-with(data_aggregated_2weeks,table(employ))
+table
+prop.table(table)
+sum(is.na(data_aggregated_2weeks$employ))
+sum(is.na(data_aggregated_2weeks$employ))/length(data_aggregated_2weeks[,1])
+# table<-with(data_aggregated_2weeks_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Tribe
+table<-with(data_aggregated_2weeks,table(tribe))
+table
+prop.table(table)
+sum(is.na(data_aggregated_2weeks$tribe))
+sum(is.na(data_aggregated_2weeks$tribe))/length(data_aggregated_2weeks[,1])
+# table<-with(data_aggregated_2weeks_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Insurance
+table<-with(data_aggregated_2weeks,table(insurance))
+table
+prop.table(table)
+sum(is.na(data_aggregated_2weeks$insurance))
+sum(is.na(data_aggregated_2weeks$insurance))/length(data_aggregated_2weeks[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#MOI
+table<-with(data_aggregated_2weeks,table(moi_baseline))
+table
+prop.table(table)
+sum(is.na(data_aggregated_2weeks$education))
+(sum(is.na(data_aggregated_2weeks$education))/length(data_aggregated_2weeks[,1]))*100
+# with(data_aggregated_2weeks_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_aggregated_2weeks_epi,t.test(age ~ class_crash
+
+#3months
+#Table one for this paper
+
+# Age
+with(data_aggregated_3months,psych::describe(age_baseline))
+sum(is.na(data_aggregated_3months$age))/length(data_aggregated_3months[,1])
+
+# with(data_aggregated_3months_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_aggregated_3months_epi,t.test(age ~ class_crash))
+
+# Gender
+table<-with(data_aggregated_3months,table(female_baseline))
+table
+prop.table(table)
+sum(is.na(data_aggregated_3months$female))
+sum(is.na(data_aggregated_3months$female))/length(data_aggregated_3months[,1])
+# table<-with(data_aggregated_3months_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Education
+with(data_aggregated_3months,psych::describe(education_baseline))
+sum(is.na(data_aggregated_3months$education))
+(sum(is.na(data_aggregated_3months$education))/length(data_aggregated_3months[,1]))*100
+# with(data_aggregated_3months_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_aggregated_3months_epi,t.test(age ~ class_crash
+
+# MArital
+table<-with(data_aggregated_3months,table(marital))
+table
+prop.table(table)
+sum(is.na(data_aggregated_3months$marital))
+sum(is.na(data_aggregated_3months$marital))/length(data_aggregated_3months[,1])
+# table<-with(data_aggregated_3months_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Emplotment
+table<-with(data_aggregated_3months,table(employ))
+table
+prop.table(table)
+sum(is.na(data_aggregated_3months$employ))
+sum(is.na(data_aggregated_3months$employ))/length(data_aggregated_3months[,1])
+# table<-with(data_aggregated_3months_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Tribe
+table<-with(data_aggregated_3months,table(tribe))
+table
+prop.table(table)
+sum(is.na(data_aggregated_3months$tribe))
+sum(is.na(data_aggregated_3months$tribe))/length(data_aggregated_3months[,1])
+# table<-with(data_aggregated_3months_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Insurance
+table<-with(data_aggregated_3months,table(insurance))
+table
+prop.table(table)
+sum(is.na(data_aggregated_3months$insurance))
+sum(is.na(data_aggregated_3months$insurance))/length(data_aggregated_3months[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#MOI
+table<-with(data_aggregated_3months,table(moi_baseline))
+table
+prop.table(table)
+sum(is.na(data_aggregated_3months$education))
+(sum(is.na(data_aggregated_3months$education))/length(data_aggregated_3months[,1]))*100
+# with(data_aggregated_2weeks_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_aggregated_2weeks_epi,t.test(age ~ class_crash
+
+
+######################################################################
+#TABLE 2 - Alcohol use behavior
+######################################################################
+
+#Baseline overall
+######################
+
+
+# Alcohol use prior to injury 
+table<-with(data_baseline,table(enr_1etoh))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_1etoh))
+sum(is.na(data_baseline$enr_1etoh))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Alcohol use post to injury 
+table<-with(data_baseline,table(enr_2etoh))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_2etoh))
+sum(is.na(data_baseline$enr_2etoh))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Breathlyzer test
+table<-with(data_baseline,table(enr_breathyesno))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_breathyesno))
+sum(is.na(data_baseline$enr_breathyesno))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Breathlyzer test
+table<-with(data_baseline,table(enr_breathresult_cat))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_breathresult_cat))
+sum(is.na(data_baseline$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#AUDIT
+audit_score_baseline<-rowSums(with(data_managed,data.frame(audit1,
+										  audit2,
+										  audit3)))
+
+data_managed$audit_score_baseline<-audit_score_baseline
+
+with(data,psych::describe(audit_score_baseline))
+sum(is.na(data$audit_score))
+(sum(is.na(data$audit_score))/length(data[,1]))*100
+# # with(data_epi,describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_epi,t.test(age ~ class_crash
+
+#Audit cat
+data_managed$audit_baseline_cat<-car::recode(data_managed$audit_score_baseline,"
+	0:4 = 'No';
+	5:40 = 'Yes'")
+
+table<-with(data_managed,table(audit_baseline_cat))
+table
+prop.table(table)
+sum(is.na(data_managed$audit_baseline_cat))
+sum(is.na(data_managed$audit_baseline_cat))/length(data_managed[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Audit cat
+table<-with(data_managed,table(audit1))
+table
+prop.table(table)
+sum(is.na(data_managed$audit_baseline_cat))
+sum(is.na(data_managed$audit_baseline_cat))/length(data_managed[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#2 weeks
+######################
+
+#AUDIT score
+with(data_2weeks,psych::describe(data_2weeks$audit_total))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+# Audit categorical
+table<-with(data_2weeks,table(audit_positive))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_breathresult_cat))
+sum(is.na(data_2weeks$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Audit Q1
+table<-with(data_2weeks,table(wk2_audit1))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_breathresult_cat))
+sum(is.na(data_2weeks$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Audit Q2
+table<-with(data_2weeks,table(wk2_audit2_nato0))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_breathresult_cat))
+sum(is.na(data_2weeks$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Audit Q3
+table<-with(data_2weeks,table(wk2_audit3_nato0))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_breathresult_cat))
+sum(is.na(data_2weeks$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+######################################################################
+#TABLE 3 - Clinical characteristics
+######################################################################
+
+#Baseline
+######################
+
+#Temperature
+data_baseline$temp_arred<-car::recode(data_baseline$temp_arred,"
+	'ND'=NA")
+
+data_baseline$temp_arred_2<-as.numeric(as.character(data_baseline$temp_arred))
+
+with(data_baseline,psych::describe(temp_arred_2))
+sum(is.na(data_baseline$temp_arred_2))
+(sum(is.na(data_baseline$temp_arred_2))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Respiratory rate
+with(data_baseline,psych::describe(rr_arred))
+sum(is.na(data_baseline$rr_arred))
+(sum(is.na(data_baseline$rr_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Heart rate
+with(data_baseline,psych::describe(hr_arred))
+sum(is.na(data_baseline$hr_arred))
+(sum(is.na(data_baseline$hr_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Systolic blood preassure
+with(data_baseline,psych::describe(sbp_arred))
+sum(is.na(data_baseline$sbp_arred))
+(sum(is.na(data_baseline$sbp_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Diastolic blood preassure
+with(data_baseline,psych::describe(dbp_arred))
+sum(is.na(data_baseline$dbp_arred))
+(sum(is.na(data_baseline$dbp_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Pulse Oxygen
+with(data_baseline,psych::describe(pox_arred))
+sum(is.na(data_baseline$pox_arred))
+(sum(is.na(data_baseline$pox_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Pulse Oxygen
+with(data_baseline,psych::describe(pox_arred))
+sum(is.na(data_baseline$pox_arred))
+(sum(is.na(data_baseline$pox_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Pain at arrival
+with(data_baseline,psych::describe(pain_arred))
+sum(is.na(data_baseline$pain_arred))
+(sum(is.na(data_baseline$pain_arred))/length(data_baseline[,1]))*100
+# # with(data_epi,describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_epi,t.test(age ~ class_crash
+
+# Ooverall health
+with(data_baseline,psych::describe(scale_health))
+sum(is.na(data_baseline$scale_health))
+(sum(is.na(data_baseline$scale_health))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Sum SF8
+SF8_overall<-rowMeans(with(data_baseline,data.frame(sf1,
+										  sf2,
+										  sf3,
+										  sf4,
+										  sf5,
+										  sf6,
+										  sf7,
+										  sf8)))
+data_baseline$SF8_overall<-SF8_overall
+
+with(data_baseline,psych::describe(SF8_overall))
+sum(is.na(data_baseline$SF8_overall))
+(sum(is.na(data_baseline$SF8_overall))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 1
+with(data_baseline,psych::describe(sf1))
+sum(is.na(data_baseline$sf1))
+(sum(is.na(data_baseline$sf1))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 2
+with(data_baseline,psych::describe(sf2))
+sum(is.na(data_baseline$sf2))
+(sum(is.na(data_baseline$sf2))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 3
+with(data_baseline,psych::describe(sf3))
+sum(is.na(data_baseline$sf3))
+(sum(is.na(data_baseline$sf3))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 4
+with(data_baseline,psych::describe(sf4))
+sum(is.na(data_baseline$sf4))
+(sum(is.na(data_baseline$sf4))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 5
+with(data_baseline,psych::describe(sf5))
+sum(is.na(data_baseline$sf5))
+(sum(is.na(data_baseline$sf5))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 6
+with(data_baseline,psych::describe(sf6))
+sum(is.na(data_baseline$sf6))
+(sum(is.na(data_baseline$sf6))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 7
+with(data_baseline,psych::describe(sf7))
+sum(is.na(data_baseline$sf7))
+(sum(is.na(data_baseline$sf7))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 8
+with(data_baseline,psych::describe(sf8))
+sum(is.na(data_baseline$sf8))
+(sum(is.na(data_baseline$sf8))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+phq2_overall<-rowMeans(with(data_baseline,data.frame(phq1,
+										  phq2)))
+
+data_baseline$phq2_overall<-SF8_overall
+
+#PHQ2 1
+with(data_baseline,psych::describe(phq9_2_total))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+# #PHQ2 2
+# with(data_baseline,psych::describe(phq2))
+# sum(is.na(data_baseline$phq2))
+# (sum(is.na(data_baseline$phq2))/length(data_baseline[,1]))*100
+# # # with(data_epi,describeBy(age,class_crash))
+# # # t-test: # independent 2-group, 2 level IV
+# # # with(data_epi,t.test(age ~ class_crash
+
+#FIM Cog
+with(data_baseline,psych::describe(fim_cog_baseline))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#FIM Cog
+with(data_baseline,psych::describe(fim_physical_baseline))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#FIM Self care
+with(data_baseline,psych::describe(fimcare))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimcare,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Toiliting
+with(data_baseline,psych::describe(fimtoilet))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimtoilet,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Transfers: Bed/chair/wheelchair
+with(data_baseline,psych::describe(fimtx))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimtx,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Locomotion: Walking/Wheelchair
+with(data_baseline,psych::describe(fimmotion))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimmotion,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Locomotion: Stairs
+with(data_baseline,psych::describe(fimstairs))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimstairs,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Expression
+with(data_baseline,psych::describe(fimexpr))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimexpr,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Comprehension
+with(data_baseline,psych::describe(fimcompr))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimcompr,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Social interaction
+with(data_baseline,psych::describe(fimsocial))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimsocial,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Problem Solving
+with(data_baseline,psych::describe(fimprob))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimprob,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Memory
+with(data_baseline,psych::describe(fimmemory))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimmemory,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#2 weeks
+######################
+
+#Temperature
+with(data_2weeks,psych::describe(data_2weeks$wk2_temp))
+sum(is.na(data_2weeks$wk2_temp))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Respiratory rate
+with(data_2weeks,psych::describe(data_2weeks$wk2_rr))
+sum(is.na(data_2weeks$wk2_rr))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Heart rate
+with(data_2weeks,psych::describe(data_2weeks$wk2_hr))
+sum(is.na(data_2weeks$wk2_hr))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#SysBP
+with(data_2weeks,psych::describe(data_2weeks$wk2_sbp))
+sum(is.na(data_2weeks$wk2_sbp))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#DiastBP
+with(data_2weeks,psych::describe(data_2weeks$wk2_dbp))
+sum(is.na(data_2weeks$wk2_dbp))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Pulse Ox
+with(data_2weeks,psych::describe(data_2weeks$wk2_pox))
+sum(is.na(data_2weeks$wk2_pox))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Weight
+with(data_2weeks,psych::describe(data_2weeks$wk2_wt))
+sum(is.na(data_2weeks$wk2_wt))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Pain
+with(data_2weeks,psych::describe(data_2weeks$wk2_pain))
+sum(is.na(data_2weeks$wk2_pain))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#health status
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf0))
+sum(is.na(data_2weeks$wk2_sf0))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#health status
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf1))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#physical health
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf2))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#role physical
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf3))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#bodily pain
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf4))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#vitality
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf5))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#social functioning
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf6))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#emotiona role
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf7))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Role emotional
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf8))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Depression
+with(data_2weeks,psych::describe(data_2weeks$phq9_total))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+# Depression categorical
+table<-with(data_2weeks,table(depression_positive))
+table
+prop.table(table)
+sum(is.na(data_2weeks$depression_positive))
+sum(is.na(data_2weeks$depression_positive))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#FIM Cognitive
+with(data_2weeks,psych::describe(data_2weeks$fim_cog))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#FIM Physical
+with(data_2weeks,psych::describe(data_2weeks$fim_physical))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#FIM Self care
+with(data_2weeks,psych::describe(wk2_fimcare))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(wk2_fimcare_cat = cut(wk2_fimcare,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(wk2_fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Toiliting
+with(data_2weeks,psych::describe(fimtoilet))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimtoilet,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Transfers: Bed/chair/wheelchair
+with(data_2weeks,psych::describe(fimtx))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimtx,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Locomotion: Walking/Wheelchair
+with(data_2weeks,psych::describe(fimmotion))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimmotion,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Locomotion: Stairs
+with(data_2weeks,psych::describe(fimstairs))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimstairs,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Expression
+with(data_2weeks,psych::describe(fimexpr))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimexpr,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Comprehension
+with(data_2weeks,psych::describe(fimcompr))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimcompr,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Social interaction
+with(data_2weeks,psych::describe(fimsocial))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimsocial,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Problem Solving
+with(data_2weeks,psych::describe(fimprob))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimprob,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Memory
+with(data_2weeks,psych::describe(fimmemory))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimmemory,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#Structure
+table<-with(data_2weeks,table(wk2_structure1))
+table
+prop.table(table)
+sum(is.na(data_2weeks$wk2_structure1))
+sum(is.na(data_2weeks$wk2_structure1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Confined at home
+table<-with(data_2weeks,table(wk2_confined))
+table
+prop.table(table)
+sum(is.na(data_2weeks$wk2_structure1))
+sum(is.na(data_2weeks$wk2_structure1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Confined at home
+table<-with(data_2weeks,table(wk2_aide1))
+table
+prop.table(table)
+sum(is.na(data_2weeks$wk2_structure1))
+sum(is.na(data_2weeks$wk2_structure1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+######################################################################
+#TABLE 4 - Co-morbidities
+######################################################################
+
+# Prior HIV test
+table<-with(data_baseline,table(enr_priorhiv))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_breathresult_cat))
+sum(is.na(data_baseline$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Prior HIV result
+table<-with(data_baseline,table(enr_priorhiv3))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_priorhiv3))
+sum(is.na(data_baseline$enr_priorhiv3))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Prior HIV result
+table<-with(data_baseline,table(enr_famhiv))
+table
+prop.table(table)
+9sum(is.na(data_baseline$enr_famhiv))
+sum(is.na(data_baseline$enr_famhiv))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Prior HIV result
+#spouse
+table<-with(data_baseline,table(enr_famhiv1___0))
+table
+prop.table(table)
+
+#Mother
+table<-with(data_baseline,table(enr_famhiv1___1))
+table
+prop.table(table)
+
+#Father
+table<-with(data_baseline,table(enr_famhiv1___2))
+table
+prop.table(table)
+
+#Blood sibling
+table<-with(data_baseline,table(enr_famhiv1___3))
+table
+prop.table(table)
+
+#Aunt/Uncle
+table<-with(data_baseline,table(enr_famhiv1___4))
+table
+prop.table(table)
+
+#Cousing
+table<-with(data_baseline,table(enr_famhiv1___5))
+table
+prop.table(table)
+
+#Grandparent
+table<-with(data_baseline,table(enr_famhiv1___6))
+table
+prop.table(table)
+
+#Child
+table<-with(data_baseline,table(enr_famhiv1___7))
+table
+prop.table(table)
+
+#GrandChild
+table<-with(data_baseline,table(enr_famhiv1___8))
+table
+prop.table(table)
+
+#Distant relative
+table<-with(data_baseline,table(enr_famhiv1___9))
+table
+prop.table(table)
+
+#Family friend
+table<-with(data_baseline,table(enr_famhiv1___10))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_famhiv1))
+sum(is.na(data_baseline$enr_famhiv1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - Bioline
+table<-with(data_baseline,table(enr_bioline))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_bioline1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - Unigold
+table<-with(data_baseline,table(enr_unigold))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_unigold1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - ELISA
+table<-with(data_baseline,table(enr_elisa))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_elisa1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - Viral load
+table<-with(data_baseline,table(enr_vl))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_vl1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - CD4
+table<-with(data_baseline,table(enr_cd4))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_cd4_1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - CD4
+table<-with(data_baseline,table(hiv_positive))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_cd4_1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# DM
+table<-with(data_managed,table(dm))
+table
+prop.table(table)
+sum(is.na(data_managed$dm))
+sum(is.na(data_managed$dm))/length(data_managed[,1])
+# table<-with(data_managed_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HTN	
+table<-with(data_managed,table(htn))
+table
+prop.table(table)
+sum(is.na(data_managed$htn))
+sum(is.na(data_managed$htn))/length(data_managed[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#2 weeks
+####################
+
+#Diabetes
+table<-with(data_2weeks,table(wk2_dm))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Hypertension
+table<-with(data_2weeks,table(wk2_htn))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Kidney disease
+table<-with(data_2weeks,table(wk2_kid))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV
+table<-with(data_2weeks,table(wk2_hiv))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+######################################################################
+#TABLE 5 - Post injury characteristics
+######################################################################
+
+#2 weeks
+######################
+
+#Interview location
+table<-with(data_2weeks,table(wk2location))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Transport oneself
+table<-with(data_2weeks,table(wk2_trans1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Transport fo the appointment
+table<-with(data_2weeks,table(wk2_hosptrans2))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Difficulty coming to the appointment
+table<-with(data_2weeks,table(wk2_hosptrans4))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+table(data_2weeks$wk2_hosptrans4a___0)
+table(data_2weeks$wk2_hosptrans4a___1)
+table(data_2weeks$wk2_hosptrans4a___2)
+table(data_2weeks$wk2_hosptrans4a___3)
+table(data_2weeks$wk2_hosptrans4a___4)
+
+#travel more difficult 
+table<-with(data_2weeks,table(wk2_hosptrans5))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+table(data_2weeks$wk2_hosptrans5a___0)
+table(data_2weeks$wk2_hosptrans5a___1)
+
+#difficult to come to hospital
+
+table(data_2weeks$wk2_hometrans2___0)
+table(data_2weeks$wk2_hometrans2___1)
+table(data_2weeks$wk2_hometrans2___3)
+table(data_2weeks$wk2_hometrans2___4)
+
+#travel more difficult 
+table<-with(data_2weeks,table(wk2_hometrans3))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Social support
+
+with(data_2weeks,psych::describe(data_2weeks$moss_total))
+sum(is.na(data_baseline$data_2weeks))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#SS9
+table<-with(data_2weeks,table(wk2_ss9))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Surgery
+table<-with(data_2weeks,table(wk2_fusurg))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Medicine
+table<-with(data_2weeks,table(wk2_fumed1))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Substance use
+table<-with(data_2weeks,table(wk2_fusubst))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Follow up with mental health
+table<-with(data_2weeks,table(wk2_fumh))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Follow up with rehabilitation
+table<-with(data_2weeks,table(wk2_furehab))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Follow up with OT
+table<-with(data_2weeks,table(wk2_fuot))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+######################################################################
+#FIGURE 1 - Social SUpport
+######################################################################
+
+# moss_likert_data<-with(data_2weeks,data.frame(wk2_ss1,
+# 											  wk2_ss2,
+# 											  wk2_ss3,
+# 											  wk2_ss4,
+# 											  wk2_ss5,
+# 											  wk2_ss6,
+# 											  wk2_ss7,
+# 											  wk2_ss8))
+
+
+# moss_likert_data[moss_likert_data==0]<-"None of the time"
+# moss_likert_data[moss_likert_data==1]<-"A little of the time"
+# moss_likert_data[moss_likert_data==2]<-"Some of the time"
+# moss_likert_data[moss_likert_data==3]<-"Most of the time"
+# moss_likert_data[moss_likert_data==4]<-"All of the time"
+
+# # likert_data2[,4][likert_data2[,4]==1]<-"Strongly Agree"
+# # likert_data2[,4][likert_data2[,4]==2]<-"Agree"
+# # likert_data2[,4][likert_data2[,4]==3]<-"I don't know"
+# # likert_data2[,4][likert_data2[,4]==4]<-"Disagree"
+# # likert_data2[,4][likert_data2[,4]==5]<-"Strongly Disagree"
+
+# # colnames(likert_data2)<-c("A large number of patients drink alcohol.",
+# # 				"Alcohol use and abuse is not a problem \n amongs our patient population at KCMC.",
+# # 				"Injury pateints at KCMC were likely drinking\n when they were injured.",
+# # 			  	"Caring for patients who are intoxicated is\n frustrating as they caused themselves\n to be ill/injured.",
+# # 			  	"Few injury patients at KCMC suffer from\n alcohol related injuries.",
+# # 			  	"Knowing if patients have atrisk drinking\n does NOT improve care I can provide.",
+# # 			  	"I feel comfortable asking patients about\n their alcohol use behavior.",
+# # 			  	"I feel comfortable counseling patients about\n their atrisk drinking.",
+# # 			  	"How motivated are you and your colleagues at\n implementing alcohol screening\n and testing?",
+# # 			  	"How willing are you and your colleagues to\n learn about reducing harmful alcohol\n use among injury patients?",
+# # 			  	"How willing are you and your colleagues to\n implement alcohol screening among\n injury patients?")
+
+
+# mylevels <- c("None of the time",
+# 			  "A little of the time",
+# 			  "Some of the time",
+# 			  "Most of the time",
+# 			  "All of the time")
+
+# for(i in seq_along(moss_likert_data)) {
+# 	moss_likert_data[,i] <- factor(moss_likert_data[,i], levels=mylevels)
+# }
+
+# moss_likert_data_clean<-likert(na.omit(moss_likert_data))
+# # perception_data$results$Group<-as.factor(c("Perception"))
+# # perception_data$grouping<-as.factor(rep("Perception",34))
+# moss_plot<-plot(moss_likert_data_clean,
+# 					 colors=c("#D33F6A",
+# 					 		  "#E07B91",
+# 					 		  "lightgrey",
+# 					 		  "#8595E1",
+# 					 		  "#4A6FE3"))
+
+# perception_plot<- moss_plot + scale_x_discrete(breaks=c(
+# 							  							"wk2_ss1"
+# 							  							"wk2_ss2"
+# 							  							"wk2_ss3"
+# 							  							"wk2_ss4"
+# 							  							"wk2_ss5"
+# 							  							"wk2_ss6"
+# 							  							"wk2_ss7"
+# 							  							"wk2_ss8"),
+# 													labels=c(
+# 							  "To help you if you were unable to move as easily as before the injury",
+# 							  "To take you to the doctor when you need it",
+# 							  "To prepare your meals if you were unable to do it yourself",
+# 							  "I feel comfortable asking patients about\n their alcohol use behavior.",
+# 							  "How willing are you and your colleagues to\n learn about reducing harmful alcohol\n use among injury patients?",
+# 							  "How motivated are you and your colleagues at\n implementing alcohol screening\n and testing?",
+# 							  "A large number of patients drink alcohol.",
+# 							  "Caring for patients who are intoxicated is\n frustrating as they caused themselves\n to be ill/injured.",
+# 							  "Few injury patients at KCMC suffer from\n alcohol related injuries.",
+# 							  "Knowing if patients have atrisk drinking\n does NOT improve care I can provide.",
+# 							  "Alcohol use and abuse is not a problem \n amongs our patient population at KCMC."))+
+# 				theme_bw() +
+# 				theme(legend.position="bottom")
+
+# summary_data<-summary(perception_data)
+
+# mean_plot<-ggplot(summary_data, aes(y=mean,x=Item)) + 
+#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.1) +
+#     geom_line() +
+#     geom_point() +
+#     coord_flip() +
+#     xlab("") +
+#     ylab("Mean/Standard Deviation") +
+#     scale_x_discrete(limits=rev(c("comfortable_counseling",
+#     						  "likely_drunk_while_injured",
+#     						  "willing_alc_screening",
+#     						  "comfortable_asking_alcohol",
+#     						  "learn_reducing_alc",
+#     						  "motivated_alc_screening",
+#     						  "pts_drink",
+#     						  "intox_pts_frustrating",
+#     						  "few_alc_related_injuries",
+#     						  "knowledge_not_improve_care",
+#     						  "alcohol_not_problem_kcmc"))) +
+
+#     theme_bw()
+
+# # mean_table_data<-with(summary_data,data.frame(Item=c(
+# # 							  "I feel comfortable counseling patients about\n their atrisk drinking.",
+# # 							  "Injury pateints at KCMC were likely drinking\n when they were injured.",
+# # 							  "How willing are you and your colleagues to\n implement alcohol screening among\n injury patients?",
+# # 							  "I feel comfortable asking patients about\n their alcohol use behavior.",
+# # 							  "How willing are you and your colleagues to\n learn about reducing harmful alcohol\n use among injury patients?",
+# # 							  "How motivated are you and your colleagues at\n implementing alcohol screening\n and testing?",
+# # 							  "A large number of patients drink alcohol.",
+# # 							  "Caring for patients who are intoxicated is\n frustrating as they caused themselves\n to be ill/injured.",
+# # 							  "Few injury patients at KCMC suffer from\n alcohol related injuries.",
+# # 							  "Knowing if patients have atrisk drinking\n does NOT improve care I can provide.",
+# # 							  "Alcohol use and abuse is not a problem \n amongs our patient population at KCMC."),
+# # 											  Mean=round(mean,1),
+# # 											  SD=round(sd,1)))
+# # mean_table<-ggtexttable(mean_table_data, rows = NULL)
+
+# # require(ggpubr)
+# perception_grid<-ggarrange(perception_plot, #+ rremove("y.text"), 
+# 		  mean_plot + rremove("y.text"), 
+# 		  # mean_table,
+#           labels = c("A", "B"),
+#           # heights = c(2, 4),
+#           ncol = 2,
+#           widths = c(1, 0.3),
+#           align = c("h"),
+#           common.legend = TRUE,
+#           legend = "bottom")
