@@ -25,8 +25,7 @@ library(qgraph)
 library(skmeans)
 library(mclust)
 
-
-data<-read.csv("/Users/Joao/Downloads/Titulos_csv2.csv",
+data<-read.csv("/Users/joaovissoci/Downloads/Titulos_csv2 (2).csv",
                stringsAsFactors=FALSE)
 
 #minerar o texto em poetugues
@@ -422,11 +421,11 @@ p
 
 
 #wordcloud
-#setting the same seed each time ensures consistent look across clouds
-# set.seed(30)
-# #limit words by specifying min frequency
-# wordcloud(names(freq),freq,min.freq=5,#scale=c(1,.01), max.words =100
-#           random.order = FALSE,random.color=FALSE,rot.per=.5,colors = freq)
+# setting the same seed each time ensures consistent look across clouds
+set.seed(30)
+#limit words by specifying min frequency
+with(wf,wordcloud(word,freq,min.freq=3,#scale=c(1,.01), max.words =100
+          random.order = FALSE,random.color=FALSE,rot.per=.5,colors = freq))
 
 
 
@@ -489,7 +488,7 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
 
 #Cluster analysis
 set.seed(123456)
-clust<-kmeans(points,5) #dividir estes dados em 3 clusters 
+clust<-kmeans(points,4) #dividir estes dados em 3 clusters 
 clust
 plot(points[,1],points[,2],col= clust$cluster)
 text(points[,1],points[,2],row.names(df))
@@ -511,7 +510,7 @@ table_final = data.frame(originalText = cleaned_data[,1][cleaned_data$area=="Psi
                    # PointY  = fit$points[,2],
                     class =  clust$cluster)
 
-write.csv(table_final,"/Users/Joao/Desktop/psicodeleteme.csv")
+write.csv(table_final,"/Users/joaovissoci/Desktop/psicodeleteme.csv")
 ########################################
 #By Cluster Analysis - Cluster 1
 ########################################
@@ -807,12 +806,12 @@ p_c1 <- ggplot(subset(wf_c1, freq>1), aes(x = reorder(word, -freq), y = freq)) +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 
 #Ploting network
-setEPS()
+# setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure_cluster1psicologia_freqs.eps",
-     width = 8, height = 8)
+# postscript("/Users/Joao/Desktop/figure_cluster1psicologia_freqs.eps",
+     # width = 8, height = 8)
 p_c1  
-dev.off()
+# dev.off()
 
 # set.seed(142)   
 # wordcloud(names(freq_c1), freq_c1, min.freq=20)
@@ -822,13 +821,40 @@ cor_c1 <- cor(as.matrix(dtm_c1_2),method = "spearman")
 cor_c1 <- ifelse(cor_c1<0,0,cor_c1)
 
 #Ploting network
-setEPS()
+# setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure_cluster1psicologia_network.eps",
-     width = 8, height = 8)
-qgraph(cor_c1,layout="spring",labels=colnames(cor_c1),threshold=0.2)
-
-dev.off()
+# postscript("/Users/Joao/Desktop/figure_cluster1psicologia_network.eps",
+     # width = 8, height = 8)
+rede1_edf<-qgraph(cor_c1,
+                   layout="spring",
+                   labels=colnames(cor_c1),
+                   # labels=c("physical activity",
+                   #          "corporal",
+                   #          "deficiency",
+                   #          "disease",
+                   #          "physical education",
+                   #          "elderly",
+                   #          "exercise",
+                   #          "aging",
+                   #          "image",
+                   #          "mental",
+                   #          "military",
+                   #          "women",
+                   #          "police",
+                   #          "practice",
+                   #          "quality of life",
+                   #          "regular",
+                   #          "health",
+                   #          "worker"),
+                   threshold=0.2,
+                   vsize=5,
+                   label.scale=FALSE,
+                   # grey=T,
+                   color="lightblue",
+                   borders = FALSE,
+                   posCol = "grey",
+                   label.cex=1.2)
+# dev.off()
 
 ########################################
 #By Cluster Analysis - Cluster 2
@@ -1122,32 +1148,60 @@ head(freq_c2, 15)
 wf_c2 <- data.frame(word=names(freq_c2), freq=freq_c2)   
 head(wf_c2)  
 
-setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure_cluster2psicologia_freqs.eps",
-     width = 8, height = 8)
-p_c2 <- ggplot(subset(wf_c2, freq>1), aes(x = reorder(word, -freq), y = freq)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/Joao/Desktop/figure_cluster2psicologia_freqs.eps",
+#      width = 8, height = 8)
+# p_c2 <- ggplot(subset(wf_c2, freq>1), aes(x = reorder(word, -freq), y = freq)) +
+#   geom_bar(stat = "identity") +
+#   theme(axis.text.x=element_text(angle=45, hjust=1))
 p_c2  
-dev.off()
+# dev.off()
 
 # set.seed(142)   
 # wordcloud(names(freq_c2), freq_c2, min.freq=20)
 
-dtm_c2_2<-removeSparseTerms(dtm_c2,0.93)
+dtm_c2_2<-removeSparseTerms(dtm_c2,0.88)
 cor_c2 <- cor(as.matrix(dtm_c2_2),method = "spearman")
 cor_c2 <- ifelse(cor_c2<0,0,cor_c2)
 
-#Ploting network
-setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure_cluster2psicologia_network.eps",
-     width = 8, height = 8)
+# #Ploting network
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/Joao/Desktop/figure_cluster2psicologia_network.eps",
+#      width = 8, height = 8)
 #View(cor_c1)
-qgraph(cor_c2,layout="spring",labels=colnames(cor_c2),threshold=0.3)
+rede2_edf<-qgraph(cor_c2,
+                   layout="spring",
+                   labels=colnames(cor_c2),
+                   # labels=c("physical activity",
+                   #          "corporal",
+                   #          "deficiency",
+                   #          "disease",
+                   #          "physical education",
+                   #          "elderly",
+                   #          "exercise",
+                   #          "aging",
+                   #          "image",
+                   #          "mental",
+                   #          "military",
+                   #          "women",
+                   #          "police",
+                   #          "practice",
+                   #          "quality of life",
+                   #          "regular",
+                   #          "health",
+                   #          "worker"),
+                   threshold=0.2,
+                   vsize=5,
+                   label.scale=FALSE,
+                   # grey=T,
+                   color="lightblue",
+                   borders = FALSE,
+                   posCol = "grey",
+                   label.cex=1.2)
+# dev.off()
 
-dev.off()
 ########################################
 #By Cluster Analysis - Cluster 3
 ########################################
@@ -1439,33 +1493,60 @@ head(freq_c3, 15)
 wf_c3 <- data.frame(word=names(freq_c3), freq=freq_c3)   
 head(wf_c3)  
 
-setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure_cluster3psicologia_freqs.eps",
-     width = 8, height = 8)
-p_c3 <- ggplot(subset(wf_c3, freq>3), aes(x = reorder(word, -freq), y = freq)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x=element_text(angle=45, hjust=1))
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/Joao/Desktop/figure_cluster3psicologia_freqs.eps",
+#      width = 8, height = 8)
+# p_c3 <- ggplot(subset(wf_c3, freq>3), aes(x = reorder(word, -freq), y = freq)) +
+#   geom_bar(stat = "identity") +
+#   theme(axis.text.x=element_text(angle=45, hjust=1))
 p_c3  
-dev.off()
+# dev.off()
 
 # set.seed(142)   
 # wordcloud(names(freq_c3), freq_c3, min.freq=20)
 
-dtm_c3_2<-removeSparseTerms(dtm_c3,0.93)
+dtm_c3_2<-removeSparseTerms(dtm_c3,0.90)
 cor_c3 <- cor(as.matrix(dtm_c3_2),method = "spearman")
 #View(cor_c1)
 cor_c3<-ifelse(cor_c3<0,0,cor_c3)
 
 #Ploting network
-setEPS()
-# tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure_cluster3psicologia_network.eps",
-     width = 8, height = 8)
+# setEPS()
+# # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+# postscript("/Users/Joao/Desktop/figure_cluster3psicologia_network.eps",
+#      width = 8, height = 8)
 
-qgraph(cor_c3,layout="spring",labels=colnames(cor_c3),threshold=0.2)
-
-dev.off()
+rede3_edf<-qgraph(cor_c3,
+                   layout="spring",
+                   labels=colnames(cor_c3),
+                   # labels=c("physical activity",
+                   #          "corporal",
+                   #          "deficiency",
+                   #          "disease",
+                   #          "physical education",
+                   #          "elderly",
+                   #          "exercise",
+                   #          "aging",
+                   #          "image",
+                   #          "mental",
+                   #          "military",
+                   #          "women",
+                   #          "police",
+                   #          "practice",
+                   #          "quality of life",
+                   #          "regular",
+                   #          "health",
+                   #          "worker"),
+                   # threshold=0.2,
+                   vsize=5,
+                   label.scale=FALSE,
+                   # grey=T,
+                   color="lightblue",
+                   borders = FALSE,
+                   posCol = "grey",
+                   label.cex=1.2)
+# dev.off()
 
 ########################################
 #By Cluster Analysis - Cluster 4
@@ -1758,15 +1839,15 @@ head(freq_c4, 15)
 wf_c4 <- data.frame(word=names(freq_c4), freq=freq_c4)   
 head(wf_c4)  
 
-setEPS()
+# setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure_cluster4psicologia_freqs.eps",
-     width = 8, height = 8)
-p_c4 <- ggplot(subset(wf_c4, freq>2), aes(x = reorder(word, -freq), y = freq)) +
+# postscript("/Users/Joao/Desktop/figure_cluster4psicologia_freqs.eps",
+#      width = 8, height = 8)
+p_c4 <- ggplot(subset(wf_c4, freq>1), aes(x = reorder(word, -freq), y = freq)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 p_c4  
-dev.off()
+# dev.off()
 
 # set.seed(142)   
 # wordcloud(names(freq_c4), freq_c4, min.freq=20)
@@ -1777,14 +1858,42 @@ cor_c4<-ifelse(cor_c4<0,0,cor_c4)
 
 
 #Ploting network
-setEPS()
+# setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure_cluster4psicologia_network.eps",
-     width = 8, height = 8)
+# postscript("/Users/Joao/Desktop/figure_cluster4psicologia_network.eps",
+     # width = 8, height = 8)
 #View(cor_c1)
-qgraph(cor_c4,layout="spring",labels=colnames(cor_c4),threshold=0.2)
+rede4_edf<-qgraph(cor_c4,
+                   layout="spring",
+                   labels=colnames(cor_c4),
+                   # labels=c("physical activity",
+                   #          "corporal",
+                   #          "deficiency",
+                   #          "disease",
+                   #          "physical education",
+                   #          "elderly",
+                   #          "exercise",
+                   #          "aging",
+                   #          "image",
+                   #          "mental",
+                   #          "military",
+                   #          "women",
+                   #          "police",
+                   #          "practice",
+                   #          "quality of life",
+                   #          "regular",
+                   #          "health",
+                   #          "worker"),
+                   threshold=0.0,
+                   vsize=5,
+                   label.scale=FALSE,
+                   # grey=T,
+                   color="lightblue",
+                   borders = FALSE,
+                   posCol = "grey",
+                   label.cex=1.2)
 
-dev.off()
+# dev.off()
 
 ########################################
 #By Cluster Analysis - Cluster 5 ...
@@ -2077,32 +2186,60 @@ head(freq_c5, 15)
 wf_c5 <- data.frame(word=names(freq_c5), freq=freq_c5)   
 head(wf_c5)  
 
-setEPS()
+# setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure_cluster5psicologia_freqs.eps",
-     width = 8, height = 8)
+# postscript("/Users/Joao/Desktop/figure_cluster5psicologia_freqs.eps",
+     # width = 8, height = 8)
 p_c5 <- ggplot(subset(wf_c5, freq>2), aes(x = reorder(word, -freq), y = freq)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x=element_text(angle=45, hjust=1))
 p_c5  
-dev.off()
+# dev.off()
 
 # set.seed(142)   
 # wordcloud(names(freq_c5), freq_c5, min.freq=20)
 
-dtm_c5_2<-removeSparseTerms(dtm_c5,0.93)
+dtm_c5_2<-removeSparseTerms(dtm_c5,0.90)
 cor_c5 <- cor(as.matrix(dtm_c5_2),method = "spearman")
 cor_c5<-ifelse(cor_c5<0,0,cor_c5)
 
 #Ploting network
-setEPS()
+# setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/Joao/Desktop/figure_cluster5psicologia_network.eps",
-     width = 8, height = 8)
+# postscript("/Users/Joao/Desktop/figure_cluster5psicologia_network.eps",
+     # width = 8, height = 8)
 #View(cor_c1)
-qgraph(cor_c5,layout="spring",labels=colnames(cor_c5),threshold=0.2)
+rede5_edf<-qgraph(cor_c5,
+                   layout="spring",
+                   labels=colnames(cor_c5),
+                   # labels=c("physical activity",
+                   #          "corporal",
+                   #          "deficiency",
+                   #          "disease",
+                   #          "physical education",
+                   #          "elderly",
+                   #          "exercise",
+                   #          "aging",
+                   #          "image",
+                   #          "mental",
+                   #          "military",
+                   #          "women",
+                   #          "police",
+                   #          "practice",
+                   #          "quality of life",
+                   #          "regular",
+                   #          "health",
+                   #          "worker"),
+                   threshold=0.2,
+                   vsize=5,
+                   label.scale=FALSE,
+                   # grey=T,
+                   color="lightblue",
+                   borders = FALSE,
+                   posCol = "grey",
+                   label.cex=1.2)
 
-dev.off()
+# dev.off()
 ########################################
 #By Cluster Analysis - Cluster 6
 ########################################
@@ -2922,3 +3059,47 @@ dev.off()
 
 # dev.off()
 
+# dev.off()
+tiff("/Users/joaovissoci/Desktop/psy_networks.tiff",
+ width = 2500, height = 3600,compression = 'lzw', res=300)
+#Add plot
+par(mfrow = c(3, 2))  # 3 rows and 2 columns
+plot(rede1_edf)
+title("Cluster 1 - Physcial activity, sport \n and human development",line=2)
+plot(rede2_edf)
+title("Cluster 2 - Psychosocial environmental aspects \n of sport ",line=2)
+plot(rede3_edf)
+title("Cluster 3 - Education and culture interface with \n sport and physical education",line=2)
+plot(rede4_edf)
+title("Cluster 4 - Psychosocial aspects of social networks, \n games and cyberspace",line=2)
+plot(rede5_edf)
+title("Cluster 5 - Physical exercise, health promotion \n and rehabilitation",line=2)
+with(wf,wordcloud(word,
+                    # c("aspects",
+                    #      "physical activity",
+                    #      "athlete",
+                    #      "evaluation",
+                    #      "cognitive",
+                    #      "behavioral",
+                    #      "disease",
+                    #      "sport",
+                    #      "stress",
+                    #      "exercise",
+                    #      "functional",
+                    #      "elderly",
+                    #      "instruments",
+                    #      "motor",
+                    #      "practice",
+                    #      "program",
+                    #      "quality of life",
+                    #      "performance",
+                    #      "health",
+                    #      "training"),
+                       freq,
+                       min.freq=3,
+                       random.order = FALSE,
+                       random.color=FALSE,
+                       rot.per=.5,
+                       colors = brewer.pal(8, "Dark2")))#scale=c(1,.01), max.words =100,
+title("Most common words used in \n Psychology institutional projects",line=2)
+dev.off()
