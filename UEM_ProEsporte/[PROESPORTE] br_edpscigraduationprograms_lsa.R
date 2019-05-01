@@ -349,7 +349,12 @@ findFreqTerms(dtm_ppgp,lowfreq=5)
 #visualização gráfico de freq. termos
 wf=data.frame(word=names(freq),freq)
 
-wf<-wf[wf$freq>10,]
+# wf<-wf[wf$freq>,10]
+
+wf$contribution<-(wf$freq/171)*100
+
+wf<-wf[wf$contribution>5,]
+wf
 
 write.csv(wf,"/Users/joaovissoci/Desktop/edfisica_wordfreq.csv")
 
