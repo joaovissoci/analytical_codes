@@ -34,7 +34,8 @@ lapply(c("sem","ggplot2","Hmisc", "psych", "irr", "nortest", "moments",
 	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust",
 	"foreign","survival","memisc","foreign","mice","MissMech",
 	"likert",
-	"ggpubr"), 
+	"ggpubr",
+	"dplyr"), 
 library, character.only=T)
 
 ######################################################################
@@ -519,6 +520,40 @@ sum(is.na(data_aggregated_3months$education))
 # t-test: # independent 2-group, 2 level IV
 # with(data_aggregated_2weeks_epi,t.test(age ~ class_crash
 
+######################################################################
+#Weight and height
+######################################################################
+
+#weight baseline
+data_baseline$weight1_recoded<-car::recode(data_baseline$weight1,"'ND'=NA;'(Other)'=NA")
+data_baseline$weight1_recoded<-as.numeric(as.character(data_baseline$weight1_recoded))
+summary(data_baseline$weight1_recoded)
+
+#weight 2 months
+# data_aggregated_2weeks$wk2_wt<-car::recode(data_aggregated_2weeks$wk2_wt,"'ND'=NA;'(Other)'=NA")
+# data_aggregated_2weeks$wk2_wt_recoded<-as.numeric(as.character(data_aggregated_2weeks$wk2_wt_recoded))
+summary(data_aggregated_2weeks$wk2_wt)
+
+#weight 3 months
+data_aggregated_3months$m3_wt_recoded<-car::recode(data_aggregated_3months$m3_wt,"'ND'=NA;'(Other)'=NA")
+data_aggregated_3months$m3_wt_recoded<-as.numeric(as.character(data_aggregated_3months$m3_wt_recoded))
+summary(data_aggregated_3months$m3_wt_recoded)
+
+estimate_wt<-c(data_baseline$weight1_recoded,
+						data_aggregated_2weeks$wk2_wt,
+						data_aggregated_3months$m3_wt_recoded)
+
+fup_times<-c(rep("Time 1 - Baseline",length(data_baseline$weight1_recoded)),
+			 rep("Time 2 - Two-weeks FUP",length(data_aggregated_2weeks$wk2_wt)),
+			 rep("Time 3 - Three-months FUP",length(data_aggregated_3months$m3_wt_recoded)))
+
+boxplotdata<-data.frame(estimate_wt,fup_times)
+
+p <- ggplot(boxplotdata, aes(x=fup_times,
+							 y=estimate_wt)) + 
+  geom_boxplot()
+
+p
 
 ######################################################################
 #TABLE 2 - Alcohol use behavior
@@ -1815,8 +1850,19 @@ sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
 # assocstats(table) #vcd package
 
 ######################################################################
-#FIGURE 1 - Social SUpport
+#FIGURE  - PSFS
 ######################################################################
+
+table(data_2weeks$wk2_psfs1)
+
+table(data_2weeks$wk2_psfs2)
+
+table(data_2weeks$wk2_psfs3)
+
+p <- ggplot(data_2weeks, aes(x = reorder(names(wk2_psfs1), -wk2_psfs1), y = wk2_psfs1)) +
+            geom_bar(stat = "identity") +
+            theme(axis.text.x=element_text(angle=45, hjust=1))
+p  
 
 # moss_likert_data<-with(data_2weeks,data.frame(wk2_ss1,
 # 											  wk2_ss2,

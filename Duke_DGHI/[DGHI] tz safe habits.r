@@ -15,7 +15,7 @@
  #install.packages("VIMGUI")
  #install.packages("miP")
  #install.packages("gWidgetsRGtk2")
- #install.packages("mi")
+
  #install.packages("epicalc")
 
 #Load packages neededz for the analysis
@@ -37,7 +37,7 @@ character.only=T)
 #Pulling data from dropbox
 #data_hamilton <- repmis::source_DropboxData("lena_hamilton.csv","r31zt5zeiygsc23",sep = ",",header = TRUE)
 
-data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
+data<-read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/safe_habits_tz/tz_safet_habits_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -137,7 +137,7 @@ by(work_experience$years_work_onbodaboda,outcomes$rtc_involvement,describe)
 wilcox.test(work_experience$years_work_onbodaboda~outcomes$rtc_involvement)
 
 # Hours of Work
-summary(work_experience$hours_work_onbodaboda)
+summary(data_all$hours_work_onbodaboda)
 ad.test(work_experience$hours_work_onbodaboda)
 #hist(work_experience$hours_work_onbodaboda)
 #ci_func(work_experience$hours_work_onbodaboda,.95)

@@ -25,7 +25,7 @@ library(qgraph)
 library(skmeans)
 library(mclust)
 
-data<-read.csv("/Users/joaovissoci/Downloads/Titulos_csv2 (1).csv",
+data<-read.csv("/Users/Joao/Downloads/Titulos_csv2.csv",
                stringsAsFactors=FALSE)
 
 #minerar o texto em poetugues
@@ -412,7 +412,6 @@ findFreqTerms(dtm_ppgp,lowfreq=5)
 #visualização gráfico de freq. termos
 wf=data.frame(word=names(freq),freq)
 
-# wf<-wf[wf$freq>,10]
 
 wf$contribution<-(wf$freq/39)*100
 
@@ -420,13 +419,14 @@ wf<-wf[wf$contribution>5,]
 
 wf
 
-write.csv(wf,"/Users/joaovissoci/Desktop/psy_wordfreq.csv")
+write.csv(wf,"/Users/Joao/Desktop/psy_wordfreq.csv")
 
 p <- ggplot(wf, aes(x = reorder(word, -freq), y = freq)) +
             geom_bar(stat = "identity") +
             theme(axis.text.x=element_text(angle=45, hjust=1))
 p   
 
+wc_data<-wf[wf$freq>3,]
 
 #wordcloud
 # setting the same seed each time ensures consistent look across clouds
@@ -1559,7 +1559,7 @@ rede3_edf<-qgraph(cor_c3,
                             "formation",
                             "practice",
                             "social networks",
-                            "subjetivacao",
+                            "subjectivation",
                             "video games"),
                    threshold=0.2,
                    vsize=5,
@@ -3083,12 +3083,12 @@ rede3_edf<-qgraph(cor_c3,
 # dev.off()
 
 # dev.off()
-tiff("/Users/joaovissoci/Desktop/psy_networks.tiff",
- width = 2500, height = 3000,compression = 'lzw', res=300)
+tiff("/Users/Joao/Desktop/psy_networks.tiff",
+ width = 3000, height = 3000,compression = 'lzw', res=300)
 #Add plot
 par(mfrow = c(2, 2))  # 3 rows and 2 columns
 plot(rede1_edf)
-title("Cluster 1 - Physcial activity, sport \n and health",line=2)
+title("Cluster 1 - Physical activity, sport \n and health",line=2)
 plot(rede2_edf)
 title("Cluster 2 - Psychosocial aspects \n of sport",line=2)
 plot(rede3_edf)
@@ -3097,27 +3097,21 @@ title("Cluster 3 - Sport and physical education in \n child and adolescents deve
 # title("Cluster 4 - Psychosocial aspects of social networks, \n games and cyberspace",line=2)
 # plot(rede5_edf)
 # title("Cluster 4 - Physical exercise, health promotion \n and rehabilitation",line=2)
-with(wf,wordcloud(word,
-                    # c("aspects",
-                    #      "physical activity",
-                    #      "athlete",
-                    #      "evaluation",
-                    #      "cognitive",
-                    #      "behavioral",
-                    #      "disease",
-                    #      "sport",
-                    #      "stress",
-                    #      "exercise",
-                    #      "functional",
-                    #      "elderly",
-                    #      "instruments",
-                    #      "motor",
-                    #      "practice",
-                    #      "program",
-                    #      "quality of life",
-                    #      "performance",
-                    #      "health",
-                    #      "training"),
+with(wc_data,wordcloud(c("adolescents",
+                         "evaluation",
+                         "play",
+                         "cognitive",
+                         "behavioral",
+                         "context",
+                         "children",
+                         "development",
+                         "education",
+                         "school",
+                         "sport",
+                         "football",
+                         "video game",
+                         "health",
+                         "game"),
                        freq,
                        min.freq=3,
                        random.order = FALSE,

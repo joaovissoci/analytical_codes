@@ -71,9 +71,12 @@ devtools::install_github("jennybc/googlesheets")
 devtools::install_github("cran/epicalc")
 devtools::install_github("BioStatMatt/sas7bdat")
 devtools::install_github("rdpeng/gpclib")
+devtools::install_github("Rjacobucci/regsem")
 devtools::install_github("sjewo/readstata13")
 devtools::install_github("ricardo-bion/ggradar")
-devtools::install_github("ricardo-bion/ggradar")
+devtools::install_github("SachaEpskamp/semPlot")
+
+devtools::install_github("regsem","Rjacobucci")
 
 
 

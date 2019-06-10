@@ -1,0 +1,287 @@
+---
+title: "cpg_arima"
+author: "Cyrus Elahi"
+date: "February 5, 2019"
+output: html_document
+---
+
+
+```{r }
+library(tidyverse)
+library(ggplot2)
+library(stringr)
+library(forcats)
+library(lubridate)
+library(likert)
+library(survival)
+library(splines)
+library(forecast)
+#library(patchwork)
+```
+
+
+```{r}
+#Doesnt have days til death
+setwd("C:/Users/cyrus/OneDrive/Documents/R/input")
+tbi <- read.csv("tz_TBIregistry_data.csv")
+```
+
+trying out a new dataset. I will not get rid of those with negative endpoints. 
+so increased sample size
+```{r}
+#by gcs
+tbi <- tbi %>%
+  dplyr::select(study_id, 
+                date_arrival, 
+                time_arrival, 
+                tbi_surgery, 
+                ct_brain, death, 
+                nurse_vs, 
+                date_death, 
+                cd_dispo, 
+                time_death, 
+                date_dc_home, 
+                gcs_tot, 
+                gos, 
+                gose, 
+                male, 
+                moi, 
+                alcohol, 
+                surgtoicu, 
+                age,
+                fluids,
+                sys_bp,
+                dia_bp,
+                oxygen,
+                pulse_ox,
+                heart_rate,
+                resp_rate,
+                cxr)
+
+#there is no time home. So i will operate under the assumption that time home is always 23:59. This if arrival and d/c occur same day, I will not get a negative difference between the two
+tbi$time_home <- "23:59"
+
+#converting dates to numeric early
+tbi$date_arrival2 <- (strptime  ( paste(tbi$date_arrival, tbi$time_arrival), "%m/%d/%Y %H:%M"))
+tbi$date_death2   <- (strptime  ( paste(tbi$date_death, tbi$time_death), "%m/%d/%Y %H:%M") )
+tbi$date_home2    <- (strptime  ( paste(tbi$date_dc_home, tbi$time_home), "%m/%d/%Y %H:%M"))
+
+#when dates already numeric
+tbi$arrival_death <- round(as.numeric( difftime(tbi$date_death2, tbi$date_arrival2, units = "days")), 2)
+tbi$arrival_home  <- round(as.numeric( difftime(tbi$date_home2 , tbi$date_arrival2, units = "days")), 2)
+
+#error message unless run this line to convert date to date format
+tbi$date_arrival2 <- as.Date(tbi$date_arrival2)
+
+#by gcs
+tbi <- tbi %>%
+    dplyr::select(study_id, 
+                  date_arrival2,  
+                  tbi_surgery, 
+                  death, 
+                  nurse_vs, 
+                  ct_brain, 
+                  cd_dispo, 
+                  time_death, 
+                  gcs_tot, 
+                  gos, 
+                  gose, 
+                  arrival_home, 
+                  arrival_death, 
+                  male, 
+                  moi, 
+                  alcohol, 
+                  surgtoicu, 
+                  age,
+                  fluids,
+                  sys_bp,
+                  dia_bp,
+                  oxygen,
+                  pulse_ox,
+                  heart_rate,
+                  resp_rate,
+                  cxr) %>%
+    mutate(endpt = if_else(is.na(tbi$arrival_death == TRUE), arrival_home, arrival_death)) 
+
+#aggregate all outcomes associated to gos and gose variables trying to reduce missings                                   
+tbi$gose_recoded<- car::recode(tbi$gose, "1=1;2=2;3:4=3;5:6=4;7:8=5;else=NA")
+tbi$gos_complete <- ifelse(is.na(tbi$gose_recoded) & is.na(tbi$gos),NA,
+                                   ifelse(is.na(tbi$gose_recoded),tbi$gos,
+                                          ifelse(is.na(tbi$gos),tbi$gose_recoded,tbi$gos)))
+#Change the type of variables accordingly to the codebook.
+tbi$gos_complete <- factor(tbi$gos_complete, 
+                           labels = c("Death", "Persistent Vegetative", "Severe Disability", "Moderate Disability", "Good recovery"))
+
+#we need to decide what consitutes good vs poor recovery. is moderate disability considered a win??
+tbi$gos_outcome <- car::recode(tbi$gos_complete, "'Death' = 'Bad Recovery';
+                                   'Persistent Vegetative' = 'Bad Recovery';
+                                   'Severe Disability' = 'Bad Recovery';
+                                   'Moderate Disability' = 'Bad Recovery'") 
+tbi$moi <- car::recode(tbi$moi, "'3' = '2';
+                       '4' = '2'")
+
+#####REGULAR alternative
+test <- tbi %>%
+  mutate(gcs_facet = case_when(gcs_tot <=8 ~ "severe",
+                               gcs_tot >= 9 & gcs_tot <= 12 ~ "mod",
+                               gcs_tot >= 13 ~ "mild")) %>%
+  mutate(gos_outcome_num = case_when(gos_outcome == "Good recovery" ~ 0,
+                                     gos_outcome == "Bad Recovery" ~ 1))
+
+
+#removing Nas from the whole dataset
+test6 <- test[!is.na(test$gos_outcome_num),]
+
+#getting rid of rouge 2 on tbi surgery
+#test6 <- subset(test2, test3$tbi_surgery < 2)
+
+#making a column of 1s to later count for total of surgery
+test6$volume <- test6$gos_outcome_num
+test6$volume <- car::recode(test6$volume, "'0' = '1';
+                                   '1' = '1'")
+
+test6$nurse_vs <- as.numeric(car::recode(test6$nurse_vs, "2 = NA"))
+
+#creating clinical need variables to measure medical team performance
+test6 <- test6 %>% mutate(ct_need = case_when(gcs_tot < 13 ~ 1,
+                                     TRUE ~ 0)) %>%
+                   mutate(ct_noneed = case_when(gcs_tot >= 13 ~ 1,
+                                     TRUE ~ 0)) %>%
+                   mutate(ct_received = case_when(ct_brain == "1" & gcs_tot < 13 ~ 1,
+                                                  TRUE ~ 0)) %>%
+                   mutate(ct_received_noneed = case_when(ct_brain == "1" & gcs_tot >= 13 ~ 1,
+                                                  TRUE ~ 0)) %>%
+                   mutate(hypoten = case_when(sys_bp < 90 | dia_bp < 60 ~1,
+                                              TRUE ~ 0)) %>%
+                   mutate(hypoten_noneed = case_when(sys_bp >= 90 & dia_bp >= 60 ~1,
+                                              TRUE ~ 0)) %>%
+                   mutate(fluids_received = case_when(hypoten =="1" & fluids == "1" ~ 1,
+                                                      TRUE ~ 0)) %>%
+                   mutate(fluids_received_noneed = case_when(hypoten =="0" & fluids == "1" ~ 1,
+                                                      TRUE ~ 0)) %>%                   
+                   mutate(hypoxic = case_when(pulse_ox < 92 | gcs_tot < 8 ~ 1,
+                                              TRUE ~ 0)) %>%
+                   mutate(hypoxic_noneed = case_when(pulse_ox >= 90 & gcs_tot >= 8 ~ 1,
+                                              TRUE ~ 0)) %>%
+                   mutate(oxy_received = case_when(hypoxic == "1" & oxygen == 1 ~ 1,
+                                                   TRUE ~ 0)) %>%
+                   mutate(oxy_received_noneed = case_when(hypoxic == "0" & oxygen == 1 ~ 1,
+                                                   TRUE ~ 0)) %>%
+                   mutate(need_cxr = case_when(hypoxic == "1" | heart_rate > 100 | resp_rate > 20 | gcs_tot < 14 ~ 1,
+                                               TRUE ~ 0)) %>%
+                   mutate(noneed_cxr = case_when(hypoxic == "0" & heart_rate <= 100 & resp_rate <= 20 & gcs_tot >= 14 ~ 1,
+                                               TRUE ~ 0)) %>%
+                   mutate(cxr_received = case_when(need_cxr == "1" & cxr == 1 ~ 1,
+                                                   TRUE ~ 0)) %>%
+                   mutate(cxr_received_noneed = case_when(need_cxr == "0" & cxr == 1 ~ 1,
+                                                   TRUE ~ 0))
+
+```
+
+test6 is a dataset that is now ready to prep for a timeseries analysis. 
+##for full dataset
+```{r}
+# #summing by month
+# 
+# data1 <- test6 %>%
+#   group_by(month=floor_date(date_arrival2, "month")) %>%
+#   summarise(badrecov_sum = sum(gos_outcome_num),
+#             death_sum = sum(death),
+#             volume_month = sum(volume),
+#             br_prop = sum(gos_outcome_num) / sum(volume),
+#             death_prop = sum(death) / sum(volume)
+#             )
+# data2 <- data1[6:49,]
+# #data2 <- data1[35:46, ]
+
+```
+
+test6 is a dataset that is now ready to prep for a timeseries analysis. 
+##for dataset after the missing month due to IRB renewal <- this is the one we are using.
+```{r}
+#summing by month
+##Data one and two are for time trend type of data
+data1 <- test6 %>%
+  group_by(month=floor_date(date_arrival2, "month")) %>%
+  summarise(badrecov_sum = sum(gos_outcome_num, na.rm = TRUE),
+          #  br_sum_severe = sum(gos_outcome_num[gcs_facet == "severe"]),
+          #  br_sum_mod = sum(gos_outcome_num[gcs_facet == "mod"]),
+          #  br_sum_mild = sum(gos_outcome_num[gcs_facet == "mild"]),
+          vitals = sum(nurse_vs, na.rm = TRUE),
+            death_sum = sum(death, na.rm = TRUE),
+            volume_month = sum(volume),
+            cxr_prop = sum(cxr_received, na.rm = TRUE) / sum(need_cxr, na.rm = TRUE),
+            noneed_cxr_prop = sum(cxr_received_noneed, na.rm = TRUE) / sum(noneed_cxr, na.rm = TRUE),
+            oxy_prop = sum(oxy_received, na.rm = TRUE) / sum(hypoxic, na.rm = TRUE),
+            noneed_oxy_prop = sum(oxy_received_noneed, na.rm = TRUE) / sum(hypoxic_noneed, na.rm = TRUE),
+            fluids_prop = sum(fluids_received, na.rm = TRUE) / sum(hypoten, na.rm = TRUE),
+            noneed_fluids_prop = sum(fluids_received_noneed, na.rm = TRUE) / sum(hypoten_noneed, na.rm = TRUE),
+            ct_prop = sum(ct_received, na.rm = TRUE) / sum(ct_need, na.rm = TRUE),
+            noneed_ct_prop = sum(ct_received_noneed, na.rm = TRUE) / sum(ct_noneed, na.rm = TRUE),
+            vitals_prop = sum(nurse_vs, na.rm = TRUE) / sum(volume, na.rm = TRUE),
+            br_prop = sum(gos_outcome_num, na.rm = TRUE) / sum(volume),
+            death_prop = sum(death, na.rm = TRUE) / sum(volume, na.rm = TRUE)
+            ) %>%
+  mutate(vitals_prop = rollmean(vitals_prop, 3, fill = NA)) %>%
+  mutate(cxr_prop = rollmean(cxr_prop, 3, fill = NA)) %>%
+  mutate(oxy_prop = rollmean(oxy_prop, 3, fill = NA)) %>%
+  mutate(fluids_prop = rollmean(fluids_prop, 3, fill = NA)) %>%
+  mutate(ct_prop = rollmean(ct_prop, 3, fill = NA)) 
+
+data2 <- data1[17:49,]
+
+```
+
+
+ARIMA
+```{r}
+timeseries_data_all <- ts(data2$br_prop, #data$distracteddriving , 
+                          start=c(2014,7), end = c(2017,3),frequency=12)
+#find out # of differences
+#pvalue > .05
+timeseries_data_all %>% adf.test()
+
+#pvalue < .05
+####This tells me one diff is needed to reach significance
+diff(timeseries_data_all) %>%
+   #diff() %>%
+  #diff() %>%
+  adf.test() 
+
+###One difference is also needed for the deseasonal data. Not surprising. =
+#deseasonal %>% adf.test #pvalue > .05
+#diff(deseasonal) %>%
+  # diff() %>%
+  #diff() %>%
+#  adf.test() 
+
+
+#diff_data <- diff(deseasonal)# %>% adf.test #pvalue < .05
+
+Acf(timeseries_data_all)
+Pacf(timeseries_data_all)
+
+Acf(new)
+Pacf(new)
+
+
+Acf(deseasonal)
+Pacf(deseasonal)
+
+
+intervention <- c(rep(0,24), 1:9)
+
+fit <- Arima(timeseries_data_all, c(1, 1, 1), seasonal = c(1,1,1), xreg = intervention)
+fit
+#may need to run this first
+dev.off()
+tsdisplay(residuals(fit), lag.max=33, main='(1,2,1) Model Residuals')
+
+#extract coeff of the model (do i exponentiate like an odds ratio?) need to figure out what to export
+output <- as.data.frame(cbind(coef = fit$coef, fit$aic))
+
+
+acf(fit$residuals)
+pacf(fit$residuals)
+
+```

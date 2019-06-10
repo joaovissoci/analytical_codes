@@ -1,5 +1,5 @@
 
-data_freq_psy<-read.csv("/Users/joaovissoci/Desktop/psy_wordfreq.csv")
+data_freq_psy<-read.csv("/Users/Joao/Desktop/psy_wordfreq.csv")
 data_freq_psy <- data_freq_psy[with(data_freq_psy,order(-contribution)),]
 data_freq_psy <- data_freq_psy[1:20,]
 data_freq_psy$word2<-c("sport",
@@ -11,7 +11,7 @@ data_freq_psy$word2<-c("sport",
 					   "children",
 					   "health",
 					   "development",
-					   "scholl",
+					   "school",
 					   "adolescents",
 					   "evaluation",
 					   "cognitive",
@@ -23,7 +23,7 @@ data_freq_psy$word2<-c("sport",
 					   "elderly",
 					   "intervention")
 
-data_freq_edf<-read.csv("/Users/joaovissoci/Desktop/edfisica_wordfreq.csv")
+data_freq_edf<-read.csv("/Users/Joao/Desktop/edfisica_wordfreq.csv")
 data_freq_edf$contribution<-data_freq_edf$contribution*-1
 data_freq_edf <- data_freq_edf[with(data_freq_edf,order(contribution)),]
 data_freq_edf <- data_freq_edf[1:20,]
@@ -52,7 +52,7 @@ data_freq<-rbind(data_freq_psy,data_freq_edf)
 data_freq$course<-c(rep("Psychology",length(data_freq_psy[,1])),
 					rep("Physical Education",length(data_freq_edf[,1])))
 
-tiff("/Users/joaovissoci/Desktop/frequency_figure.tiff",
+tiff("/Users/Joao/Desktop/frequency_figure.tiff",
  width = 1500, height = 2000,compression = 'lzw', res=300)
 data_freq %>%
         # mutate(contribution = n * score) %>%

@@ -1,0 +1,2991 @@
+######################################################################
+#BASIC R STATISTICS TEMPLATE
+######################################################################
+#
+#
+#
+#
+#
+######################################################################
+#SETTING ENVIRONMENT
+######################################################################
+#PASCKAGES INSTALLATION CODES
+#install.packages("Hmisc")
+#install.packages("car")
+#install.packages("psych")
+#install.packages("nortest")
+#install.packages("ggplot2")
+#install.packages("pastecs")
+#install.packages("repmis")
+#install.packages("mvnormtest")
+#install.packages("polycor")
+
+#PACKAGES LOADING CODE
+#Load packages neededz for the analysis
+#library(Hmisc)
+
+#Clear existing data and graphics
+rm(list=ls())
+graphics.off()
+
+#All packages must be installes with install.packages() function
+lapply(c("sem","ggplot2","Hmisc", "psych", "irr", "nortest", "moments",
+	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
+	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust",
+	"foreign","survival","memisc","foreign","mice","MissMech",
+	"likert",
+	"ggpubr"), 
+library, character.only=T)
+
+######################################################################
+#IMPORTING DATA
+######################################################################
+#LOADING DATA FROM A .CSV FILE
+
+#Read Data
+data_followup=read.csv('/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_400study_data.csv')
+
+data_registry<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_data.csv",sep=",")
+
+data_registry$study_id<-data_registry$part_id
+
+#merge both datasets
+data_aggregated<-merge(x = data_followup, 
+					   y = data_registry, 
+					   by = "study_id", 
+					   all.x = TRUE)
+
+######################################################################
+#DATA MANAGEMENT
+######################################################################
+
+#Setting Labels
+# label(data$toc_id)="ToC study ID"
+# label(data$redcap_event_name)="Event Name"
+# label(data$study_id)="Registry study ID"
+# label(data$initials)="Patient initials"
+# label(data$age)="Patient age"
+# label(data$female)="Patient sex"
+# label(data$enr_dateinjury)="D1. Date of injury"
+# label(data$enr_timeinjury)="D2. Time of injury"
+# label(data$enr_1etoh)="A1. Did you drink alcohol in the 6 hours prior to injury?"
+# label(data$enr_1wine)="A1a. Wine (13.0%) 6 hours prior to injury?"
+# label(data$enr_1wineml)="A1a1. #mL (wine)?"
+# label(data$enr_1winedrinks)="A1a2. # drinks (wine)?"
+# label(data$enr_1lbeer)="A1b. Light beer (2.7%) 6 hours prior to injury?"
+# label(data$enr_1lbeerml)="A1b1. #mL (light beer)?"
+# label(data$enr_1lbeerdrinks)="A1b2. # drinks (light beer)?"
+# label(data$enr_1beer)="A1c. Beer (5%) 6 hours prior to injury?"
+# label(data$enr_1beerml)="A1c1. #mL (beer)?"
+# label(data$enr_1beerdrinks)="A1c2. # drinks (beer)?"
+# label(data$enr_1fwine)="A1d. Fortified wine (20%) 6 hours prior to injury?"
+# label(data$enr_1fwineml)="A1d1. #mL (fortified wine)?"
+# label(data$enr_1fwinedrinks)="A1d2. # drinks (fortified wine)?"
+# label(data$enr_1liquor)="A1e. Liquor/Spirits (40%) 6 hours prior to injury?"
+# label(data$enr_1liquorml)="A1e1. #mL (liquor/spirits)?"
+# label(data$enr_1liquordrinks)="A1e2. # drinks (liquor/spirits)?"
+# label(data$enr_1other)="A1f. Other alcoholic beverage 6 hours prior to injury?"
+# label(data$enr_1othertype)="A1fa. Other alcohol type"
+# label(data$enr_1otherml)="A1f1. #mL (other)?"
+# label(data$enr_1otherdrinks)="A1f2. # drinks (other)?"
+# label(data$enr_2etoh)="A2. Did you drink alcohol after the injury occurred?"
+# label(data$enr_2wine)="A2a. Wine (13.0%) after the injury?"
+# label(data$enr_2wineml)="A2a1. #mL (wine)?"
+# label(data$enr_2winedrinks)="A2a2. # drinks (wine)?"
+# label(data$enr_2lbeer)="A2b. Light beer (2.7%) after the injury?"
+# label(data$enr_2lbeerml)="A2b1. #mL (light beer)?"
+# label(data$enr_2lbeerdrinks)="A2b2. # drinks (light beer)?"
+# label(data$enr_2beer)="A2c. Beer (5%) after the injury?"
+# label(data$enr_2beerml)="A2c1. #mL (beer)?"
+# label(data$enr_2beerdrinks)="A2c2. # drinks (beer)?"
+# label(data$enr_2fwine)="A2d. Fortified wine (20%) after the injury?"
+# label(data$enr_2fwineml)="A2d1. #mL (fortified wine)?"
+# label(data$enr_2fwinedrinks)="A2d2. # drinks (fortified wine)?"
+# label(data$enr_2liquor)="A2e. Liquor/Spirits (40%) after the injury?"
+# label(data$enr_2liquorml)="A2e1. #mL (liquor/spirits)?"
+# label(data$enr_2liquordrinks)="A2e2. # drinks (liquor/spirits)?"
+# label(data$enr_2other)="A2f. Other alcoholic beverage after the injury?"
+# label(data$enr_2othertype)="A2fa. Other alcohol type"
+# label(data$enr_2otherml)="A2f1. #mL (other)?"
+# label(data$enr_2otherdrinks)="A2f2. # drinks (other)?"
+# label(data$enr_breathyesno)="A3. Breathalyzer testing"
+# label(data$enr_breathresult)="A3a. Breathalyzer results"
+# label(data$enr_breathdate)="A4. Date of Breathalyzer: dd/mm/yy"
+# label(data$enr_breathtime)="A5. Time of Breathalyzer: hh:mm:"
+# label(data$enr_priorhiv)="H1. Have you ever been tested for HIV before?"
+# label(data$enr_priorhiv1)="H1a. Date of prior HIV testing?"
+# label(data$enr_priorhiv1y)="H1ay. Year of prior HIV testing"
+# label(data$enr_priorhiv2)="H1b. Place of prior HIV testing?"
+# label(data$enr_priorhiv3)="H1c. Result?"
+# label(data$enr_famhiv)="H2. Do you have family members with HIV?"
+# label(data$enr_famhiv1___0)="H2a. If one or more, which family members? (choice=Spouse)"
+# label(data$enr_famhiv1___1)="H2a. If one or more, which family members? (choice=Mother)"
+# label(data$enr_famhiv1___2)="H2a. If one or more, which family members? (choice=Father)"
+# label(data$enr_famhiv1___3)="H2a. If one or more, which family members? (choice=Blood Sibling)"
+# label(data$enr_famhiv1___4)="H2a. If one or more, which family members? (choice=Aunt/Uncle)"
+# label(data$enr_famhiv1___5)="H2a. If one or more, which family members? (choice=Cousin)"
+# label(data$enr_famhiv1___6)="H2a. If one or more, which family members? (choice=Grandparent)"
+# label(data$enr_famhiv1___7)="H2a. If one or more, which family members? (choice=Child)"
+# label(data$enr_famhiv1___8)="H2a. If one or more, which family members? (choice=Grandchild)"
+# label(data$enr_famhiv1___9)="H2a. If one or more, which family members? (choice=More distant family member)"
+# label(data$enr_famhiv1___10)="H2a. If one or more, which family members? (choice=Close family friend)"
+# label(data$enr_bioline)="H3. Bioline"
+# label(data$enr_bioline1)="H3. Bioline Result"
+# label(data$enr_unigold)="H4. Unigold"
+# label(data$enr_unigold1)="H4. Unigold Result"
+# label(data$enr_elisa)="H5. ELISA"
+# label(data$enr_elisa1)="H5. ELISA Result"
+# label(data$enr_vl)="H6. Viral Load"
+# label(data$enr_vl1)="H6. Viral Load Result"
+# label(data$enr_cd4)="H7. CD4"
+# label(data$enr_cd4_1)="H7. CD4 Result"
+# label(data$enr_where)="Z. Where patient lives:"
+# label(data$enr_whereother)="Other:"
+# label(data$enrollment_questionniare_complete)="Complete?"
+# label(data$wk2location)="Interview location"
+# label(data$wk2_trans1)="T1. Are you able to drive/transport yourself?"
+# label(data$wk2_trans1a___0)="T1a. If yes, with what? (choice=Car)"
+# label(data$wk2_trans1a___1)="T1a. If yes, with what? (choice=Motorcycle)"
+# label(data$wk2_trans1a___2)="T1a. If yes, with what? (choice=Bicycle)"
+# label(data$wk2_trans1a___3)="T1a. If yes, with what? (choice=Bijaji)"
+# label(data$wk2_trans1a___4)="T1a. If yes, with what? (choice=Dala dala)"
+# label(data$wk2_trans1a___5)="T1a. If yes, with what? (choice=Large bus)"
+# label(data$wk2_hosptrans2)="T2. How did you travel here for this appointment?"
+# label(data$wk2_hosptrans3___0)="T3. Who helped with your travel for this appointment or others? (choice=No one)"
+# label(data$wk2_hosptrans3___1)="T3. Who helped with your travel for this appointment or others? (choice=Mother)"
+# label(data$wk2_hosptrans3___2)="T3. Who helped with your travel for this appointment or others? (choice=Father)"
+# label(data$wk2_hosptrans3___3)="T3. Who helped with your travel for this appointment or others? (choice=Sister)"
+# label(data$wk2_hosptrans3___4)="T3. Who helped with your travel for this appointment or others? (choice=Brother)"
+# label(data$wk2_hosptrans3___5)="T3. Who helped with your travel for this appointment or others? (choice=Son)"
+# label(data$wk2_hosptrans3___6)="T3. Who helped with your travel for this appointment or others? (choice=Daughter)"
+# label(data$wk2_hosptrans3___7)="T3. Who helped with your travel for this appointment or others? (choice=Other family)"
+# label(data$wk2_hosptrans3___8)="T3. Who helped with your travel for this appointment or others? (choice=Friend)"
+# label(data$wk2_hosptrans3___9)="T3. Who helped with your travel for this appointment or others? (choice=Neighbor)"
+# label(data$wk2_hosptrans3___89)="T3. Who helped with your travel for this appointment or others? (choice=Other)"
+# label(data$wk2_hosptrans3_o)="T3a. Other"
+# label(data$wk2_hosptrans4)="T4. Was it difficult coming to this or other appointments?"
+# label(data$wk2_hosptrans4a___0)="T4a. If yes, why? (choice=Too much walking)"
+# label(data$wk2_hosptrans4a___1)="T4a. If yes, why? (choice=Finding transportation)"
+# label(data$wk2_hosptrans4a___2)="T4a. If yes, why? (choice=Find someone to take you)"
+# label(data$wk2_hosptrans4a___3)="T4a. If yes, why? (choice=Plan time of the day)"
+# label(data$wk2_hosptrans4a___4)="T4a. If yes, why? (choice=Find the money to get gas, transport or help)"
+# label(data$wk2_hosptrans4a___89)="T4a. If yes, why? (choice=Other)"
+# label(data$wk2_hosptrans4a_o)="T4b. Other"
+# label(data$wk2_hosptrans5)="T5. Is travel more difficult since your injury?"
+# label(data$wk2_hosptrans5a___0)="T5a. If yes, is it more challenging because of: (choice=Financial challenges)"
+# label(data$wk2_hosptrans5a___1)="T5a. If yes, is it more challenging because of: (choice=Logistical Challenges)"
+# label(data$wk2_hosptrans5a___89)="T5a. If yes, is it more challenging because of: (choice=Other)"
+# label(data$wk2_hosptrans5b)="T5b. Other"
+# label(data$wk2_hosptrans5c)="T5c. If yes, what do you do different for transport now than before your injury?"
+# label(data$wk2_hometrans2___0)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Too much walking)"
+# label(data$wk2_hometrans2___1)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Finding transportation)"
+# label(data$wk2_hometrans2___2)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Find someone to take you)"
+# label(data$wk2_hometrans2___3)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Plan time of the day)"
+# label(data$wk2_hometrans2___4)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Find the money to get gas, transport or help)"
+# label(data$wk2_hometrans2___89)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Other)"
+# label(data$wk2_hometrans2a)="Tn2a. Other"
+# label(data$wk2_hometrans3)="Tn3. Is travel by transport more difficult since your injury?"
+# label(data$wk2_hometrans3a___0)="Tn3a. If yes, is it more challenging because of: (choice=Financial challenges)"
+# label(data$wk2_hometrans3a___1)="Tn3a. If yes, is it more challenging because of: (choice=Logistical Challenges)"
+# label(data$wk2_hometrans3a___89)="Tn3a. If yes, is it more challenging because of: (choice=Other)"
+# label(data$wk2_hometrans3ab)="Tn3b. Other"
+# label(data$wk2_hometrans3c)="Tn3c. If yes, what do you do differently for transport now than before your injury?"
+# label(data$wk2_ss1)="SS1. To help you if you were unable to move as easily as before the injury"
+# label(data$wk2_ss2)="SS2. To take you to the doctor when you need it"
+# label(data$wk2_ss3)="SS3. To prepare your meals if you were unable to do it yourself"
+# label(data$wk2_ss4)="SS4. To help you with daily chores and things in the house if you coudnt do it for yourself"
+# label(data$wk2_ss5)="SS5. To have a good time with or do something you enjoy"
+# label(data$wk2_ss6)="SS6. To go to for suggestions on how to deal with a problem"
+# label(data$wk2_ss7)="SS7. Who understands your problems"
+# label(data$wk2_ss8)="SS8. To love you and make you feel wanted"
+# label(data$wk2_ss9)="SS9. Do you or your family feel like they need information or training that would help you live at home and do what you need to do?"
+# label(data$wk2_ss9a)="SS9a. If yes, what kind of training or information would you need?"
+# label(data$wk2_temp)="V1. 2 Wk Follow up Temperature"
+# label(data$wk2_rr)="V2 2 Wk Follow up RR"
+# label(data$wk2_hr)="V3. 2 Wk Follow up HR"
+# label(data$wk2_sbp)="V4. 2 Wk Follow up Systolic BP"
+# label(data$wk2_dbp)="V5. 2 Wk Follow up Diastolic BP"
+# label(data$wk2_pox)="V6. 2 Wk Follow up Pulse Ox"
+# label(data$wk2_pain)="V7. 2 Wk Follow up Pain"
+# label(data$wk2_wt)="V8. 2 Wk Follow up Weight"
+# label(data$wk2_sf0)="SF0. From 0 to 100, how would you rate your state of health since discharge from the hospital?"
+# label(data$wk2_sf1)="SF1. Overall, how would you rate your health since discharge from the hospital?"
+# label(data$wk2_sf2)="SF2. Since discharge from the hospital, how much did physical health problems limit your usual physical activities (such as walking to the market)?"
+# label(data$wk2_sf3)="SF3. Since discharge from the hospital, how much difficulty did you have doing your daily work, both home and away from home, because of your physical health?"
+# label(data$wk2_sf4)="SF4 How much bodily pain have you had since discharge from the hospital?"
+# label(data$wk2_sf5)="SF5. Since discharge from the hospital, how much energy did you have?"
+# label(data$wk2_sf6)="SF6. Since discharge from the hospital, how much did your physical health or emotional problems limit your usual social activities with family or friends?"
+# label(data$wk2_sf7)="SF7. Since discharge from the hospital, how much have you been bothered by emotional problems (such as feeling anxious, depressed or irritable)?"
+# label(data$wk2_sf8)="SF8. Since discharge from the hospital, how much did personal or emotional problems keep you from doing your usual work, school or other daily activities?"
+# label(data$wk2_phq1)="PHQ1. Since discharge from the hospital, how often have you been bothered by little interest or pleasure in doing things:"
+# label(data$wk2_phq2)="PHQ2. Since discharge from the hospital how often have you been bothered by feeling down, depressed, or hopeless:"
+# label(data$wk2_phq3)="PHQ3. Since discharge, how often have you been bothered by trouble falling or staying asleep, or sleeping too much:"
+# label(data$wk2_phq4)="PHQ4. Since discharge, how often have you been bothered by feeling tired or having little energy:"
+# label(data$wk2_phq5)="PHQ5. Since discharge, how often have you been bothered by poor appetite or overeating:"
+# label(data$wk2_phq6)="PHQ6. Since discharge, how often have you been bothered by feeling bad about yourself, or that you are a failure, or that you have let yourself or your family down:"
+# label(data$wk2_phq7)="PHQ7. Since discharge, how often have you been bothered by trouble concentrating on things, such as what you are doing:"
+# label(data$wk2_phq8)="PHQ8. Since discharge, how often have you been bothered by moving or speaking so slowly that other people could have noticed. Or the opposite, being so fidgety or restless that you have been moving around a lot more than usual:"
+# label(data$wk2_phq9)="PHQ9. Since discharge, how often have you been bothered by thoughts that you would be better off dead or hurting yourself in some way:"
+# label(data$wk2_audit1)="A1. Since discharge, how often do you have a drink containing alcohol?"
+# label(data$wk2_audit2)="A2. Since discharge, how many drinks containing alcohol do you have on a typical day when you are drinking?"
+# label(data$wk2_audit3)="A3. Since discharge, how often do you have six or more drinks on one occasion?"
+# label(data$wk2_fimcare)="G1. Self Care"
+# label(data$wk2_fimtoilet)="G6. Toileting"
+# label(data$wk2_fimtx)="G10. Transfers: bed/chair/wheelchair"
+# label(data$wk2_fimmotion)="G14. Locomotion: walking/wheelchair"
+# label(data$wk2_fimstairs)="G15. Locomotion: stairs"
+# label(data$wk2_fimexpr)="G17. Expression"
+# label(data$wk2_fimcompr)="G18. Comprehension"
+# label(data$wk2_fimsocial)="G22. Social Interaction"
+# label(data$wk2_fimprob)="G26. Problem Solving"
+# label(data$wk2_fimmemory)="G27. Memory"
+# label(data$wk2_structure1)="D1. Are there structural things in your home which toileting, bathing or self-care difficult?"
+# label(data$wk2_structure1a)="D1a. If yes, please explain"
+# label(data$wk2_confined)="D2. Does anything stop you from leaving your home?"
+# label(data$wk2_aide1)="D3. Do you use something (Assistive/Aide) to help you when you move around?"
+# label(data$wk2_aide2___0)="D3a. If yes, which? Check all that apply (choice=Motorized Wheelchair)"
+# label(data$wk2_aide2___1)="D3a. If yes, which? Check all that apply (choice=Non-motorized wheelchair)"
+# label(data$wk2_aide2___2)="D3a. If yes, which? Check all that apply (choice=Walker)"
+# label(data$wk2_aide2___3)="D3a. If yes, which? Check all that apply (choice=Crutches)"
+# label(data$wk2_aide2___4)="D3a. If yes, which? Check all that apply (choice=Cane(s))"
+# label(data$wk2_aide2___5)="D3a. If yes, which? Check all that apply (choice=Prosthesis)"
+# label(data$wk2_aide2___89)="D3a. If yes, which? Check all that apply (choice=Other)"
+# label(data$wk2_aide3)="D3b. Other"
+# label(data$wk2_dx)="D4. Do you have any medical problems?"
+# label(data$wk2_dm)="D4a. Diabetes Mellitus"
+# label(data$wk2_dmoldnew)="If Diabetes"
+# label(data$wk2_htn)="D4b. Hypertension"
+# label(data$wk2_htnoldnew)="If Hypertension"
+# label(data$wk2_kid)="D4c. Acute Kidney Injury"
+# label(data$wk2_kidoldnew)="If Kidney Injury"
+# label(data$wk2_hiv)="D4d. HIV"
+# label(data$wk2_hivoldnew)="If HIV"
+# label(data$wk2_other1)="D4e. Other 1 medical history"
+# label(data$wk2_other1type)="D4e0. Type of other medical history"
+# label(data$wk2_other1oldnew)="D4e1. Is Other1 old or new?"
+# label(data$wk2_other2)="D4f. Other 2 medical history"
+# label(data$wk2_other2type)="D4f0. Type of other medical history"
+# label(data$wk2_other2oldnew)="D4f1. Is Other2 old or new?"
+# label(data$wk2_fusurg)="F1. Will you follow up with Surgery"
+# label(data$wk2_fusurgdx)="F1a. For what diagnosis will you follow up with Surgery?"
+# label(data$wk2_fusurgdate)="F1b. When will you follow up with Surgery?"
+# label(data$wk2_fusurgatt)="F1c. Attended?"
+# label(data$wk2_fusurgattwhy)="F1d. If not attended, why not?"
+# label(data$wk2_fuortho)="F2. Will you follow up with Orthopedics?"
+# label(data$wk2_fuorthodx)="F2a. For what diagnosis will you follow up with Orthopedics?"
+# label(data$wk2_fuorthodate)="F2b. When will you follow up with Orthopedics?"
+# label(data$wk2_fuorthoatt)="F2c. Attended?"
+# label(data$wk2_fuorthoattwhy)="F2d. If not attended, why not?"
+# label(data$wk2_fumed1)="F3. Will you follow up with Medicine?"
+# label(data$wk2_fumed1dx)="F3a. For what diagnosis will you follow up with Medicine?"
+# label(data$wk2_fumed1date)="F3b. When will you follow up with Medicine?"
+# label(data$wk2_fumed1att)="F3c. Attended?"
+# label(data$wk2_fumed1attwhy)="F3d. If not attended, why not?"
+# label(data$wk2_fumed2)="F4. Will you follow up with Medicine #2?"
+# label(data$wk2_fumed2dx)="F4a. For what diagnosis will you follow up with Medicine?"
+# label(data$wk2_fumed2date)="F4b. When will you follow up with Medicine?"
+# label(data$wk2_fumed2att)="F4c. Attended?"
+# label(data$wk2_fumed2attwhy)="F4d. If not attended, why not?"
+# label(data$wk2_fumed3)="F5. Will you follow up with Medicine #3?"
+# label(data$wk2_fumed3dx)="F5a. For what diagnosis will you follow up with Medicine?"
+# label(data$wk2_fumed3date)="F5b. When will you follow up with Medicine?"
+# label(data$wk2_fumed3att)="F5c. Attended?"
+# label(data$wk2_fumed3attwhy)="F5d. If not attended, why not?"
+# label(data$wk2_fumed4)="F6. Will you follow up with Medicine #4?"
+# label(data$wk2_fumed4dx)="F6a. For what diagnosis will you follow up with Medicine?"
+# label(data$wk2_fumed4date)="F6b. When will you follow up with Medicine?"
+# label(data$wk2_fumed4att)="F6c. Attended?"
+# label(data$wk2_fumed4attwhy)="F6d. If not attended, why not?"
+# label(data$wk2_fusubst)="F7.Will you follow up with a substance use specialist?"
+# label(data$wk2_fusubstname)="F7a. Who is the substance use specialist you will follow up with? (specialty, type of practitioner etc)"
+# label(data$wk2_fusubstdx)="F7b. For what diagnosis will you follow up with a substance use specialist?"
+# label(data$wk2_fusubstdate)="F7c. When will you follow up with this substance use specialist?"
+# label(data$wk2_fusubstatt)="F7d. Attended?"
+# label(data$wk2_fusubstattwhy)="F7e. If not attended, why not?"
+# label(data$wk2_fumh)="F8. Will you follow up with a mental health practitioner?"
+# label(data$wk2_fumhname)="F8a. Who is the mental health practitioner you will follow up with? (specialty, type of practitioner etc)"
+# label(data$wk2_fumhdx)="F8b. For what diagnosis will you follow up with a mental health specialist?"
+# label(data$wk2_fumhdate)="F8c. When will you follow up with this mental health specialist?"
+# label(data$wk2_fumhatt)="F8d. Attended?"
+# label(data$wk2_fumhattwhy)="F8e. If not attended, why not?"
+# label(data$wk2_furehab)="F9. Will you follow up with Rehabilitation?"
+# label(data$wk2_furehabdx)="F9a. For what diagnosis will you follow up with Rehab?"
+# label(data$wk2_furehabdate)="F9b. When will you follow up with Rehab?"
+# label(data$wk2_furehabatt)="F9c. Attended?"
+# label(data$wk2_furehabattwhy)="F9d. If not attended, why not?"
+# label(data$wk2_fuot)="F10. Will you follow up with Occupational Therapy?"
+# label(data$wk2_fuotdx)="F10a. For what diagnosis will you follow up with Occupational Therapy?"
+# label(data$wk2_fuotdate)="F10b. When will you follow up with Occupational Therapy?"
+# label(data$wk2_fuotatt)="F10c. Attended?"
+# label(data$wk2_fuotattwhy)="F10d. If not attended, why not?"
+# label(data$wk2_fuother)="F11. Will you follow up with any Other specialist?"
+# label(data$wk2_fuothername)="F11a. Who is the other specialist you will follow up with? (specialty, type of practitioner etc)"
+# label(data$wk2_fuotherdx)="F11b. For what diagnosis will you follow up with any other specialist?"
+# label(data$wk2_fuotherdate)="F11c. When will you follow up with this other specialist?"
+# label(data$wk2_fuotheratt)="F11d. Attended?"
+# label(data$wk2_fuotherattwhy)="F11e. If not attended, why not?"
+# label(data$wk2_med1)="M1. Prescribed Medication Name"
+# label(data$wk2_med1dose)="M1a. Prescribed Medication Dose"
+# label(data$wk2_med1freq)="M1b. Prescribed Medication Frequency"
+# label(data$wk2_med1new)="M1c. Prescribed Medication is new?"
+# label(data$wk2_med1take)="M1d. Take as told or Miss occasionally"
+# label(data$wk2_med2)="M2. Prescribed Medication Name"
+# label(data$wk2_med2dose)="M2a. Prescribed Medication Dose"
+# label(data$wk2_med2freq)="M2b. Prescribed Medication Frequency"
+# label(data$wk2_med2new)="M2c. Prescribed Medication is new?"
+# label(data$wk2_med2take)="M2d. Take as told or Miss occasionally"
+# label(data$wk2_med3)="M3. Prescribed Medication Name"
+# label(data$wk2_med3dose)="M3a. Prescribed Medication Dose"
+# label(data$wk2_med3freq)="M3b. Prescribed Medication Frequency"
+# label(data$wk2_med3new)="M3c. Prescribed Medication is new?"
+# label(data$wk2_med3take)="M3d. Take as told or Miss occasionally"
+# label(data$wk2_med4)="M4. Prescribed Medication Name"
+# label(data$wk2_med4dose)="M4a. Prescribed Medication Dose"
+# label(data$wk2_med4freq)="M4b. Prescribed Medication Frequency"
+# label(data$wk2_med4new)="M4c. Prescribed Medication is new?"
+# label(data$wk2_med4take)="M4d. Take as told or Miss occasionally"
+# label(data$wk2_med5)="M5. Prescribed Medication Name"
+# label(data$wk2_med5dose)="M5a. Prescribed Medication Dose"
+# label(data$wk2_med5freq)="M5b. Prescribed Medication Frequency"
+# label(data$wk2_med5new)="M5c. Prescribed Medication is new?"
+# label(data$wk2_med5take)="M5d. Take as told or Miss occasionally"
+# label(data$wk2_med6)="M6. Prescribed Medication Name"
+# label(data$wk2_med6dose)="M6a. Prescribed Medication Dose"
+# label(data$wk2_med6freq)="M6b. Prescribed Medication Frequency"
+# label(data$wk2_med6new)="M6c. Prescribed Medication is new?"
+# label(data$wk2_med6take)="M6d. Take as told or Miss occasionally"
+# label(data$wk2_medchal___0)="M7. Have you had challenges obtaining or taking these medicines? (choice=Medicines not available)"
+# label(data$wk2_medchal___1)="M7. Have you had challenges obtaining or taking these medicines? (choice=Medications expensive/unaffordable)"
+# label(data$wk2_medchal___2)="M7. Have you had challenges obtaining or taking these medicines? (choice=they are far away)"
+# label(data$wk2_medchal___3)="M7. Have you had challenges obtaining or taking these medicines? (choice=Difficult to follow instructions)"
+# label(data$wk2_medchal___4)="M7. Have you had challenges obtaining or taking these medicines? (choice=Difficultly measuring dosage)"
+# label(data$wk2_medchal___5)="M7. Have you had challenges obtaining or taking these medicines? (choice=Side effects (ie nausea, headache))"
+# label(data$wk2_medchal___6)="M7. Have you had challenges obtaining or taking these medicines? (choice=Missing needed equipment to take medicines)"
+# label(data$wk2_medchal___7)="M7. Have you had challenges obtaining or taking these medicines? (choice=Tired of taking medicines (ie. chronic diseases))"
+# label(data$wk2_medchal___8)="M7. Have you had challenges obtaining or taking these medicines? (choice=Religious leaders/ local healers discourage medicines)"
+# label(data$wk2_medchal___9)="M7. Have you had challenges obtaining or taking these medicines? (choice=None)"
+# label(data$wk2_psfs0)="PS0. Are there any important activities that you would like to be able to do again that you are unable to do or are having difficulty with as a result of your injury?"
+# label(data$wk2_psfs1)="PS1. #1 important activity"
+# label(data$wk2_psfs1a)="PS1a. Scoring 0-10"
+# label(data$wk2_psfs2)="PS2. #2 important activity"
+# label(data$wk2_psfs2a)="PS2a. Scoring 0-10"
+# label(data$wk2_psfs3)="PS3. #3 important activity"
+# label(data$wk2_psfs3a)="PS3a. Scoring 0-10"
+# label(data$wk2_comment)="Z1. Do you have any further questions or comments for us?"
+# label(data$wk2note)="Z2. Notes"
+# label(data$week2_follow_up_complete)="Complete?"
+# label(data$m3location)="Interview location"
+# label(data$m3_trans1)="T1. Are you able to drive/transport yourself?"
+# label(data$m3_trans1a___0)="T1a. If yes, with what? (choice=Car)"
+# label(data$m3_trans1a___1)="T1a. If yes, with what? (choice=Motorcycle)"
+# label(data$m3_trans1a___2)="T1a. If yes, with what? (choice=Bicycle)"
+# label(data$m3_trans1a___3)="T1a. If yes, with what? (choice=Bijaji)"
+# label(data$m3_trans1a___4)="T1a. If yes, with what? (choice=Dala dala)"
+# label(data$m3_trans1a___5)="T1a. If yes, with what? (choice=Large bus)"
+# label(data$m3_hosptrans2)="T2. How did you travel here for this appointment?"
+# label(data$m3_hosptrans3___0)="T3. Who helped with your travel for this appointment or others? (choice=No one)"
+# label(data$m3_hosptrans3___1)="T3. Who helped with your travel for this appointment or others? (choice=Mother)"
+# label(data$m3_hosptrans3___2)="T3. Who helped with your travel for this appointment or others? (choice=Father)"
+# label(data$m3_hosptrans3___3)="T3. Who helped with your travel for this appointment or others? (choice=Sister)"
+# label(data$m3_hosptrans3___4)="T3. Who helped with your travel for this appointment or others? (choice=Brother)"
+# label(data$m3_hosptrans3___5)="T3. Who helped with your travel for this appointment or others? (choice=Son)"
+# label(data$m3_hosptrans3___6)="T3. Who helped with your travel for this appointment or others? (choice=Daughter)"
+# label(data$m3_hosptrans3___7)="T3. Who helped with your travel for this appointment or others? (choice=Other family)"
+# label(data$m3_hosptrans3___8)="T3. Who helped with your travel for this appointment or others? (choice=Friend)"
+# label(data$m3_hosptrans3___9)="T3. Who helped with your travel for this appointment or others? (choice=Neighbor)"
+# label(data$m3_hosptrans3___89)="T3. Who helped with your travel for this appointment or others? (choice=Other)"
+# label(data$m3_hosptrans3_o)="T3a. Other"
+# label(data$m3_hosptrans4)="T4. Was it difficult coming to this or other appointments?"
+# label(data$m3_hosptrans4a___0)="T4a. If yes, why? (choice=Too much walking)"
+# label(data$m3_hosptrans4a___1)="T4a. If yes, why? (choice=Finding transportation)"
+# label(data$m3_hosptrans4a___2)="T4a. If yes, why? (choice=Find someone to take you)"
+# label(data$m3_hosptrans4a___3)="T4a. If yes, why? (choice=Plan time of the day)"
+# label(data$m3_hosptrans4a___4)="T4a. If yes, why? (choice=Find the money to get gas, transport or help)"
+# label(data$m3_hosptrans4a___89)="T4a. If yes, why? (choice=Other)"
+# label(data$m3_hosptrans4a_o)="T4b. Other"
+# label(data$m3_hosptrans5)="T5. Is travel more difficult since your injury?"
+# label(data$m3_hosptrans5a___0)="T5a. If yes, is it more challenging because of: (choice=Financial challenges)"
+# label(data$m3_hosptrans5a___1)="T5a. If yes, is it more challenging because of: (choice=Logistical Challenges)"
+# label(data$m3_hosptrans5a___89)="T5a. If yes, is it more challenging because of: (choice=Other)"
+# label(data$m3_hosptrans5b)="T5b. Other"
+# label(data$m3_hosptrans5c)="T5c. If yes, what do you do different for transport now than before your injury?"
+# label(data$m3_hometrans2___0)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Too much walking)"
+# label(data$m3_hometrans2___1)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Finding transportation)"
+# label(data$m3_hometrans2___2)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Find someone to take you)"
+# label(data$m3_hometrans2___3)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Plan time of the day)"
+# label(data$m3_hometrans2___4)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Find the money to get gas, transport or help)"
+# label(data$m3_hometrans2___89)="Tn2. You were not able to travel to the hospital for this appointment. What made it hard? (choice=Other)"
+# label(data$m3_hometrans2a)="Tn2a. Other"
+# label(data$m3_hometrans3)="Tn3. Is travel by transport more difficult since your injury?"
+# label(data$m3_hometrans3a___0)="Tn3a. If yes, is it more challenging because of: (choice=Financial challenges)"
+# label(data$m3_hometrans3a___1)="Tn3a. If yes, is it more challenging because of: (choice=Logistical Challenges)"
+# label(data$m3_hometrans3a___89)="Tn3a. If yes, is it more challenging because of: (choice=Other)"
+# label(data$m3_hometrans3ab)="Tn3b. Other"
+# label(data$m3_hometrans3c)="Tn3c. If yes, what do you do differently for transport now than before your injury?"
+# label(data$m3_ss1)="SS1. To help you if you were unable to move as easily as before the injury"
+# label(data$m3_ss2)="SS2. To take you to the doctor when you need it"
+# label(data$m3_ss3)="SS3. To prepare your meals if you were unable to do it yourself"
+# label(data$m3_ss4)="SS4. To help you with daily chores and things in the house if you coudnt do it for yourself"
+# label(data$m3_ss5)="SS5. To have a good time with or do something you enjoy"
+# label(data$m3_ss6)="SS6. To go to for suggestions on how to deal with a problem"
+# label(data$m3_ss7)="SS7. Who understands your problems"
+# label(data$m3_ss8)="SS8. To love you and make you feel wanted"
+# label(data$m3_temp)="V1.Temperature"
+# label(data$m3_rr)="V2. RR"
+# label(data$m3_hr)="V3. HR"
+# label(data$m3_sbp)="V4. Systolic BP"
+# label(data$m3_dbp)="V5. Diastolic BP"
+# label(data$m3_pox)="V6. Pulse Ox"
+# label(data$m3_pain)="V7. Pain"
+# label(data$m3_wt)="V8. Weight"
+# label(data$m3_painmap)="Where is your pain?"
+# label(data$m3_peg1)="What number best describes your pain on average in the past week?"
+# label(data$m3_peg2)="What number best describes how, during the past week, pain has interfered with your enjoyment of life?"
+# label(data$m3_peg3)="What number best describes how, during the past week, pain has interfered with your general activity?"
+# label(data$m3_sf0)="SF0. From 0 to 100, how would you rate your state of health since discharge from the hospital?"
+# label(data$m3_sf1)="SF1. Overall, how would you rate your health since discharge from the hospital?"
+# label(data$m3_sf2)="SF2. Since discharge from the hospital, how much did physical health problems limit your usual physical activities (such as walking to the market)?"
+# label(data$m3_sf3)="SF3. Since discharge from the hospital, how much difficulty did you have doing your daily work, both home and away from home, because of your physical health?"
+# label(data$m3_sf4)="SF4 How much bodily pain have you had since discharge from the hospital?"
+# label(data$m3_sf5)="SF5. Since discharge from the hospital, how much energy did you have?"
+# label(data$m3_sf6)="SF6. Since discharge from the hospital, how much did your physical health or emotional problems limit your usual social activities with family or friends?"
+# label(data$m3_sf7)="SF7. Since discharge from the hospital, how much have you been bothered by emotional problems (such as feeling anxious, depressed or irritable)?"
+# label(data$m3_sf8)="SF8. Since discharge from the hospital, how much did personal or emotional problems keep you from doing your usual work, school or other daily activities?"
+# label(data$m3_phq1)="PHQ1. Since discharge from the hospital, how often have you been bothered by little interest or pleasure in doing things:"
+# label(data$m3_phq2)="PHQ2. Since discharge from the hospital how often have you been bothered by feeling down, depressed, or hopeless:"
+# label(data$m3_phq3)="PHQ3. Since discharge, how often have you been bothered by trouble falling or staying asleep, or sleeping too much:"
+# label(data$m3_phq4)="PHQ4. Since discharge, how often have you been bothered by feeling tired or having little energy:"
+# label(data$m3_phq5)="PHQ5. Since discharge, how often have you been bothered by poor appetite or overeating:"
+# label(data$m3_phq6)="PHQ6. Since discharge, how often have you been bothered by feeling bad about yourself, or that you are a failure, or that you have let yourself or your family down:"
+# label(data$m3_phq7)="PHQ7. Since discharge, how often have you been bothered by trouble concentrating on things, such as what you are doing:"
+# label(data$m3_phq8)="PHQ8. Since discharge, how often have you been bothered by moving or speaking so slowly that other people could have noticed. Or the opposite, being so fidgety or restless that you have been moving around a lot more than usual:"
+# label(data$m3_phq9)="PHQ9. Since discharge, how often have you been bothered by thoughts that you would be better off dead or hurting yourself in some way:"
+# label(data$m3_audit1)="1. Since discharge, how often do you have a drink containing alcohol?"
+# label(data$m3_audit2)="2. Since discharge, how many drinks containing alcohol do you have on a typical day when you are drinking?"
+# label(data$m3_audit3)="3. Since discharge, how often do you have six or more drinks on one occasion?"
+# label(data$m3_fimcare)="G1. Self care"
+# label(data$m3_fimtoilet)="G6. Toileting"
+# label(data$m3_fimtx)="G10. Transfers: bed/chair/wheelchair"
+# label(data$m3_fimmotion)="G14. Locomotion: walking/wheelchair"
+# label(data$m3_fimstairs)="G15. Locomotion: stairs"
+# label(data$m3_fimexpr)="G17. Expression"
+# label(data$m3_fimcompr)="G18. Comprehension"
+# label(data$m3_fimsocial)="G22. Social Interaction"
+# label(data$m3_fimprob)="G26. Problem Solving"
+# label(data$m3_fimmemory)="G27. Memory"
+# label(data$m3_conditions)="D4. Do you have any medical problems?"
+# label(data$m3_dm)="D4a. Diabetes Mellitus"
+# label(data$m3_dmoldnew)="If Diabetes"
+# label(data$m3_htn)="D4b. Hypertension"
+# label(data$m3_htnoldnew)="If Hypertension"
+# label(data$m3_kid)="D4c. Acute Kidney Injury"
+# label(data$m3_kidoldnew)="If Kidney Injury"
+# label(data$m3_hiv)="D4d. HIV"
+# label(data$m3_hivoldnew)="If HIV"
+# label(data$m3_other1)="D4e. Other 1 medical history"
+# label(data$m3_other1type)="D4e0. Type of other medical history"
+# label(data$m3_other1new)="D4e1. Is Other1 old or new?"
+# label(data$m3_other2)="D4f. Other 2 medical history"
+# label(data$m3_other2type)="D4f0. Type of other medical history"
+# label(data$m3_other2new)="D4f1. Is Other2 old or new?"
+# label(data$m3_fusurg)="F1. Will you follow up with Surgery"
+# label(data$m3_fusurgdx)="F1a. For what diagnosis will you follow up with Surgery?"
+# label(data$m3_fusurgdate)="F1b. When will you follow up with Surgery?"
+# label(data$m3_fusurgatt)="F1c. Attended?"
+# label(data$m3_fusurgattwhy)="F1d. If not attended, why not?"
+# label(data$m3_fuortho)="F2. Will you follow up with Orthopedics?"
+# label(data$m3_fuorthodx)="F2a. For what diagnosis will you follow up with Orthopedics?"
+# label(data$m3_fuorthodate)="F2b. When will you follow up with Orthopedics?"
+# label(data$m3_fuorthoatt)="F2c. Attended?"
+# label(data$m3_fuorthoattwhy)="F2d. If not attended, why not?"
+# label(data$m3_fumed1)="F3. Will you follow up with Medicine?"
+# label(data$m3_fumed1dx)="F3a. For what diagnosis will you follow up with Medicine?"
+# label(data$m3_fumed1date)="F3b. When will you follow up with Medicine?"
+# label(data$m3_fumed1att)="F3c. Attended?"
+# label(data$m3_fumed1attwhy)="F3d. If not attended, why not?"
+# label(data$m3_fumed2)="F4. Will you follow up with Medicine #2?"
+# label(data$m3_fumed2dx)="F4a. For what diagnosis will you follow up with Medicine?"
+# label(data$m3_fumed2date)="F4b. When will you follow up with Medicine?"
+# label(data$m3_fumed2att)="F4c. Attended?"
+# label(data$m3_fumed2attwhy)="F4d. If not attended, why not?"
+# label(data$m3_fumed3)="F5. Will you follow up with Medicine #3?"
+# label(data$m3_fumed3dx)="F5a. For what diagnosis will you follow up with Medicine?"
+# label(data$m3_fumed3date)="F5b. When will you follow up with Medicine?"
+# label(data$m3_fumed3att)="F5c. Attended?"
+# label(data$m3_fumed3attwhy)="F5d. If not attended, why not?"
+# label(data$m3_fumed4)="F6. Will you follow up with Medicine #4?"
+# label(data$m3_fumed4dx)="F6a. For what diagnosis will you follow up with Medicine?"
+# label(data$m3_fumed4date)="F6b. When will you follow up with Medicine?"
+# label(data$m3_fumed4att)="F6c. Attended?"
+# label(data$m3_fumed4attwhy)="F6d. If not attended, why not?"
+# label(data$m3_fusubst)="F7.Will you follow up with a substance use specialist?"
+# label(data$m3_fusubstname)="F7a. Who is the substance use specialist you will follow up with? (specialty, type of practitioner etc)"
+# label(data$m3_fusubstdx)="F7b. For what diagnosis will you follow up with a substance use specialist?"
+# label(data$m3_fusubstdate)="F7c. When will you follow up with this substance use specialist?"
+# label(data$m3_fusubstatt)="F7d. Attended?"
+# label(data$m3_fusubstattwhy)="F7e. If not attended, why not?"
+# label(data$m3_fumh)="F8. Will you follow up with a mental health practitioner?"
+# label(data$m3_fumhname)="F8a. Who is the mental health practitioner you will follow up with? (specialty, type of practitioner etc)"
+# label(data$m3_fumhdx)="F8b. For what diagnosis will you follow up with a mental health specialist?"
+# label(data$m3_fumhdate)="F8c. When will you follow up with this mental health specialist?"
+# label(data$m3_fumhatt)="F8d. Attended?"
+# label(data$m3_fumhattwhy)="F8e. If not attended, why not?"
+# label(data$m3_furehab)="F9. Will you follow up with Rehabilitation?"
+# label(data$m3_furehabdx)="F9a. For what diagnosis will you follow up with Rehab?"
+# label(data$m3_furehabdate)="F9b. When will you follow up with Rehab?"
+# label(data$m3_furehabatt)="F9c. Attended?"
+# label(data$m3_furehabattwhy)="F9d. If not attended, why not?"
+# label(data$m3_fuot)="F10. Will you follow up with Occupational Therapy?"
+# label(data$m3_fuotdx)="F10a. For what diagnosis will you follow up with Occupational Therapy?"
+# label(data$m3_fuotdate)="F10b. When will you follow up with Occupational Therapy?"
+# label(data$m3_fuotatt)="F10c. Attended?"
+# label(data$m3_fuotattwhy)="F10d. If not attended, why not?"
+# label(data$m3_fuother)="F11. Will you follow up with any Other specialist?"
+# label(data$m3_fuothername)="F11a. Who is the other specialist you will follow up with? (specialty, type of practitioner etc)"
+# label(data$m3_fuotherdx)="F11b. For what diagnosis will you follow up with any other specialist?"
+# label(data$m3_fuotherdate)="F11c. When will you follow up with this other specialist?"
+# label(data$m3_fuotheratt)="F11d. Attended?"
+# label(data$m3_fuotherattwhy)="F11e. If not attended, why not?"
+# label(data$m3_med1)="M1. Prescribed Medication Name"
+# label(data$m3_med1dose)="M1a. Prescribed Medication Dose"
+# label(data$m3_med1freq)="M1b. Prescribed Medication Frequency"
+# label(data$m3_med1new)="M1c. Prescribed Medication is new?"
+# label(data$m3_med1take)="M1d. Take as told or Miss occasionally"
+# label(data$m3_med2)="M2. Prescribed Medication Name"
+# label(data$m3_med2dose)="M2a. Prescribed Medication Dose"
+# label(data$m3_med2freq)="M2b. Prescribed Medication Frequency"
+# label(data$m3_med2new)="M2c. Prescribed Medication is new?"
+# label(data$m3_med2take)="M2d. Take as told or Miss occasionally"
+# label(data$m3_med3)="M3. Prescribed Medication Name"
+# label(data$m3_med3dose)="M3a. Prescribed Medication Dose"
+# label(data$m3_med3freq)="M3b. Prescribed Medication Frequency"
+# label(data$m3_med3new)="M3c. Prescribed Medication is new?"
+# label(data$m3_med3take)="M3d. Take as told or Miss occasionally"
+# label(data$m3_med4)="M4. Prescribed Medication Name"
+# label(data$m3_med4dose)="M4a. Prescribed Medication Dose"
+# label(data$m3_med4freq)="M4b. Prescribed Medication Frequency"
+# label(data$m3_med4new)="M4c. Prescribed Medication is new?"
+# label(data$m3_med4take)="M4d. Take as told or Miss occasionally"
+# label(data$m3_med5)="M5. Prescribed Medication Name"
+# label(data$m3_med5dose)="M5a. Prescribed Medication Dose"
+# label(data$m3_med5freq)="M5b. Prescribed Medication Frequency"
+# label(data$m3_med5new)="M5c. Prescribed Medication is new?"
+# label(data$m3_med5take)="M5d. Take as told or Miss occasionally"
+# label(data$m3_med6)="M6. Prescribed Medication Name"
+# label(data$m3_med6dose)="M6a. Prescribed Medication Dose"
+# label(data$m3_med6freq)="M6b. Prescribed Medication Frequency"
+# label(data$m3_med6new)="M6c. Prescribed Medication is new?"
+# label(data$m3_med6take)="M6d. Take as told or Miss occasionally"
+# label(data$m3_medchal___0)="M7. Have you had challenges obtaining or taking these medicines? (choice=Medicines not available)"
+# label(data$m3_medchal___1)="M7. Have you had challenges obtaining or taking these medicines? (choice=Medications expensive/unaffordable)"
+# label(data$m3_medchal___2)="M7. Have you had challenges obtaining or taking these medicines? (choice=they are far away)"
+# label(data$m3_medchal___3)="M7. Have you had challenges obtaining or taking these medicines? (choice=Difficult to follow instructions)"
+# label(data$m3_medchal___4)="M7. Have you had challenges obtaining or taking these medicines? (choice=Difficultly measuring dosage)"
+# label(data$m3_medchal___5)="M7. Have you had challenges obtaining or taking these medicines? (choice=Side effects (ie nausea, headache))"
+# label(data$m3_medchal___6)="M7. Have you had challenges obtaining or taking these medicines? (choice=Missing needed equipment to take medicines)"
+# label(data$m3_medchal___7)="M7. Have you had challenges obtaining or taking these medicines? (choice=Tired of taking medicines (ie. chronic diseases))"
+# label(data$m3_medchal___8)="M7. Have you had challenges obtaining or taking these medicines? (choice=Religious leaders/ local healers discourage medicines)"
+# label(data$m3_medchal___9)="M7. Have you had challenges obtaining or taking these medicines? (choice=None)"
+# label(data$m3_psfs1)="PS1. #1 important activity"
+# label(data$m3_psfs1yn)="PS1. Do you still have difficulty with activity #1"
+# label(data$m3_psfs1a)="PS1. Scoring 0-10"
+# label(data$m3_psfs2)="PS2. #2 important activity"
+# label(data$m3_psfs2yn)="PS2. Do you still have difficulty with activity #2"
+# label(data$m3_psfs2a)="PS2. Scoring 0-10"
+# label(data$m3_psfs3)="PS3. #3 important activity"
+# label(data$m3_psfs3yn)="PS3. Do you still have difficulty with activity #3"
+# label(data$m3_psfs3a)="PS3. Scoring 0-10"
+# label(data$m3_comment)="Z1. Do you have any further questions or comments for us?"
+# label(data$m3note)="Z2. Notes"
+# label(data$m3_strugimage)="SI1. Do you have any struggles in your housing environment? "
+# label(data$m3_strugimageyn)="SI2. May I take pictures of these challenges you have?"
+# label(data$m3_strugimage1)="SI2i. Image #1"
+# label(data$m3_strugimage1r)="SI2i. Image #1 represents"
+# label(data$m3_strugimage2)="SI2ii. Image #2 "
+# label(data$m3_strugimage2r)="SI2ii. Image #2 represents"
+# label(data$m3_strugimage3)="SI2iii. Image #3"
+# label(data$m3_strugimage3r)="SI2iii. Image #3 represents"
+# label(data$m3_chalimage)="CI1. Have you found any solutions to challenges in getting around your house? "
+# label(data$m3_chalimageyn)="CI2. May I take pictures of these solutions?	"
+# label(data$m3_chalimage1)="CI2i. Image #1"
+# label(data$m3_chalimage1r)="CI2i. Image #1 represents"
+# label(data$m3_chalimage2)="CI2ii. Image #2 "
+# label(data$m3_chalimage2r)="CI2ii. Image #2 represents"
+# label(data$m3_chalimage3)="CI2iii. Image #3"
+# label(data$m3_chalimage3r)="CI2iii. Image #3 represents"
+# label(data$month3_follow_up_complete)="Complete?"
+
+#Setting Units
+#Setting Factors(will create new variable for factors)
+data$redcap_event_name.factor = factor(data$redcap_event_name,levels=c("toc_400_enrollment_arm_1","2_week_followup_arm_1","3_month_followup_arm_1"))
+data$female.factor = factor(data$female,levels=c("0","1"))
+data$enr_1etoh.factor = factor(data$enr_1etoh,levels=c("1","0"))
+data$enr_1wine.factor = factor(data$enr_1wine,levels=c("1","0"))
+data$enr_1wineml.factor = factor(data$enr_1wineml,levels=c("0","1","2","3"))
+data$enr_1lbeer.factor = factor(data$enr_1lbeer,levels=c("1","0"))
+data$enr_1lbeerml.factor = factor(data$enr_1lbeerml,levels=c("0","1","2"))
+data$enr_1beer.factor = factor(data$enr_1beer,levels=c("1","0"))
+data$enr_1beerml.factor = factor(data$enr_1beerml,levels=c("0","1","2"))
+data$enr_1fwine.factor = factor(data$enr_1fwine,levels=c("1","0"))
+data$enr_1fwineml.factor = factor(data$enr_1fwineml,levels=c("0","1","2"))
+data$enr_1liquor.factor = factor(data$enr_1liquor,levels=c("1","0"))
+data$enr_1liquorml.factor = factor(data$enr_1liquorml,levels=c("0","1","2","3"))
+data$enr_1other.factor = factor(data$enr_1other,levels=c("1","0"))
+data$enr_2etoh.factor = factor(data$enr_2etoh,levels=c("1","0"))
+data$enr_2wine.factor = factor(data$enr_2wine,levels=c("1","0"))
+data$enr_2wineml.factor = factor(data$enr_2wineml,levels=c("0","1","2","3"))
+data$enr_2lbeer.factor = factor(data$enr_2lbeer,levels=c("1","0"))
+data$enr_2lbeerml.factor = factor(data$enr_2lbeerml,levels=c("0","1","2"))
+data$enr_2beer.factor = factor(data$enr_2beer,levels=c("1","0"))
+data$enr_2beerml.factor = factor(data$enr_2beerml,levels=c("0","1","2"))
+data$enr_2fwine.factor = factor(data$enr_2fwine,levels=c("1","0"))
+data$enr_2fwineml.factor = factor(data$enr_2fwineml,levels=c("0","1","2"))
+data$enr_2liquor.factor = factor(data$enr_2liquor,levels=c("1","0"))
+data$enr_2liquorml.factor = factor(data$enr_2liquorml,levels=c("0","1","2","3"))
+data$enr_2other.factor = factor(data$enr_2other,levels=c("1","0"))
+data$enr_breathyesno.factor = factor(data$enr_breathyesno,levels=c("0","1"))
+data$enr_priorhiv.factor = factor(data$enr_priorhiv,levels=c("1","0"))
+data$enr_priorhiv3.factor = factor(data$enr_priorhiv3,levels=c("0","1","2"))
+data$enr_famhiv.factor = factor(data$enr_famhiv,levels=c("0","1","2"))
+data$enr_famhiv1___0.factor = factor(data$enr_famhiv1___0,levels=c("0","1"))
+data$enr_famhiv1___1.factor = factor(data$enr_famhiv1___1,levels=c("0","1"))
+data$enr_famhiv1___2.factor = factor(data$enr_famhiv1___2,levels=c("0","1"))
+data$enr_famhiv1___3.factor = factor(data$enr_famhiv1___3,levels=c("0","1"))
+data$enr_famhiv1___4.factor = factor(data$enr_famhiv1___4,levels=c("0","1"))
+data$enr_famhiv1___5.factor = factor(data$enr_famhiv1___5,levels=c("0","1"))
+data$enr_famhiv1___6.factor = factor(data$enr_famhiv1___6,levels=c("0","1"))
+data$enr_famhiv1___7.factor = factor(data$enr_famhiv1___7,levels=c("0","1"))
+data$enr_famhiv1___8.factor = factor(data$enr_famhiv1___8,levels=c("0","1"))
+data$enr_famhiv1___9.factor = factor(data$enr_famhiv1___9,levels=c("0","1"))
+data$enr_famhiv1___10.factor = factor(data$enr_famhiv1___10,levels=c("0","1"))
+data$enr_bioline.factor = factor(data$enr_bioline,levels=c("0","1"))
+data$enr_unigold.factor = factor(data$enr_unigold,levels=c("0","1"))
+data$enr_elisa.factor = factor(data$enr_elisa,levels=c("0","1"))
+data$enr_vl.factor = factor(data$enr_vl,levels=c("0","1"))
+data$enr_cd4.factor = factor(data$enr_cd4,levels=c("0","1"))
+data$enr_where.factor = factor(data$enr_where,levels=c("0","1","89","99"))
+data$enrollment_questionniare_complete.factor = factor(data$enrollment_questionniare_complete,levels=c("0","1","2"))
+data$wk2location.factor = factor(data$wk2location,levels=c("0","1"))
+data$wk2_trans1.factor = factor(data$wk2_trans1,levels=c("1","0"))
+data$wk2_trans1a___0.factor = factor(data$wk2_trans1a___0,levels=c("0","1"))
+data$wk2_trans1a___1.factor = factor(data$wk2_trans1a___1,levels=c("0","1"))
+data$wk2_trans1a___2.factor = factor(data$wk2_trans1a___2,levels=c("0","1"))
+data$wk2_trans1a___3.factor = factor(data$wk2_trans1a___3,levels=c("0","1"))
+data$wk2_trans1a___4.factor = factor(data$wk2_trans1a___4,levels=c("0","1"))
+data$wk2_trans1a___5.factor = factor(data$wk2_trans1a___5,levels=c("0","1"))
+data$wk2_hosptrans2.factor = factor(data$wk2_hosptrans2,levels=c("0","1","2","3","4","5"))
+data$wk2_hosptrans3___0.factor = factor(data$wk2_hosptrans3___0,levels=c("0","1"))
+data$wk2_hosptrans3___1.factor = factor(data$wk2_hosptrans3___1,levels=c("0","1"))
+data$wk2_hosptrans3___2.factor = factor(data$wk2_hosptrans3___2,levels=c("0","1"))
+data$wk2_hosptrans3___3.factor = factor(data$wk2_hosptrans3___3,levels=c("0","1"))
+data$wk2_hosptrans3___4.factor = factor(data$wk2_hosptrans3___4,levels=c("0","1"))
+data$wk2_hosptrans3___5.factor = factor(data$wk2_hosptrans3___5,levels=c("0","1"))
+data$wk2_hosptrans3___6.factor = factor(data$wk2_hosptrans3___6,levels=c("0","1"))
+data$wk2_hosptrans3___7.factor = factor(data$wk2_hosptrans3___7,levels=c("0","1"))
+data$wk2_hosptrans3___8.factor = factor(data$wk2_hosptrans3___8,levels=c("0","1"))
+data$wk2_hosptrans3___9.factor = factor(data$wk2_hosptrans3___9,levels=c("0","1"))
+data$wk2_hosptrans3___89.factor = factor(data$wk2_hosptrans3___89,levels=c("0","1"))
+data$wk2_hosptrans4.factor = factor(data$wk2_hosptrans4,levels=c("1","0"))
+data$wk2_hosptrans4a___0.factor = factor(data$wk2_hosptrans4a___0,levels=c("0","1"))
+data$wk2_hosptrans4a___1.factor = factor(data$wk2_hosptrans4a___1,levels=c("0","1"))
+data$wk2_hosptrans4a___2.factor = factor(data$wk2_hosptrans4a___2,levels=c("0","1"))
+data$wk2_hosptrans4a___3.factor = factor(data$wk2_hosptrans4a___3,levels=c("0","1"))
+data$wk2_hosptrans4a___4.factor = factor(data$wk2_hosptrans4a___4,levels=c("0","1"))
+data$wk2_hosptrans4a___89.factor = factor(data$wk2_hosptrans4a___89,levels=c("0","1"))
+data$wk2_hosptrans5.factor = factor(data$wk2_hosptrans5,levels=c("1","0"))
+data$wk2_hosptrans5a___0.factor = factor(data$wk2_hosptrans5a___0,levels=c("0","1"))
+data$wk2_hosptrans5a___1.factor = factor(data$wk2_hosptrans5a___1,levels=c("0","1"))
+data$wk2_hosptrans5a___89.factor = factor(data$wk2_hosptrans5a___89,levels=c("0","1"))
+data$wk2_hometrans2___0.factor = factor(data$wk2_hometrans2___0,levels=c("0","1"))
+data$wk2_hometrans2___1.factor = factor(data$wk2_hometrans2___1,levels=c("0","1"))
+data$wk2_hometrans2___2.factor = factor(data$wk2_hometrans2___2,levels=c("0","1"))
+data$wk2_hometrans2___3.factor = factor(data$wk2_hometrans2___3,levels=c("0","1"))
+data$wk2_hometrans2___4.factor = factor(data$wk2_hometrans2___4,levels=c("0","1"))
+data$wk2_hometrans2___89.factor = factor(data$wk2_hometrans2___89,levels=c("0","1"))
+data$wk2_hometrans3.factor = factor(data$wk2_hometrans3,levels=c("1","0"))
+data$wk2_hometrans3a___0.factor = factor(data$wk2_hometrans3a___0,levels=c("0","1"))
+data$wk2_hometrans3a___1.factor = factor(data$wk2_hometrans3a___1,levels=c("0","1"))
+data$wk2_hometrans3a___89.factor = factor(data$wk2_hometrans3a___89,levels=c("0","1"))
+data$wk2_ss1.factor = factor(data$wk2_ss1,levels=c("0","1","2","3","4"))
+data$wk2_ss2.factor = factor(data$wk2_ss2,levels=c("0","1","2","3","4"))
+data$wk2_ss3.factor = factor(data$wk2_ss3,levels=c("0","1","2","3","4"))
+data$wk2_ss4.factor = factor(data$wk2_ss4,levels=c("0","1","2","3","4"))
+data$wk2_ss5.factor = factor(data$wk2_ss5,levels=c("0","1","2","3","4"))
+data$wk2_ss6.factor = factor(data$wk2_ss6,levels=c("0","1","2","3","4"))
+data$wk2_ss7.factor = factor(data$wk2_ss7,levels=c("0","1","2","3","4"))
+data$wk2_ss8.factor = factor(data$wk2_ss8,levels=c("0","1","2","3","4"))
+data$wk2_ss9.factor = factor(data$wk2_ss9,levels=c("0","1"))
+data$wk2_sf1.factor = factor(data$wk2_sf1,levels=c("0","1","2","3","4","5"))
+data$wk2_sf2.factor = factor(data$wk2_sf2,levels=c("0","1","2","3","4"))
+data$wk2_sf3.factor = factor(data$wk2_sf3,levels=c("0","1","2","3","4"))
+data$wk2_sf4.factor = factor(data$wk2_sf4,levels=c("0","1","2","3","4","5"))
+data$wk2_sf5.factor = factor(data$wk2_sf5,levels=c("0","1","2","3","4"))
+data$wk2_sf6.factor = factor(data$wk2_sf6,levels=c("0","1","2","3","4"))
+data$wk2_sf7.factor = factor(data$wk2_sf7,levels=c("0","1","2","3","4"))
+data$wk2_sf8.factor = factor(data$wk2_sf8,levels=c("0","1","2","3","4"))
+data$wk2_phq1.factor = factor(data$wk2_phq1,levels=c("0","1","2","3"))
+data$wk2_phq2.factor = factor(data$wk2_phq2,levels=c("0","1","2","3"))
+data$wk2_phq3.factor = factor(data$wk2_phq3,levels=c("0","1","2","3"))
+data$wk2_phq4.factor = factor(data$wk2_phq4,levels=c("0","1","2","3"))
+data$wk2_phq5.factor = factor(data$wk2_phq5,levels=c("0","1","2","3"))
+data$wk2_phq6.factor = factor(data$wk2_phq6,levels=c("0","1","2","3"))
+data$wk2_phq7.factor = factor(data$wk2_phq7,levels=c("0","1","2","3"))
+data$wk2_phq8.factor = factor(data$wk2_phq8,levels=c("0","1","2","3"))
+data$wk2_phq9.factor = factor(data$wk2_phq9,levels=c("0","1","2","3"))
+data$wk2_audit1.factor = factor(data$wk2_audit1,levels=c("0","1","2","3","4"))
+data$wk2_audit2.factor = factor(data$wk2_audit2,levels=c("0","1","2","3","4"))
+data$wk2_audit3.factor = factor(data$wk2_audit3,levels=c("0","1","2","3","4"))
+data$wk2_fimcare.factor = factor(data$wk2_fimcare,levels=c("1","2","3","4","5","6","7"))
+data$wk2_fimtoilet.factor = factor(data$wk2_fimtoilet,levels=c("1","2","3","4","5","6","7"))
+data$wk2_fimtx.factor = factor(data$wk2_fimtx,levels=c("1","2","3","4","5","6","7"))
+data$wk2_fimmotion.factor = factor(data$wk2_fimmotion,levels=c("1","2","3","4","5","6","7"))
+data$wk2_fimstairs.factor = factor(data$wk2_fimstairs,levels=c("1","2","3","4","5","6","7"))
+data$wk2_fimexpr.factor = factor(data$wk2_fimexpr,levels=c("1","2","3","4","5","6","7"))
+data$wk2_fimcompr.factor = factor(data$wk2_fimcompr,levels=c("1","2","3","4","5","6","7"))
+data$wk2_fimsocial.factor = factor(data$wk2_fimsocial,levels=c("1","2","3","4","5","6","7"))
+data$wk2_fimprob.factor = factor(data$wk2_fimprob,levels=c("1","2","3","4","5","6","7"))
+data$wk2_fimmemory.factor = factor(data$wk2_fimmemory,levels=c("1","2","3","4","5","6","7"))
+data$wk2_structure1.factor = factor(data$wk2_structure1,levels=c("1","0"))
+data$wk2_confined.factor = factor(data$wk2_confined,levels=c("1","0"))
+data$wk2_aide1.factor = factor(data$wk2_aide1,levels=c("1","0"))
+data$wk2_aide2___0.factor = factor(data$wk2_aide2___0,levels=c("0","1"))
+data$wk2_aide2___1.factor = factor(data$wk2_aide2___1,levels=c("0","1"))
+data$wk2_aide2___2.factor = factor(data$wk2_aide2___2,levels=c("0","1"))
+data$wk2_aide2___3.factor = factor(data$wk2_aide2___3,levels=c("0","1"))
+data$wk2_aide2___4.factor = factor(data$wk2_aide2___4,levels=c("0","1"))
+data$wk2_aide2___5.factor = factor(data$wk2_aide2___5,levels=c("0","1"))
+data$wk2_aide2___89.factor = factor(data$wk2_aide2___89,levels=c("0","1"))
+data$wk2_dx.factor = factor(data$wk2_dx,levels=c("1","0"))
+data$wk2_dm.factor = factor(data$wk2_dm,levels=c("1","0"))
+data$wk2_dmoldnew.factor = factor(data$wk2_dmoldnew,levels=c("0","1"))
+data$wk2_htn.factor = factor(data$wk2_htn,levels=c("1","0"))
+data$wk2_htnoldnew.factor = factor(data$wk2_htnoldnew,levels=c("0","1"))
+data$wk2_kid.factor = factor(data$wk2_kid,levels=c("1","0"))
+data$wk2_kidoldnew.factor = factor(data$wk2_kidoldnew,levels=c("0","1"))
+data$wk2_hiv.factor = factor(data$wk2_hiv,levels=c("1","0"))
+data$wk2_hivoldnew.factor = factor(data$wk2_hivoldnew,levels=c("0","1"))
+data$wk2_other1.factor = factor(data$wk2_other1,levels=c("1","0"))
+data$wk2_other2.factor = factor(data$wk2_other2,levels=c("1","0"))
+data$wk2_fusurg.factor = factor(data$wk2_fusurg,levels=c("1","0"))
+data$wk2_fusurgatt.factor = factor(data$wk2_fusurgatt,levels=c("0","1","2"))
+data$wk2_fuortho.factor = factor(data$wk2_fuortho,levels=c("1","0"))
+data$wk2_fuorthoatt.factor = factor(data$wk2_fuorthoatt,levels=c("0","1","2"))
+data$wk2_fumed1.factor = factor(data$wk2_fumed1,levels=c("1","0"))
+data$wk2_fumed2.factor = factor(data$wk2_fumed2,levels=c("1","0"))
+data$wk2_fumed2att.factor = factor(data$wk2_fumed2att,levels=c("0","1","2"))
+data$wk2_fumed3.factor = factor(data$wk2_fumed3,levels=c("1","0"))
+data$wk2_fumed3att.factor = factor(data$wk2_fumed3att,levels=c("0","1","2"))
+data$wk2_fumed4.factor = factor(data$wk2_fumed4,levels=c("1","0"))
+data$wk2_fumed4att.factor = factor(data$wk2_fumed4att,levels=c("0","1","2"))
+data$wk2_fusubst.factor = factor(data$wk2_fusubst,levels=c("1","0"))
+data$wk2_fusubstatt.factor = factor(data$wk2_fusubstatt,levels=c("0","1","2"))
+data$wk2_fumh.factor = factor(data$wk2_fumh,levels=c("1","0"))
+data$wk2_fumhatt.factor = factor(data$wk2_fumhatt,levels=c("0","1","2"))
+data$wk2_furehab.factor = factor(data$wk2_furehab,levels=c("1","0"))
+data$wk2_furehabatt.factor = factor(data$wk2_furehabatt,levels=c("0","1","2"))
+data$wk2_fuot.factor = factor(data$wk2_fuot,levels=c("1","0"))
+data$wk2_fuotatt.factor = factor(data$wk2_fuotatt,levels=c("0","1","2"))
+data$wk2_fuother.factor = factor(data$wk2_fuother,levels=c("1","0"))
+data$wk2_fuotheratt.factor = factor(data$wk2_fuotheratt,levels=c("0","1","2"))
+data$wk2_med1freq.factor = factor(data$wk2_med1freq,levels=c("0","1","2","3","4","5"))
+data$wk2_med1new.factor = factor(data$wk2_med1new,levels=c("1","0"))
+data$wk2_med1take.factor = factor(data$wk2_med1take,levels=c("0","1","2"))
+data$wk2_med2freq.factor = factor(data$wk2_med2freq,levels=c("0","1","2","3","4","5"))
+data$wk2_med2new.factor = factor(data$wk2_med2new,levels=c("1","0"))
+data$wk2_med2take.factor = factor(data$wk2_med2take,levels=c("0","1","2"))
+data$wk2_med3freq.factor = factor(data$wk2_med3freq,levels=c("0","1","2","3","4","5"))
+data$wk2_med3new.factor = factor(data$wk2_med3new,levels=c("1","0"))
+data$wk2_med3take.factor = factor(data$wk2_med3take,levels=c("0","1","2"))
+data$wk2_med4freq.factor = factor(data$wk2_med4freq,levels=c("0","1","2","3","4","5"))
+data$wk2_med4new.factor = factor(data$wk2_med4new,levels=c("1","0"))
+data$wk2_med4take.factor = factor(data$wk2_med4take,levels=c("0","1","2"))
+data$wk2_med5freq.factor = factor(data$wk2_med5freq,levels=c("0","1","2","3","4","5"))
+data$wk2_med5new.factor = factor(data$wk2_med5new,levels=c("1","0"))
+data$wk2_med5take.factor = factor(data$wk2_med5take,levels=c("0","1","2"))
+data$wk2_med6freq.factor = factor(data$wk2_med6freq,levels=c("0","1","2","3","4","5"))
+data$wk2_med6new.factor = factor(data$wk2_med6new,levels=c("1","0"))
+data$wk2_med6take.factor = factor(data$wk2_med6take,levels=c("0","1","2"))
+data$wk2_medchal___0.factor = factor(data$wk2_medchal___0,levels=c("0","1"))
+data$wk2_medchal___1.factor = factor(data$wk2_medchal___1,levels=c("0","1"))
+data$wk2_medchal___2.factor = factor(data$wk2_medchal___2,levels=c("0","1"))
+data$wk2_medchal___3.factor = factor(data$wk2_medchal___3,levels=c("0","1"))
+data$wk2_medchal___4.factor = factor(data$wk2_medchal___4,levels=c("0","1"))
+data$wk2_medchal___5.factor = factor(data$wk2_medchal___5,levels=c("0","1"))
+data$wk2_medchal___6.factor = factor(data$wk2_medchal___6,levels=c("0","1"))
+data$wk2_medchal___7.factor = factor(data$wk2_medchal___7,levels=c("0","1"))
+data$wk2_medchal___8.factor = factor(data$wk2_medchal___8,levels=c("0","1"))
+data$wk2_medchal___9.factor = factor(data$wk2_medchal___9,levels=c("0","1"))
+data$wk2_psfs0.factor = factor(data$wk2_psfs0,levels=c("1","0"))
+data$week2_follow_up_complete.factor = factor(data$week2_follow_up_complete,levels=c("0","1","2"))
+data$m3location.factor = factor(data$m3location,levels=c("0","1"))
+data$m3_trans1.factor = factor(data$m3_trans1,levels=c("1","0"))
+data$m3_trans1a___0.factor = factor(data$m3_trans1a___0,levels=c("0","1"))
+data$m3_trans1a___1.factor = factor(data$m3_trans1a___1,levels=c("0","1"))
+data$m3_trans1a___2.factor = factor(data$m3_trans1a___2,levels=c("0","1"))
+data$m3_trans1a___3.factor = factor(data$m3_trans1a___3,levels=c("0","1"))
+data$m3_trans1a___4.factor = factor(data$m3_trans1a___4,levels=c("0","1"))
+data$m3_trans1a___5.factor = factor(data$m3_trans1a___5,levels=c("0","1"))
+data$m3_hosptrans2.factor = factor(data$m3_hosptrans2,levels=c("0","1","2","3","4","5"))
+data$m3_hosptrans3___0.factor = factor(data$m3_hosptrans3___0,levels=c("0","1"))
+data$m3_hosptrans3___1.factor = factor(data$m3_hosptrans3___1,levels=c("0","1"))
+data$m3_hosptrans3___2.factor = factor(data$m3_hosptrans3___2,levels=c("0","1"))
+data$m3_hosptrans3___3.factor = factor(data$m3_hosptrans3___3,levels=c("0","1"))
+data$m3_hosptrans3___4.factor = factor(data$m3_hosptrans3___4,levels=c("0","1"))
+data$m3_hosptrans3___5.factor = factor(data$m3_hosptrans3___5,levels=c("0","1"))
+data$m3_hosptrans3___6.factor = factor(data$m3_hosptrans3___6,levels=c("0","1"))
+data$m3_hosptrans3___7.factor = factor(data$m3_hosptrans3___7,levels=c("0","1"))
+data$m3_hosptrans3___8.factor = factor(data$m3_hosptrans3___8,levels=c("0","1"))
+data$m3_hosptrans3___9.factor = factor(data$m3_hosptrans3___9,levels=c("0","1"))
+data$m3_hosptrans3___89.factor = factor(data$m3_hosptrans3___89,levels=c("0","1"))
+data$m3_hosptrans4.factor = factor(data$m3_hosptrans4,levels=c("1","0"))
+data$m3_hosptrans4a___0.factor = factor(data$m3_hosptrans4a___0,levels=c("0","1"))
+data$m3_hosptrans4a___1.factor = factor(data$m3_hosptrans4a___1,levels=c("0","1"))
+data$m3_hosptrans4a___2.factor = factor(data$m3_hosptrans4a___2,levels=c("0","1"))
+data$m3_hosptrans4a___3.factor = factor(data$m3_hosptrans4a___3,levels=c("0","1"))
+data$m3_hosptrans4a___4.factor = factor(data$m3_hosptrans4a___4,levels=c("0","1"))
+data$m3_hosptrans4a___89.factor = factor(data$m3_hosptrans4a___89,levels=c("0","1"))
+data$m3_hosptrans5.factor = factor(data$m3_hosptrans5,levels=c("1","0"))
+data$m3_hosptrans5a___0.factor = factor(data$m3_hosptrans5a___0,levels=c("0","1"))
+data$m3_hosptrans5a___1.factor = factor(data$m3_hosptrans5a___1,levels=c("0","1"))
+data$m3_hosptrans5a___89.factor = factor(data$m3_hosptrans5a___89,levels=c("0","1"))
+data$m3_hometrans2___0.factor = factor(data$m3_hometrans2___0,levels=c("0","1"))
+data$m3_hometrans2___1.factor = factor(data$m3_hometrans2___1,levels=c("0","1"))
+data$m3_hometrans2___2.factor = factor(data$m3_hometrans2___2,levels=c("0","1"))
+data$m3_hometrans2___3.factor = factor(data$m3_hometrans2___3,levels=c("0","1"))
+data$m3_hometrans2___4.factor = factor(data$m3_hometrans2___4,levels=c("0","1"))
+data$m3_hometrans2___89.factor = factor(data$m3_hometrans2___89,levels=c("0","1"))
+data$m3_hometrans3.factor = factor(data$m3_hometrans3,levels=c("1","0"))
+data$m3_hometrans3a___0.factor = factor(data$m3_hometrans3a___0,levels=c("0","1"))
+data$m3_hometrans3a___1.factor = factor(data$m3_hometrans3a___1,levels=c("0","1"))
+data$m3_hometrans3a___89.factor = factor(data$m3_hometrans3a___89,levels=c("0","1"))
+data$m3_ss1.factor = factor(data$m3_ss1,levels=c("0","1","2","3","4"))
+data$m3_ss2.factor = factor(data$m3_ss2,levels=c("0","1","2","3","4"))
+data$m3_ss3.factor = factor(data$m3_ss3,levels=c("0","1","2","3","4"))
+data$m3_ss4.factor = factor(data$m3_ss4,levels=c("0","1","2","3","4"))
+data$m3_ss5.factor = factor(data$m3_ss5,levels=c("0","1","2","3","4"))
+data$m3_ss6.factor = factor(data$m3_ss6,levels=c("0","1","2","3","4"))
+data$m3_ss7.factor = factor(data$m3_ss7,levels=c("0","1","2","3","4"))
+data$m3_ss8.factor = factor(data$m3_ss8,levels=c("0","1","2","3","4"))
+data$m3_sf1.factor = factor(data$m3_sf1,levels=c("0","1","2","3","4","5"))
+data$m3_sf2.factor = factor(data$m3_sf2,levels=c("0","1","2","3","4"))
+data$m3_sf3.factor = factor(data$m3_sf3,levels=c("0","1","2","3","4"))
+data$m3_sf4.factor = factor(data$m3_sf4,levels=c("0","1","2","3","4","5"))
+data$m3_sf5.factor = factor(data$m3_sf5,levels=c("0","1","2","3","4"))
+data$m3_sf6.factor = factor(data$m3_sf6,levels=c("0","1","2","3","4"))
+data$m3_sf7.factor = factor(data$m3_sf7,levels=c("0","1","2","3","4"))
+data$m3_sf8.factor = factor(data$m3_sf8,levels=c("0","1","2","3","4"))
+data$m3_phq1.factor = factor(data$m3_phq1,levels=c("0","1","2","3"))
+data$m3_phq2.factor = factor(data$m3_phq2,levels=c("0","1","2","3"))
+data$m3_phq3.factor = factor(data$m3_phq3,levels=c("0","1","2","3"))
+data$m3_phq4.factor = factor(data$m3_phq4,levels=c("0","1","2","3"))
+data$m3_phq5.factor = factor(data$m3_phq5,levels=c("0","1","2","3"))
+data$m3_phq6.factor = factor(data$m3_phq6,levels=c("0","1","2","3"))
+data$m3_phq7.factor = factor(data$m3_phq7,levels=c("0","1","2","3"))
+data$m3_phq8.factor = factor(data$m3_phq8,levels=c("0","1","2","3"))
+data$m3_phq9.factor = factor(data$m3_phq9,levels=c("0","1","2","3"))
+data$m3_audit1.factor = factor(data$m3_audit1,levels=c("0","1","2","3","4"))
+data$m3_audit2.factor = factor(data$m3_audit2,levels=c("0","1","2","3","4"))
+data$m3_audit3.factor = factor(data$m3_audit3,levels=c("0","1","2","3","4"))
+data$m3_fimcare.factor = factor(data$m3_fimcare,levels=c("1","2","3","4","5","6","7"))
+data$m3_fimtoilet.factor = factor(data$m3_fimtoilet,levels=c("1","2","3","4","5","6","7"))
+data$m3_fimtx.factor = factor(data$m3_fimtx,levels=c("1","2","3","4","5","6","7"))
+data$m3_fimmotion.factor = factor(data$m3_fimmotion,levels=c("1","2","3","4","5","6","7"))
+data$m3_fimstairs.factor = factor(data$m3_fimstairs,levels=c("1","2","3","4","5","6","7"))
+data$m3_fimexpr.factor = factor(data$m3_fimexpr,levels=c("1","2","3","4","5","6","7"))
+data$m3_fimcompr.factor = factor(data$m3_fimcompr,levels=c("1","2","3","4","5","6","7"))
+data$m3_fimsocial.factor = factor(data$m3_fimsocial,levels=c("1","2","3","4","5","6","7"))
+data$m3_fimprob.factor = factor(data$m3_fimprob,levels=c("1","2","3","4","5","6","7"))
+data$m3_fimmemory.factor = factor(data$m3_fimmemory,levels=c("1","2","3","4","5","6","7"))
+data$m3_conditions.factor = factor(data$m3_conditions,levels=c("1","0"))
+data$m3_dm.factor = factor(data$m3_dm,levels=c("1","0"))
+data$m3_dmoldnew.factor = factor(data$m3_dmoldnew,levels=c("0","1"))
+data$m3_htn.factor = factor(data$m3_htn,levels=c("1","0"))
+data$m3_htnoldnew.factor = factor(data$m3_htnoldnew,levels=c("0","1"))
+data$m3_kid.factor = factor(data$m3_kid,levels=c("1","0"))
+data$m3_kidoldnew.factor = factor(data$m3_kidoldnew,levels=c("0","1"))
+data$m3_hiv.factor = factor(data$m3_hiv,levels=c("1","0"))
+data$m3_hivoldnew.factor = factor(data$m3_hivoldnew,levels=c("0","1"))
+data$m3_other1.factor = factor(data$m3_other1,levels=c("1","0"))
+data$m3_other1new.factor = factor(data$m3_other1new,levels=c("0","1"))
+data$m3_other2.factor = factor(data$m3_other2,levels=c("1","0"))
+data$m3_other2new.factor = factor(data$m3_other2new,levels=c("0","1"))
+data$m3_fusurg.factor = factor(data$m3_fusurg,levels=c("1","0"))
+data$m3_fusurgatt.factor = factor(data$m3_fusurgatt,levels=c("0","1","2"))
+data$m3_fuortho.factor = factor(data$m3_fuortho,levels=c("1","0"))
+data$m3_fuorthoatt.factor = factor(data$m3_fuorthoatt,levels=c("0","1","2"))
+data$m3_fumed1.factor = factor(data$m3_fumed1,levels=c("1","0"))
+data$m3_fumed2.factor = factor(data$m3_fumed2,levels=c("1","0"))
+data$m3_fumed2att.factor = factor(data$m3_fumed2att,levels=c("0","1","2"))
+data$m3_fumed3.factor = factor(data$m3_fumed3,levels=c("1","0"))
+data$m3_fumed3att.factor = factor(data$m3_fumed3att,levels=c("0","1","2"))
+data$m3_fumed4.factor = factor(data$m3_fumed4,levels=c("1","0"))
+data$m3_fumed4att.factor = factor(data$m3_fumed4att,levels=c("0","1","2"))
+data$m3_fusubst.factor = factor(data$m3_fusubst,levels=c("1","0"))
+data$m3_fusubstatt.factor = factor(data$m3_fusubstatt,levels=c("0","1","2"))
+data$m3_fumh.factor = factor(data$m3_fumh,levels=c("1","0"))
+data$m3_fumhatt.factor = factor(data$m3_fumhatt,levels=c("0","1","2"))
+data$m3_furehab.factor = factor(data$m3_furehab,levels=c("1","0"))
+data$m3_furehabatt.factor = factor(data$m3_furehabatt,levels=c("0","1","2"))
+data$m3_fuot.factor = factor(data$m3_fuot,levels=c("1","0"))
+data$m3_fuotatt.factor = factor(data$m3_fuotatt,levels=c("0","1","2"))
+data$m3_fuother.factor = factor(data$m3_fuother,levels=c("1","0"))
+data$m3_fuotheratt.factor = factor(data$m3_fuotheratt,levels=c("0","1","2"))
+data$m3_med1freq.factor = factor(data$m3_med1freq,levels=c("0","1","2","3","4","5"))
+data$m3_med1new.factor = factor(data$m3_med1new,levels=c("1","0"))
+data$m3_med1take.factor = factor(data$m3_med1take,levels=c("0","1","2"))
+data$m3_med2freq.factor = factor(data$m3_med2freq,levels=c("0","1","2","3","4","5"))
+data$m3_med2new.factor = factor(data$m3_med2new,levels=c("1","0"))
+data$m3_med2take.factor = factor(data$m3_med2take,levels=c("0","1","2"))
+data$m3_med3freq.factor = factor(data$m3_med3freq,levels=c("0","1","2","3","4","5"))
+data$m3_med3new.factor = factor(data$m3_med3new,levels=c("1","0"))
+data$m3_med3take.factor = factor(data$m3_med3take,levels=c("0","1","2"))
+data$m3_med4freq.factor = factor(data$m3_med4freq,levels=c("0","1","2","3","4","5"))
+data$m3_med4new.factor = factor(data$m3_med4new,levels=c("1","0"))
+data$m3_med4take.factor = factor(data$m3_med4take,levels=c("0","1","2"))
+data$m3_med5freq.factor = factor(data$m3_med5freq,levels=c("0","1","2","3","4","5"))
+data$m3_med5new.factor = factor(data$m3_med5new,levels=c("1","0"))
+data$m3_med5take.factor = factor(data$m3_med5take,levels=c("0","1","2"))
+data$m3_med6freq.factor = factor(data$m3_med6freq,levels=c("0","1","2","3","4","5"))
+data$m3_med6new.factor = factor(data$m3_med6new,levels=c("1","0"))
+data$m3_med6take.factor = factor(data$m3_med6take,levels=c("0","1","2"))
+data$m3_medchal___0.factor = factor(data$m3_medchal___0,levels=c("0","1"))
+data$m3_medchal___1.factor = factor(data$m3_medchal___1,levels=c("0","1"))
+data$m3_medchal___2.factor = factor(data$m3_medchal___2,levels=c("0","1"))
+data$m3_medchal___3.factor = factor(data$m3_medchal___3,levels=c("0","1"))
+data$m3_medchal___4.factor = factor(data$m3_medchal___4,levels=c("0","1"))
+data$m3_medchal___5.factor = factor(data$m3_medchal___5,levels=c("0","1"))
+data$m3_medchal___6.factor = factor(data$m3_medchal___6,levels=c("0","1"))
+data$m3_medchal___7.factor = factor(data$m3_medchal___7,levels=c("0","1"))
+data$m3_medchal___8.factor = factor(data$m3_medchal___8,levels=c("0","1"))
+data$m3_medchal___9.factor = factor(data$m3_medchal___9,levels=c("0","1"))
+data$m3_psfs1yn.factor = factor(data$m3_psfs1yn,levels=c("1","0"))
+data$m3_psfs2yn.factor = factor(data$m3_psfs2yn,levels=c("1","0"))
+data$m3_psfs3yn.factor = factor(data$m3_psfs3yn,levels=c("1","0"))
+data$m3_strugimage.factor = factor(data$m3_strugimage,levels=c("1","0"))
+data$m3_strugimageyn.factor = factor(data$m3_strugimageyn,levels=c("1","0"))
+data$m3_chalimage.factor = factor(data$m3_chalimage,levels=c("1","0"))
+data$m3_chalimageyn.factor = factor(data$m3_chalimageyn,levels=c("1","0"))
+data$month3_follow_up_complete.factor = factor(data$month3_follow_up_complete,levels=c("0","1","2"))
+
+
+
+#Setting categories
+levels(data$redcap_event_name.factor)=c("TOC 400 enrollment questionnia","2 Week Follow-up","3 Month Follow-up")
+levels(data$female.factor)=c("Male","Female")
+levels(data$enr_1etoh.factor)=c("Yes","No")
+levels(data$enr_1wine.factor)=c("Yes","No")
+levels(data$enr_1wineml.factor)=c("100 ml","330 ml","500 ml","750 ml")
+levels(data$enr_1lbeer.factor)=c("Yes","No")
+levels(data$enr_1lbeerml.factor)=c("330 ml","500 ml","1000 ml")
+levels(data$enr_1beer.factor)=c("Yes","No")
+levels(data$enr_1beerml.factor)=c("330 ml","500 ml","1000 ml")
+levels(data$enr_1fwine.factor)=c("Yes","No")
+levels(data$enr_1fwineml.factor)=c("90 ml","500 ml","750 ml")
+levels(data$enr_1liquor.factor)=c("Yes","No")
+levels(data$enr_1liquorml.factor)=c("40 ml","100 ml","500 ml","750 ml")
+levels(data$enr_1other.factor)=c("Yes","No")
+levels(data$enr_2etoh.factor)=c("Yes","No")
+levels(data$enr_2wine.factor)=c("Yes","No")
+levels(data$enr_2wineml.factor)=c("100 ml","330 ml","500 ml","750 ml")
+levels(data$enr_2lbeer.factor)=c("Yes","No")
+levels(data$enr_2lbeerml.factor)=c("330 ml","500 ml","1000 ml")
+levels(data$enr_2beer.factor)=c("Yes","No")
+levels(data$enr_2beerml.factor)=c("330 ml","500 ml","1000 ml")
+levels(data$enr_2fwine.factor)=c("Yes","No")
+levels(data$enr_2fwineml.factor)=c("90 ml","500 ml","750 ml")
+levels(data$enr_2liquor.factor)=c("Yes","No")
+levels(data$enr_2liquorml.factor)=c("40 ml","100 ml","500 ml","750 ml")
+levels(data$enr_2other.factor)=c("Yes","No")
+levels(data$enr_breathyesno.factor)=c("Refused","Agreed")
+levels(data$enr_priorhiv.factor)=c("Yes","No")
+levels(data$enr_priorhiv3.factor)=c("HIV negative","HIV positive","Unknown")
+levels(data$enr_famhiv.factor)=c("None","One","More than one")
+levels(data$enr_famhiv1___0.factor)=c("Unchecked","Checked")
+levels(data$enr_famhiv1___1.factor)=c("Unchecked","Checked")
+levels(data$enr_famhiv1___2.factor)=c("Unchecked","Checked")
+levels(data$enr_famhiv1___3.factor)=c("Unchecked","Checked")
+levels(data$enr_famhiv1___4.factor)=c("Unchecked","Checked")
+levels(data$enr_famhiv1___5.factor)=c("Unchecked","Checked")
+levels(data$enr_famhiv1___6.factor)=c("Unchecked","Checked")
+levels(data$enr_famhiv1___7.factor)=c("Unchecked","Checked")
+levels(data$enr_famhiv1___8.factor)=c("Unchecked","Checked")
+levels(data$enr_famhiv1___9.factor)=c("Unchecked","Checked")
+levels(data$enr_famhiv1___10.factor)=c("Unchecked","Checked")
+levels(data$enr_bioline.factor)=c("Not tested","Tested")
+levels(data$enr_unigold.factor)=c("Not tested","Tested")
+levels(data$enr_elisa.factor)=c("Not tested","Tested")
+levels(data$enr_vl.factor)=c("Not tested","Tested")
+levels(data$enr_cd4.factor)=c("Not tested","Tested")
+levels(data$enr_where.factor)=c("Moshi Urban","Moshi Rural","Other","Not on data collection form")
+levels(data$enrollment_questionniare_complete.factor)=c("Incomplete","Unverified","Complete")
+levels(data$wk2location.factor)=c("Home","Hospital")
+levels(data$wk2_trans1.factor)=c("Yes","No")
+levels(data$wk2_trans1a___0.factor)=c("Unchecked","Checked")
+levels(data$wk2_trans1a___1.factor)=c("Unchecked","Checked")
+levels(data$wk2_trans1a___2.factor)=c("Unchecked","Checked")
+levels(data$wk2_trans1a___3.factor)=c("Unchecked","Checked")
+levels(data$wk2_trans1a___4.factor)=c("Unchecked","Checked")
+levels(data$wk2_trans1a___5.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans2.factor)=c("Car","Motorcycle","Bicycle","Bijaji","Dala dala","Large bus")
+levels(data$wk2_hosptrans3___0.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans3___1.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans3___2.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans3___3.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans3___4.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans3___5.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans3___6.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans3___7.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans3___8.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans3___9.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans3___89.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans4.factor)=c("Yes","No")
+levels(data$wk2_hosptrans4a___0.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans4a___1.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans4a___2.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans4a___3.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans4a___4.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans4a___89.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans5.factor)=c("Yes","No")
+levels(data$wk2_hosptrans5a___0.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans5a___1.factor)=c("Unchecked","Checked")
+levels(data$wk2_hosptrans5a___89.factor)=c("Unchecked","Checked")
+levels(data$wk2_hometrans2___0.factor)=c("Unchecked","Checked")
+levels(data$wk2_hometrans2___1.factor)=c("Unchecked","Checked")
+levels(data$wk2_hometrans2___2.factor)=c("Unchecked","Checked")
+levels(data$wk2_hometrans2___3.factor)=c("Unchecked","Checked")
+levels(data$wk2_hometrans2___4.factor)=c("Unchecked","Checked")
+levels(data$wk2_hometrans2___89.factor)=c("Unchecked","Checked")
+levels(data$wk2_hometrans3.factor)=c("Yes","No")
+levels(data$wk2_hometrans3a___0.factor)=c("Unchecked","Checked")
+levels(data$wk2_hometrans3a___1.factor)=c("Unchecked","Checked")
+levels(data$wk2_hometrans3a___89.factor)=c("Unchecked","Checked")
+levels(data$wk2_ss1.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$wk2_ss2.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$wk2_ss3.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$wk2_ss4.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$wk2_ss5.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$wk2_ss6.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$wk2_ss7.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$wk2_ss8.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$wk2_ss9.factor)=c("No","Yes")
+levels(data$wk2_sf1.factor)=c("Excellent","Very Good","Good","Fair","Poor","Very Poor")
+levels(data$wk2_sf2.factor)=c("Not at all","Very little","Somewhat","Quite a lot","Could not do physical activities")
+levels(data$wk2_sf3.factor)=c("None at all","A little bit","Some","Quite a lot","Could not do daily work")
+levels(data$wk2_sf4.factor)=c("None","Very mild","Mild","Moderate","Severe","Very Severe")
+levels(data$wk2_sf5.factor)=c("Very much","Quite a lot","Some","A little","None")
+levels(data$wk2_sf6.factor)=c("None at all","Very little","Somewhat","Quite a lot","Could not do social activities")
+levels(data$wk2_sf7.factor)=c("None at all","Slightly","Moderately","Quite a lot","Extremely")
+levels(data$wk2_sf8.factor)=c("Not at all","Slightly","Moderately","Quite a lot","Extremely")
+levels(data$wk2_phq1.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$wk2_phq2.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$wk2_phq3.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$wk2_phq4.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$wk2_phq5.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$wk2_phq6.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$wk2_phq7.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$wk2_phq8.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$wk2_phq9.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$wk2_audit1.factor)=c("Never","Monthly or less","2 to 4 times a month","2 to 3 times a week","4 or more times a week")
+levels(data$wk2_audit2.factor)=c("1 or 2","3 or 4","5 or 6","7 to 9","10 or more")
+levels(data$wk2_audit3.factor)=c("Never","Less than monthly","Monthly","Weekly","Daily or almost daily")
+levels(data$wk2_fimcare.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$wk2_fimtoilet.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$wk2_fimtx.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$wk2_fimmotion.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$wk2_fimstairs.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$wk2_fimexpr.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$wk2_fimcompr.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$wk2_fimsocial.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$wk2_fimprob.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$wk2_fimmemory.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$wk2_structure1.factor)=c("Yes","No")
+levels(data$wk2_confined.factor)=c("Yes","No")
+levels(data$wk2_aide1.factor)=c("Yes","No")
+levels(data$wk2_aide2___0.factor)=c("Unchecked","Checked")
+levels(data$wk2_aide2___1.factor)=c("Unchecked","Checked")
+levels(data$wk2_aide2___2.factor)=c("Unchecked","Checked")
+levels(data$wk2_aide2___3.factor)=c("Unchecked","Checked")
+levels(data$wk2_aide2___4.factor)=c("Unchecked","Checked")
+levels(data$wk2_aide2___5.factor)=c("Unchecked","Checked")
+levels(data$wk2_aide2___89.factor)=c("Unchecked","Checked")
+levels(data$wk2_dx.factor)=c("Yes","No")
+levels(data$wk2_dm.factor)=c("Yes","No")
+levels(data$wk2_dmoldnew.factor)=c("Old Diagnosis","New Diagnosis")
+levels(data$wk2_htn.factor)=c("Yes","No")
+levels(data$wk2_htnoldnew.factor)=c("Old Diagnosis","New Diagnosis")
+levels(data$wk2_kid.factor)=c("Yes","No")
+levels(data$wk2_kidoldnew.factor)=c("Old Diagnosis","New Diagnosis")
+levels(data$wk2_hiv.factor)=c("Yes","No")
+levels(data$wk2_hivoldnew.factor)=c("Old Diagnosis","New Diagnosis")
+levels(data$wk2_other1.factor)=c("Yes","No")
+levels(data$wk2_other2.factor)=c("Yes","No")
+levels(data$wk2_fusurg.factor)=c("Yes","No")
+levels(data$wk2_fusurgatt.factor)=c("No","Yes","Not yet")
+levels(data$wk2_fuortho.factor)=c("Yes","No")
+levels(data$wk2_fuorthoatt.factor)=c("No","Yes","Not yet")
+levels(data$wk2_fumed1.factor)=c("Yes","No")
+levels(data$wk2_fumed2.factor)=c("Yes","No")
+levels(data$wk2_fumed2att.factor)=c("No","Yes","Not yet")
+levels(data$wk2_fumed3.factor)=c("Yes","No")
+levels(data$wk2_fumed3att.factor)=c("No","Yes","Not yet")
+levels(data$wk2_fumed4.factor)=c("Yes","No")
+levels(data$wk2_fumed4att.factor)=c("No","Yes","Not yet")
+levels(data$wk2_fusubst.factor)=c("Yes","No")
+levels(data$wk2_fusubstatt.factor)=c("No","Yes","Not yet")
+levels(data$wk2_fumh.factor)=c("Yes","No")
+levels(data$wk2_fumhatt.factor)=c("No","Yes","Not yet")
+levels(data$wk2_furehab.factor)=c("Yes","No")
+levels(data$wk2_furehabatt.factor)=c("No","Yes","Not yet")
+levels(data$wk2_fuot.factor)=c("Yes","No")
+levels(data$wk2_fuotatt.factor)=c("No","Yes","Not yet")
+levels(data$wk2_fuother.factor)=c("Yes","No")
+levels(data$wk2_fuotheratt.factor)=c("No","Yes","Not yet")
+levels(data$wk2_med1freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$wk2_med1new.factor)=c("Yes","No")
+levels(data$wk2_med1take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$wk2_med2freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$wk2_med2new.factor)=c("Yes","No")
+levels(data$wk2_med2take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$wk2_med3freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$wk2_med3new.factor)=c("Yes","No")
+levels(data$wk2_med3take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$wk2_med4freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$wk2_med4new.factor)=c("Yes","No")
+levels(data$wk2_med4take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$wk2_med5freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$wk2_med5new.factor)=c("Yes","No")
+levels(data$wk2_med5take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$wk2_med6freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$wk2_med6new.factor)=c("Yes","No")
+levels(data$wk2_med6take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$wk2_medchal___0.factor)=c("Unchecked","Checked")
+levels(data$wk2_medchal___1.factor)=c("Unchecked","Checked")
+levels(data$wk2_medchal___2.factor)=c("Unchecked","Checked")
+levels(data$wk2_medchal___3.factor)=c("Unchecked","Checked")
+levels(data$wk2_medchal___4.factor)=c("Unchecked","Checked")
+levels(data$wk2_medchal___5.factor)=c("Unchecked","Checked")
+levels(data$wk2_medchal___6.factor)=c("Unchecked","Checked")
+levels(data$wk2_medchal___7.factor)=c("Unchecked","Checked")
+levels(data$wk2_medchal___8.factor)=c("Unchecked","Checked")
+levels(data$wk2_medchal___9.factor)=c("Unchecked","Checked")
+levels(data$wk2_psfs0.factor)=c("Yes","No")
+levels(data$week2_follow_up_complete.factor)=c("Incomplete","Unverified","Complete")
+levels(data$m3location.factor)=c("Home","Hospital")
+levels(data$m3_trans1.factor)=c("Yes","No")
+levels(data$m3_trans1a___0.factor)=c("Unchecked","Checked")
+levels(data$m3_trans1a___1.factor)=c("Unchecked","Checked")
+levels(data$m3_trans1a___2.factor)=c("Unchecked","Checked")
+levels(data$m3_trans1a___3.factor)=c("Unchecked","Checked")
+levels(data$m3_trans1a___4.factor)=c("Unchecked","Checked")
+levels(data$m3_trans1a___5.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans2.factor)=c("Car","Motorcycle","Bicycle","Bijaji","Dala dala","Large bus")
+levels(data$m3_hosptrans3___0.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans3___1.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans3___2.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans3___3.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans3___4.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans3___5.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans3___6.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans3___7.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans3___8.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans3___9.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans3___89.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans4.factor)=c("Yes","No")
+levels(data$m3_hosptrans4a___0.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans4a___1.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans4a___2.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans4a___3.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans4a___4.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans4a___89.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans5.factor)=c("Yes","No")
+levels(data$m3_hosptrans5a___0.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans5a___1.factor)=c("Unchecked","Checked")
+levels(data$m3_hosptrans5a___89.factor)=c("Unchecked","Checked")
+levels(data$m3_hometrans2___0.factor)=c("Unchecked","Checked")
+levels(data$m3_hometrans2___1.factor)=c("Unchecked","Checked")
+levels(data$m3_hometrans2___2.factor)=c("Unchecked","Checked")
+levels(data$m3_hometrans2___3.factor)=c("Unchecked","Checked")
+levels(data$m3_hometrans2___4.factor)=c("Unchecked","Checked")
+levels(data$m3_hometrans2___89.factor)=c("Unchecked","Checked")
+levels(data$m3_hometrans3.factor)=c("Yes","No")
+levels(data$m3_hometrans3a___0.factor)=c("Unchecked","Checked")
+levels(data$m3_hometrans3a___1.factor)=c("Unchecked","Checked")
+levels(data$m3_hometrans3a___89.factor)=c("Unchecked","Checked")
+levels(data$m3_ss1.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$m3_ss2.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$m3_ss3.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$m3_ss4.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$m3_ss5.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$m3_ss6.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$m3_ss7.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$m3_ss8.factor)=c("None of the time","A little of the time","Some of the time","Most of the time","All of the time")
+levels(data$m3_sf1.factor)=c("Excellent","Very Good","Good","Fair","Poor","Very Poor")
+levels(data$m3_sf2.factor)=c("Not at all","Very little","Somewhat","Quite a lot","Could not do physical activities")
+levels(data$m3_sf3.factor)=c("None at all","A little bit","Some","Quite a lot","Could not do daily work")
+levels(data$m3_sf4.factor)=c("None","Very mild","Mild","Moderate","Severe","Very Severe")
+levels(data$m3_sf5.factor)=c("Very much","Quite a lot","Some","A little","None")
+levels(data$m3_sf6.factor)=c("None at all","Very little","Somewhat","Quite a lot","Could not do social activities")
+levels(data$m3_sf7.factor)=c("None at all","Slightly","Moderately","Quite a lot","Extremely")
+levels(data$m3_sf8.factor)=c("Not at all","Slightly","Moderately","Quite a lot","Extremely")
+levels(data$m3_phq1.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$m3_phq2.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$m3_phq3.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$m3_phq4.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$m3_phq5.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$m3_phq6.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$m3_phq7.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$m3_phq8.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$m3_phq9.factor)=c("Not at all","Several days","More than half the days","Nearly every day")
+levels(data$m3_audit1.factor)=c("Never","Monthly or less","2 to 4 times a month","2 to 3 times a week","4 or more times a week")
+levels(data$m3_audit2.factor)=c("1 or 2","3 or 4","5 or 6","7 to 9","10 or more")
+levels(data$m3_audit3.factor)=c("Never","Less than monthly","Monthly","Weekly","Daily or almost daily")
+levels(data$m3_fimcare.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$m3_fimtoilet.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$m3_fimtx.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$m3_fimmotion.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$m3_fimstairs.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$m3_fimexpr.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$m3_fimcompr.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$m3_fimsocial.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$m3_fimprob.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$m3_fimmemory.factor)=c("1 Total Assistance","2 Maximal assistance","3 Moderate assistance","4 Minimal assistance","5 Supervision","6 Modified independence","7 Complete independence")
+levels(data$m3_conditions.factor)=c("Yes","No")
+levels(data$m3_dm.factor)=c("Yes","No")
+levels(data$m3_dmoldnew.factor)=c("Old Diagnosis","New Diagnosis")
+levels(data$m3_htn.factor)=c("Yes","No")
+levels(data$m3_htnoldnew.factor)=c("Old Diagnosis","New Diagnosis")
+levels(data$m3_kid.factor)=c("Yes","No")
+levels(data$m3_kidoldnew.factor)=c("Old Diagnosis","New Diagnosis")
+levels(data$m3_hiv.factor)=c("Yes","No")
+levels(data$m3_hivoldnew.factor)=c("Old Diagnosis","New Diagnosis")
+levels(data$m3_other1.factor)=c("Yes","No")
+levels(data$m3_other1new.factor)=c("Old Diagnosis","New Diagnosis")
+levels(data$m3_other2.factor)=c("Yes","No")
+levels(data$m3_other2new.factor)=c("Old Diagnosis","New Diagnosis")
+levels(data$m3_fusurg.factor)=c("Yes","No")
+levels(data$m3_fusurgatt.factor)=c("No","Yes","Not yet")
+levels(data$m3_fuortho.factor)=c("Yes","No")
+levels(data$m3_fuorthoatt.factor)=c("No","Yes","Not yet")
+levels(data$m3_fumed1.factor)=c("Yes","No")
+levels(data$m3_fumed2.factor)=c("Yes","No")
+levels(data$m3_fumed2att.factor)=c("No","Yes","Not yet")
+levels(data$m3_fumed3.factor)=c("Yes","No")
+levels(data$m3_fumed3att.factor)=c("No","Yes","Not yet")
+levels(data$m3_fumed4.factor)=c("Yes","No")
+levels(data$m3_fumed4att.factor)=c("No","Yes","Not yet")
+levels(data$m3_fusubst.factor)=c("Yes","No")
+levels(data$m3_fusubstatt.factor)=c("No","Yes","Not yet")
+levels(data$m3_fumh.factor)=c("Yes","No")
+levels(data$m3_fumhatt.factor)=c("No","Yes","Not yet")
+levels(data$m3_furehab.factor)=c("Yes","No")
+levels(data$m3_furehabatt.factor)=c("No","Yes","Not yet")
+levels(data$m3_fuot.factor)=c("Yes","No")
+levels(data$m3_fuotatt.factor)=c("No","Yes","Not yet")
+levels(data$m3_fuother.factor)=c("Yes","No")
+levels(data$m3_fuotheratt.factor)=c("No","Yes","Not yet")
+levels(data$m3_med1freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$m3_med1new.factor)=c("New","Old")
+levels(data$m3_med1take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$m3_med2freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$m3_med2new.factor)=c("New","Old")
+levels(data$m3_med2take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$m3_med3freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$m3_med3new.factor)=c("New","Old")
+levels(data$m3_med3take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$m3_med4freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$m3_med4new.factor)=c("New","Old")
+levels(data$m3_med4take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$m3_med5freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$m3_med5new.factor)=c("New","Old")
+levels(data$m3_med5take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$m3_med6freq.factor)=c("once daily","twice daily","three times daily","four times daily","5 times daily","as needed")
+levels(data$m3_med6new.factor)=c("New","Old")
+levels(data$m3_med6take.factor)=c("Take as told","Miss occasionally","Miss often")
+levels(data$m3_medchal___0.factor)=c("Unchecked","Checked")
+levels(data$m3_medchal___1.factor)=c("Unchecked","Checked")
+levels(data$m3_medchal___2.factor)=c("Unchecked","Checked")
+levels(data$m3_medchal___3.factor)=c("Unchecked","Checked")
+levels(data$m3_medchal___4.factor)=c("Unchecked","Checked")
+levels(data$m3_medchal___5.factor)=c("Unchecked","Checked")
+levels(data$m3_medchal___6.factor)=c("Unchecked","Checked")
+levels(data$m3_medchal___7.factor)=c("Unchecked","Checked")
+levels(data$m3_medchal___8.factor)=c("Unchecked","Checked")
+levels(data$m3_medchal___9.factor)=c("Unchecked","Checked")
+levels(data$m3_psfs1yn.factor)=c("Yes","No")
+levels(data$m3_psfs2yn.factor)=c("Yes","No")
+levels(data$m3_psfs3yn.factor)=c("Yes","No")
+levels(data$m3_strugimage.factor)=c("Yes","No")
+levels(data$m3_strugimageyn.factor)=c("Yes","No")
+levels(data$m3_chalimage.factor)=c("Yes","No")
+levels(data$m3_chalimageyn.factor)=c("Yes","No")
+levels(data$month3_follow_up_complete.factor)=c("Incomplete","Unverified","Complete")
+
+
+#Recoding and re-shaping
+data_managed <- data_aggregated %>% 
+		as_tibble() %>% 
+		mutate(
+  				enr_breathresult_cat = cut(enr_breathresult,
+  							breaks=c(-Inf,0.08,Inf),
+  						 	labels=c("negative","positive"))) %>%
+		mutate(hiv_positive = case_when(
+				 enr_priorhiv3 == 1 |
+				 enr_bioline1 == "POSITIVE" |
+				 enr_unigold1 == "POSITIVE" |
+				 enr_elisa1 == "POSITIVE" ~ "positive",
+				 	enr_priorhiv3 == 0 |
+				 	enr_bioline1 == "NEGATIVE" |
+				 	enr_unigold1 == "NEGATIVE" |
+				 	enr_elisa1 == "NEGATIVE" ~ "negative")) %>%
+		mutate(moss_total = scales::rescale(rowMeans(data.frame(wk2_ss1,
+												  wk2_ss2,
+												  wk2_ss3,
+												  wk2_ss4,
+												  wk2_ss5,
+												  wk2_ss6,
+												  wk2_ss7,
+												  wk2_ss8)),
+										to=c(0,100))) %>%
+		mutate(wk2_rr = na_if(wk2_rr, "ND")) %>%
+		mutate(wk2_wt = na_if(wk2_wt, "ND")) %>%
+		mutate_at(vars(wk2_sf1,
+						wk2_sf2,
+						wk2_sf3,
+						wk2_sf4,
+						wk2_sf5,
+						wk2_sf6,
+						wk2_sf7,
+						wk2_sf8),
+				   .funs=list(rescaled= ~scales::rescale(.,to=c(0,100)))) %>%
+		mutate(sf8_total = scales::rescale(rowMeans(data.frame(
+										  wk2_sf1,
+										  wk2_sf2,
+										  wk2_sf3,
+										  wk2_sf4,
+										  wk2_sf5,
+										  wk2_sf6,
+										  wk2_sf7,
+										  wk2_sf8)))) %>%
+		mutate(phq9_total = rowSums(data.frame(
+										  wk2_phq1,
+										  wk2_phq2,
+										  wk2_phq3,
+										  wk2_phq4,
+										  wk2_phq5,
+										  wk2_phq6,
+										  wk2_phq7,
+										  wk2_phq8,
+										  wk2_phq9))) %>%
+		mutate(depression_positive = case_when(
+				 phq9_total <= 9 ~ "negative",
+				 phq9_total > 9 ~ "positive"))  %>%
+		mutate(fim_physical = rowMeans(data.frame(
+										  wk2_fimcare,
+										  wk2_fimtoilet,
+										  wk2_fimtx,
+										  wk2_fimmotion,
+										  wk2_fimstairs))) %>%
+		mutate(fim_cog = rowMeans(data.frame(
+										  wk2_fimexpr,
+										  wk2_fimcompr,
+										  wk2_fimsocial,
+										  wk2_fimmemory,
+										  wk2_fimprob))) %>%
+		mutate(wk2_audit2_nato0 = case_when(
+				 wk2_audit1 == 0 ~ 0,
+				 wk2_audit2 == 0 ~ 0,
+				 wk2_audit2 == 1 ~ 1,
+				 wk2_audit2 == 2 ~ 2,
+				 wk2_audit2 == 3 ~ 3,
+				 wk2_audit2 == 4 ~ 4)) %>%
+		mutate(wk2_audit3_nato0 = case_when(
+				 wk2_audit1 == 0 ~ 0,
+				 wk2_audit3 == 0 ~ 0,
+				 wk2_audit3 == 1 ~ 1,
+				 wk2_audit3 == 2 ~ 2,
+				 wk2_audit3 == 3 ~ 3,
+				 wk2_audit3 == 4 ~ 4)) %>%
+		mutate(audit_total = rowSums(data.frame(
+										  wk2_audit1,
+										  wk2_audit2_nato0,
+										  wk2_audit3_nato0))) %>%
+		mutate(audit_positive = case_when(
+				 audit_total <= 4 ~ "negative",
+				 audit_total > 4 ~ "positive")) %>%
+		mutate(phq9_2_total = rowSums(data.frame(
+										  wk2_phq1,
+										  wk2_phq2))) %>%
+		mutate(depression_2_positive = case_when(
+				 phq9_2_total <= 3 ~ "negative",
+				 phq9_2_total > 3 ~ "positive"))  %>%
+		mutate(fim_physical_baseline = rowMeans(data.frame(
+										  fimcare,
+										  fimtoilet,
+										  fimtx,
+										  fimmotion,
+										  fimstairs))) %>%
+		mutate(fim_cog_baseline = rowMeans(data.frame(
+										  fimexpr,
+										  fimcompr,
+										  fimsocial,
+										  fimmemory,
+										  fimprob))) %>%
+		mutate(audit2_nato0 = case_when(
+				 audit1 == 0 ~ 0,
+				 audit2 == 0 ~ 0,
+				 audit2 == 1 ~ 1,
+				 audit2 == 2 ~ 2,
+				 audit2 == 3 ~ 3,
+				 audit2 == 4 ~ 4)) %>%
+		mutate(audit3_nato0 = case_when(
+				 audit1 == 0 ~ 0,
+				 audit3 == 0 ~ 0,
+				 audit3 == 1 ~ 1,
+				 audit3 == 2 ~ 2,
+				 audit3 == 3 ~ 3,
+				 audit3 == 4 ~ 4)) %>%
+		mutate(audit_baseline_total = rowSums(data.frame(
+										  audit1,
+										  audit2_nato0,
+										  audit3_nato0))) %>%
+		mutate(audit_baseline_positive = case_when(
+				 audit_total <= 4 ~ "negative",
+				 audit_total > 4 ~ "positive")) 
+
+
+data_managed$wk2_rr<-as.numeric(as.character(data_managed$wk2_rr))
+data_managed$wk2_wt<-as.numeric(as.character(data_managed$wk2_wt))
+
+#Subsetting data
+#baseline data
+data_baseline<-subset(data_managed,data_managed$redcap_event_name=='toc_400_enrollment_arm_1')
+
+#2 weeks data
+
+non_moshi_data<-data_baseline[data_baseline$live==0,]
+
+data_2weeks<-subset(data_managed,data_managed$redcap_event_name=='2_week_followup_arm_1')
+
+data_2weeks2 <- data_2weeks[data_2weeks$toc_id %in% non_moshi_data$toc_id, ]
+
+#3months data
+data_3months<-subset(data_managed,data_managed$redcap_event_name=='3_month_followup_arm_1')
+
+#stacking up data
+
+
+######################################################################
+#TABLE 1 - Sociodemographics
+######################################################################
+
+#Baseline
+#Table one for this paper
+
+# Age
+with(data_baseline,psych::describe(age.x))
+sum(is.na(data_baseline$age))/length(data_baseline[,1])
+
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+# Gender
+table<-with(data_baseline,table(female))
+table
+prop.table(table)
+sum(is.na(data_baseline$female))
+sum(is.na(data_baseline$female))/length(data_baseline[,1])
+# table<-with(data_baseline_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Education
+with(data_baseline,psych::describe(education))
+sum(is.na(data_baseline$education))
+(sum(is.na(data_baseline$education))/length(data_baseline[,1]))*100
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash
+
+# MArital
+table<-with(data_baseline,table(marital))
+table
+prop.table(table)
+sum(is.na(data_baseline$marital))
+sum(is.na(data_baseline$marital))/length(data_baseline[,1])
+# table<-with(data_baseline_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Emplotment
+table<-with(data_baseline,table(employ))
+table
+prop.table(table)
+sum(is.na(data_baseline$employ))
+sum(is.na(data_baseline$employ))/length(data_baseline[,1])
+# table<-with(data_baseline_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Tribe
+table<-with(data_baseline,table(tribe))
+table
+prop.table(table)
+sum(is.na(data_baseline$tribe))
+sum(is.na(data_baseline$tribe))/length(data_baseline[,1])
+# table<-with(data_baseline_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Insurance
+table<-with(data_baseline,table(insurance))
+table
+prop.table(table)
+sum(is.na(data_baseline$insurance))
+sum(is.na(data_baseline$insurance))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+######################################################################
+#TABLE 2 - Alcohol use behavior
+######################################################################
+
+#Baseline overall
+######################
+
+
+# Alcohol use prior to injury 
+table<-with(data_baseline,table(enr_1etoh))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_1etoh))
+sum(is.na(data_baseline$enr_1etoh))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Alcohol use post to injury 
+table<-with(data_baseline,table(enr_2etoh))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_2etoh))
+sum(is.na(data_baseline$enr_2etoh))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Breathlyzer test
+table<-with(data_baseline,table(enr_breathyesno))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_breathyesno))
+sum(is.na(data_baseline$enr_breathyesno))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Breathlyzer test
+table<-with(data_baseline,table(enr_breathresult_cat))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_breathresult_cat))
+sum(is.na(data_baseline$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#AUDIT
+audit_score_baseline<-rowSums(with(data_managed,data.frame(audit1,
+										  audit2,
+										  audit3)))
+
+data_managed$audit_score_baseline<-audit_score_baseline
+
+with(data,psych::describe(audit_score_baseline))
+sum(is.na(data$audit_score))
+(sum(is.na(data$audit_score))/length(data[,1]))*100
+# # with(data_epi,describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_epi,t.test(age ~ class_crash
+
+#Audit cat
+data_managed$audit_baseline_cat<-car::recode(data_managed$audit_score_baseline,"
+	0:4 = 'No';
+	5:40 = 'Yes'")
+
+table<-with(data_managed,table(audit_baseline_cat))
+table
+prop.table(table)
+sum(is.na(data_managed$audit_baseline_cat))
+sum(is.na(data_managed$audit_baseline_cat))/length(data_managed[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Audit cat
+table<-with(data_managed,table(audit1))
+table
+prop.table(table)
+sum(is.na(data_managed$audit_baseline_cat))
+sum(is.na(data_managed$audit_baseline_cat))/length(data_managed[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#2 weeks
+######################
+
+#AUDIT score
+with(data_2weeks,psych::describe(data_2weeks$audit_total))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+# Audit categorical
+table<-with(data_2weeks,table(audit_positive))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_breathresult_cat))
+sum(is.na(data_2weeks$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Audit Q1
+table<-with(data_2weeks,table(wk2_audit1))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_breathresult_cat))
+sum(is.na(data_2weeks$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Audit Q2
+table<-with(data_2weeks,table(wk2_audit2_nato0))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_breathresult_cat))
+sum(is.na(data_2weeks$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Audit Q3
+table<-with(data_2weeks,table(wk2_audit3_nato0))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_breathresult_cat))
+sum(is.na(data_2weeks$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+######################################################################
+#TABLE 3 - Clinical characteristics
+######################################################################
+
+#Baseline
+######################
+
+#Temperature
+data_baseline$temp_arred<-car::recode(data_baseline$temp_arred,"
+	'ND'=NA")
+
+data_baseline$temp_arred_2<-as.numeric(as.character(data_baseline$temp_arred))
+
+with(data_baseline,psych::describe(temp_arred_2))
+sum(is.na(data_baseline$temp_arred_2))
+(sum(is.na(data_baseline$temp_arred_2))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Respiratory rate
+with(data_baseline,psych::describe(rr_arred))
+sum(is.na(data_baseline$rr_arred))
+(sum(is.na(data_baseline$rr_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Heart rate
+with(data_baseline,psych::describe(hr_arred))
+sum(is.na(data_baseline$hr_arred))
+(sum(is.na(data_baseline$hr_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Systolic blood preassure
+with(data_baseline,psych::describe(sbp_arred))
+sum(is.na(data_baseline$sbp_arred))
+(sum(is.na(data_baseline$sbp_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Diastolic blood preassure
+with(data_baseline,psych::describe(dbp_arred))
+sum(is.na(data_baseline$dbp_arred))
+(sum(is.na(data_baseline$dbp_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Pulse Oxygen
+with(data_baseline,psych::describe(pox_arred))
+sum(is.na(data_baseline$pox_arred))
+(sum(is.na(data_baseline$pox_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Pulse Oxygen
+with(data_baseline,psych::describe(pox_arred))
+sum(is.na(data_baseline$pox_arred))
+(sum(is.na(data_baseline$pox_arred))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Pain at arrival
+with(data_baseline,psych::describe(pain_arred))
+sum(is.na(data_baseline$pain_arred))
+(sum(is.na(data_baseline$pain_arred))/length(data_baseline[,1]))*100
+# # with(data_epi,describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_epi,t.test(age ~ class_crash
+
+# Ooverall health
+with(data_baseline,psych::describe(scale_health))
+sum(is.na(data_baseline$scale_health))
+(sum(is.na(data_baseline$scale_health))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#Sum SF8
+SF8_overall<-rowMeans(with(data_baseline,data.frame(sf1,
+										  sf2,
+										  sf3,
+										  sf4,
+										  sf5,
+										  sf6,
+										  sf7,
+										  sf8)))
+data_baseline$SF8_overall<-SF8_overall
+
+with(data_baseline,psych::describe(SF8_overall))
+sum(is.na(data_baseline$SF8_overall))
+(sum(is.na(data_baseline$SF8_overall))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 1
+with(data_baseline,psych::describe(sf1))
+sum(is.na(data_baseline$sf1))
+(sum(is.na(data_baseline$sf1))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 2
+with(data_baseline,psych::describe(sf2))
+sum(is.na(data_baseline$sf2))
+(sum(is.na(data_baseline$sf2))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 3
+with(data_baseline,psych::describe(sf3))
+sum(is.na(data_baseline$sf3))
+(sum(is.na(data_baseline$sf3))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 4
+with(data_baseline,psych::describe(sf4))
+sum(is.na(data_baseline$sf4))
+(sum(is.na(data_baseline$sf4))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 5
+with(data_baseline,psych::describe(sf5))
+sum(is.na(data_baseline$sf5))
+(sum(is.na(data_baseline$sf5))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 6
+with(data_baseline,psych::describe(sf6))
+sum(is.na(data_baseline$sf6))
+(sum(is.na(data_baseline$sf6))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 7
+with(data_baseline,psych::describe(sf7))
+sum(is.na(data_baseline$sf7))
+(sum(is.na(data_baseline$sf7))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#SF8 8
+with(data_baseline,psych::describe(sf8))
+sum(is.na(data_baseline$sf8))
+(sum(is.na(data_baseline$sf8))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+phq2_overall<-rowMeans(with(data_baseline,data.frame(phq1,
+										  phq2)))
+
+data_baseline$phq2_overall<-SF8_overall
+
+#PHQ2 1
+with(data_baseline,psych::describe(phq9_2_total))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+# #PHQ2 2
+# with(data_baseline,psych::describe(phq2))
+# sum(is.na(data_baseline$phq2))
+# (sum(is.na(data_baseline$phq2))/length(data_baseline[,1]))*100
+# # # with(data_epi,describeBy(age,class_crash))
+# # # t-test: # independent 2-group, 2 level IV
+# # # with(data_epi,t.test(age ~ class_crash
+
+#FIM Cog
+with(data_baseline,psych::describe(fim_cog_baseline))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#FIM Cog
+with(data_baseline,psych::describe(fim_physical_baseline))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+# # with(data_baseline_epi,psych::describeBy(age,class_crash))
+# # t-test: # independent 2-group, 2 level IV
+# # with(data_baseline_epi,t.test(age ~ class_crash
+
+#FIM Self care
+with(data_baseline,psych::describe(fimcare))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimcare,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Toiliting
+with(data_baseline,psych::describe(fimtoilet))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimtoilet,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Transfers: Bed/chair/wheelchair
+with(data_baseline,psych::describe(fimtx))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimtx,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Locomotion: Walking/Wheelchair
+with(data_baseline,psych::describe(fimmotion))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimmotion,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Locomotion: Stairs
+with(data_baseline,psych::describe(fimstairs))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimstairs,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Expression
+with(data_baseline,psych::describe(fimexpr))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimexpr,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Comprehension
+with(data_baseline,psych::describe(fimcompr))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimcompr,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Social interaction
+with(data_baseline,psych::describe(fimsocial))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimsocial,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Problem Solving
+with(data_baseline,psych::describe(fimprob))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimprob,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Memory
+with(data_baseline,psych::describe(fimmemory))
+sum(is.na(data_baseline$phq1))
+(sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
+
+data_baseline %>%
+mutate(fimcare_cat = cut(fimmemory,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#2 weeks
+######################
+
+#Temperature
+with(data_2weeks,psych::describe(data_2weeks$wk2_temp))
+sum(is.na(data_2weeks$wk2_temp))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Respiratory rate
+with(data_2weeks,psych::describe(data_2weeks$wk2_rr))
+sum(is.na(data_2weeks$wk2_rr))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Heart rate
+with(data_2weeks,psych::describe(data_2weeks$wk2_hr))
+sum(is.na(data_2weeks$wk2_hr))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#SysBP
+with(data_2weeks,psych::describe(data_2weeks$wk2_sbp))
+sum(is.na(data_2weeks$wk2_sbp))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#DiastBP
+with(data_2weeks,psych::describe(data_2weeks$wk2_dbp))
+sum(is.na(data_2weeks$wk2_dbp))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Pulse Ox
+with(data_2weeks,psych::describe(data_2weeks$wk2_pox))
+sum(is.na(data_2weeks$wk2_pox))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Weight
+with(data_2weeks,psych::describe(data_2weeks$wk2_wt))
+sum(is.na(data_2weeks$wk2_wt))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Pain
+with(data_2weeks,psych::describe(data_2weeks$wk2_pain))
+sum(is.na(data_2weeks$wk2_pain))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#health status
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf0))
+sum(is.na(data_2weeks$wk2_sf0))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#health status
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf1))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#physical health
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf2))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#role physical
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf3))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#bodily pain
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf4))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#vitality
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf5))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#social functioning
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf6))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#emotiona role
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf7))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Role emotional
+with(data_2weeks,psych::describe(data_2weeks$wk2_sf8))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#Depression
+with(data_2weeks,psych::describe(data_2weeks$phq9_total))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+# Depression categorical
+table<-with(data_2weeks,table(depression_positive))
+table
+prop.table(table)
+sum(is.na(data_2weeks$depression_positive))
+sum(is.na(data_2weeks$depression_positive))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#FIM Cognitive
+with(data_2weeks,psych::describe(data_2weeks$fim_cog))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#FIM Physical
+with(data_2weeks,psych::describe(data_2weeks$fim_physical))
+sum(is.na(data_2weeks$wk2_sf1))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#FIM Self care
+with(data_2weeks,psych::describe(wk2_fimcare))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(wk2_fimcare_cat = cut(wk2_fimcare,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(wk2_fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Toiliting
+with(data_2weeks,psych::describe(fimtoilet))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimtoilet,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Transfers: Bed/chair/wheelchair
+with(data_2weeks,psych::describe(fimtx))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimtx,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Locomotion: Walking/Wheelchair
+with(data_2weeks,psych::describe(fimmotion))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimmotion,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Locomotion: Stairs
+with(data_2weeks,psych::describe(fimstairs))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimstairs,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Expression
+with(data_2weeks,psych::describe(fimexpr))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimexpr,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Comprehension
+with(data_2weeks,psych::describe(fimcompr))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimcompr,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Social interaction
+with(data_2weeks,psych::describe(fimsocial))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimsocial,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Problem Solving
+with(data_2weeks,psych::describe(fimprob))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimprob,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#FIM Memory
+with(data_2weeks,psych::describe(fimmemory))
+sum(is.na(data_2weeks$phq1))
+(sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
+
+data_2weeks %>%
+mutate(fimcare_cat = cut(fimmemory,
+  							breaks=c(-Inf,5,Inf),
+  						 	labels=c("positive","negative"))) %>%
+count(fimcare_cat) %>%
+  mutate(prop = prop.table(n))
+
+#Structure
+table<-with(data_2weeks,table(wk2_structure1))
+table
+prop.table(table)
+sum(is.na(data_2weeks$wk2_structure1))
+sum(is.na(data_2weeks$wk2_structure1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Confined at home
+table<-with(data_2weeks,table(wk2_confined))
+table
+prop.table(table)
+sum(is.na(data_2weeks$wk2_structure1))
+sum(is.na(data_2weeks$wk2_structure1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Confined at home
+table<-with(data_2weeks,table(wk2_aide1))
+table
+prop.table(table)
+sum(is.na(data_2weeks$wk2_structure1))
+sum(is.na(data_2weeks$wk2_structure1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+######################################################################
+#TABLE 4 - Co-morbidities
+######################################################################
+
+# Prior HIV test
+table<-with(data_baseline,table(enr_priorhiv))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_breathresult_cat))
+sum(is.na(data_baseline$enr_breathresult_cat))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Prior HIV result
+table<-with(data_baseline,table(enr_priorhiv3))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_priorhiv3))
+sum(is.na(data_baseline$enr_priorhiv3))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Prior HIV result
+table<-with(data_baseline,table(enr_famhiv))
+table
+prop.table(table)
+9sum(is.na(data_baseline$enr_famhiv))
+sum(is.na(data_baseline$enr_famhiv))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# Prior HIV result
+#spouse
+table<-with(data_baseline,table(enr_famhiv1___0))
+table
+prop.table(table)
+
+#Mother
+table<-with(data_baseline,table(enr_famhiv1___1))
+table
+prop.table(table)
+
+#Father
+table<-with(data_baseline,table(enr_famhiv1___2))
+table
+prop.table(table)
+
+#Blood sibling
+table<-with(data_baseline,table(enr_famhiv1___3))
+table
+prop.table(table)
+
+#Aunt/Uncle
+table<-with(data_baseline,table(enr_famhiv1___4))
+table
+prop.table(table)
+
+#Cousing
+table<-with(data_baseline,table(enr_famhiv1___5))
+table
+prop.table(table)
+
+#Grandparent
+table<-with(data_baseline,table(enr_famhiv1___6))
+table
+prop.table(table)
+
+#Child
+table<-with(data_baseline,table(enr_famhiv1___7))
+table
+prop.table(table)
+
+#GrandChild
+table<-with(data_baseline,table(enr_famhiv1___8))
+table
+prop.table(table)
+
+#Distant relative
+table<-with(data_baseline,table(enr_famhiv1___9))
+table
+prop.table(table)
+
+#Family friend
+table<-with(data_baseline,table(enr_famhiv1___10))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_famhiv1))
+sum(is.na(data_baseline$enr_famhiv1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - Bioline
+table<-with(data_baseline,table(enr_bioline))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_bioline1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - Unigold
+table<-with(data_baseline,table(enr_unigold))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_unigold1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - ELISA
+table<-with(data_baseline,table(enr_elisa))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_elisa1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - Viral load
+table<-with(data_baseline,table(enr_vl))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_vl1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - CD4
+table<-with(data_baseline,table(enr_cd4))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_cd4_1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV testing - CD4
+table<-with(data_baseline,table(hiv_positive))
+table
+prop.table(table)
+
+table<-with(data_baseline,table(enr_cd4_1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+# DM
+table<-with(data_managed,table(dm))
+table
+prop.table(table)
+sum(is.na(data_managed$dm))
+sum(is.na(data_managed$dm))/length(data_managed[,1])
+# table<-with(data_managed_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HTN	
+table<-with(data_managed,table(htn))
+table
+prop.table(table)
+sum(is.na(data_managed$htn))
+sum(is.na(data_managed$htn))/length(data_managed[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#2 weeks
+####################
+
+#Diabetes
+table<-with(data_2weeks,table(wk2_dm))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Hypertension
+table<-with(data_2weeks,table(wk2_htn))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Kidney disease
+table<-with(data_2weeks,table(wk2_kid))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#HIV
+table<-with(data_2weeks,table(wk2_hiv))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+######################################################################
+#TABLE 5 - Post injury characteristics
+######################################################################
+
+#2 weeks
+######################
+
+#Interview location
+table<-with(data_2weeks,table(wk2location))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Transport oneself
+table<-with(data_2weeks,table(wk2_trans1))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Transport fo the appointment
+table<-with(data_2weeks,table(wk2_hosptrans2))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Difficulty coming to the appointment
+table<-with(data_2weeks,table(wk2_hosptrans4))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+table(data_2weeks$wk2_hosptrans4a___0)
+table(data_2weeks$wk2_hosptrans4a___1)
+table(data_2weeks$wk2_hosptrans4a___2)
+table(data_2weeks$wk2_hosptrans4a___3)
+table(data_2weeks$wk2_hosptrans4a___4)
+
+#travel more difficult 
+table<-with(data_2weeks,table(wk2_hosptrans5))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+table(data_2weeks$wk2_hosptrans5a___0)
+table(data_2weeks$wk2_hosptrans5a___1)
+
+#difficult to come to hospital
+
+table(data_2weeks$wk2_hometrans2___0)
+table(data_2weeks$wk2_hometrans2___1)
+table(data_2weeks$wk2_hometrans2___3)
+table(data_2weeks$wk2_hometrans2___4)
+
+#travel more difficult 
+table<-with(data_2weeks,table(wk2_hometrans3))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Social support
+
+with(data_2weeks,psych::describe(data_2weeks$moss_total))
+sum(is.na(data_baseline$data_2weeks))/length(data_baseline[,1])
+# with(data_baseline_epi,describeBy(age,class_crash))
+# t-test: # independent 2-group, 2 level IV
+# with(data_baseline_epi,t.test(age ~ class_crash))
+
+#SS9
+table<-with(data_2weeks,table(wk2_ss9))
+table
+prop.table(table)
+sum(is.na(data_baseline$enr_bioline1))
+sum(is.na(data_baseline$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Surgery
+table<-with(data_2weeks,table(wk2_fusurg))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Medicine
+table<-with(data_2weeks,table(wk2_fumed1))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Substance use
+table<-with(data_2weeks,table(wk2_fusubst))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Follow up with mental health
+table<-with(data_2weeks,table(wk2_fumh))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Follow up with rehabilitation
+table<-with(data_2weeks,table(wk2_furehab))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+#Follow up with OT
+table<-with(data_2weeks,table(wk2_fuot))
+table
+prop.table(table)
+sum(is.na(data_2weeks$enr_bioline1))
+sum(is.na(data_2weeks$enr_bioline1))/length(data_baseline[,1])
+# table<-with(data_epi,table(gender,outcome))
+# table
+# prop.table(table,2)
+# chisq.test(table)
+# fisher.test(table)
+# assocstats(table) #vcd package
+
+######################################################################
+#FIGURE 1 - Social SUpport
+######################################################################
+
+# moss_likert_data<-with(data_2weeks,data.frame(wk2_ss1,
+# 											  wk2_ss2,
+# 											  wk2_ss3,
+# 											  wk2_ss4,
+# 											  wk2_ss5,
+# 											  wk2_ss6,
+# 											  wk2_ss7,
+# 											  wk2_ss8))
+
+
+# moss_likert_data[moss_likert_data==0]<-"None of the time"
+# moss_likert_data[moss_likert_data==1]<-"A little of the time"
+# moss_likert_data[moss_likert_data==2]<-"Some of the time"
+# moss_likert_data[moss_likert_data==3]<-"Most of the time"
+# moss_likert_data[moss_likert_data==4]<-"All of the time"
+
+# # likert_data2[,4][likert_data2[,4]==1]<-"Strongly Agree"
+# # likert_data2[,4][likert_data2[,4]==2]<-"Agree"
+# # likert_data2[,4][likert_data2[,4]==3]<-"I don't know"
+# # likert_data2[,4][likert_data2[,4]==4]<-"Disagree"
+# # likert_data2[,4][likert_data2[,4]==5]<-"Strongly Disagree"
+
+# # colnames(likert_data2)<-c("A large number of patients drink alcohol.",
+# # 				"Alcohol use and abuse is not a problem \n amongs our patient population at KCMC.",
+# # 				"Injury pateints at KCMC were likely drinking\n when they were injured.",
+# # 			  	"Caring for patients who are intoxicated is\n frustrating as they caused themselves\n to be ill/injured.",
+# # 			  	"Few injury patients at KCMC suffer from\n alcohol related injuries.",
+# # 			  	"Knowing if patients have atrisk drinking\n does NOT improve care I can provide.",
+# # 			  	"I feel comfortable asking patients about\n their alcohol use behavior.",
+# # 			  	"I feel comfortable counseling patients about\n their atrisk drinking.",
+# # 			  	"How motivated are you and your colleagues at\n implementing alcohol screening\n and testing?",
+# # 			  	"How willing are you and your colleagues to\n learn about reducing harmful alcohol\n use among injury patients?",
+# # 			  	"How willing are you and your colleagues to\n implement alcohol screening among\n injury patients?")
+
+
+# mylevels <- c("None of the time",
+# 			  "A little of the time",
+# 			  "Some of the time",
+# 			  "Most of the time",
+# 			  "All of the time")
+
+# for(i in seq_along(moss_likert_data)) {
+# 	moss_likert_data[,i] <- factor(moss_likert_data[,i], levels=mylevels)
+# }
+
+# moss_likert_data_clean<-likert(na.omit(moss_likert_data))
+# # perception_data$results$Group<-as.factor(c("Perception"))
+# # perception_data$grouping<-as.factor(rep("Perception",34))
+# moss_plot<-plot(moss_likert_data_clean,
+# 					 colors=c("#D33F6A",
+# 					 		  "#E07B91",
+# 					 		  "lightgrey",
+# 					 		  "#8595E1",
+# 					 		  "#4A6FE3"))
+
+# perception_plot<- moss_plot + scale_x_discrete(breaks=c(
+# 							  							"wk2_ss1"
+# 							  							"wk2_ss2"
+# 							  							"wk2_ss3"
+# 							  							"wk2_ss4"
+# 							  							"wk2_ss5"
+# 							  							"wk2_ss6"
+# 							  							"wk2_ss7"
+# 							  							"wk2_ss8"),
+# 													labels=c(
+# 							  "To help you if you were unable to move as easily as before the injury",
+# 							  "To take you to the doctor when you need it",
+# 							  "To prepare your meals if you were unable to do it yourself",
+# 							  "I feel comfortable asking patients about\n their alcohol use behavior.",
+# 							  "How willing are you and your colleagues to\n learn about reducing harmful alcohol\n use among injury patients?",
+# 							  "How motivated are you and your colleagues at\n implementing alcohol screening\n and testing?",
+# 							  "A large number of patients drink alcohol.",
+# 							  "Caring for patients who are intoxicated is\n frustrating as they caused themselves\n to be ill/injured.",
+# 							  "Few injury patients at KCMC suffer from\n alcohol related injuries.",
+# 							  "Knowing if patients have atrisk drinking\n does NOT improve care I can provide.",
+# 							  "Alcohol use and abuse is not a problem \n amongs our patient population at KCMC."))+
+# 				theme_bw() +
+# 				theme(legend.position="bottom")
+
+# summary_data<-summary(perception_data)
+
+# mean_plot<-ggplot(summary_data, aes(y=mean,x=Item)) + 
+#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.1) +
+#     geom_line() +
+#     geom_point() +
+#     coord_flip() +
+#     xlab("") +
+#     ylab("Mean/Standard Deviation") +
+#     scale_x_discrete(limits=rev(c("comfortable_counseling",
+#     						  "likely_drunk_while_injured",
+#     						  "willing_alc_screening",
+#     						  "comfortable_asking_alcohol",
+#     						  "learn_reducing_alc",
+#     						  "motivated_alc_screening",
+#     						  "pts_drink",
+#     						  "intox_pts_frustrating",
+#     						  "few_alc_related_injuries",
+#     						  "knowledge_not_improve_care",
+#     						  "alcohol_not_problem_kcmc"))) +
+
+#     theme_bw()
+
+# # mean_table_data<-with(summary_data,data.frame(Item=c(
+# # 							  "I feel comfortable counseling patients about\n their atrisk drinking.",
+# # 							  "Injury pateints at KCMC were likely drinking\n when they were injured.",
+# # 							  "How willing are you and your colleagues to\n implement alcohol screening among\n injury patients?",
+# # 							  "I feel comfortable asking patients about\n their alcohol use behavior.",
+# # 							  "How willing are you and your colleagues to\n learn about reducing harmful alcohol\n use among injury patients?",
+# # 							  "How motivated are you and your colleagues at\n implementing alcohol screening\n and testing?",
+# # 							  "A large number of patients drink alcohol.",
+# # 							  "Caring for patients who are intoxicated is\n frustrating as they caused themselves\n to be ill/injured.",
+# # 							  "Few injury patients at KCMC suffer from\n alcohol related injuries.",
+# # 							  "Knowing if patients have atrisk drinking\n does NOT improve care I can provide.",
+# # 							  "Alcohol use and abuse is not a problem \n amongs our patient population at KCMC."),
+# # 											  Mean=round(mean,1),
+# # 											  SD=round(sd,1)))
+# # mean_table<-ggtexttable(mean_table_data, rows = NULL)
+
+# # require(ggpubr)
+# perception_grid<-ggarrange(perception_plot, #+ rremove("y.text"), 
+# 		  mean_plot + rremove("y.text"), 
+# 		  # mean_table,
+#           labels = c("A", "B"),
+#           # heights = c(2, 4),
+#           ncol = 2,
+#           widths = c(1, 0.3),
+#           align = c("h"),
+#           common.legend = TRUE,
+#           legend = "bottom")

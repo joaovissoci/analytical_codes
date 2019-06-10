@@ -26,7 +26,7 @@ library(skmeans)
 library(mclust)
 
 
-data<-read.csv("/Users/joaovissoci/Downloads/Titulos_csv2 (1).csv",
+data<-read.csv("/Users/Joao/Downloads/Titulos_csv2 (1).csv",
                stringsAsFactors=FALSE)
 
 #minerar o texto em poetugues
@@ -356,7 +356,7 @@ wf$contribution<-(wf$freq/171)*100
 wf<-wf[wf$contribution>5,]
 wf
 
-write.csv(wf,"/Users/joaovissoci/Desktop/edfisica_wordfreq.csv")
+write.csv(wf,"/Users/Joao/Desktop/edfisica_wordfreq.csv")
 
 p <- ggplot(wf, aes(x = reorder(word, -freq), y = freq)) +
             geom_bar(stat = "identity") +
@@ -2603,7 +2603,7 @@ dev.off()
 # qgraph(cor_c8,layout="spring",labels=colnames(cor_c8),threshold=0.3)
 
 # dev.off()
-tiff("/Users/joaovissoci/Desktop/edf_networks.tiff",
+tiff("/Users/Joao/Desktop/edf_networks.tiff",
  width = 2500, height = 3600,compression = 'lzw', res=300)
 #Add plot
 par(mfrow = c(3, 2))  # 3 rows and 2 columns
