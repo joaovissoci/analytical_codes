@@ -12,6 +12,6 @@ rsconnect::setAccountInfo(name='joaovissoci', token='9CA50F37220AE6294E1A9F88B8F
 rsconnect::deployApp('/Users/Joao/Desktop/v2_US_SAP_residents_dashboard.rmd')
 
 
-rmarkdown::run("/Users/joaovissoci/Git/analytical_codes/Duke_DGNN/US_SAP_residents_dashboard.rmd")
+rmarkdown::run("/Users/Joao/Downloads/index_ptb_ufma.Rmd")
 
-rsconnect::deployApp('/Users/joaovissoci/Git/analytical_codes/Duke_DGNN/US_SAP_residents_dashboard.rmd')
+rsconnect::deployApp('/Users/Joao/Downloads/index_ptb_ufma.Rmd')

@@ -44,9 +44,9 @@ library, character.only=T)
 #LOADING DATA FROM A .CSV FILE
 
 #Read Data
-data_followup=read.csv('/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_400study_data.csv')
+data_followup=read.csv('/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_400study_dataAgu2019.csv')
 
-data_registry<-read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_data.csv",sep=",")
+data_registry<-read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_dataAug2019.csv",sep=",")
 
 data_registry$study_id<-data_registry$part_id
 
@@ -916,7 +916,7 @@ sum(is.na(data_baseline$phq1))
 # # t-test: # independent 2-group, 2 level IV
 # # with(data_baseline_epi,t.test(age ~ class_crash
 
-#FIM Cog
+#FIM Physical
 with(data_baseline,psych::describe(fim_physical_baseline))
 sum(is.na(data_baseline$phq1))
 (sum(is.na(data_baseline$phq1))/length(data_baseline[,1]))*100
@@ -1213,108 +1213,108 @@ count(wk2_fimcare_cat) %>%
   mutate(prop = prop.table(n))
 
 #FIM Toiliting
-with(data_2weeks,psych::describe(fimtoilet))
+with(data_2weeks,psych::describe(wk2_fimtoilet))
 sum(is.na(data_2weeks$phq1))
 (sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
 
 data_2weeks %>%
-mutate(fimcare_cat = cut(fimtoilet,
+mutate(fimcare_cat = cut(wk2_fimtoilet,
   							breaks=c(-Inf,5,Inf),
   						 	labels=c("positive","negative"))) %>%
 count(fimcare_cat) %>%
   mutate(prop = prop.table(n))
 
 #FIM Transfers: Bed/chair/wheelchair
-with(data_2weeks,psych::describe(fimtx))
+with(data_2weeks,psych::describe(wk2_fimtx))
 sum(is.na(data_2weeks$phq1))
 (sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
 
 data_2weeks %>%
-mutate(fimcare_cat = cut(fimtx,
+mutate(fimcare_cat = cut(wk2_fimtx,
   							breaks=c(-Inf,5,Inf),
   						 	labels=c("positive","negative"))) %>%
 count(fimcare_cat) %>%
   mutate(prop = prop.table(n))
 
 #FIM Locomotion: Walking/Wheelchair
-with(data_2weeks,psych::describe(fimmotion))
+with(data_2weeks,psych::describe(wk2_fimmotion))
 sum(is.na(data_2weeks$phq1))
 (sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
 
 data_2weeks %>%
-mutate(fimcare_cat = cut(fimmotion,
+mutate(fimcare_cat = cut(wk2_fimmotion,
   							breaks=c(-Inf,5,Inf),
   						 	labels=c("positive","negative"))) %>%
 count(fimcare_cat) %>%
   mutate(prop = prop.table(n))
 
 #FIM Locomotion: Stairs
-with(data_2weeks,psych::describe(fimstairs))
+with(data_2weeks,psych::describe(wk2_fimstairs))
 sum(is.na(data_2weeks$phq1))
 (sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
 
 data_2weeks %>%
-mutate(fimcare_cat = cut(fimstairs,
+mutate(fimcare_cat = cut(wk2_fimstairs,
   							breaks=c(-Inf,5,Inf),
   						 	labels=c("positive","negative"))) %>%
 count(fimcare_cat) %>%
   mutate(prop = prop.table(n))
 
 #FIM Expression
-with(data_2weeks,psych::describe(fimexpr))
-sum(is.na(data_2weeks$phq1))
+with(data_2weeks,psych::describe(wk2_fimexpr))
+0sum(is.na(data_2weeks$phq1))
 (sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
 
 data_2weeks %>%
-mutate(fimcare_cat = cut(fimexpr,
+mutate(fimcare_cat = cut(wk2_fimexpr,
   							breaks=c(-Inf,5,Inf),
   						 	labels=c("positive","negative"))) %>%
 count(fimcare_cat) %>%
   mutate(prop = prop.table(n))
 
 #FIM Comprehension
-with(data_2weeks,psych::describe(fimcompr))
-sum(is.na(data_2weeks$phq1))
+with(data_2weeks,psych::describe(wk2_fimcompr))
+0sum(is.na(data_2weeks$phq1))
 (sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
 
 data_2weeks %>%
-mutate(fimcare_cat = cut(fimcompr,
+mutate(fimcare_cat = cut(wk2_fimcompr,
   							breaks=c(-Inf,5,Inf),
   						 	labels=c("positive","negative"))) %>%
 count(fimcare_cat) %>%
   mutate(prop = prop.table(n))
 
 #FIM Social interaction
-with(data_2weeks,psych::describe(fimsocial))
-sum(is.na(data_2weeks$phq1))
+with(data_2weeks,psych::describe(wk2_fimsocial))
+ sum(is.na(data_2weeks$phq1))
 (sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
 
 data_2weeks %>%
-mutate(fimcare_cat = cut(fimsocial,
+mutate(fimcare_cat = cut(wk2_fimsocial,
   							breaks=c(-Inf,5,Inf),
   						 	labels=c("positive","negative"))) %>%
 count(fimcare_cat) %>%
   mutate(prop = prop.table(n))
 
 #FIM Problem Solving
-with(data_2weeks,psych::describe(fimprob))
-sum(is.na(data_2weeks$phq1))
+with(data_2weeks,psych::describe(wk2_fimprob))
+ sum(is.na(data_2weeks$phq1))
 (sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
 
 data_2weeks %>%
-mutate(fimcare_cat = cut(fimprob,
+mutate(fimcare_cat = cut(wk2_fimprob,
   							breaks=c(-Inf,5,Inf),
   						 	labels=c("positive","negative"))) %>%
 count(fimcare_cat) %>%
   mutate(prop = prop.table(n))
 
 #FIM Memory
-with(data_2weeks,psych::describe(fimmemory))
+with(data_2weeks,psych::describe(wk2_fimmemory))
 sum(is.na(data_2weeks$phq1))
 (sum(is.na(data_2weeks$phq1))/length(data_2weeks[,1]))*100
 
 data_2weeks %>%
-mutate(fimcare_cat = cut(fimmemory,
+mutate(fimcare_cat = cut(wk2_fimmemory,
   							breaks=c(-Inf,5,Inf),
   						 	labels=c("positive","negative"))) %>%
 count(fimcare_cat) %>%

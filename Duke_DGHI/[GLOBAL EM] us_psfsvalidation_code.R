@@ -22,7 +22,7 @@
 #All packages must be installes with install.packages() function
 lapply(c("ggplot2","car", "vcd", "gridExtra","epicalc","gdata",
 	"reshape2","dplyr","devtools","reshape","mice","haven",
-  "data.table"),
+  "data.table","psych"),
 library, character.only=T)
 
 #Package and codes to pull data from goodle sheets
@@ -92,22 +92,22 @@ library, character.only=T)
 # write.csv(adys,"/Users/Joao/Desktop/deleteme_adys.csv")
 
 # add the path to you computer between " "
-data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
+data<-read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/data/US_snaekbitePSFS_data.csv",sep=',')
 
 #DASH, PGIC and LEFS
-data2<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adqs.sas7bdat"))
+data2<-setDT(read_sas("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adqs.sas7bdat"))
 
 #PSFS
-data3<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
+data3<-setDT(read_sas("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
 
 #PSFS Pilot
-data4<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
+data4<-setDT(read_sas("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
 
 #PGIC Pilot
-data5<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/pgic.sas7bdat"))
+data5<-setDT(read_sas("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/pgic.sas7bdat"))
 
 #SF36/PROMIS
-data6<-setDT(read_sas("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adys.sas7bdat"))
+data6<-setDT(read_sas("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adys.sas7bdat"))
 
 ######################################################
 #DATA MANAGEMENT
@@ -347,100 +347,80 @@ psfs_data_tocombine<-with(psfs_data,data.frame(id,
 data_psfs_combined<-rbind(psfs_data_tocombine,data_psfs_pilot_casted)
 
 # recoding method os administration variable
-# data$type<-car::recode(data$time,"
-#             '3days'='paper';
-#             '7days'='paper';
-#             '10days'='phone';
-#             '14days'='paper';
-#             '17days'='phone';
-#             '21days'='paper';
-#             '24days'='phone';
-#             '28days'='paper';
-#             else='phone'")
+data$type<-car::recode(data$time,"
+            '7days'='In-person PSFS Score';
+            '10days'='Telephone PSFS Score';
+            '14days'='In-person PSFS Score';
+            '17days'='Telephone PSFS Score';
+            '21days'='In-person PSFS Score';
+            '24days'='Telephone PSFS Score';
+            else=NA")
 
-# data$time_2measures<-car::recode(data$time,"
-#             '3days'='Tnothing';
-#             '7days'='T1paper';
-#             '10days'='T1phone';
-#             '14days'='T2paper';
-#             '17days'='T2phone';
-#             '21days'='T3paper';
-#             '24days'='T3phone';
-#             '28days'='Tnothing';
-#             else='Tnothing'")
+
+
+
+data$time_2measures<-car::recode(data$time,"
+            '7days'='T1';
+            '10days'='T1';
+            '14days'='T2';
+            '17days'='T2';
+            '21days'='T3';
+            '24days'='T3';
+            else=NA")
+
+data$time_2measures_2<-car::recode(data$time,"
+            '7days'='T1 In person';
+            '10days'='T1 Telephone';
+            '14days'='T2 In person';
+            '17days'='T2 Telephone';
+            '21days'='T3 In person';
+            '24days'='T3 Telephone';
+            else=NA")
 
 # #Kessler
-# psfs_questions<-with(data,data.frame(q1,q2,q3))
+psfs_questions<-with(data,data.frame(q1,q2,q3))
 
-# data$score<-rowMeans(psfs_questions)
+data$score<-rowMeans(psfs_questions)
 
 # #subsetting data set to keep only baseline data
-# data_validation_paperT0<-data[data$time=="3days",]
-# data_validation_phoneT0<-data[data$time=="10days",]
+data_validation_paperT0<-data[data$time=="3days",]
+data_validation_phoneT0<-data[data$time=="10days",]
 
-# data_validationT0<-data[data$time=="3days",]
-# data_validationT1<-data[data$time=="7days",]
-# data_validationT2<-data[data$time=="10days",]
-
-# #recoding marital status variable
-# data_validation$married<-car::recode(data_validation$married,"
-# 	0='married';1='married';2='not married';
-# 	3='not married';4='married';5='not married'")
-
-# #recoding education varibLE
-# data_validation$education_cat<-car::recode(data_validation$education,"
-#      0:7='Some primary';8:13='Some secondary';
-#      14:16='Some university';89=NA")
-
-# # #recoding education varibLE
-# data_validation$occupation_cat<-car::recode(
-# 	data_validation$occupation,"
-#      0='Business';1='Farming';
-#      3='Paid worker';4='Skilled worker';
-#      5='Paid worker';6='Other';8='Other';89=NA")
-
-# #recoding education varibLE
-# data_validation$age_cat<-car::recode(
-# 	data_validation$age,"
-#      0:35='<35';36:100='>35'")
+data_validationT0<-data[data$time=="3days",]
+data_validationT1<-data[data$time=="7days",]
+data_validationT2<-data[data$time=="10days",]
 
 #Organize scale datasets
 
-# # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-# data_imputed <- mice(kessler_data1, seed = 2222, m=10)
-
-# # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-# kessler_data<-mice::complete(data_imputed,4)
-
 ### Temporal stability data
 
-# temporal_data_paper<-subset(data,data$time=="21days" | data$time=="28days")
+temporal_data_paper<-subset(data,data$time=="21days" | data$time=="28days")
 
-# icc_temporal_paper1<-with(temporal_data_paper,data.frame(X...id,time,score))
-# icc_temporal_paper<-cast(icc_temporal_paper1,
-#                           X...id~time)
+icc_temporal_paper1<-with(temporal_data_paper,data.frame(id,time,score))
+icc_temporal_paper<-cast(icc_temporal_paper1,
+                          id~time)
 
-# temporal_data_phone<-subset(data,data$time=="17days" | data$time=="24days")
+temporal_data_phone<-subset(data,data$time=="17days" | data$time=="24days")
 
-# icc_temporal_phone1<-with(temporal_data_phone,data.frame(X...id,time,score))
-# icc_temporal_phone<-cast(icc_temporal_phone1,
-#                           X...id~time)
+icc_temporal_phone1<-with(temporal_data_phone,data.frame(id,time,score))
+icc_temporal_phone<-cast(icc_temporal_phone1,
+                          id~time)
 
 # ### Consistency between methods of application
 
-# icc<-subset(data,data$time=="14days" | data$time=="17days")
+icc<-subset(data,data$time=="14days" | data$time=="17days")
 
-# icc_data1<-with(icc,data.frame(id,time,score))
-# icc_data<-cast(icc_data1,
-#                           id~time)
+icc_data1<-with(icc,data.frame(id,time,score))
+icc_data<-cast(icc_data1,
+                          id~time)
 
-# descriptive_data<-subset(data,data$time_2measures=="T1paper" | 
-#                               data$time_2measures=="T1phone" |
-#                               data$time_2measures=="T2paper" |
-#                               data$time_2measures=="T2phone" |
-#                               data$time_2measures=="T3paper" |
-#                               data$time_2measures=="T3phone"
-#                               )
+descriptive_data<-subset(data,data$time_2measures=="T1paper" | 
+                              data$time_2measures=="T1phone" |
+                              data$time_2measures=="T2paper" |
+                              data$time_2measures=="T2phone" |
+                              data$time_2measures=="T3paper" |
+                              data$time_2measures=="T3phone"
+                              )
 
 #Organizing PGIC data
 data_2_subset1<-subset(data2,data2$PARAMCD=="PGIC1")
@@ -933,7 +913,7 @@ data_merged_3 <- merge(data_lefs,data_merged_2,all.y=TRUE,by.x="USUBJID.x",by.y=
 data_merged_4 <- merge(data_COMBTSCO,data_merged_3,all.y=TRUE,by.x="USUBJID.x",by.y="USUBJID.x")
 data_merged_5 <- merge(data_PFScore,data_merged_4,all.y=TRUE,by.x="USUBJID.x",by.y="USUBJID.x")
 
-write.csv(data_merged_5,"/Users/Joao/Desktop/psfs_data.csv")
+# write.csv(data_merged_5,"/Users/Joao/Desktop/psfs_data.csv")
 
 ######################################################################
 #TABLE 1
@@ -1023,10 +1003,10 @@ print(pl)
 
 setEPS()
 # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
-postscript("/Users/joaovissoci/Desktop/figure1.eps",
+postscript("/Users/Joao/Desktop/figure1_psfstelephone.eps",
   width = 8, height = 6)
 bland.altman.plot(icc_data[,2], icc_data[,3], conf.int=.95, pch=19,
-                  xlab="Average measurements over time", ylab="Difference in measurement over time")
+                  xlab="Average PSFS for telephone and in-person", ylab="Difference in PSFS between telephone and in-person")
 #Add plot
 dev.off()
 
@@ -1036,18 +1016,49 @@ cor(na.omit(icc_data[,c(2,3)]))
 
 plot<-ggplot(icc_data, aes(icc_data[,2],icc_data[,3])) +
     geom_point() +    # Use hollow circles
-    geom_smooth() +
-    xlab("PSFS Score at T1") +
-    ylab("PSFS Score at T2")
+    geom_smooth(method=lm,color="grey50") +
+    xlab("In-person PSFS Score") +
+    ylab("Telephone PSFS Score") +
+    theme_bw()
+plot
+
+ggsave("figure2_psfstelephone.eps", #change .eps to .pdf for different format
+    plot, #plot is the name of the fig, but the function assumes the last plot if argument is NULL
+    path="/Users/Joao/Desktop", #path to save the plot
+    width = 6, 
+    height = 4, 
+    device=cairo_ps) #cairo
+
+#Scores by time boxplot
+
+data_plot<-na.omit(data)
+
+plot<-ggplot(data_plot, aes(time_2measures_2,score,fill=type)) +
+    geom_boxplot() + #color=c("grey50","white")) +    # Use hollow circles
+    # geom_smooth(method=lm,color="grey50") +
+    scale_fill_manual(values=c("grey50", "white"), 
+                      # name="Experimental\nCondition",
+                       breaks=c("In-person PSFS Score", "Telephone PSFS Score")) +
+                      # labels=c("Control", "Treatment 1", "Treatment 2")) +
+    xlab("PSFS method of administration") +
+    ylab("PSFS Score") +
+    # facet_wrap(~type) +
+    theme_bw() +
+    guides(fill=guide_legend(title=NULL)) +
+    theme(legend.position="none")
+
+
+plot
+
               # Add a loess smoothed fit curve with confidence region
 #> `geom_smooth()` using method = 'loess'
 
 #save figure
-ggsave("figure2.eps", #change .eps to .pdf for different format
+ggsave("figure3_psfstelephone.eps", #change .eps to .pdf for different format
     plot, #plot is the name of the fig, but the function assumes the last plot if argument is NULL
-    path="/Users/joaovissoci/Desktop", #path to save the plot
-    width = 8, 
-    height = 6, 
+    path="/Users/Joao/Desktop", #path to save the plot
+    width = 6, 
+    height = 4, 
     device=cairo_ps) #cairo_ps is a device to save eps with transparecy
 
 ########################################################

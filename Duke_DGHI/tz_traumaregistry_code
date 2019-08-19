@@ -36,7 +36,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data_registry<-read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_data.csv",sep=",")
+data_registry<-read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_dataAug2019.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -271,12 +271,12 @@ sum(is.na(data$insurance))/length(data[,1])
 ######################################################################
 
 # DM
-table<-with(data,table(dm))
+table<-with(data_registry,table(dm))
 table
 prop.table(table)
-sum(is.na(data$dm))
-sum(is.na(data$dm))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$dm))
+sum(is.na(data_registry$dm))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -284,12 +284,12 @@ sum(is.na(data$dm))/length(data[,1])
 # assocstats(table) #vcd package
 
 #DM tested
-table<-with(data,table(nodm))
+table<-with(data_registry,table(nodm))
 table
 prop.table(table)
-sum(is.na(data$nodm))
-sum(is.na(data$nodm))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$nodm))
+sum(is.na(data_registry$nodm))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -297,12 +297,12 @@ sum(is.na(data$nodm))/length(data[,1])
 # assocstats(table) #vcd package
 
 #DM treat
-table<-with(data,table(yesdm___0))
+table<-with(data_registry,table(yesdm___0))
 table
 prop.table(table)
-sum(is.na(data$yesdm___0))
-sum(is.na(data$yesdm___0))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$yesdm___0))
+sum(is.na(data_registry$yesdm___0))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -310,12 +310,12 @@ sum(is.na(data$yesdm___0))/length(data[,1])
 # assocstats(table) #vcd package
 
 #HTN	
-table<-with(data,table(htn))
+table<-with(data_registry,table(htn))
 table
 prop.table(table)
-sum(is.na(data$htn))
-sum(is.na(data$htn))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$htn))
+sum(is.na(data_registry$htn))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -323,12 +323,12 @@ sum(is.na(data$htn))/length(data[,1])
 # assocstats(table) #vcd package
 
 #htn tested
-table<-with(data,table(nohtn))
+table<-with(data_registry,table(nohtn))
 table
 prop.table(table)
-sum(is.na(data$nohtn))
-sum(is.na(data$nohtn))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$nohtn))
+sum(is.na(data_registry$nohtn))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -336,12 +336,12 @@ sum(is.na(data$nohtn))/length(data[,1])
 # assocstats(table) #vcd package
 
 #htn treat
-table<-with(data,table(yeshtn___2))
+table<-with(data_registry,table(yeshtn___2))
 table
 prop.table(table)
-sum(is.na(data$yeshtn___2))
-sum(is.na(data$yeshtn___2))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$yeshtn___2))
+sum(is.na(data_registry$yeshtn___2))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -349,12 +349,12 @@ sum(is.na(data$yeshtn___2))/length(data[,1])
 # assocstats(table) #vcd package
 
 #Prior surgery
-table<-with(data,table(hxsurg))
+table<-with(data_registry,table(hxsurg))
 table
 prop.table(table)
-sum(is.na(data$hxsurg))
-sum(is.na(data$hxsurg))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$hxsurg))
+sum(is.na(data_registry$hxsurg))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -362,12 +362,12 @@ sum(is.na(data$hxsurg))/length(data[,1])
 # assocstats(table) #vcd package
 
 #What surgery
-table<-with(data,table(yessurg___90))
+table<-with(data_registry,table(yessurg___90))
 table
 prop.table(table)
-sum(is.na(data$yessurg___90))
-sum(is.na(data$yessurg___90))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$yessurg___90))
+sum(is.na(data_registry$yessurg___90))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -375,12 +375,12 @@ sum(is.na(data$yessurg___90))/length(data[,1])
 # assocstats(table) #vcd package
 
 #Prior TBI
-table<-with(data,table(hxtbi))
+table<-with(data_registry,table(hxtbi))
 table
 prop.table(table)
-sum(is.na(data$hxtbi))
-sum(is.na(data$hxtbi))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$hxtbi))
+sum(is.na(data_registry$hxtbi))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -388,12 +388,12 @@ sum(is.na(data$hxtbi))/length(data[,1])
 # assocstats(table) #vcd package
 
 #HIV status
-table<-with(data,table(hxhiv))
+table<-with(data_registry,table(hxhiv))
 table
 prop.table(table)
-sum(is.na(data$hxhiv))
-sum(is.na(data$hxhiv))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$hxhiv))
+sum(is.na(data_registry$hxhiv))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -401,12 +401,12 @@ sum(is.na(data$hxhiv))/length(data[,1])
 # assocstats(table) #vcd package
 
 #HIV ARV
-table<-with(data,table(yeshiv))
+table<-with(data_registry,table(yeshiv))
 table
 prop.table(table)
-sum(is.na(data$yeshiv))
-sum(is.na(data$yeshiv))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$yeshiv))
+sum(is.na(data_registry$yeshiv))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -414,12 +414,12 @@ sum(is.na(data$yeshiv))/length(data[,1])
 # assocstats(table) #vcd package
 
 #Any medicines
-table<-with(data,table(medyes))
+table<-with(data_registry,table(medyes))
 table
 prop.table(table)
-sum(is.na(data$medyes))
-sum(is.na(data$medyes))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$medyes))
+sum(is.na(data_registry$medyes))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -427,12 +427,12 @@ sum(is.na(data$medyes))/length(data[,1])
 # assocstats(table) #vcd package
 
 #Any medicines - frequency
-table<-with(data,table(med1freq))
+table<-with(data_registry,table(med1freq))
 table
 prop.table(table)
-sum(is.na(data$med1freq))
-sum(is.na(data$med1freq))/length(data[,1])
-# table<-with(data,table(gender,outcome))
+sum(is.na(data_registry$med1freq))
+sum(is.na(data_registry$med1freq))/length(data_registry[,1])
+# table<-with(data_registry,table(gender,outcome))
 # table
 # prop.table(table,2)
 # chisq.test(table)
@@ -440,11 +440,11 @@ sum(is.na(data$med1freq))/length(data[,1])
 # assocstats(table) #vcd package
 
 #Any medicines - frequency
-table<-with(data,table(hxreport))
+table<-with(data_registry,table(hxreport))
 table
 prop.table(table)
-sum(is.na(data$hxreport))
-sum(is.na(data$hxreport))/length(data[,1])
+sum(is.na(data_registry$hxreport))
+sum(is.na(data_registry$hxreport))/length(data_registry[,1])
 # table<-with(data,table(gender,outcome))
 # table
 # prop.table(table,2)

@@ -50,7 +50,7 @@ data_freq_edf$word2<-c("quality of life",
 
 data_freq<-rbind(data_freq_psy,data_freq_edf)
 data_freq$course<-c(rep("Psychology",length(data_freq_psy[,1])),
-					rep("Physical Education",length(data_freq_edf[,1])))
+					rep("Exercise and Sport Sciences",length(data_freq_edf[,1])))
 
 tiff("/Users/Joao/Desktop/frequency_figure.tiff",
  width = 1500, height = 2000,compression = 'lzw', res=300)

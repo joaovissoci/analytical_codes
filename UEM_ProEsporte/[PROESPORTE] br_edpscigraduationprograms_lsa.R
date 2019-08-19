@@ -26,7 +26,7 @@ library(skmeans)
 library(mclust)
 
 
-data<-read.csv("/Users/Joao/Downloads/Titulos_csv2 (1).csv",
+data<-read.csv("/Users/Joao/Downloads/Titulos_csv2.csv",
                stringsAsFactors=FALSE)
 
 #minerar o texto em poetugues
@@ -2643,6 +2643,6 @@ with(wc_data,wordcloud(c("aspects",
                        random.color=FALSE,
                        rot.per=.5,
                        colors = brewer.pal(8, "Dark2")))#scale=c(1,.01), max.words =100,
-title("Most common words used in \n Physical Education institutional projects",line=2)
+title("Most common words used in Exercise and \n Sport Sciences institutional researches",line=2)
 dev.off()
 

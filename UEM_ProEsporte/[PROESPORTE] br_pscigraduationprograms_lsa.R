@@ -3118,5 +3118,5 @@ with(wc_data,wordcloud(c("adolescents",
                        random.color=FALSE,
                        rot.per=.5,
                        colors = brewer.pal(8, "Dark2")))#scale=c(1,.01), max.words =100,
-title("Most common words used in \n Psychology institutional projects",line=2)
+title("Most common words used in \n Psychology institutional researches",line=2)
 dev.off()

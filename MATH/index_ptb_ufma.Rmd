@@ -1,0 +1,235 @@
+---
+title: "Monitoramento e estratificação de prematuridade"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+runtime: shiny
+---
+  
+```{r global, include=FALSE}
+library(arm)
+library(caret)
+library(flexdashboard)
+# load("/Users/Joao/Downloads/bayes_fit.Rdata")
+```
+
+Sidebar {.sidebar}
+=======================================================================
+  
+## Por favor, insira os dados da mãe aqui:
+
+
+```{r Inputs}
+
+textInput("caption", "Nome da mãe", " ")
+numericInput("age", "Idade da mãe", value=0, min=0, max=199)
+radioButtons("male.Female", "Estado civil", choices=list("Casado"="0", "Solteiro"="1"), inline=TRUE)
+radioButtons("male.Female", "Alfabetizado", choices=list("Não"="0", "Sim"="1"), inline=TRUE)
+numericInput("age", "# de partos vivos", value=0, min=0, max=199)
+numericInput("age", "# de partos natimortos", value=0, min=0, max=199)
+radioButtons("male.Female", "Parto Normal?", choices=list("Não"="0", "Sim"="1"), inline=TRUE)
+numericInput("age", "# de consultas prenatais", value=0, min=0, max=199)
+numericInput("age", "Mês da gradivez em que começaram os prentais", value=0, min=0, max=199)
+radioButtons("male.Female", "Gênero do bebê", choices=list("Masculino"="0", "Feminino"="1"), inline=TRUE)
+numericInput("age", "# de partos cesária", value=0, min=0, max=199)
+numericInput("age", "# de partos normais", value=0, min=0, max=199)
+selectInput("gcs_motor", "Cidade de Moradia",
+            choices=list("Sao Luis"="6", "Maringá"="5", "Brasília"="4", "São Paulo"="3",
+                         "Durham"="2", "Arapongas"="1"))
+textInput("caption", "Endereço", " ")
+
+# selectInput("intent.Unintentional", "Alfabetizada?",
+#             choices=list("Unintentional"="1", "SelfInflicted, Inflicted by other or Unknown"="0"))
+# selectInput("alcohol", "Alcohol Involved?", choices=list("No"="0", "Yes"="1", "Unknown"="2"))
+# numericInput("temp", "Temperature", value=36.2, min=30, max=99)
+# numericInput("resp_rate", "Respiratory Rate", value=18, min=0, max=30)
+# numericInput("heart_rate", "Pulse", value=50, min=0, max=999)
+# numericInput("sys_bp", "Systolic Blood Pressure", value=120, min=0, max=999)
+# numericInput("dia_bp", "Diastolic Blood Pressure", value=80, min=0, max=999)
+# numericInput("pulse_ox", "Pulse Oxygen", value=90)
+# selectInput("gcs_eye", "Glasgow Come Score, Eye",
+#             choices=list("Spontaneous"="4", "To Speech"="3", "To Pain"="2", "None"="1"))
+# selectInput("gcs_verbal", "Glasgow Come Score, Verbal",
+#             choices=list("Oriented"="5", "Confused"="4","Inappropriate words"="3",
+#                          "Incomprehensible"="2", "None"="1"))
+# selectInput("gcs_motor", "Glasgow Come Score, Motor",
+#             choices=list("Obeys"="6", "Localizes"="5", "Withdraws from pain"="4", "Flexion to pain"="3",
+#                          "Extension to pain"="2", "None"="1"))
+# radioButtons("perrla.Yes", "Pupils equal", choices=list("Yes"="1", "No"="0"), inline=TRUE)
+# selectInput("cd_dispo.Surgery", "Casualty Department disposition",
+#             choices=list("Surgery ward"="1", "Other"="0"))
+# radioButtons("surgtoicu.No", "Went from Surg 1 to icu", choices=list("Yes"="0", "No"="1"), inline=TRUE)
+# selectInput("moi_complete_expanded", "Mechanism of Injury",
+#                    choices=list("Motorcycle"="0", "Domestic"="1", "Car"="2",
+#                                 "Knife"="3", "Fist/Foot"="4", "Gun"="5"))
+
+
+```
+
+
+Risk Calculator
+=======================================================================
+  
+Row
+-----------------------------------------------------------------------
+  
+### Provável semana de parto
+```{r Reactive}
+
+prob<-c(30)
+# prob <- reactive({
+#   # Some simple validations
+#   validate(
+#     need(as.numeric(input$sys_bp) >= as.numeric(input$dia_bp), "Systolic Blood Pressure most be higher then Diastolic Blood Pressure")
+#   )
+  
+#   # Where to store inputed predictors
+#   predictors <- list()
+
+#   # Some selectors don't need any processing and can be just used as is.
+#   predictors[["age"]] <- as.numeric(input$age)
+#   predictors[["male.Female"]] <- as.numeric(input$male.Female)
+#   predictors[["intent.Unintentional"]] <- as.numeric(input$intent.Unintentional)
+#   predictors[["alcohol.No"]] <- as.integer(input$alcohol == "0")
+#   predictors[["alcohol.Yes"]] <- as.integer(input$alcohol == "1")
+#   predictors[["temp"]] <- as.numeric(input$temp)
+#   predictors[["resp_rate"]] <- as.numeric(input$resp_rate)
+#   predictors[["heart_rate"]] <- as.numeric(input$heart_rate)
+#   predictors[["sys_bp"]] <- as.numeric(input$sys_bp)
+#   predictors[["dia_bp"]] <- as.numeric(input$dia_bp)
+#   predictors[["pulse_ox"]] <- as.numeric(input$pulse_ox)
+#   predictors[["gcs_tot"]] <- as.numeric(input$gcs_eye) + as.numeric(input$gcs_verbal) + as.numeric(input$gcs_motor)
+#   predictors[["perrla.Yes"]] <- as.numeric(input$perrla.Yes)
+#   predictors[["cd_dispo.Surgery"]] <- as.numeric(input$cd_dispo.Surgery)
+#   predictors[["tbi_surgery.No"]] <- 1
+#   predictors[["tbi_surgery.Yes"]] <- 0
+#   predictors[["surgtoicu.No"]] <- as.numeric(input$surgtoicu.No)
+#   predictors[["moi_complete_expanded.Motorcycle"]] <- as.integer("0" %in% input$moi_complete_expanded)
+#   predictors[["moi_complete_expanded.Domestic"]] <- as.integer("1" %in% input$moi_complete_expanded)
+#   predictors[["moi_complete_expanded.Car"]] <- as.integer("2" %in% input$moi_complete_expanded)
+#   predictors[["moi_complete_expanded.Knife"]] <- as.integer("3" %in% input$moi_complete_expanded)
+#   predictors[["moi_complete_expanded.Fist/Foot"]] <- as.integer("4" %in% input$moi_complete_expanded)
+#   predictors[["moi_complete_expanded.Gun"]] <- as.integer("5" %in% input$moi_complete_expanded)
+
+
+
+#   df <- data.frame(predictors, check.names=FALSE)
+#   prob <- predict(bayes_fit, df, type="prob")
+#   no_tbi_surgery_value <- prob[1, "Bad_recovery"]
+
+#   result <- list()
+#   result$no_tbi_surgery_value <- sprintf("%3.1f %%", prob[1, "Bad_recovery"] * 100.0)
+#   result$no_tbi_surgery_color <- sprintf("#%02X%02X00",
+#                                          as.integer(prob[1,"Bad_recovery"]*128),
+#                                          as.integer(prob[1,"Good_recovery"]*128))
+
+#   predictors[["tbi_surgery.No"]] <- 0
+#   predictors[["tbi_surgery.Yes"]] <- 1
+#   df <- data.frame(predictors, check.names=FALSE)
+#   prob <- predict(bayes_fit, df, type="prob")
+#   yes_tbi_surgery_value <- prob[1, "Bad_recovery"]
+
+#   result$yes_tbi_surgery_value <- sprintf("%3.1f %%", prob[1, "Bad_recovery"] * 100.0)
+#   result$yes_tbi_surgery_color <- sprintf("#%02X%02X00",
+#                                           as.integer(prob[1,"Bad_recovery"]*128),
+#                                           as.integer(prob[1,"Good_recovery"]*128))
+
+#   result$tbi_surgery_diff <- sprintf("%3.1f %%", (no_tbi_surgery_value - yes_tbi_surgery_value) * 100.0)
+#   result
+# })
+
+# renderValueBox({
+#   valueBox(value=prob()$no_tbi_surgery_value, color=prob()$no_tbi_surgery_color)
+# })
+
+renderValueBox({
+  valueBox(value=prob, color="darkred")
+})
+```
+  
+
+
+### Risco Individual de Prematuridade
+```{r}
+# renderValueBox({
+#   valueBox(value=prob()$yes_tbi_surgery_value, color=prob()$yes_tbi_surgery_color)
+# })
+
+renderValueBox({
+  valueBox(value=c(92.2), color="darkred")
+})
+```
+ 
+
+Row
+-----------------------------------------------------------------------
+
+### Geolocalização da mãe
+
+
+```{r}
+# renderUI({tagList(
+
+#   p(HTML(sprintf(paste('Your patient has <span style="color:%s;font-weight:bold;">%s</span> chance of death without surgery and a',
+#                   '<span style="color:%s; font-weight:bold">%s</span> chance of death with surgery.'),
+#             prob()$no_tbi_surgery_color,
+#             prob()$no_tbi_surgery_value,
+#             prob()$yes_tbi_surgery_color,
+#             prob()$yes_tbi_surgery_value))),
+#   br(),
+
+#   p(HTML(sprintf('This is a <span style="color:green;font-weight:bold;">%s</span> change in survival chance with a surgery.',
+#     prob()$tbi_surgery_diff))),
+#   br(),
+#   p(HTML('It is recommended to operate on patients with a greater than <span style="color:green; font-weight:bold">15%</span> change in survival.')),
+#   br(),br(),br(),br(),br(),
+#   p(strong('Please note, this is a support tool and is not meant to replace the clinical judgement of a physician'))
+# )})
+
+library(devtools)
+library(leaflet)
+library(tmaptools)
+
+
+address<-geocode_OSM("Rua Ararajubas 11, sao luis, maranhão, brazil")
+
+
+leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(lng=address$coords[1],
+                   lat=address$coords[2], popup=c("Érika Thomaz\n
+                                            Idade = 20 anos\n
+                                            Diabetes = Sim\n
+                                            Hipert. = Sim\n
+                                              Prenatal = 1\n
+                                              Semanas = 5 Semanas\n
+                                              Risco PTB = 90%\n
+                                              Parto = 30 semanas"#
+                    # radius = ~ifelse(type == "ship", 6, 10),
+                          # color = ~pal(type),
+
+))
+
+
+
+
+```
+
+Vigilância de Prematuridade - Mapa Inteligente
+=======================================================================
+
+### Monitoramento e mapa inteligente
+
+```{r}
+library(leaflet)
+leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(lng=174.768, lat=-36.852, popup="Érika Thomaz
+                                              Idade = 20 anos
+                                              Diabetes = Sim
+                                              Hipert. = Sim
+                                              # Prenatal = 1
+                                              Semanas = 5 Semanas
+                                              Risco PTB = 90%
+                                              Parto = 30 semanas")
+```

@@ -36,7 +36,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_data.csv",sep=",")
+data<-read.csv("/Users/Joao/Downloads/ToCTraumaRegistry_DATA_2019-07-18_0833.csv",sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -104,11 +104,107 @@ data$complication_sum<-with(data,rowSums(data.frame(pneum,
 										wound_deh,
 										dec_ulcer)))
 
-unique(data$surg_1proc)
+# unique(data$surg_1proc)
 
-unique(data$surg_1indic)
+# unique(data$surg_1indic)
 
-data$surg_1asa
+# data$surg_1asa
+
+data$gcs_tot<-data$gcs_eye+data$gcs_verbal+data$gcs_motor
+table(data$gcs_tot)
+
+# RECODING A GCS_TOT_CAT VARIABLE
+data$gcs_tot_cat<-as.factor(car::recode(data$gcs_tot,"1:12='Poor GCS'; 13:15='Good GCS'"))
+summary(data$gcs_tot_cat)
+
+# CREATING A KTS VARIABLE
+# START BY CREATING A SEPARATE DATASET WITH VARIABLES REQUIRES FOR KTS
+KTS_data<-with(data, data.frame(age, avpu_arred, rr_arred, hr_arred, sbp_arred, pox_arred, surg_1, dispo_loc, gcs_tot))
+
+# RECODE VARIABLES TO REFLECT KTS SCORING
+# RECODING AGE
+KTS_data$age_cat<-as.numeric(car::recode(KTS_data$age,"5:55='1'; 0:5='0'; 56:110='0'"))
+table(KTS_data$age_cat)
+
+# RECODING SBP
+KTS_data$sbp_arred_cat<-as.numeric(car::recode(KTS_data$sbp_arred,"90:300='2'; 50:89='1'; 0:49='0'"))
+table(KTS_data$sbp_arred_cat)
+
+# RECODING RR
+KTS_data$rr_arred_cat<-as.numeric(car::recode(KTS_data$rr_arred,"10:29='2'; 30:100='1'; 0:9='0'"))
+table(KTS_data$rr_arred_cat)
+
+# RECODING AVPU/NEUROLOGIC STATUS
+KTS_data$avpu_arred_cat<-as.numeric(car::recode(KTS_data$avpu_arred,"0='3'; 1='2'; 2='1'; 3='0'"))
+table(KTS_data$avpu_arred_cat)
+
+# CREATING A NEW VARIABLE 'SERIOUS INJURY'
+# FIRST NEED TO RECODE VARIBLES: DISPO ICU, GCS, POX, SBP, HR, RR --> OUTPUT OF 1=BAD, 0=GOOD 
+KTS_data$dispo_loc<-as.numeric(car::recode(KTS_data$dispo_loc, "0='1'; 1='1'; 2:89='0'"))
+
+KTS_data$gcs_tot<-as.numeric(car::recode(KTS_data$gcs_tot, "0:12='1'; 13:15='0'"))
+
+KTS_data$pox_arred<-as.numeric(car::recode(KTS_data$pox_arred, "0:91='1'; 92:100='0'"))
+
+KTS_data$sbp_arred<-as.numeric(car::recode(KTS_data$sbp_arred, "0:99='1'; 100:300='0'"))
+
+KTS_data$hr_arred<-as.numeric(car::recode(KTS_data$hr_arred, "100:300='1'; 0:99='0'"))
+
+KTS_data$rr_arred<-as.numeric(car::recode(KTS_data$rr_arred, "26:80='1'; 0:25='0'"))
+
+table(KTS_data$rr_arred)
+
+# COMBINING VARIABLES FOR SERIOUS INJURY, IF VARIABLE=BAD=1 THEN OUTPUT IS 0, LOWER COMBINED SCORES=WORSE
+KTS_data$serious_injury<-ifelse(KTS_data$surg_1==1, 0, 1)+ifelse(KTS_data$dispo_loc==1, 0, 1)+ifelse(KTS_data$gcs_tot==1, 0, 1)+ifelse(KTS_data$pox_arred==1, 0, 1)+ifelse(KTS_data$sbp_arred==1, 0, 1)+ifelse(KTS_data$hr_arred==1, 0, 1)+ifelse(KTS_data$rr_arred==1, 0, 1)
+table(KTS_data$serious_injury)
+
+data$serious_injury<-KTS_data$serious_injury
+
+# RECODING SERIOUS INJURY SO IT CAN BE ADDED INTO KTS SCORE
+KTS_data$serious_injury_recoded<-as.numeric(car::recode(KTS_data$serious_injury, "0:5='0'; 6='1'; 7='2'"))
+table(KTS_data$serious_injury_recoded)
+
+# COMBINING ALL VARIABLES (AGE, SBP, RR, AVPU, SERIOUS INJURY)
+KTS_data<-mutate(KTS_data, kts_score=(KTS_data$age_cat+KTS_data$sbp_arred_cat+KTS_data$rr_arred_cat+KTS_data$avpu_arred_cat+KTS_data$serious_injury_recoded))
+table(KTS_data$kts_score)
+
+# RECODING KTS SCORE
+KTS_data$kts_score_cat<-as.factor(car::recode(KTS_data$kts_score, "0:6='Severe'; 7:8='Moderate'; 9:10='Mild'"))
+table(KTS_data$kts_score_cat)
+prop.table(table(KTS_data$kts_score_cat))*100
+data$kts<-KTS_data$kts_score
+data$kts_recoded<-KTS_data$kts_score_cat
+
+#TIME TO CARE
+library(lubridate)
+
+injuryT<-with(data,paste(dateinjury, timeinjury, sep=" "))
+injury_time<-lubridate::ymd_hm(injuryT, tz="Africa/Dar_es_Salaam")
+
+arrivalT<-with(data,paste(datearrivekcmc, timearrivekcmc, sep=" "))
+arrival_time<-lubridate::ymd_hm(arrivalT, tz="Africa/Dar_es_Salaam")
+
+diff_time<-difftime(arrival_time, injury_time, units=c("min"))
+
+time_to_care <-NULL
+
+for(i in 1:nrow(data)){if(is.na(diff_time) [i]==TRUE) {time_to_care[i]<-NA} else if(diff_time[i]<0) {time_to_care[i]<-NA} else{time_to_care[i]<-diff_time[i]}}
+
+# INSERTING TIME TO CARE IN HOURS VARIABLE INTO DATASET
+data$time_to_care<-time_to_care/60
+summary(data$time_to_care)
+
+data<-with(data, data.frame(
+                                        age, 
+                                        female, 
+                                        moi, 
+                                        death, 
+                                        gos_recoded,
+                                        kts_recoded,
+                                        gcs_tot_cat,
+                                        kts=KTS_data$kts_score_cat,
+                                        time_to_care))
+
 
 #TIME 1 - TIME TO REACH HOSPITAL
 ######################################################
@@ -174,7 +270,27 @@ for (i in 1:nrow(data))
 #time_to_care[1053]<-60
 
 data$time_to_care<-time_to_care/60
+
+
 summary(data$time_to_care) # EM HORAS #
+
+with(data,by(time_to_care,death,summary))
+#t-test: # independent 2-group, 2 level IV
+with(data,t.test(time_to_care ~ death))
+
+with(data,by(time_to_care,gos_recoded,summary))
+#t-test: # independent 2-group, 2 level IV
+with(data,t.test(time_to_care ~ gos_recoded))
+
+summary(data$serious_injury) # EM HORAS #
+
+with(data,by(serious_injury,death,summary))
+#t-test: # independent 2-group, 2 level IV
+with(data,t.test(serious_injury ~ death))
+
+with(data,by(serious_injury,gos_recoded,summary))
+#t-test: # independent 2-group, 2 level IV
+with(data,t.test(serious_injury ~ gos_recoded))
 
 #######################################################
 #ANALYZING MISSING DATA
@@ -232,7 +348,7 @@ summary(data$time_to_care) # EM HORAS #
 # imp <- mice(data_tobeimp, seed = 2222, m=50)
 
 # # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
-# data_imputed<-complete(imp,4)
+# datauted<-complete(imp,4)
 
 # #Plost the distrbution of each of the 5 possibilities of imputations
 # #stripplot(imp,pch=20,cex=1.2)
@@ -970,7 +1086,7 @@ assocstats(table) #vcd package
 table<-with(data,table(etoh,gos_recoded))
 table
 prop.table(table,2)
-chisq.test(table)
+1chisq.test(table)
 fisher.test(table)
 assocstats(table) #vcd package
 
@@ -1335,8 +1451,25 @@ logmodel_gos<-glm(gos_recoded ~
                   age + 
                   female + 
                   moi_recoded + 
-                  # complication_sum +
-                  gcs_cat,
+                  kts_recoded +
+                  time_to_care, 
+                  family=binomial, 
+                  data=data)
+summary(logmodel_gos)
+#anova(reglogGEU)
+#exp(coef(model1_death)) # exponentiated coefficients
+#exp(confint(model1_death)) # 95% CI for exponentiated coefficients
+exp(cbind(Odds=coef(logmodel_gos),confint(logmodel_gos,level=0.95))) 
+#predict(model1_death, type="response") # predicted values
+#residuals(model1_death, type="deviance") # residuals
+#logistic.display(baselineXFUP3)
+
+logmodel_gos<-glm(death ~ 
+                  age + 
+                  female + 
+                  moi_recoded + 
+                  kts_recoded +
+                  time_to_care, 
                   family=binomial, 
                   data=data)
 summary(logmodel_gos)
