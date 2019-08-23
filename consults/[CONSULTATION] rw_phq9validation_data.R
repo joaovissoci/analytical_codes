@@ -35,7 +35,7 @@ library, character.only=T)
 
 # library(jsonlite)
 
-file <- file("/Users/joaovissoci/Downloads/exported_data.txt",
+file <- file("/Users/Joao/Box/Home Folder jnv4/Data/consultation/UCB/exported_data.txt",
              open="r",
              encoding="UTF-8-BOM")
 
@@ -135,6 +135,8 @@ df_questionnaire$age<-with(df_questionnaire,age_calc(na.omit(data_birth),current
 
 describe(df_questionnaire$age)
 
+table(df_questionnaire$Statut.marital)
+
 #gender
 table(df_questionnaire$Sexe)
 prop.table(table(df_questionnaire$Sexe))
@@ -188,22 +190,22 @@ prop.table(table(df_questionnaire$Niveau.d.education))
 
 #age of first onset
 
-df_questionnaire<-
-df_questionnaire %>%
-    as.tibble() %>%
-      mutate(age_onset_numerictemp = gsub("[^0-9\\.]", "",
-            Age.du.patient.au.moment.de.la.premiere.crise)) %>%
-      mutate(age_onset_numerictemp = as.numeric(age_onset_numerictemp)) %>% 
-      mutate(age_onset_numerictemp2 = ifelse(age_onset_numerictemp < 1000, age_onset_numerictemp,
-                                          (2017-age_onset_numerictemp))) %>%
-      # mutate(age_onset_numerictemp3 = age_calc(data_birth,mdy(as.character(age_onset_numerictemp2)))) %>%
-      # # mutate(ade_at_onset = )
-      # pull(age_onset_numerictemp2)
+# df_questionnaire<-
+# df_questionnaire %>%
+#     as.tibble() %>%
+#       mutate(age_onset_numerictemp = gsub("[^0-9\\.]", "",
+#             Age.du.patient.au.moment.de.la.premiere.crise)) %>%
+#       mutate(age_onset_numerictemp = as.numeric(age_onset_numerictemp)) %>% 
+#       mutate(age_onset_numerictemp2 = ifelse(age_onset_numerictemp < 1000, age_onset_numerictemp,
+#                                           (2017-age_onset_numerictemp)))# %>%
+#       # mutate(age_onset_numerictemp3 = age_calc(data_birth,mdy(as.character(age_onset_numerictemp2)))) %>%
+#       # # mutate(ade_at_onset = )
+#       # pull(age_onset_numerictemp2)
 
-describe(df_questionnaire$age_onset_numerictemp2)
+# describe(df_questionnaire$age_onset_numerictemp2)
 
 #type of epilepsy
-df <- data.frame(matrix(unlist(df_questionnaire$Type.de.crise.epileptiques), nrow=434, byrow=T))
+df <- data.frame(matrix(unlist(df_questionnaire$Type.de.crise.épileptiques), nrow=434, byrow=T))
 
 table(df$X1)
 table(df$X2)
@@ -372,10 +374,10 @@ phq9_data$phq9_sum<-with(phq9_data,rowSums(data.frame(phq1_num,
 ######################LIKERT SCALE GRAPH
 #######################################
 
-phq9_data[,c(15:23)][phq9_data[,c(15:23)]==0]<-"Nta na rimwe"
-phq9_data[,c(15:23)][phq9_data[,c(15:23)]==1]<-"Rimwe na rimwe"
-phq9_data[,c(15:23)][phq9_data[,c(15:23)]==2]<-"Birenze igice cy'umunsi"
-phq9_data[,c(15:23)][phq9_data[,c(15:23)]==3]<-"Hafi ya buri muns"
+# phq9_data[,c(15:23)][phq9_data[,c(15:23)]==0]<-"Nta na rimwe"
+# phq9_data[,c(15:23)][phq9_data[,c(15:23)]==1]<-"Rimwe na rimwe"
+# phq9_data[,c(15:23)][phq9_data[,c(15:23)]==2]<-"Birenze igice cy'umunsi"
+# phq9_data[,c(15:23)][phq9_data[,c(15:23)]==3]<-"Hafi ya buri muns"
 
 phq9_likertplot<-with(phq9_data,data.frame(phq1_num,
                                            phq2_num,
@@ -786,35 +788,42 @@ socio_data$date_epilepsy_diag_recoded<-as.POSIXct(socio_data$date_epilepsy_diag,
 #   y=hdrs_data2, by="id",all.x = TRUE)
 
 library("plyr")
-data_merged<-join(phq9_data2, 
+data_merged0<-join(phq9_data2, 
      hdrs_data2,
      type = "inner",by=c("id"))
+
+socio_data$id<-df_questionnaire$V1
+
+data_merged<-join(socio_data, 
+     data_merged0,
+     type = "right",by=c("id"))
+dim
 
 #creating intervals based on the HDRS
 
 data_merged$hdrs_international_cat<-car::recode(data_merged$hdrs_sum,"
-                                0:6='ab';
-                                7:17='mild';
-                                18:23='severe';
+                                0:7='ab';
+                                8:16='mild';
+                                17:23='severe';
                                 NA=NA;
                                 else='verysevere'")
 
-data_merged$hdrs_international_abscence<-car::recode(data_merged$hdrs_sum,"
-                                0:6=0;
+data_merged$hdrs_international_mild<-car::recode(data_merged$hdrs_sum,"
+                                0:7=0;
                                 NA=NA;
                                 else=1")
-data_merged$hdrs_international_mild<-car::recode(data_merged$hdrs_sum,"
-                                0:17=0;
+data_merged$hdrs_international_mod<-car::recode(data_merged$hdrs_sum,"
+                                0:16=0;
                                 NA=NA;
                                 else=1")
 data_merged$hdrs_international_severe<-car::recode(data_merged$hdrs_sum,"
                                 0:23=0;
                                 NA=NA;
                                 else=1")
-data_merged$hdrs_international_verysevere<-car::recode(data_merged$hdrs_sum,"
-                                0:24=0;
-                                NA=NA;
-                                else=1")
+# data_merged$hdrs_international_severe<-car::recode(data_merged$hdrs_sum,"
+#                                 0:24=0;
+#                                 NA=NA;
+#                                 else=1")
 
 data_merged$hdrs_international_rwandan<-car::recode(data_merged$hdrs_sum,"
                                 0:17=0;
@@ -931,6 +940,12 @@ table(socio_data$household_size)
 table(data_merged$hdrs_international_cat)
 prop.table(table(data_merged$hdrs_international_cat))
 
+summary(as.factor(data_merged$hdrs_international_cat))
+
+describe(data_merged$phq9_sum)
+describe(data_merged$hdrs_sum)
+
+
 ######################################################################
 #FLOORING,AND CEILING EFFECT
 ######################################################################
@@ -1015,7 +1030,7 @@ lavInspect(fit,what="th")
 Mod <- lavaan::modificationIndices(fit)
 subset(Mod, mi > 10)
 
-library()
+# library()
 nodeLabels<-c("Q1",
               "Q2",
               "Q3",
@@ -1025,19 +1040,19 @@ nodeLabels<-c("Q1",
               "Q7",
               "Q8",
               "Q9",
-              "Q10",
-              "Q11",
-              "Q12",
-              "Q13",
-              "Q14",
-              "Q15",
-              "Q16",
-              "Q17",
-              "HDRS")
+              # "Q10",
+              # "Q11",
+              # "Q12",
+              # "Q13",
+              # "Q14",
+              # "Q15",
+              # "Q16",
+              # "Q17",
+              "PHQ9")
 
-color<-c(rep("grey",17),rep("white",1))
-borders<-c(rep("FALSE",17),rep("TRUE",1))
-labelcex<-c(rep(0.7,17),rep(1,1))
+color<-c(rep("grey",9),rep("white",1))
+borders<-c(rep("FALSE",9),rep("TRUE",1))
+labelcex<-c(rep(0.7,9),rep(1,1))
 
 # tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in', 
 #   width = 15,
@@ -1187,7 +1202,55 @@ by(Est$std.all[13:50],Est$lhs[13:50],mean)
 # with(data_mcid2,by(change_score,change_cat_PGIC2,summary))
 # with(data_mcid2,by(data_mcid2[,4],change_cat_PGIC2,summary))
 
-ROC(form=hdrs_international_verysevere~phq9_sum, data=data_merged)
+require(pROC)
+require(ztable)
+require(moonBook)
+
+roc_mild<-ROC(form=hdrs_international_mild~phq9_sum, 
+    data=data_merged,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="")
+
+plot_ROC(roc_mild)
+# text("A")
+
+roc_mod<-ROC(form=hdrs_international_mod~phq9_sum, 
+    data=data_merged,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_mod)
+
+roc_sever<-ROC(form=hdrs_international_severe~phq9_sum, 
+    data=data_merged,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_sever)
+
+
+roc_rw<-ROC(form=hdrs_international_rwandan~phq9_sum, 
+    data=data_merged,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_rw)
+
+plot(roc_mild)
+
+
 
 library(OptimalCutpoints)
 optimal.cutpoint.Youden <- optimal.cutpoints(X = "phq9_sum", 
@@ -1218,4 +1281,185 @@ summary(optimal.cutpoint.Youden)
 
 plot(optimal.cutpoint.Youden)
 
+data_above30<-subset(data_merged,data_merged$age>=30)
 
+roc_mild<-ROC(form=hdrs_international_mild~phq9_sum, 
+    data=data_above30,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="")
+
+plot_ROC(roc_mild)
+# text("A")
+
+roc_mod<-ROC(form=hdrs_international_mod~phq9_sum, 
+    data=data_above30,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_mod)
+
+roc_sever<-ROC(form=hdrs_international_severe~phq9_sum, 
+    data=data_above30,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_sever)
+
+
+roc_rw<-ROC(form=hdrs_international_rwandan~phq9_sum, 
+    data=data_above30,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_rw)
+
+data_below30<-subset(data_merged,data_merged$age<30)
+
+roc_mild<-ROC(form=hdrs_international_mild~phq9_sum, 
+    data=data_below30,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="")
+
+plot_ROC(roc_mild)
+# text("A")
+
+roc_mod<-ROC(form=hdrs_international_mod~phq9_sum, 
+    data=data_below30,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_mod)
+
+roc_sever<-ROC(form=hdrs_international_severe~phq9_sum, 
+    data=data_below30,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_sever)
+
+
+roc_rw<-ROC(form=hdrs_international_rwandan~phq9_sum, 
+    data=data_below30,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_rw)
+
+#Education
+
+data_merged$education_recoded<-car::recode(data_merged$education,"
+              'primaire'='educ1';
+              'sans scolarité'='educ1';
+              else='educ2'")
+
+data_educ1<-subset(data_merged,data_merged$education_recoded=="educ1")
+
+roc_mild<-ROC(form=hdrs_international_mild~phq9_sum, 
+    data=data_educ1,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="")
+
+plot_ROC(roc_mild)
+# text("A")
+
+roc_mod<-ROC(form=hdrs_international_mod~phq9_sum, 
+    data=data_educ1,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_mod)
+
+roc_sever<-ROC(form=hdrs_international_severe~phq9_sum, 
+    data=data_educ1,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_sever)
+
+
+roc_rw<-ROC(form=hdrs_international_rwandan~phq9_sum, 
+    data=data_educ1,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_rw)
+
+data_educ2<-subset(data_merged,data_merged$education_recoded=="educ2")
+
+roc_mild<-ROC(form=hdrs_international_mild~phq9_sum, 
+    data=data_educ2,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="")
+
+plot_ROC(roc_mild)
+# text("A")
+
+roc_mod<-ROC(form=hdrs_international_mod~phq9_sum, 
+    data=data_educ2,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_mod)
+
+roc_sever<-ROC(form=hdrs_international_severe~phq9_sum, 
+    data=data_educ2,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_sever)
+
+
+roc_rw<-ROC(form=hdrs_international_rwandan~phq9_sum, 
+    data=data_educ2,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="ROC")
+
+plot_ROC(roc_rw)

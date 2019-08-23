@@ -1395,4 +1395,90 @@ random = rma(yi=SMD, sei=SE, data=data2)
 
 forest(random)
 
+#############################################################################
+#
+#Figure 3 - Cohort data
+#
+#############################################################################
+
+# data_3model<-subset(data,data$ART_duration_5years!="")
+
+# data_5ART$ART_duration_5years <- factor(data_5ART$ART_duration_5years)
+
+datafig3_base<-rbind(data3,data3[1,])
+
+#run metanalysis model for type of intervention
+meta_fig3_base <- metacont(n_hiv_cART.,
+	mean_cIMT,
+	sd_cIMT,
+	n_hiv_cART..1,
+	mean_cIMT.1,
+	sd_cIMT.1, 
+  data=datafig3_base, 
+  sm="SMD",
+  # method.smd="Glass",
+  # byvar=intervention_cat,
+  # print.byvar=FALSE,
+  # comb.fixed=FALSE,
+  studlab=datafig3_base[,1])
+
+
+#Editing object to insert data from the other model.
+data2<-na.omit(data2)
+
+meta_fig3_edited<-meta_fig3_base
+
+meta_fig3_edited$studlab<-as.character(data2$Study)
+meta_fig3_edited$TE<-data2$SMD
+meta_fig3_edited$seTE<-data2$SE
+meta_fig3_edited$lower<-data2$lower
+meta_fig3_edited$upper<-data2$upper
+# meta_fig3_edited$zval<-
+# meta_fig3_edited$pval<-
+meta_fig3_edited$w.fixed<-data2$Weightfixed
+meta_fig3_edited$w.random<-data2$Weightrandom
+meta_fig3_edited$TE.fixed<-0.181
+meta_fig3_edited$seTE.fixed<-0.086
+meta_fig3_edited$lower.fixed<-0.011
+meta_fig3_edited$upper.fixed<-0.351
+meta_fig3_edited$zval.fixed<-2.085
+meta_fig3_edited$pval.fixed<-0.037
+meta_fig3_edited$TE.random<-0.164
+meta_fig3_edited$seTE.random<-0.167
+meta_fig3_edited$lower.random<-c(-0.164)
+meta_fig3_edited$upper.random<-0.492
+meta_fig3_edited$zval.random<-0.982
+meta_fig3_edited$pval.random<-0.326
+meta_fig3_edited$k<-5
+meta_fig3_edited$Q<-14.452      
+meta_fig3_edited$df.Q<-4 
+meta_fig3_edited$pval.Q<-0.006  
+# meta_fig3_edited$tau<-     
+# meta_fig3_edited$se.tau2<- 
+# meta_fig3_edited$C<-       
+# meta_fig3_edited$H<-       
+# meta_fig3_edited$lower.H<- 
+# meta_fig3_edited$upper.H<- 
+meta_fig3_edited$I2<-0.723
+meta_fig3_edited$lower.I2<-0.304
+meta_fig3_edited$upper.I2<-0.889
+# meta_fig3_edited$Rb<-      
+# meta_fig3_edited$lower.Rb<-
+# meta_fig3_edited$upper.Rb<-
+
+setEPS()
+# tiff("/Users/Joao/Desktop/dep3ession_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)
+postscript("/Users/Joao/Desktop/figure3.eps",
+	width = 10, height = 6)
+forest(meta_fig3_edited,sortvar=meta_fig3_edited$TE,
+					   bysort=FALSE,
+					   digits.mean=2,
+					   digits.sd=2,
+					   layout="JAMA",
+					   calcwidth.tests=TRUE,
+					   print.byvar=FALSE)
+
+dev.off()
+
+
 
