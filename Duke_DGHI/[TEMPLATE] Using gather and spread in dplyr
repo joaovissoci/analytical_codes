@@ -1,0 +1,32 @@
+#Using gather and spread in dplyr
+
+#Gather is used to "gather" a set a variables into a vector. As if you
+#are stacking them up. It gets a set a variables and stackes them into
+#a vactor caller key (you can change the name) and the actual value
+#into another vector called value (you can change it too).
+#You can also list a set of variables to be maintend constant with the
+#-var notation.
+
+#simples example
+
+
+#complex example
+
+injury_level_data<-study_data %>%
+
+				  gather(key, value, -c("age",
+										  "gender",
+										  "education_recoded",
+										  "occupation_recoded",
+										  "race",
+										  "year_visits",
+										  "monthly_income",
+										  "insurance",
+										  "record_id"))
+
+#Spread is the oposite. It gets a stacked vector and flashes it out into
+#corresponding vectors. Unstackes the variable.
+
+#simple example
+
+#complex example
