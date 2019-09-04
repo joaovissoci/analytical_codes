@@ -1,0 +1,933 @@
+######################################################################
+#BASIC R STATISTICS TEMPLATE
+######################################################################
+#
+#
+#
+#
+#
+######################################################################
+#SETTING ENVIRONMENT
+######################################################################
+#PASCKAGES INSTALLATION CODES
+#install.packages("Hmisc")
+#install.packages("car")
+#install.packages("psych")
+#install.packages("nortest")
+#install.packages("ggplot2")
+#install.packages("pastecs")
+#install.packages("repmis")
+#install.packages("mvnormtest")
+#install.packages("polycor")
+
+#PACKAGES LOADING CODE
+#Load packages neededz for the analysis
+#library(Hmisc)
+
+#All packages must be installes with install.packages() function
+lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments",
+	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
+	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust",
+	"foreign","survival","memisc","foreign","mice","MissMech",
+	"dplyr"), 
+library, character.only=T)
+
+######################################################################
+#IMPORTING DATA
+######################################################################
+#LOADING DATA FROM A .CSV FILE
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_dataAug2019.csv")
+#information between " " are the path to the directory in your computer where the data is stored
+
+######################################################################
+#DATA MANAGEMENT
+######################################################################
+#Creating a data frame (group of variables)
+
+data %>%
+	as_tibble() %>%
+   mutate(complication_binary = 
+   		case_when(pneum == 1 |
+   				  acute_renal == 1 |
+   				  thromb == 1 |
+   				  uti == 1 |
+   				  org_fail == 1 |
+   				  delirium == 1 |
+   				  symp_storm == 1 |
+   				  seizures == 1 |
+   				  wound_inf == 1 |
+   				  wound_deh == 1 |
+   				  dec_ulcer == 1 ~ 1,
+   				  TRUE ~ 0)) %>%
+   mutate(gos_recoded =
+   		case_when(gos == 7 ~ "positive",
+   				  gos == 8 ~ "positive",
+   				  gos == 1 ~ "Anegtive",
+   				  gos == 2 ~ "Anegtive",
+   				  gos == 3 ~ "Anegtive",
+   				  gos == 4 ~ "Anegtive",
+   				  gos == 5 ~ "Anegtive",
+   				  gos == 6 ~ "Anegtive")) %>%
+   mutate(moi_recoded =
+   		case_when(moi == 0 ~ "ARTI",
+   				  moi == 1 ~ "BAssault",
+   				  moi == 2 ~ "Other",
+   				  moi == 3 ~ "Fall",
+   				  moi == 4 ~ "Other",
+   				  moi == 89 ~ "Other",
+   				  TRUE ~ NA_character_)) %>%
+   mutate(gcs_sum =
+   		rowSums(data.frame(
+   			gcs_eye,
+   			gcs_verbal,
+   			gcs_motor))) %>%
+   mutate(age_cat =
+         case_when(age %in% 18:29 ~ "18 to 29",
+                 age %in% 30:49 ~ "30 to 49",
+                 age %in% 50:64 ~ "50 to 64",
+                 age >= 65 ~ "above 65",
+                 TRUE ~ NA_character_)) %>%
+   mutate(fim_cat_selfcare =
+         case_when(fimcare %in% 1:5 |
+                 fimtoilet %in% 1:5 |
+                 fimtx %in% 1:5 ~ "Anegative",
+                 TRUE ~ "positive")) %>%
+   mutate(fim_cat_locomotion =
+         case_when(fimmotion %in% 1:5 |
+                 fimstairs %in% 1:5 ~ "Anegative",
+                 TRUE ~ "positive")) %>%
+   mutate(gcs_cat =
+   		case_when(gcs_sum <= 8 ~ "severe",
+   				  gcs_sum %in% 9:12 ~ "moderate",
+   				  gcs_sum > 12 ~ "mild")) -> data
+
+data$complication_sum<-with(data,rowSums(data.frame(pneum,
+										acute_renal,
+										thromb,
+										uti,
+										org_fail,
+										delirium,
+										symp_storm,
+										seizures,
+										wound_inf,
+										wound_deh,
+										dec_ulcer)))
+
+#Combining HTN w/ test v. no test
+htn_combined<-NULL
+
+data$htn<-recode(data$htn,'0'="no",'1'="yes")
+data$nohtn<-recode(data$nohtn,'0'="never tested",'1'="Atested and negative")
+
+for(i in 1:nrow(data)){
+  if(is.na(data$htn) [i]==FALSE) {
+    if(data$htn[i]=="yes") {
+       htn_combined[i]<-data$htn[i]} else {
+          htn_combined[i]<-data$nohtn[i]
+          }
+        } else {
+            htn_combined[i]<-NA
+          }
+        }
+
+data$htn_combined<-htn_combined
+
+#Combining HTN w/ test v. no test
+dm_combined<-NULL
+
+data$dm<-recode(data$dm,'0'="no",'1'="yes")
+data$nodm<-recode(data$nodm,'0'="never tested",'1'="Atested and negative")
+
+for(i in 1:nrow(data)){
+  if(is.na(data$dm) [i]==FALSE) {
+    if(data$dm[i]=="yes") {
+       dm_combined[i]<-data$dm[i]} else {
+          dm_combined[i]<-data$nodm[i]
+          }
+        } else {
+            dm_combined[i]<-NA
+          }
+        }
+
+data$dm_combined<-dm_combined
+
+#recoding variables
+data$female_recoded<-car::recode(data$female,
+                            "0='Male'; 1='Female'") 
+data$marital_recoded<-car::recode(data$marital,
+                             "0='Single'; 1='Married'; 2:4='Other'")
+data$tribe_recoded<-car::recode(data$tribe,
+                           "1='Saamba';0='Chagga'; 2='Maasai'; 3='Pare'; 4='Other';5='Other';6='Other';7='Other';8='Other';89='Other'")
+data$employ_recoded<-car::recode(data$employ,
+                            "0='Unemployed'; 1='Unemployed'; 2='Professional'; 3='Skilled Employment'; 4='Self-Employed'; 5='Farmer'; 6='Other'")
+# data$moi_recoded<-car::recode(data$moi,
+#                          "0='Road Traffic Injury'; 1='Assault'; 2='Other'; 3='Fall'; 4='Other'; 89='Other'; 99='Other'")
+data$insurance_recoded<-car::recode(data$insurance,
+                               "0='None'; 1='Cash personal payment'; 2='National Health insurance'; 3:89='Other'")
+
+#separating GOS into positive and negative categories
+data$gos_recoded <-car::recode(data$gos,
+                          "0:4='negative outcome'; 5:8='positive outcome'")
+
+#creating new variable for gcs score (ultimately goes into KTS score)
+data$gcs_tot<-rowSums(data.frame(data$gcs_eye+data$gcs_verbal
+                                    +data$gcs_motor))
+
+data$gcs_tot_recoded<-car::recode(data$gcs_tot,
+                             "1:12='Poor GCS';13:15='Good GCS'")
+
+# CREATING A KTS VARIABLE
+##Creating KTS Variable
+KTS_data<-with(data, data.frame(age, avpu_arred, rr_arred, 
+                               hr_arred,sbp_arred, pox_arred, surg_1, 
+                               dispo_loc, gcs_tot))
+#recode variables into KTS scoring
+KTS_data$age_cat<-as.numeric(car::recode(KTS_data$age,
+                                             "5:55='1'; 0:5='0'; 56:110='0'"))
+table(KTS_data$age_cat)
+
+KTS_data$sbp_arred_cat<-as.numeric(car::recode(KTS_data$sbp_arred,
+                                                   "90:300='2'; 50:89='1'; 0:49='0'"))
+table(KTS_data$sbp_arred_cat)
+
+KTS_data$rr_arred_cat<-as.numeric(car::recode(KTS_data$rr_arred,
+                                                  "10:29='2'; 30:100='1'; 0:9='0'"))
+table(KTS_data$rr_arred_cat)
+
+KTS_data$avpu_arred_cat<-as.numeric(car::recode(KTS_data$avpu_arred,
+                                                    "0='3'; 1='2'; 2='1'; 3='0'"))
+table(KTS_data$avpu_arred_cat)
+#creating variable for 'serious injury' aspect of KTS
+#recoding variables so that 1=bad, 0=good
+KTS_data$dispo_loc<-as.numeric(car::recode(KTS_data$dispo_loc, 
+                                               "0='1'; 1='1'; 2:89='0'"))
+KTS_data$gcs_tot<-as.numeric(car::recode(KTS_data$gcs_tot, 
+                                             "0:12='1'; 13:15='0'"))
+KTS_data$pox_arred<-as.numeric(car::recode(KTS_data$pox_arred, 
+                                               "0:91='1'; 92:100='0'"))
+KTS_data$sbp_arred<-as.numeric(car::recode(KTS_data$sbp_arred, 
+                                               "0:99='1'; 100:300='0'"))
+KTS_data$hr_arred<-as.numeric(car::recode(KTS_data$hr_arred, 
+                                              "100:300='1'; 0:99='0'"))
+KTS_data$rr_arred<-as.numeric(car::recode(KTS_data$rr_arred, 
+                                              "26:80='1'; 0:25='0'"))
+table(KTS_data$rr_arred)
+#combining variables into 'serious injury,' if any variable is present then output is 1 (true) for serious injury, if no variable is present then output is 0 (false)
+#lower combined score = worse injury
+KTS_data$serious_injury<-(KTS_data$surg_1==1) | (KTS_data$dispo_loc==1) | (KTS_data$gcs_tot==1) | (KTS_data$pox_arred==1) | (KTS_data$sbp_arred==1) | (KTS_data$hr_arred==1) | (KTS_data$rr_arred==1)
+table(KTS_data$serious_injury)
+
+#converting from logical t/f to numeric 1/0
+KTS_data$serious_injury<-1*KTS_data$serious_injury
+table(KTS_data$serious_injury)
+
+#combining all variables (age, sbp, rr, avpu, serious injury)
+KTS_data<-mutate(KTS_data, kts_score=(KTS_data$age_cat+KTS_data$sbp_arred_cat+KTS_data$rr_arred_cat+KTS_data$avpu_arred_cat+KTS_data$serious_injury))
+table(KTS_data$kts_score)
+
+#recoding KTS score into mild, moderate-severe (binary categorization)
+KTS_data$kts_score_cat<-as.factor(car::recode(KTS_data$kts_score, 
+                                              "0:8='Severe KTS'; 9:10='Mild KTS'"))
+#adding KTS back into main toc dataset
+data$kts_score<-KTS_data$kts_score_cat
+data$kts_score_cat<-KTS_data$kts_score_cat
+
+#TIME TO CARE
+library(lubridate)
+
+injuryT<-with(data,paste(dateinjury, timeinjury, sep=" "))
+injury_time<-lubridate::ymd_hm(injuryT, tz="Africa/Dar_es_Salaam")
+
+arrivalT<-with(data,paste(datearrivekcmc, timearrivekcmc, sep=" "))
+arrival_time<-lubridate::ymd_hm(arrivalT, tz="Africa/Dar_es_Salaam")
+
+diff_time<-difftime(arrival_time, injury_time, units=c("min"))
+
+time_to_care <-NULL
+
+for(i in 1:nrow(data)){if(is.na(diff_time) [i]==TRUE) {time_to_care[i]<-NA} else if(diff_time[i]<0) {time_to_care[i]<-NA} else{time_to_care[i]<-diff_time[i]}}
+
+# INSERTING LOS IN DAYS VARIABLE INTO DATASET
+data$time_to_care<-(time_to_care/60)
+summary(data$time_to_care)
+
+data$time_to_care_cat<-car::recode(data$time_to_care,"0:1='Abelow 1';1.00001:4='one to four';4.000001:400='more than 4'")
+
+#LOS
+library(lubridate)
+
+arrivalT<-with(data,paste(datearrivekcmc, timearrivekcmc, sep=" "))
+arrival_time<-lubridate::ymd_hm(arrivalT, tz="Africa/Dar_es_Salaam")
+
+dischargeT<-with(data,paste(dc_date, dc_time, sep=" "))
+discharge_time<-lubridate::ymd_hm(dischargeT, tz="Africa/Dar_es_Salaam")
+
+diff_time_los<-difftime(discharge_time, arrival_time, units=c("min"))
+
+length_stay <-NULL
+
+for(i in 1:nrow(data)){if(is.na(diff_time_los) [i]==TRUE) {length_stay[i]<-NA} else if(diff_time_los[i]<0) {length_stay[i]<-NA} else{length_stay[i]<-diff_time_los[i]}}
+
+
+# INSERTING LOS IN DAYS VARIABLE INTO DATASET
+data$length_stay<-(length_stay/60)/24
+summary(data$length_stay)
+
+#Death Time
+library(lubridate)
+
+arrivalT<-with(data,paste(datearrivekcmc, timearrivekcmc, sep=" "))
+arrival_time<-lubridate::ymd_hm(arrivalT, tz="Africa/Dar_es_Salaam")
+
+deathT<-with(data,paste(death_date, death_time, sep=" "))
+death_time<-lubridate::ymd_hm(deathT, tz="Africa/Dar_es_Salaam")
+
+diff_time_deathtime<-difftime(death_time, arrival_time, units=c("min"))
+
+death_time <-NULL
+
+for(i in 1:nrow(data)){
+  if(is.na(diff_time_deathtime) [i]==TRUE) {
+        death_time[i]<-NA} else 
+    if(diff_time_deathtime[i]<0) {
+          death_time[i]<-NA} else{
+            death_time[i]<-diff_time_deathtime[i]}
+          }
+
+# INSERTING LOS IN DAYS VARIABLE INTO DATASET
+data$death_time<-(death_time/60)/24
+summary(data$death_time)
+
+#Merging LOS and death time
+
+losplusdeath<-NULL
+
+for(i in 1:nrow(data)){
+  if(is.na(data$death) [i]==FALSE) {
+    if(data$death[i]==1) {
+       losplusdeath[i]<-death_time[i]} else {
+          losplusdeath[i]<-length_stay[i]
+          }
+        } else {
+            losplusdeath[i]<-NA
+          }
+        }
+
+# INSERTING LOS IN DAYS VARIABLE INTO DATASET
+data$losplusdeath<-(losplusdeath/60)/24
+summary(data$losplusdeath)
+
+#recoding types of surgerys
+fracture_id<-c(grep("#", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FRACTURE", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("EXTRACARSULAR", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("DISLOCATION", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("AMPUTATION", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("P/3", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("T/L", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("T/F", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("RT", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("LT", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("m/3", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("d/3", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("SD +", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("ACHILLES", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FORE ARM", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FEMUR", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("P3", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("EXTERSOR", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("PIPKIN", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("TRANSECTION", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("TENDON", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("PATELLA", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FIXATION", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FOOT", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FRUCTURE", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE))
+
+
+neuro_id<-c(grep("epidural", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("subdural", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("brain", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("skull", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("PNENMOCEPHALY", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("PARIETAL", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("MTBI", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("SPINAL", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("HEAD", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE))
+
+gen_id<-c(grep("CUT", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("LACERATION", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("LACERATOR", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("SOFT", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("VISCERAL", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("WOUND", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("DIBREDMENT", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("PALM", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("PENETRATING", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("BURN", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("PNEUMOHORAX", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("LACERETION", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("WRIST", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("SACRUM", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("ENDOTRACHIAL", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE))
+
+ent_id<-c(grep("MAXILLA", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("MANDIBLE", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("ZYGOMATIC", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("THROAT", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("ZYGOMA", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("LEFORT", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("ORAL CAVITY", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("LEFORIC", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("NOSE", data$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+                ))
+
+surgery_type<-rep(NA,872)
+
+for(i in 1:872){
+
+if(i %in% gen_id) {
+ 
+ surgery_type[i] <- "general"}
+
+   if(i %in% fracture_id) {
+
+   surgery_type[i] <- "Aortho" }
+
+      if(i %in% neuro_id) {
+
+   surgery_type[i] <- "neuro" }
+
+         if(i %in% ent_id) {
+
+   surgery_type[i] <- "ent" }  
+
+            }
+
+data$surgery_type<-surgery_type
+
+data$surgery_type<-car::recode(data$surgery_type," NA='Unknown'")
+
+data_cleaned<-with(data, data.frame(
+                            age_cat, 
+                            female_recoded,
+                            education,
+                            marital_recoded, 
+                            moi_recoded,
+                            tribe_recoded,
+                            employ_recoded,
+                            insurance_recoded, 
+                            death, 
+                            etoh,
+                            hxhiv,
+                            gos_recoded,
+                            gcs_tot_recoded,
+                            kts_score_cat,
+                            time_to_care,
+                            time_to_care_cat,
+                            surgery_type,
+                            death,
+                            dm_combined,
+                            htn_combined,
+                            fim_cat_locomotion,
+                            fim_cat_selfcare,
+                            losplusdeath))
+
+# #finding number of missing values for each var
+na_count<-sapply(data_cleaned, function(x) sum(length(which(is.na(x)))))
+na_count
+na_count<-data.frame(na_count)
+na_count
+na_count$percentage<-na_count$na_count/dim(data_cleaned)[1]*100
+na_count
+barplot(na_count$percentage,las=2,names.arg = rownames(na_count), 
+        col="lightgreen", main="Number of Missing Values",
+        ylab="Percent Missing",mar=c(5,2,2,2))
+
+#imputation
+imp<-mice(data_cleaned,seed=2222,m=5)
+data_imp<-mice::complete(imp,sample(1:5,1))
+
+#building model data
+data_model<-data_imp
+
+data_model$tribe_recoded<-car::recode(data_model$tribe_recoded,"
+                                          'Maasai'='Other';
+                                          'Saamba'='Other'")
+
+data_model$insurance_recoded<-car::recode(data_model$insurance_recoded,"
+                                          'Cash personal payment'='Cash personal payment';
+                                          else='Other'"
+                              )
+
+data_model$surgery_type<-car::recode(data_model$surgery_type,"
+                                          'ent'='Unknown'"
+                              )
+
+data_model$employ_recoded<-car::recode(data_model$employ_recoded,"
+                                          'Skilled Employment'='Employed';
+                                          'Professional'='Employed';
+                                          'Student'='Unemployed';
+                                          'Other'='Unemployed'
+                                          "
+                              )
+
+#############################################################################
+#TABLE 1. SOCIODEMOgRAPHIC CHARACtEriStiCS
+#############################################################################
+
+#INJURY SEVERITY
+#Categorical data by alcohol use
+####################################
+
+#GENDER
+with(data_imp,table(female_recoded))
+with(data_imp,prop.table(table(female_recoded)))
+#by alcohol use
+table<-with(data_imp,table(female_recoded,gos_recoded)) 
+table
+with(data_imp,prop.table(table(female_recoded,kts_score_cat),2))
+chisq.test(table)
+fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(talked_dr ~ female
+#       ,family=binomial, data=data_imp)
+# summary(logmodel)
+# exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
+#by tabaco use
+
+#MARITAL STATUS
+with(data_imp,table(marital_recoded))
+with(data_imp,prop.table(table(marital_recoded)))
+#by alcohol use
+table<-with(data_imp,table(marital,kts_score_cat)) 
+table
+with(data_imp,prop.table(table(marital,kts_score_cat),2))
+chisq.test(table)
+fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(talked_dr ~ female
+#       ,family=binomial, data=data_imp)
+# summary(logmodel)
+# exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
+#TRIBE
+with(data_imp,table(tribe_recoded))
+with(data_imp,prop.table(table(tribe_recoded)))
+#by alcohol use
+table<-with(data_imp,table(tribe,kts_score_cat)) 
+table
+with(data_imp,prop.table(table(tribe,kts_score_cat),2))
+chisq.test(table)
+fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(talked_dr ~ female
+#       ,family=binomial, data=data_imp)
+# summary(logmodel)
+# exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
+#EMPLOYMENT
+with(data_imp,table(employ_recoded))
+with(data_imp,prop.table(table(employ_recoded)))
+#by alcohol use
+table<-with(data_imp,table(employ,kts_score_cat)) 
+table
+with(data_imp,prop.table(table(employ,kts_score_cat),2))
+chisq.test(table)
+fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(talked_dr ~ female
+#       ,family=binomial, data=data_imp)
+# summary(logmodel)
+# exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
+#MECHANISM OF INJURY
+with(data_imp,table(moi_recoded))
+with(data_imp,prop.table(table(moi_recoded)))
+#by alcohol use
+table<-with(data_imp,table(moi,kts_score_cat)) 
+table
+with(data_imp,prop.table(table(moi,kts_score_cat),2))
+chisq.test(table)
+fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(talked_dr ~ female
+#       ,family=binomial, data=data_imp)
+# summary(logmodel)
+# exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95))) 
+
+#INSURANCE TYPE
+with(data_imp,table(insurance_recoded))
+with(data_imp,prop.table(table(insurance_recoded)))
+#by alcohol use
+table<-with(data_imp,table(insurance_recoded,kts_score_cat)) 
+table
+with(data_imp,prop.table(table(insurance_recoded,kts_score_cat),2))
+chisq.test(table)
+fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(talked_dr ~ female
+#       ,family=binomial, data=data_imp)
+# summary(logmodel)
+# exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95)))
+
+#Age
+describe(data_imp$age)
+
+#Time to treatment
+
+describe(data_cleaned$education)
+
+#############################################################################
+#TABLE 2. CLINICAL CHARACTERISTICS
+#############################################################################
+
+#HIV
+with(data_imp,table(hxhiv))
+with(data_imp,prop.table(table(hxhiv)))
+#by alcohol use
+table<-with(data_imp,table(insurance_recoded,kts_score_cat)) 
+table
+with(data_imp,prop.table(table(insurance_recoded,kts_score_cat),2))
+chisq.test(table)
+fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(talked_dr ~ female
+#       ,family=binomial, data=data_imp)
+# summary(logmodel)
+# exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95)))
+
+#ALCHOHOL
+with(data_imp,table(etoh))
+with(data_imp,prop.table(table(etoh)))
+#by alcohol use
+table<-with(data_imp,table(insurance_recoded,kts_score_cat)) 
+table
+with(data_imp,prop.table(table(insurance_recoded,kts_score_cat),2))
+chisq.test(table)
+fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(talked_dr ~ female
+#       ,family=binomial, data=data_imp)
+# summary(logmodel)
+# exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95)))
+
+#DIABETES
+with(data_imp,table(dm_combined))
+with(data_imp,prop.table(table(dm_combined)))
+#by alcohol use
+table<-with(data_imp,table(dm,kts_score_cat)) 
+table
+with(data_imp,prop.table(table(dm,kts_score_cat),2))
+chisq.test(table)
+fisher.test(table)
+# assocstats(table) #vcd package
+# logmodel<-glm(talked_dr ~ female
+#       ,family=binomial, data=data_imp)
+# summary(logmodel)
+# exp(cbind(Odds=coef(logmodel),confint(logmodel,level=0.95)))
+
+#HyPERTENSION
+with(data_imp,table(htn_combined))
+with(data_imp,prop.table(table(htn_combined)))
+with(data,table(nohtn))
+with(data,prop.table(table(nohtn)))
+
+
+#############################################################################
+#TABLE 2. Outcomes
+#############################################################################
+
+#GOS
+with(data_imp,table(gos_recoded))
+with(data_imp,prop.table(table(gos_recoded)))
+#by alcohol use
+
+#Mortality
+with(data_imp,table(death))
+with(data_imp,prop.table(table(death)))
+#by alcohol use
+
+#LOS
+with(data_imp,summary((length_stay/60)/24))
+
+#FIM self-care
+with(data_imp,table(fim_cat_selfcare))
+with(data_imp,prop.table(table(fim_cat_selfcare)))
+#by alcohol use
+
+#FIM LOCOMOTION
+with(data_imp,table(fim_cat_locomotion))
+with(data_imp,prop.table(table(fim_cat_locomotion)))
+#by alcohol use
+
+#############################################################################
+#TABLE 3. Injury characteristics
+#############################################################################
+
+#MOI
+with(data_imp,table(moi_recoded))
+with(data_imp,prop.table(table(moi_recoded)))
+#by alcohol use
+
+#KTS
+with(data_imp,table(kts_score_cat))
+with(data_imp,prop.table(table(kts_score_cat)))
+#by alcohol use
+
+#Type of surgery
+with(data_imp,table(surgery_type))
+with(data_imp,prop.table(table(surgery_type)))
+#by alcohol use
+
+#############################################################################
+#Figure 4. Association with mortality
+#############################################################################
+#Age
+# table<-with(data_imp,table(female_recoded,death)) 
+# table
+# with(data_imp,prop.table(table(female_recoded,death),2))
+
+#Sex
+table<-with(data_model,table(female_recoded,death)) 
+table
+with(data_model,prop.table(table(female_recoded,death),2))
+
+#Marital
+table<-with(data_model,table(marital_recoded,death)) 
+table
+with(data_model,prop.table(table(marital_recoded,death),2))
+
+#tribe
+table<-with(data_model,table(tribe_recoded,death)) 
+table
+with(data_model,prop.table(table(tribe_recoded,death),2))
+
+#employ
+table<-with(data_model,table(employ_recoded,death)) 
+table
+with(data_model,prop.table(table(employ_recoded,death),2))
+
+#moi
+table<-with(data_model,table(moi_recoded,death)) 
+table
+with(data_model,prop.table(table(moi_recoded,death),2))
+
+#insurance
+table<-with(data_model,table(insurance_recoded,death)) 
+table
+with(data_model,prop.table(table(insurance_recoded,death),2))
+
+#kts
+table<-with(data_model,table(kts_score_cat,death)) 
+table
+with(data_model,prop.table(table(kts_score_cat,death),2))
+
+#surgery type
+table<-with(data_model,table(surgery_type,death)) 
+table
+with(data_model,prop.table(table(surgery_type,death),2))
+
+#slcohol
+table<-with(data_model,table(etoh,death)) 
+table
+with(data_model,prop.table(table(etoh,death),2))
+
+#HIV
+table<-with(data_model,table(hxhiv,death)) 
+table
+with(data_model,prop.table(table(hxhiv,death),2))
+
+#DM
+table<-with(data_model,table(dm_combined,death)) 
+table
+with(data_model,prop.table(table(dm_combined,death),2))
+
+#HTN
+table<-with(data_model,table(htn_combined,death)) 
+table
+with(data_model,prop.table(table(htn_combined,death),2))
+
+#time to treatment
+with(data_model,describeBy(age,death))
+
+#time to treatment
+with(data_model,describeBy(education,death))
+
+#time to treatment
+with(data_model,by(time_to_care,death,summary))
+
+model_death<-glm(death ~ 
+                          age_cat + 
+                          female_recoded +
+                          education +
+                            marital_recoded + 
+                            moi_recoded +
+                            tribe_recoded +
+                            employ_recoded +
+                            insurance_recoded +
+                          as.factor(etoh) +
+                            as.factor(hxhiv) +
+                            htn_combined +
+                            dm_combined +
+                            kts_score_cat +
+                            time_to_care_cat +
+                            surgery_type,
+                            family = binomial(link = logit),
+                            data=data_model)
+summary(model_death)
+round(exp(cbind(Odds=coef(model_death),confint(model_death,level=0.95))), 3)
+vif(model_death)
+
+str(data_model)
+
+#############################################################################
+#Figure 2. Association with lenght of stay
+#############################################################################
+# data$losplusdeath
+# OutVals = boxplot(data$losplusdeath)$out
+outlierKD(data_model, losplusdeath)
+
+# drawing survival curves with several strata
+t.Surv <- Surv(data$losplusdeath, data$death)
+t.survfit <- survfit(t.Surv~1, data=data)
+summary(t.survfit)
+plot(t.survfit)
+print(t.survfit, show.rmean=T)
+
+#Cox model
+cox_model <- coxph(t.Surv~age_cat + 
+                          female_recoded +
+                          education +
+                            marital_recoded + 
+                            moi_recoded +
+                            tribe_recoded +
+                            employ_recoded +
+                            insurance_recoded +
+                           as.factor(etoh) +
+                            as.factor(hxhiv) +
+                            htn_combined +
+                            dm_combined +
+                            kts_score_cat +
+                            time_to_care_cat +
+                            surgery_type
+            ,data=data_model)
+# baseline<-basehaz(MaleMod)
+summary(cox_model)
+
+# plot(baseline$time, baseline$hazard, type='l',main="Hazard rates")
+x<-cox.zph(MaleMod)
+print(x)                  # display the results 
+plot(x)
+
+# # Plot the baseline survival function
+# ggsurvplot(survfit(res.cox), color = "#2E9FDF",
+#            ggtheme = theme_minimal())
+
+## FIM LOCOMOTION MODEL
+model_fimlocoomtion<-glm(fim_cat_locomotion ~ 
+                          age_cat + 
+                          female_recoded +
+                          education +
+                            marital_recoded + 
+                            moi_recoded +
+                            tribe_recoded +
+                            employ_recoded +
+                            insurance_recoded +
+                           as.factor(etoh) +
+                            as.factor(hxhiv) +
+                            htn_combined +
+                            dm_combined +
+                            kts_score_cat +
+                            time_to_care_cat +
+                            surgery_type,
+                            family = binomial(link = logit),
+                            data=data_model)
+summary(model_fimlocoomtion)
+round(exp(cbind(Odds=coef(model_fimlocoomtion),confint(model_fimlocoomtion,level=0.95))), 3)
+vif(model_fimlocoomtion)
+
+str(data_model)
+
+#FIM SELF CARE MODEL
+model_fimselfcare<-glm(fim_cat_selfcare ~ 
+                          age_cat + 
+                          female_recoded +
+                          education +
+                            marital_recoded + 
+                            moi_recoded +
+                            tribe_recoded +
+                            employ_recoded +
+                            insurance_recoded +
+                           as.factor(etoh) +
+                            as.factor(hxhiv) +
+                            htn_combined +
+                            dm_combined +
+                            kts_score_cat +
+                            time_to_care_cat +
+                            surgery_type,
+                            family = binomial(link = logit),
+                            data=data_model)
+summary(model_fimselfcare)
+round(exp(cbind(Odds=coef(model_fimselfcare),confint(model_fimselfcare,level=0.95))), 3)
+vif(model_fimselfcare)
+
+str(data_model)
