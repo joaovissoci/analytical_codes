@@ -29,14 +29,15 @@ lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments",
 	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
 	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust",
 	"foreign","survival","memisc","foreign","mice","MissMech",
-	"dplyr"), 
+	"dplyr","tm"), 
 library, character.only=T)
 
 ######################################################################
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data_registry<-read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_dataAug2019.csv",sep=",")
+data_registry <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_dataAug2019.csv")
+
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################
@@ -98,6 +99,155 @@ data_registry$complication_sum<-with(data_registry,rowSums(data.frame(pneum,
 										wound_deh,
 										dec_ulcer)))
 
+#recoding types of surgerys
+fracture_id<-c(grep("#", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FRACTURE", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("EXTRACARSULAR", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("DISLOCATION", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("AMPUTATION", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("P/3", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("T/L", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("T/F", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("RT", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("LT", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("m/3", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("d/3", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("SD +", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("ACHILLES", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FORE ARM", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FEMUR", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("P3", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("EXTERSOR", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("PIPKIN", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("TRANSECTION", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("TENDON", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("PATELLA", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FIXATION", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FOOT", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("FRUCTURE", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE))
+
+
+neuro_id<-c(grep("epidural", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("subdural", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("brain", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("skull", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("PNENMOCEPHALY", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("PARIETAL", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("MTBI", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("SPINAL", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+             grep("HEAD", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE))
+
+gen_id<-c(grep("CUT", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("LACERATION", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("LACERATOR", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("SOFT", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("VISCERAL", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("WOUND", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("DIBREDMENT", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("PALM", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("PENETRATING", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("BURN", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("PNEUMOHORAX", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("LACERETION", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("WRIST", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("SACRUM", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+               grep("ENDOTRACHIAL", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE))
+
+ent_id<-c(grep("MAXILLA", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("MANDIBLE", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("ZYGOMATIC", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("THROAT", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("ZYGOMA", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("LEFORT", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("ORAL CAVITY", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("LEFORIC", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+           fixed = FALSE, useBytes = FALSE, invert = FALSE),
+                grep("NOSE", data_registry$surg_1indic, ignore.case = TRUE, perl = FALSE, value = FALSE,
+                ))
+
+surgery_type<- NULL
+
+for(i in 1:dim(data_registry)[1]){
+
+if(i %in% gen_id) {
+ 
+ tryout[i] <- "general"}
+
+   if(i %in% fracture_id) {
+
+   tryout[i] <- "ortho" }
+
+      if(i %in% neuro_id) {
+
+   tryout[i] <- "neuro" }
+
+         if(i %in% ent_id) {
+
+   tryout[i] <- "ent" }  
+
+            }
+
+data_registry$surgery_type
+
+#KTS
+
+#Time to treatment
 
 #######################################################
 #ANALYZING MISSING DATA
