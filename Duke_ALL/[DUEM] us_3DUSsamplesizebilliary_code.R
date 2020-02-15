@@ -18,7 +18,7 @@ library(ICC.Sample.Size)
 
 
 ## Calculate Sample Size for p=0.80, p0=0.60, two ratings, alpha=0.05 with two tails and power=0.80.
-calculateIccSampleSize(p=0.90,p0=0.40,k=3,alpha=0.05,tails=2,power=0.80)
+calculateIccSampleSize(p=0.70,p0=0.40,k=3,alpha=0.05,tails=2,power=0.80)
 ## Calculate Sample Size as above, but test varying p from 0 to 1 by steps of 0.05
 calculateIccSampleSize(p=0.80,p0=0.60,k=2,alpha=0.05,tails=2,power=0.80,by="p",step=0.05)
 ## Calculate Sample Size as above, but test varying p0 from 0 to 1 by steps of 0.05

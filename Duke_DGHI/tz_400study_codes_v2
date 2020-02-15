@@ -56,6 +56,39 @@ data_aggregated<-merge(x = data_followup,
 					   by = "study_id", 
 					   all.x = TRUE)
 
+NAtobla<-function(x){
+	car::recode(x,"''=NA")
+	}
+
+deleteme10 <- with(data_registry,data.frame(dx_list1,
+							  dx_list2,
+							  dx_list3,
+							  dx_list4,
+							  dx_list5,
+							  dx_list6,
+							  dx_list7,
+							  dx_list8,
+							  dx_list9))
+
+audit_data_NAto0<-lapply(deleteme10,NAtobla)
+audit_data_NAto0<-as.data.frame(audit_data_NAto0)
+
+NAtobla2<-function(x){
+	is.na(x)
+	}
+
+audit_data_NAto1<-lapply(audit_data_NAto0,NAtobla2)
+audit_data_NAto1<-as.data.frame(audit_data_NAto1)
+
+NAto0<-function(x){
+	car::recode(x,"'FALSE'=1;'TRUE'=0;NA=0")
+	}
+
+
+audit_data_NAto2<-lapply(audit_data_NAto1,NAto0)
+audit_data_NAto2<-as.data.frame(audit_data_NAto2)
+deleteme3<-rowSums(audit_data_NAto2)
+
 ######################################################################
 #DATA MANAGEMENT
 ######################################################################

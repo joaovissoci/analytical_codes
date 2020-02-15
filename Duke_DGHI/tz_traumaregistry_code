@@ -36,7 +36,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data_registry <- read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_dataAug2019.csv")
+data_registry <- read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_dataAug2019.csv")
 
 #information between " " are the path to the directory in your computer where the data is stored
 
@@ -1064,20 +1064,33 @@ sum(is.na(data$etoh_pos))/length(data[,1])
 # assocstats(table) #vcd package
 
 
-data$weight1_recoded<-car::recode(data$weight1,"'ND'=NA;'(Other)'=NA")
-data$weight1_recoded<-as.numeric(as.character(data$weight1_recoded))
-summary(data$weight1_recoded)
+data_registry$weight1_recoded<-car::recode(data_registry$weight1,"'ND'=NA;'(Other)'=NA")
+data_registry$weight1_recoded<-as.numeric(as.character(data_registry$weight1_recoded))
+summary(data_registry$weight1_recoded)
 
 data_registry$height_recoded<-car::recode(data_registry$height,"0=NA;
                                                 'ND'=NA;
                                                 '1.7M'=170")
 
-data$height_recoded<-as.numeric(as.character(data$height_recoded))
-summary(data$height_recoded)
+data_registry$height_recoded<-as.numeric(as.character(data_registry$height_recoded))
+summary(data_registry$height_recoded)
 
-data$bmi<-data$weight1_recoded/(data$height_recoded/100)^2
-summary(data$bmi)
+data_registry$bmi<-data_registry$weight1_recoded/(data_registry$height_recoded/100)^2
+summary(data_registry$bmi)
 
+data_registry$bmi_recoded<-car::recode(data_registry$bmi,"0:20='0to20';
+                                                20.000000001:30='21to30';
+                                                30.000000001:500='30to500'")
+table(data_registry$bmi_recoded)
+prop.table(table(data_registry$bmi_recoded))
+
+data_registry$elderly<-car::recode(data_registry$age,"0:65='0to65';
+                                                65.000000001:100='above 65'")
+
+table(data_registry$elderly)
+
+table(data_registry$bmi_recoded,data_registry$elderly)
+prop.table(table(data_registry$bmi_recoded,data_registry$elderly),2)
 
 ######################################################################
 #TABLE 5

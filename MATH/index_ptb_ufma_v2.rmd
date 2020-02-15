@@ -1,0 +1,299 @@
+---
+title: "Monitoramento e estratificação de prematuridade"
+output: flexdashboard::flex_dashboard
+social: menu
+runtime: shiny
+---
+  
+```{r global, include=FALSE}
+library(arm)
+library(caret)
+library(flexdashboard)
+load("/Users/Joao/Downloads/extre_gradien_boost_fit.Rdata")
+municipality_data<-read.csv("/Users/Joao/Desktop/br_muicipality_data.csv")
+```
+
+Risk Calculator
+=======================================================================
+
+Input {.sidebar}
+-----------------------------------------------------------------------
+  
+Please insert Patient data below
+
+
+```{r Inputs}
+textInput("name", "Nome da mãe", "Fulana de tal")
+# textInput("address", "Endereço da mãe", "Rua Ave Lira 45")
+# textInput("city", "Cidade da mãe", "Arapongas")
+# textInput("estado", "Estado da mãe", "Paraná")
+
+ # Rate at which to flag high download traffic
+ selectInput("state", label = h3("Estado da mãe"), 
+    choices = c("Escolha um na lista",unique(as.character(municipality_data$uf))),
+    selected="Escolha um na lista")
+
+ # Rate at which to flag high download traffic
+ selectInput("city", label = h3("Cidade da mãe"), 
+    choices = c("Escolha um na lista",unique(as.character(municipality_data$municipio))))#,
+    # selected="São Luis")
+
+textInput("address", "Endereço da mãe", "Praça dos Três Poderes")
+
+numericInput("IDADEMAE", "Idade da mãe", value=20, min=0, max=100)
+numericInput("CONSPRENAT", "# de consultas de prenatal", value=0, min=0, max=50)
+numericInput("MESPRENAT", "Mês de início de consultas de prenatal", value=0, min=0, max=9)
+radioButtons("PARTO.Cesareo", "Plano de parto cesária?", choices=list("Não"="0", "Sim"="1"), inline=TRUE)
+selectInput("ESCMAE", "Educação",
+            choices=list("Superior_completo"="1", 
+                         "Superior_incompleto"="2",
+                         "Medio_2grau"="0"))
+selectInput("ESTCIVMAE", "Estado civil da mãe",
+            choices=list("Solteira"="2",
+                         "Casada"="1",
+                         "Uniao_consensual"="0"))
+numericInput("QTDFILVIVO", "# de filhos vivos", value=0, min=20, max=199)
+numericInput("QTDPARTNOR", "# de partos normais prévios", value=0, min=0, max=100)
+numericInput("QTDFILMORT", "# de filho mortos", value=0, min=0, max=100)
+numericInput("QTDPARTCES", "# de partos cesárianos", value=0, min=0, max=100)
+
+```  
+
+Column
+-----------------------------------------------------------------------
+
+```{r Reactive}
+
+observe({
+    x <- input$state
+
+    if (is.null(x) || x == "Escolha um na lista") {
+      updateSelectInput(session, "city",
+        choices = c("All",unique(as.character(municipality_data$municipio))),
+        selected="Escolha um da lista")
+    } else {
+      updateSelectInput(session, "city",
+        choices = c("Escolha um da lista", unique(
+          as.character(subset(municipality_data, uf == x, municipio, TRUE)))),
+        selected = "Escolha um da lista")
+    }
+  })
+
+prob <- reactive({
+  # Some simple validations
+  # validate(
+  #   need(as.numeric(input$sys_bp) >= as.numeric(input$dia_bp), "Systolic Blood Pressure most be higher then Diastolic Blood Pressure")
+  # )
+
+  city<-reactive({input$city})
+
+  # city<-"São Luis"
+
+  input_municipality<-subset(municipality_data,
+                                municipality_data$municipio==city())
+
+
+    # Where to store inputed predictors
+  predictors <- list()
+
+  # Some selectors don't need any processing and can be just used as is.
+  predictors[["IDADEMAE"]] <- as.numeric(input$IDADEMAE)
+  predictors[["ESTCIVMAE.Solteira"]] <- as.integer("2" %in% input$ESTCIVMAE)
+  predictors[["ESTCIVMAE.Casada"]] <- as.integer("1" %in% input$ESTCIVMAE)
+  predictors[["QTDFILVIVO"]] <- as.numeric(input$QTDFILVIVO)
+  predictors[["QTDFILMORT"]] <- as.numeric(input$QTDFILMORT)
+  predictors[["SEXO.Feminino"]] <- 1               
+  predictors[["QTDPARTNOR"]] <- as.numeric(input$QTDPARTNOR)
+  predictors[["QTDPARTCES"]] <- as.numeric(input$QTDPARTCES)
+  predictors[["CONSPRENAT"]] <- as.numeric(input$CONSPRENAT)
+  predictors[["MESPRENAT"]] <- as.numeric(input$MESPRENAT)
+  predictors[["referencia"]] <- as.numeric(input_municipality$referencia)
+  predictors[["prenatal"]] <- as.numeric(input_municipality$prenatal)
+  predictors[["exames"]] <- as.numeric(input_municipality$exames)
+  predictors[["sis_pn"]] <- as.numeric(input_municipality$sis_pn)
+  predictors[["usa_caderneta"]] <- as.numeric(input_municipality$usa_caderneta)
+  predictors[["reg_profissional"]] <- as.numeric(input_municipality$reg_profissional)
+  predictors[["reg_consulta_cd"]] <- as.numeric(input_municipality$reg_consulta_cd)
+  predictors[["reg_vacina"]] <- as.numeric(input_municipality$reg_vacina)
+  predictors[["reg_citop"]] <- as.numeric(input_municipality$reg_citop)
+  predictors[["tetano"]] <- as.numeric(input_municipality$tetano)
+  predictors[["res_oportuno"]] <- as.numeric(input_municipality$res_oportuno)
+  predictors[["aplica_penicilina"]] <- as.numeric(input_municipality$aplica_penicilina)
+  predictors[["tp_us_dummy"]] <- as.numeric(input_municipality$tp_us_dummy)
+  predictors[["qt_medico"]] <- as.numeric(input_municipality$qt_medico)
+  predictors[["qt_enfermeiro"]] <- as.numeric(input_municipality$qt_enfermeiro)
+  predictors[["qt_cd"]] <- as.numeric(input_municipality$qt_cd)
+  predictors[["horario_m"]] <- as.numeric(input_municipality$horario_m)
+  predictors[["consulta_m"]] <- as.numeric(input_municipality$consulta_m)
+  predictors[["consulta_e"]] <- as.numeric(input_municipality$consulta_e)
+  predictors[["consulta_cd"]] <- as.numeric(input_municipality$consulta_cd)
+  predictors[["dispensa_m"]] <- as.numeric(input_municipality$dispensa_m)
+  predictors[["faz_vacina"]] <- as.numeric(input_municipality$faz_vacina)
+  predictors[["caderneta"]] <- as.numeric(input_municipality$caderneta)
+  predictors[["vacina_dt"]] <- as.numeric(input_municipality$vacina_dt)
+  predictors[["vacina_influenza"]] <- as.numeric(input_municipality$vacina_influenza)
+  predictors[["vacina_hepB"]] <- as.numeric(input_municipality$vacina_hepB)
+  predictors[["antihipertensivo"]] <- as.numeric(input_municipality$antihipertensivo)
+  predictors[["equipamento_prop"]] <- as.numeric(input_municipality$equipamento_prop)
+  predictors[["material_prop"]] <- as.numeric(input_municipality$material_prop)
+  predictors[["complexo_prop"]] <- as.numeric(input_municipality$complexo_prop)
+  predictors[["antibacteriano_prop"]] <- as.numeric(input_municipality$antibacteriano_prop)
+  predictors[["antidiabetico_prop"]] <- as.numeric(input_municipality$antidiabetico_prop)
+  predictors[["pop2012"]] <- as.numeric(input_municipality$pop2014)
+  predictors[["tanalfa2010"]] <- as.numeric(input_municipality$tanalfa2010)
+  predictors[["propbaixarend2010"]] <- as.numeric(input_municipality$propbaixarend2010) 
+  predictors[["GINIpc2010"]] <- as.numeric(input_municipality$GINIpc2010)
+  predictors[["txdesemp2010"]] <- as.numeric(input_municipality$txdesemp2010)
+  predictors[["pibpc2012"]] <- as.numeric(input_municipality$pibpc2013)
+  predictors[["tesc2010"]] <- as.numeric(input_municipality$tesc2010)
+  predictors[["rendapc2010"]] <- as.numeric(input_municipality$rendapc2010)
+  predictors[["perc_partohosp2012"]] <- as.numeric(input_municipality$perc_partohosp2014)
+  predictors[["perc_popESF2012"]] <- as.numeric(input_municipality$perc_popESF2014)
+  predictors[["cobagua2010"]] <- as.numeric(input_municipality$cobagua2010)                 
+  predictors[["perc_popACS2012"]] <- as.numeric(input_municipality$perc_popACS2014)
+  predictors[["ESTCIVMAE.Uniao_consensual"]] <- as.integer("0" %in% input$ESTCIVMAE)
+  predictors[["ESCMAE.Medio_2grau"]] <- as.integer("0" %in% input$ESCMAE)
+  predictors[["ESCMAE.Superior_incompleto"]] <- as.integer("2" %in% input$ESCMAE)
+  predictors[["ESCMAE.Superior_completo"]] <- as.integer("1" %in% input$ESCMAE)
+  predictors[["PARTO.Cesareo"]] <- as.numeric(input$PARTO.Cesareo) 
+  predictors[["t_hiv"]] <- as.numeric(input_municipality$t_hiv)
+  predictors[["t_sifilis"]] <- as.numeric(input_municipality$t_sifilis)
+  predictors[["t_gravidez"]] <- as.numeric(input_municipality$t_gravidez)
+
+  df <- data.frame(predictors, check.names=FALSE)
+  prob_out <- predict(extre_gradien_boost_fit, df)
+
+  # no_tbi_surgery_value <- prob[1, "Bad_recovery"]
+
+  result <- list()
+  # result$no_tbi_surgery_value <- sprintf("%3.1f %%", prob[1, "Bad_recovery"] * 100.0)
+  result$ptb_pred_value <- round(prob_out)
+
+  # result$no_tbi_surgery_color <- sprintf("#%02X%02X00",
+  #                                        as.integer(prob_out[1,"Bad_recovery"]*128),
+  #                                        as.integer(prob_out[1,"Good_recovery"]*128))
+
+  result$ptb_pred_color <- car::recode(prob_out,"
+                                0:28='darkred';
+                                28.01:32='red';
+                                32.01:37='orange';
+                                37.01:45='green'")
+
+  result$ptb_pred_text <- car::recode(prob_out,"
+                                0:28='Extremo Pré-termo';
+                                28.01:32='Muito Pré-termo';
+                                32.01:37='Leve Pré-termo';
+                                37.01:45='Termo'")
+
+
+  # predictors[["tbi_surgery.No"]] <- 0
+  # predictors[["tbi_surgery.Yes"]] <- 1
+  # df <- data.frame(predictors, check.names=FALSE)
+  # prob <- predict(bayes_fit, df, type="prob")
+  # yes_tbi_surgery_value <- prob[1, "Bad_recovery"]
+
+  # result$yes_tbi_surgery_value <- sprintf("%3.1f %%", prob[1, "Bad_recovery"] * 100.0)
+  # result$yes_tbi_surgery_color <- sprintf("#%02X%02X00",
+  #                                         as.integer(prob[1,"Bad_recovery"]*128),
+  #                                         as.integer(prob[1,"Good_recovery"]*128))
+
+  # result$tbi_surgery_diff <- sprintf("%3.1f %%", (no_tbi_surgery_value - yes_tbi_surgery_value) * 100.0)
+result
+})
+```
+
+### Patient risk of morbidity with no surgery {.value-box}
+```{r}
+renderValueBox({
+  valueBox(value=prob()$ptb_pred_value, 
+            color=prob()$ptb_pred_color)
+})
+```
+
+### The patient risk of morbidity with surgery {.value-box}
+```{r}  
+
+renderValueBox({
+  valueBox(value=prob()$ptb_pred_text, 
+            color=prob()$ptb_pred_color)
+})
+```
+
+<!-- Row {data-height=650}
+-----------------------------------------------------------------------
+ -->
+### Geolocalização da mãe
+
+```{r}
+# renderUI({tagList(
+
+#   p(HTML(sprintf(paste('Your patient has <span style="color:%s;font-weight:bold;">%s</span> chance of death without surgery and a',
+#                   '<span style="color:%s; font-weight:bold">%s</span> chance of death with surgery.'),
+#             prob()$no_tbi_surgery_color,
+#             prob()$no_tbi_surgery_value,
+#             prob()$yes_tbi_surgery_color,
+#             prob()$yes_tbi_surgery_value))),
+#   br(),
+
+#   p(HTML(sprintf('This is a <span style="color:green;font-weight:bold;">%s</span> change in survival chance with a surgery.',
+#     prob()$tbi_surgery_diff))),
+#   br(),
+#   p(HTML('It is recommended to operate on patients with a greater than <span style="color:green; font-weight:bold">15%</span> change in survival.')),
+#   br(),br(),br(),br(),br(),
+#   p(strong('Please note, this is a support tool and is not meant to replace the clinical judgement of a physician'))
+# )})
+
+  library(devtools)
+  library(leaflet)
+  library(tmaptools)
+
+renderLeaflet({
+
+city<-reactive({input$city})
+address<-reactive({input$address})
+name<-reactive({input$name})
+idade<-reactive({input$IDADEMAE})
+prenatal<-reactive({input$CONSPRENAT})
+mesprenatal<-reactive({input$MESPRENAT})
+estadocivil<-reactive({input$ESTCIVMAE})
+
+address_geocoded<-geocode_OSM(paste(address(),city(), sep= ", "))
+
+
+leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(lng=address_geocoded$coords[1],
+                   lat=address_geocoded$coords[2], 
+                   popup=paste(name(),
+                           paste("Idade =",idade(), sep= " "),
+                           paste("# Pre-natal =",prenatal(), sep= " "),
+                           paste("Estado civil =",estadocivil(), sep= " "),sep=" \n")
+                    #
+                    # radius = ~ifelse(type == "ship", 6, 10),
+  
+                        # color = ~pal(type),
+        )
+})
+
+
+
+```
+
+Vigilância de Prematuridade - Mapa Inteligente
+=======================================================================
+
+### Monitoramento e mapa inteligente
+
+```{r}
+library(leaflet)
+leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(lng=174.768, lat=-36.852, popup="Érika Thomaz
+                                              Idade = 20 anos
+                                              Diabetes = Sim
+                                              Hipert. = Sim
+                                              # Prenatal = 1
+                                              Semanas = 5 Semanas
+                                              Risco PTB = 90%
+                                              Parto = 30 semanas")
+```

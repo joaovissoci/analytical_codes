@@ -1,13 +1,19 @@
-# install.packages("MKmisc")
+install.packages("MKmisc")
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("limma")
+
 library("MKmisc")
 
 
 ## see n2 on page 1202 of Chu and Cole (2007)
-power.diagnostic.test(spec = 0.95,
-					  delta = 0.1,
-					  power = 0.95, 
-					  sig.level=0.01,
-					  prev=0.07) # 40
+power.diagnostic.test(spec = 0.70,
+					  delta = 0.10,
+					  power = 0.80, 
+					  sig.level=0.05,
+					  prev=0.14) # 40
 
 ## see n2 on page 1202 of Chu and Cole (2007)
 power.diagnostic.test(spec = 0.95,
@@ -20,7 +26,7 @@ power.diagnostic.test(spec = 0.95,
 
 ## see n2 on page 1202 of Chu and Cole (2007)
 power.diagnostic.test(sens = 0.99,
-					  delta = 0.1,
+					  delta = 0.15,
 					  power = 0.95, 
 					  sig.level=0.05,
 					  prev=1) # 40
@@ -39,4 +45,4 @@ install.packages("kappaSize")
 
 library(kappaSize)
 
-PowerBinary(kappa0=0.2, kappa1=0.8, props=0.90, alpha=0.05, power=0.80);
+PowerBinary(kappa0=0.4, kappa1=0.8, props=0.14, alpha=0.05, power=0.80);

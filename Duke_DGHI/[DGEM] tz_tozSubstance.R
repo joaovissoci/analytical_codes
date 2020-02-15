@@ -390,6 +390,11 @@ vif(model1table1)
 with(toc_data,table(anyalcohol_imp))
 with(toc_data,prop.table(table(anyalcohol_imp)))
 
+#UNADJUSTED PREVALENCE
+with(toc_data,table(etoh))
+with(toc_data,prop.table(table(etoh)))
+
+
 #GENDER
 with(toc_data,table(female_imp))
 with(toc_data,prop.table(table(female_imp)))

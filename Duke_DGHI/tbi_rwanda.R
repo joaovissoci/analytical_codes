@@ -58,7 +58,9 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 
 #data_cp<-read.csv("/home/joao/Desktop/data_cp.csv",sep=',')
 #data_rs<-read.csv("/home/joao/Desktop/data_rs.csv",sep=',')
-data <- read.csv("/Users/jnv4/OneDrive - Duke University/datasets/DGHI/Africa/Rwanda/kuth_tbi_rwanda_data.csv")
+data <- read.csv("/Users/Joao/Downloads/kuth_tbi_rwanda_data.csv")
+
+write.csv(data,"/Users/Joao/Downloads/kuth_tbi_rwanda_data_full.csv")
 
 ######################################################
 #DATA MANAGEMENT

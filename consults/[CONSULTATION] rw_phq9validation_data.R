@@ -185,8 +185,38 @@ table(employment)
 prop.table(table(employment))
 
 #education
-table(df_questionnaire$Niveau.d.education)
-prop.table(table(df_questionnaire$Niveau.d.education))
+
+test<-data.frame(matrix(unlist(df_questionnaire$Lévétiracétam), 
+                    nrow=length(df_questionnaire$Lévétiracétam), 
+                    byrow=T))
+
+test<-data.frame(matrix(unlist(df_questionnaire$Valproate), 
+                    nrow=length(df_questionnaire$Valproate), 
+                    byrow=T))
+
+
+test<-data.frame(matrix(unlist(df_questionnaire$Diphantoine), 
+                    nrow=length(df_questionnaire$Diphantoine), 
+                    byrow=T))
+
+test<-data.frame(matrix(unlist(df_questionnaire$Phénobarbital), 
+                    nrow=length(df_questionnaire$Phénobarbital), 
+                    byrow=T))
+
+test<-data.frame(matrix(unlist(df_questionnaire$Lorazépam), 
+                    nrow=length(df_questionnaire$Lorazépam), 
+                    byrow=T))
+
+test<-data.frame(matrix(unlist(df_questionnaire$Clonazépam), 
+                    nrow=length(df_questionnaire$Clonazépam), 
+                    byrow=T))
+
+test<-data.frame(matrix(unlist(df_questionnaire$Diazepam), 
+                    nrow=length(df_questionnaire$Diazepam), 
+                    byrow=T))
+
+table(as_tibble())
+prop.table(table(df_questionnaire$Lévétiracétam))
 
 #age of first onset
 
@@ -238,6 +268,12 @@ prop.table(table(df_questionnaire$Traitement.antiepileptique))
 
 table(df_questionnaire$Probleme.de.sante.mentale.)
 prop.table(table(df_questionnaire$Traitement.antiepileptique))
+
+prop.table(table(df_questionnaire$V1))
+
+#Treatment for depression
+
+
 
 ######################################################
 #PHQ9
@@ -1005,9 +1041,9 @@ phq6_num ~~ phq9_num
 '
 
 fit <- lavaan::cfa(cfa_model,
-                   data = data_merged[,15:23],
+                   data = phq9_network,
                    estimator="WLSMV",
-                   ordered=colnames(data_merged[,15:23])
+                   ordered=colnames(phq9_network)
                    )
 summary(fit, fit.measures=TRUE)
 lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
@@ -1206,15 +1242,15 @@ require(pROC)
 require(ztable)
 require(moonBook)
 
-roc_mild<-ROC(form=hdrs_international_mild~phq9_sum, 
+roc_mild<-ROC(form=hdrs_international_mild~phq9_sum+education_recoded, 
     data=data_merged,
     PV=TRUE,
     MX=TRUE,
     MI=FALSE,
     AUC=TRUE,
-    plot="")
+    plot="sp")
 
-plot_ROC(roc_mild)
+plot(roc_mild)
 # text("A")
 
 roc_mod<-ROC(form=hdrs_international_mod~phq9_sum, 

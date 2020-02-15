@@ -61,7 +61,7 @@ lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest",
 
 #data_cp<-read.csv("/home/joao/Desktop/data_cp.csv",sep=',')
 #data_rs<-read.csv("/home/joao/Desktop/data_rs.csv",sep=',')
-data <- read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Rwanda/RwandaSurvey_DATA_2016-08-15_1346.csv")
+data <- read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Rwanda/RwandaSurvey_DATA_2016-08-15_1346.csv")
 
 ######################################################
 #DATA MANAGEMENT
@@ -851,7 +851,7 @@ crashlifetime <-glm(as.factor(crash_year) ~
 summary(crashlifetime)
 odds_model_1<-exp(cbind(Odds=coef(crashlifetime),
                 confint(crashlifetime,level=0.95))) 
-colnames(odds_model_1)<-c("OR","LowCI","HighCI")
+colnames(s0)<-c("OR","LowCI","HighCI")
 
 #nearmiss
 

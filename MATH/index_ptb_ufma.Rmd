@@ -1,5 +1,5 @@
 ---
-title: "Monitoramento e estratificação de prematuridade"
+title: "Monitoramento e estratificacao de prematuridade"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
@@ -10,7 +10,7 @@ runtime: shiny
 library(arm)
 library(caret)
 library(flexdashboard)
-# load("/Users/Joao/Downloads/bayes_fit.Rdata")
+# load("/Users/JoaNo/Downloads/bayes_fit.Rdata")
 ```
 
 Sidebar {.sidebar}
@@ -186,9 +186,9 @@ Row
 #   p(strong('Please note, this is a support tool and is not meant to replace the clinical judgement of a physician'))
 # )})
 
-library(devtools)
-library(leaflet)
-library(tmaptools)
+  library(devtools)
+  library(leaflet)
+  library(tmaptools)
 
 
 address<-geocode_OSM("Rua Ararajubas 11, sao luis, maranhão, brazil")

@@ -10,13 +10,13 @@
 # install.packages("readstata13")
 #All packages must be installes with install.packages() function
 lapply(c("poLCA","ggplot2","devtools","ggradar","dplyr",
-		 "scales","tibble","fmsb","scales","reshape"),
+		 "scales","tibble","fmsb","scales","reshape","mice"),
 library, character.only=T)
 # library("haven")
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
-data <- read.csv("/Users/Joao/Desktop/br_immunizationLCA_data.csv")
+data <- read.csv("/Users/Joao/Desktop/Add to box/br_immunizationLCA_data.csv")
 # data<-as.data.frame(data)
 
 # data[] <- lapply(data, unclass)
@@ -282,6 +282,7 @@ f <- cbind(	periodo_func2,
 #     tol = 1e-10, na.rm = TRUE, probs.start = NULL, nrep = 1,
 #     verbose = TRUE, calc.se = TRUE)
 
+set.seed(1002)
 #========================================================= 
 # Fit for 2 latent classes: 
 #========================================================= 

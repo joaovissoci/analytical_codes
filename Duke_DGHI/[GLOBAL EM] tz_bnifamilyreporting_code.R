@@ -41,9 +41,9 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data_patients<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
+data_patients<-read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
 
-data_family<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAfamily_data.csv")
+data_family<-read.csv("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bniKAfamily_data.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -244,7 +244,7 @@ data_patients$audit_score<-audit_data_questions$audit_score
 
 data_patients$audit_score_cat<-car::recode(
 	audit_data_questions$audit_score,
-	"0:8='No';else='Yes'")
+	"0:7='No';else='Yes'")
 
 # audit_data_cleaned<-audit_data_questions[-c(1:10)]
 # audit_data_cleaned<-cbind(audit_data_cleaned,
@@ -405,11 +405,13 @@ data_family$audit_score<-audit_data_questions_fam$audit_score
 
 data_family$audit_score_cat<-car::recode(
 	audit_data_questions_fam$audit_score,
-	"0:8='No';else='Yes'")
+	"0:7='No';else='Yes'")
 
 #MERGING DATASETS
 
 merged_data<-merge(x = with(data_patients,data.frame(
+							age,
+							sex=female,
 							p_audit_score=audit_score,
 							p_audit_score_cat=audit_score_cat,
 							p_pas_score=pas_scores_patients,
@@ -474,12 +476,20 @@ stacked_data<-rbind(with(data_nonabst,data.frame(
 with(stacked_data,by(audit_score,group,summary))
 with(stacked_data,kruskal.test(audit_score~group))
 
+table<-with(merged_data,table(p_audit_score_cat))
+table
+prop.table(table)
+
+table<-with(merged_data,table(f_audit_score_cat))
+table
+prop.table(table)
+
 table<-with(merged_data,table(p_audit_score_cat,f_audit_score_cat))
 table
 prop.table(table,2)
 chisq.test(table)
 fisher.test(table)
-assocstats(table) #vcd package
+
 
 with(stacked_data,by(pas_score,group,summary))
 with(stacked_data,kruskal.test(pas_score~group))
@@ -489,6 +499,73 @@ with(stacked_data,kruskal.test(pas_score~group))
 
 # with(stacked_data,by(devaluation,group,summary))
 # with(stacked_data,kruskal.test(devaluation~group))
+
+
+library(irr)
+kappa2(with(merged_data,
+		data.frame(p_audit_score_cat,f_audit_score_cat)),
+		 "unweighted")
+
+
+
+fit_glm <- glm(p_audit_score_cat ~ f_audit_score, data_nonabst, family=binomial(link="logit"))
+
+glm_link_scores <- predict(fit_glm, data_nonabst, type="link")
+
+glm_response_scores <- predict(fit_glm, data_nonabst, type="response")
+
+score_data <- data.frame(link=glm_link_scores, 
+                         response=glm_response_scores,
+                         p_audit_score_cat=data_nonabst$p_audit_score_cat,
+                         stringsAsFactors=FALSE)
+
+library(epiR)
+
+
+
+library(pROC)
+library(Epi)
+
+library(pROC)
+
+auc(data_nonabst$p_audit_score_cat, glm_response_scores)
+
+plot<-plot(roc(data_nonabst$p_audit_score_cat, 
+			glm_response_scores, direction="<"))
+     # col="yellow", lwd=3, main="The turtle finds its way")
+print(plot)
+
+plot
+
+ROC(form=p_audit_score_cat~f_audit_score, data=merged_data)
+
+
+merged_data<-merged_data %>% mutate(discord = case_when(
+				p_audit_score_cat == f_audit_score_cat ~ 'agree',
+				p_audit_score_cat != f_audit_score_cat ~ 'disagree'))
+
+table(merged_data$discord)
+prop.table(table(merged_data$discord))
+
+with(merged_data,by(p_audit_score,discord,summary))
+with(merged_data,by(f_audit_score,discord,summary))
+with(merged_data,by(p_pas_score,discord,summary))
+with(merged_data,by(f_pas_score,discord,summary))
+with(merged_data,by(age,discord,summary))
+with(merged_data,by(p_drinc_data_score,discord,summary))
+
+table<-with(merged_data,table(p_consumption,discord))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+
+table<-with(merged_data,table(sex,discord))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+
 
 #NETWORK DATA
 

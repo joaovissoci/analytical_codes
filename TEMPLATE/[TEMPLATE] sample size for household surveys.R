@@ -55,3 +55,5 @@ r = 0.05 #response rate loss of 5%
 
 n=(Z^2*P*(P-1)/e^2)/1-r
 n
+
+
