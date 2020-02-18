@@ -39,10 +39,10 @@ library, character.only=T)
 
 library(readr)
 
-data_residents<-read_csv("/Users/Joao/Box/MERC Feedback Project/MERCResidentSurvey_DATA_2019-09-11_0745.csv")
+data_residents<-read_csv("/Users/joaovissoci/Downloads/MERCResidentSurvey_DATA_2019-09-11_0745.csv")
 #information between " " are the path to the directory in your computer where the data is stored
 
-data_faculty<-read_csv("/Users/Joao/Box/MERC Feedback Project/MERCFacultySurvey_DATA_2019-09-11_0744.csv")
+data_faculty<-read_csv("/Users/joaovissoci/Downloads/MERCFacultySurvey_DATA_2019-09-11_0744.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -197,6 +197,10 @@ data_question_all_imp<-mice::complete(imp,4)
 
 ######################################################################
 #TABLE 1 - DESCRIPTIVEs
+######################################################################
+
+######################################################################
+#FIGURE 1 - ITEMs Descriptions
 ######################################################################
 
 describe(data$hiv_related_stigma_sumscore)
@@ -389,7 +393,7 @@ cor_data<-cor_auto(data_question_all_imp)
 #	onefile = FALSE)
 # tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
  # height = 700,compression = 'lzw')
-network<-qgraph(cor_data,
+network <-qgraph(cor_data,
 	graph="glasso",
 	layout="spring",
 	sampleSize=nrow(data_question_all_imp),
@@ -420,7 +424,7 @@ g2<-as.igraph(network)
 # g2_cl<-walktrap.community(g2)
 
 # se houver arestas negativas
-g2_sg<-spinglass.community(g2,implementation = "neg")
+g2_sg<-cluster_louvain(g2)#,implementation = "neg")
 
 community_network<-qgraph(cor_data,
 	graph="glasso",
@@ -440,41 +444,51 @@ community_network<-qgraph(cor_data,
 #TABLE 2 - RELIABILITY and FACTOR ANALYSIS RESULTS
 ######################################################################
 
-#RELIABILITY
+#ONE FACTOR
 #############################################################
 #psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
-psych::alpha(hiv_related_stigma_imputed,n.iter=1000,check.keys=TRUE)
+psych::alpha(data_question_all_imp,n.iter=1000,check.keys=TRUE)
 
 #CONFIRMATORY FACTOR ANALYSIS
 
 #identifying the model
-onefactor_model <- 'HIV stigma =~  HSS11 +
-									 HSS2 +
-									 HSS3 +
-									 HSS4 +
-									 HSS5 +
-									 HSS6 +
-									 HSS7 +
-									 HSS8 +
-									 HSS9 +
-									 HSS10 +
-									 HSS1 +
-									 HSS12 +
-									 HSS13 +
-									 HSS14 +
-									 HSS15 +
-									 HSS16 +
-									 HSS17 +
-									 HSS18
+onefactor_model <- 'FEEDUP =~  question_1 +
+							   question_2 +
+							   question_3 +
+							   question_4 +
+							   question_5 +
+							   question_6 +
+							   question_7 +
+							   question_8 +
+							   question_9 +
+							   question_10 +
+							   # question_11 +
+							   question_12 +
+							   # question_13 +
+							   question_14 +
+							   question_15 +
+							   question_16 +
+							   question_17 +
+							   question_18 +
+							   question_19 +
+							   # question_20 +
+							   # question_21 +
+							   question_22 +
+							   # question_23 +
+							   question_24 +
+							   question_25
+									 
 #Errors correlation
-# HSS5 ~~  HSS6				
-									 '
+ 			  # question_2 ~~  question_9
+ 			  # question_7 ~~  question_3
+ 			  # question_20 ~~  question_3				
+'
 
 #estimating the model
 fit <- lavaan::cfa(onefactor_model,
-                   data = hiv_related_stigma,
+                   data = data_question_all_imp,
                    estimator="WLSMV",
-                   ordered=colnames(hiv_related_stigma)
+                   ordered=colnames(data_question_all_imp)
                    )
 
 #summary statistics of h mofrl
@@ -504,49 +518,226 @@ subset(Est, op == "~~")
 # library(semPlot)
 
 #node Names
-nodeNames <- c(
-				"Getting HIV is a punishment for bad behavior.",
-    			"I would think less of someone if I found out the person has HIV.",
-    			"I would be upset if someone with HIV moved in next door to me.",
-    			"I feel uncomfortable around someone with HIV.",
-    			"People with HIV have only themselves to blame for getting HIV.",
-    			"People with HIV must have done something wrong to get it.",
-    			"People with HIV should feel ashamed about having HIV.",
-    			"I would be ashamed if someone in my family has HIV.",
-    			"If I was in public or private transport, \n I would not like to sit next to someone with HIV.",
-    			"I would not like to be friends with someone with HIV.",
-    			"I would not employ someone with HIV.",
-    			"I would not eat together with someone I knew had HIV.",
-    			"If a relative of mine became ill with HIV, \n I would not want to care for that \n person in my home.",
-    			"I would not want to buy food from someone I know has HIV.",
-    			"If a teacher has HIV but is not sick, she should not \n be allowed to continue teaching in the school.",
-    			"I would not want someone with HIV to look after my child.",
-    			"I do not want to get too close to someone with HIV \n because I am afraid I might get infected with HIV.",
-    		    "I would not want my child to play with a \n child who has HIV or whose parents have HIV."
-    					      )
+# nodeNames <- c(
+# 				"Getting HIV is a punishment for bad behavior.",
+#     			"I would think less of someone if I found out the person has HIV.",
+#     			"I would be upset if someone with HIV moved in next door to me.",
+#     			"I feel uncomfortable around someone with HIV.",
+#     			"People with HIV have only themselves to blame for getting HIV.",
+#     			"People with HIV must have done something wrong to get it.",
+#     			"People with HIV should feel ashamed about having HIV.",
+#     			"I would be ashamed if someone in my family has HIV.",
+#     			"If I was in public or private transport, \n I would not like to sit next to someone with HIV.",
+#     			"I would not like to be friends with someone with HIV.",
+#     			"I would not employ someone with HIV.",
+#     			"I would not eat together with someone I knew had HIV.",
+#     			"If a relative of mine became ill with HIV, \n I would not want to care for that \n person in my home.",
+#     			"I would not want to buy food from someone I know has HIV.",
+#     			"If a teacher has HIV but is not sick, she should not \n be allowed to continue teaching in the school.",
+#     			"I would not want someone with HIV to look after my child.",
+#     			"I do not want to get too close to someone with HIV \n because I am afraid I might get infected with HIV.",
+#     		    "I would not want my child to play with a \n child who has HIV or whose parents have HIV."
+#     					      )
 
 
 # Now we can plot:
 semPaths(fit,
-    what = "std", # this argument controls what the color of edges represent. In this case, standardized parameters
+    # style="lisrel",
+    what = "std", # this argument controls what the color of edges represent. In this case, standardized parameters. Options are "paths"
     whatLabels = "std.all", # This argument controls what the edge labels represent. In this case, parameter estimates
-    style = "lisrel", # This will plot residuals as arrows, closer to what we use in class
-    residScale = 8, # This makes the residuals larger
+    # style = "lisrel", # This will plot residuals as arrows, closer to what we use in class
+    # residScale = 8, # This makes the residuals larger
     theme = "colorblind", # qgraph colorblind friendly theme
     nCharNodes = 0, # Setting this to 0 disables abbreviation of nodes
-    manifests = paste0("HSS",1:18), # Names of manifests, to order them appropriatly.
+    # nCharEdges = 0, # Setting this to 0 disables abbreviation of edges
+    # manifests = paste0("Q",1:19), # Names of manifests, to order them appropriatly.
     reorder = FALSE, # This disables the default reordering
-    # nodeNames = nodeNames, # Add a legend with node names
-    legend.cex = 0.5, # Makes the legend smaller
+    # nodeNames = paste0("Q",1:19), # Add a legend with node names
+    # legend.cex = 0.5, # Makes the legend smaller
     rotation = 2, # Rotates the plot
     layout = "tree2", # tree layout options are "tree", "tree2", and "tree3"
-    cardinal = "lat cov", # This makes the latent covariances connet at a cardinal center point
-    curvePivot = TRUEcvbb,                         # Changes curve into rounded straight lines
+    # cardinal = "lat cov", # This makes the latent covariances connet at a cardinal center point
+    curvePivot = TRUE,                         # Changes curve into rounded straight lines
     sizeMan = 4, # Size of manifest variables
+    residuals=TRUE,
+    intercepts=FALSE,
     sizeLat = 10, # Size of latent variables
-    # mar = c(2,5,2,5.5) # Figure margins
+    mar = c(2,8,2,8.5), # Figure margins 1st=bottom,2nd=left,3rd=top,4th=right
+    esize=TRUE,
+    # structural="TRUE"
+    # intStyle="multi",
+    edge.label.cex = 0.95,
+    node.label.cex = 1,
+    equalizeManifests = FALSE,
+    optimizeLatRes = TRUE, 
+    shapeMan = "rectangle",
+    node.width = 2,
+    exoCov = FALSE,
+    thresholds = FALSE,
+    nodeLabels=c(paste0("Q",1:20),"FEED-UP"),
+    edge.color="black"
+    # shapeLat = "ellipse"
     # filetype = "pdf", width = 8, height = 6, filename = "StarWars" #  Save to PDF
     )
+
+### Modification Indexes
+Mod <- lavaan::modificationIndices(fit)
+subset(Mod, mi > 10)
+
+# Composite reliability
+sum(Est$std.all[1:19])^2/(sum(Est$std.all[1:19])^2+
+  sum(Est$std.all[95:113]))
+
+#Average Extracted Variance
+sum(Est$std.all[1:18]^2)/length(Est$std.all[1:18])
+
+summary(Est$std.all[1:19])
+
+#FIVE FACTORS
+#############################################################
+#psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
+# psych::alpha(data_question_all_imp,n.iter=1000,check.keys=TRUE)
+
+#CONFIRMATORY FACTOR ANALYSIS
+
+#identifying the model
+fivefactor_model <- 'FEEDUP_timeliness =~  question_1 +
+							   question_5 +
+							   question_7 +
+							   question_12 +
+							   question_24
+
+			        FEEDUP_feedback_culture =~	question_2 +
+							   question_3 +
+							   question_10 +
+							   # question_13 +
+							   question_18
+							   # question_21
+
+					FEEDUP_specificity =~  question_4 +
+							   question_14 +
+							   question_17 +
+							   question_22
+
+					FEEDUP_actionplan =~ question_6 +
+							   question_9 +
+							   # question_11 +
+							   question_15 +
+							   question_16
+
+					FEEDUP_respect =~ question_8 +
+							   question_19 +
+							   # question_20 +
+							   # question_23 +
+							   question_25
+
+#Errors correlation
+ 			  # question_3 ~~  question_20
+ 			  # question_7 ~~  question_20
+ 			  # question_2 ~~ question_9
+'
+
+#estimating the model
+fit <- lavaan::cfa(fivefactor_model,
+                   data = data_question_all_imp,
+                   estimator="WLSMV",
+                   ordered=colnames(data_question_all_imp)
+                   )
+
+#summary statistics of h mofrl
+summary(fit, fit.measures=TRUE)
+
+#fitness indicators
+lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
+                                          "rmsea.ci.lower.scaled",
+                                          "rmsea.ci.upper.scaled",
+                                          "cfi.scaled",
+                                          "tli.scaled",
+                                          "nnfi.scaled",
+                                          "chisq.scaled",
+                                          "pvalue.scaled",
+                                          "df"
+)
+)
+# AIC(fit)
+
+#Estimated
+Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+subset(Est, op == "=~")
+subset(Est, op == "~~")
+#lavInspect(fit,what="th") 
+
+# Plot with semPlot:
+# library(semPlot)
+
+#node Names
+# nodeNames <- c(
+# 				"Getting HIV is a punishment for bad behavior.",
+#     			"I would think less of someone if I found out the person has HIV.",
+#     			"I would be upset if someone with HIV moved in next door to me.",
+#     			"I feel uncomfortable around someone with HIV.",
+#     			"People with HIV have only themselves to blame for getting HIV.",
+#     			"People with HIV must have done something wrong to get it.",
+#     			"People with HIV should feel ashamed about having HIV.",
+#     			"I would be ashamed if someone in my family has HIV.",
+#     			"If I was in public or private transport, \n I would not like to sit next to someone with HIV.",
+#     			"I would not like to be friends with someone with HIV.",
+#     			"I would not employ someone with HIV.",
+#     			"I would not eat together with someone I knew had HIV.",
+#     			"If a relative of mine became ill with HIV, \n I would not want to care for that \n person in my home.",
+#     			"I would not want to buy food from someone I know has HIV.",
+#     			"If a teacher has HIV but is not sick, she should not \n be allowed to continue teaching in the school.",
+#     			"I would not want someone with HIV to look after my child.",
+#     			"I do not want to get too close to someone with HIV \n because I am afraid I might get infected with HIV.",
+#     		    "I would not want my child to play with a \n child who has HIV or whose parents have HIV."
+#     					      )
+
+
+# Now we can plot:
+semPaths(fit,
+    # style="lisrel",
+    what = "std", # this argument controls what the color of edges represent. In this case, standardized parameters. Options are "paths"
+    whatLabels = "std.all", # This argument controls what the edge labels represent. In this case, parameter estimates
+    # style = "lisrel", # This will plot residuals as arrows, closer to what we use in class
+    # residScale = 8, # This makes the residuals larger
+    theme = "colorblind", # qgraph colorblind friendly theme
+    nCharNodes = 0, # Setting this to 0 disables abbreviation of nodes
+    # nCharEdges = 0, # Setting this to 0 disables abbreviation of edges
+    # manifests = paste0("Q",1:19), # Names of manifests, to order them appropriatly.
+    reorder = FALSE, # This disables the default reordering
+    # nodeNames = paste0("Q",1:19), # Add a legend with node names
+    # legend.cex = 0.5, # Makes the legend smaller
+    rotation = 2, # Rotates the plot
+    layout = "tree2", # tree layout options are "tree", "tree2", and "tree3"
+    # cardinal = "lat cov", # This makes the latent covariances connet at a cardinal center point
+    curvePivot = TRUE,                         # Changes curve into rounded straight lines
+    sizeMan = 4, # Size of manifest variables
+    # residuals=TRUE,
+    intercepts=FALSE,
+    sizeLat = 7, # Size of latent variables
+    mar = c(2,8,2,8.5), # Figure margins 1st=bottom,2nd=left,3rd=top,4th=right
+    esize=TRUE,
+    # structural="TRUE"
+    # intStyle="multi",
+    edge.label.cex = 0.95,
+    node.label.cex = 0.9,
+    equalizeManifests = FALSE,
+    # optimizeLatRes = TRUE, 
+    shapeMan = "rectangle",
+    node.width = 2,
+    exoCov = FALSE,
+    thresholds = FALSE,
+    nodeLabels=c(paste0("Q",1:20),"Timeliness",
+    							  "Feedback \nCulture",
+    							  "Specificity",
+    							  "Action/\nPlan",
+    							  "Respect\nCommunication"),
+    edge.color="black",
+    # label.cex=1
+    # shapeLat = "ellipse"
+    # filetype = "pdf", width = 8, height = 6, filename = "StarWars" #  Save to PDF
+    )
+
 # qgraph(fit)
 
 ### Modification Indexes
@@ -555,10 +746,70 @@ subset(Mod, mi > 10)
 
 # Composite reliability
 sum(Est$std.all[1:18])^2/(sum(Est$std.all[1:18])^2+
-  sum(Est$std.all[73:91]))
+  sum(Est$std.all[109:131]))
 
 #Average Extracted Variance
 sum(Est$std.all[1:18]^2)/length(Est$std.all[1:18])
+
+#Reliability
+################################
+
+#Timeliness
+data_timeliness<-with(data_question_all_imp,data.frame(
+			question_1,
+			question_5,
+			question_7,
+			question_12,
+			question_24))
+
+psych::alpha(data_timeliness,n.iter=1000,check.keys=TRUE)
+
+# Composite reliability
+sum(Est$std.all[15,])^2/(sum(Est$std.all[1:18])^2+
+  sum(Est$std.all[109:131]))
+
+#Feedback Culture
+data_feedback<-with(data_question_all_imp,data.frame(
+			question_2,
+			question_3,
+			question_10,
+			# question_13,
+			question_18))
+			# question_21))
+
+psych::alpha(data_feedback,n.iter=1000,check.keys=TRUE)
+
+
+#Specificity
+data_specificity<-with(data_question_all_imp,data.frame(
+			question_4,
+			question_14,
+			question_17,
+			# question_13,
+			question_22))
+			# question_21))
+
+psych::alpha(data_specificity,n.iter=1000,check.keys=TRUE)
+
+#Action/Plan
+data_actionplan<-with(data_question_all_imp,data.frame(
+			question_6,
+			question_9,
+			# question_11,
+			question_15,
+			question_16))
+
+psych::alpha(data_actionplan,n.iter=1000,check.keys=TRUE)
+
+#Respect
+data_respect<-with(data_question_all_imp,data.frame(
+			question_8,
+			question_19,
+			question_20,
+			question_23,
+			question_25))
+
+psych::alpha(data_respect,n.iter=1000,check.keys=TRUE)
 
 ######################################################################
 #FIGURE 1 - EFA PATH DIAGRAM CFA

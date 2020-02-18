@@ -39,7 +39,7 @@ library, character.only=T)
 ######################################################
 
 # add the path to you computer between " "
-data<-read.csv("/Users/jnv4/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/MH post TBI in Tz/Tz_MHpostTBI_data.csv",sep=',')
 
 ######################################################
 #DATA MANAGEMENT
@@ -93,6 +93,17 @@ data_imputed <- mice(phq9_data1, seed = 2222, m=10)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
 phq9_data<-mice::complete(data_imputed,4)
+
+phq9_data_2f_cog<-with(phq9_data,data.frame(phq9_b11,
+                                            phq9_b12,
+                                            phq9_b16,
+                                            phq9_b17,
+                                            phq9_b18,
+                                            phq9_b19))
+
+phq9_data_2f_somatic<-with(phq9_data,data.frame(phq9_b13,
+                                            phq9_b14,
+                                            phq9_b15))
 
 #CES-D
 cesd_data1<-with(data,data.frame(e1,
@@ -205,6 +216,10 @@ prop.table(table)
 #RELIABILITY
 #psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
 psych::alpha(phq9_data,n.iter=1000,check.keys=TRUE)
+
+psych::alpha(phq9_data_2f_cog,n.iter=1000,check.keys=TRUE)
+
+psych::alpha(phq9_data_2f_somatic,n.iter=1000,check.keys=TRUE)
 
 #### INTER-RATER Agreement
 # data_agreement<-with(data,data.frame( ))
@@ -572,46 +587,46 @@ tiff("/Users/jnv4/Desktop/resilience_stress_fig2.tiff", units='in',
                   # bifactor="general")
 dev.off()
 
-# # 2 factors model ###########################
-# cfa_model <- '
-# Depression =~  d1 + d4 + d7 + d8 + d9 + d10
-# Anxiety =~ d2 + d3 + d5 + d6
+# 2 factors model ###########################
+cfa_model <- '
+cog_affective =~  d1 + d4 + d7 + d8 + d9 + d10
+somatic =~ d3 + d5 + d6
 
-# #
-# # Depression ~~ Depression
-# # Anxiety ~~ Anxiety
+#
+# Depression ~~ Depression
+# Anxiety ~~ Anxiety
 
-# #cov
-# # d2 ~~  d9
-# # d5 ~~  d6
-# # d7 ~~  d8
-#        '
+#cov
+# d2 ~~  d9
+# d5 ~~  d6
+# d7 ~~  d8
+       '
 
-# fit <- lavaan::cfa(cfa_model,
-#   data = kessler_data,
-#   estimator="WLSMV",
-#   ordered=colnames(kessler_data))
-# summary(fit, fit.measures=TRUE)
-# lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
-#                                           "rmsea.ci.lower.scaled",
-#                                           "rmsea.ci.upper.scaled",
-#                                           "cfi.scaled",
-#                                           "tli.scaled",
-#                                           "nnfi.scaled",
-#                                           "chisq.scaled",
-#                                           "pvalue.scaled",
-#                                           "df.scaled"
-#                                           ))
-# parameterEstimates(fit)
-# Est <- lavaan::parameterEstimates(fit,
-#                                   ci = TRUE,
-#                                   standardized = TRUE)
-# subset(Est, op == "=~")
-# lavInspect(fit,what="th")
+fit <- lavaan::cfa(cfa_model,
+  data = kessler_data,
+  estimator="WLSMV",
+  ordered=colnames(kessler_data))
+summary(fit, fit.measures=TRUE)
+lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
+                                          "rmsea.ci.lower.scaled",
+                                          "rmsea.ci.upper.scaled",
+                                          "cfi.scaled",
+                                          "tli.scaled",
+                                          "nnfi.scaled",
+                                          "chisq.scaled",
+                                          "pvalue.scaled",
+                                          "df.scaled"
+                                          ))
+parameterEstimates(fit)
+Est <- lavaan::parameterEstimates(fit,
+                                  ci = TRUE,
+                                  standardized = TRUE)
+subset(Est, op == "=~")
+lavInspect(fit,what="th")
 
-# ### Modification Indexes
-# Mod <- lavaan::modificationIndices(fit)
-# subset(Mod)#, mi > 10)
+### Modification Indexes
+Mod <- lavaan::modificationIndices(fit)
+subset(Mod)#, mi > 10)
 
 # ### By Group analysis
 # fit <- lavaan::cfa(cfa_model, data = data,
