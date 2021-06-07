@@ -1,0 +1,303 @@
+---
+title: "Invariância"
+author: "Nayara"
+date: "7/2/2020"
+output: word_document
+---
+
+First of all, we need to understand the concept of the invariance of the AFC model. For this, I recommend reading this article, which is very didactic: https://www.scielo.br/pdf/pusf/v18n2/v18n2a05.pdf.
+Got it done, good luck (lol). Just kidding, just follow the steps below.
+
+
+##Puxando os pacotes
+```{r}
+library(lavaan)
+library(devtools)
+library(semTools)
+library(mirt)
+library(readxl)
+library(mice)
+library(merTools) #to calculate the ICC
+library(jtools)   #to present the regression results in table (more organized) 
+library(lmerTest)
+library(reghelper) 
+```
+
+
+##Load data set and take the missings out
+```{r set up data}
+invarianciaCAAS <- read_excel("C:/Users/nayar/Dropbox/Doutorado/Projeto Doutorado/Projeto/Estudo 2 - Validação CAAS/Validação AFC/ImpCAAS_treinador_atletaTodos.xlsx") ##Load data set
+
+
+colnames(invarianciaCAAS)
+table(invarianciaCAAS$Sexo)
+table(invarianciaCAAS$`T ou A`)
+invarianciaTA = invarianciaCAAS[,c(11:30)] ##take just the interest variables
+View(invarianciaTA)
+#invarianciaCAAS <- invarianciaCAAS[,c(12:30)]
+fcaas<-na.omit(invarianciaCAAS) ##Verify and take the missings out
+fcaasTA<-na.omit(invarianciaTA) ##Verify and take the missings out
+```
+
+
+
+#Defining the model (factors and items) 
+```{r}
+caas.model<-'
+Avoidant =~ AP01 + AP02 + AP03 + AP04 + AP05 + AP06 + AP07
+			 Anxious =~ AP08 + AP09 + AP10 + AP11 + AP12 + AP13 + AP14
+			 Secure =~ AP15 + AP16 + AP17 + AP18 + AP19
+'
+
+
+# estimating the fit of the model to the data
+fcaas.fit<-cfa(caas.model, na.omit(invarianciaTA), estimator = "WLSMV", 
+               ordered = colnames(invarianciaTA))
+summary(fcaas.fit, fit.measures=T,standardized=TRUE)
+
+# calculating the reliability of factors using McDonald's Omega
+omega(fcaas.fit) 
+```
+
+
+##By group
+```{r}
+#by gender
+fcaas.fitsexo<-cfa(caas.model,na.omit(invarianciaCAAS), estimator = "WLSMV",
+                   ordered = colnames(invarianciaCAAS), group = "Sexo")
+summary(fcaas.fitsexo,fit.measures=T,standardized=T)
+#check the ladings differences
+
+
+#by coach and athlete
+invarianciaTA$TA <- invarianciaTA$`T ou A`
+
+fcaas.fitTA<-cfa(caas.model,na.omit(invarianciaTA), estimator = "WLSMV",
+                 ordered = colnames(invarianciaTA), group = "TA")
+summary(fcaas.fitTA,fit.measures=T,standardized=T) #check the ladings differences
+```
+
+
+
+##Baseline invariance model
+```{r by gender}
+fcaasSEX.fit_inv <- measEq.syntax(configural.model = caas.model,
+                                 data = invarianciaCAAS,
+                                 ordered = colnames(invarianciaCAAS),
+                                 parameterization = "delta",
+                                 ID.fac = "std.lv",
+                                 ID.cat = "Wu.Estabrook.2016",
+                                 group = "Sexo",
+                                 group.equal = c("configural","thresholds","loadings"))
+
+model.inv <- as.character(fcaasSEX.fit_inv)
+
+fcaasSEX.fit2 <- cfa(model.inv, data = invarianciaCAAS, group = "Sexo",
+                    ordered =colnames(invarianciaCAAS))
+summary(fcaasSEX.fit2,fit.measures=T,standardized=T)
+```
+
+
+
+```{r by coach and athlete}
+fcaasTA.fit_inv <- measEq.syntax(configural.model = caas.model,
+                                 data = invarianciaTA,
+                                 ordered = colnames(invarianciaTA),
+                                 parameterization = "delta",
+                                 ID.fac = "std.lv",
+                                 ID.cat = "Wu.Estabrook.2016",
+                                 group = "TA",
+                                 group.equal = c("configural","thresholds","loadings"))
+
+model.inv <- as.character(fcaasTA.fit_inv)
+
+fcaasTA.fit2 <- cfa(model.inv, data = invarianciaTA, group = "TA",
+                    ordered =colnames(invarianciaTA))
+summary(fcaasTA.fit2,fit.measures=T,standardized=T)
+```
+
+
+===============================
+By invariances levels
+===============================
+
+##Configural
+```{r by gender}
+fcaasSEX.fit_conf <- measEq.syntax(configural.model = caas.model,
+                                 data = invarianciaCAAS,
+                                 ordered = colnames(invarianciaCAAS),
+                                 parameterization = "delta",
+                                 ID.fac = "std.lv",
+                                 ID.cat = "Wu.Estabrook.2016",
+                                 group = "Sexo",
+                                 group.equal = "configural")
+
+model.inv_conf <- as.character(fcaasSEX.fit_conf)
+
+fcaasSEX.fit2_conf <- cfa(model.inv_conf, data = invarianciaCAAS, group = "Sexo",
+                    ordered =colnames(invarianciaCAAS))
+summary(fcaasSEX.fit2_conf,fit.measures=T,standardized=T)
+```
+
+
+```{r by coach and athlete}
+fcaasTA.fit_conf <- measEq.syntax(configural.model = caas.model,
+                                 data = invarianciaTA,
+                                 ordered = colnames(invarianciaTA),
+                                 parameterization = "delta",
+                                 ID.fac = "std.lv",
+                                 ID.cat = "Wu.Estabrook.2016",
+                                 group = "TA",
+                                 group.equal = "configural")
+
+modelTA.inv_conf <- as.character(fcaasTA.fit_conf)
+
+fcaasTA.fit2_conf <- cfa(modelTA.inv_conf, data = invarianciaTA, group = "TA",
+                    ordered =colnames(invarianciaTA))
+summary(fcaasTA.fit2_conf,fit.measures=T,standardized=T)
+```
+
+
+
+
+##Loadings
+```{r by gender}
+fcaasSEX.fit_load <- measEq.syntax(configural.model = caas.model,
+                                  data = invarianciaCAAS,
+                                  ordered = colnames(invarianciaCAAS),
+                                  parameterization = "delta",
+                                  ID.fac = "std.lv",
+                                  ID.cat = "Wu.Estabrook.2016",
+                                  group = "Sexo",
+                                  group.equal =c("configural","loadings"))
+
+model.inv_load <- as.character(fcaasSEX.fit_load)
+
+fcaasSEX.fit2_load <- cfa(model.inv_load, data = invarianciaCAAS, group = "Sexo",
+                         ordered =colnames(invarianciaCAAS))
+summary(fcaasSEX.fit2_load,fit.measures=T,standardized=T)
+```
+
+
+```{r por coach and athlete}
+fcaasTA.fit_load <- measEq.syntax(configural.model = caas.model,
+                                  data = invarianciaTA,
+                                  ordered = colnames(invarianciaTA),
+                                  parameterization = "delta",
+                                  ID.fac = "std.lv",
+                                  ID.cat = "Wu.Estabrook.2016",
+                                  group = "TA",
+                                  group.equal =c("configural","loadings"))
+
+modelTA.inv_load <- as.character(fcaasTA.fit_load)
+
+fcaasTA.fit2_load <- cfa(modelTA.inv_load, data = invarianciaTA, group = "TA",
+                         ordered =colnames(invarianciaTA))
+summary(fcaasTA.fit2_load,fit.measures=T,standardized=T)
+```
+
+
+##Interceptos
+```{r by gender}
+fcaasSEX.fit_int <- measEq.syntax(configural.model = caas.model,
+                                  data = invarianciaCAAS,
+                                  ordered = colnames(invarianciaCAAS),
+                                  parameterization = "delta",
+                                  ID.fac = "std.lv",
+                                  ID.cat = "Wu.Estabrook.2016",
+                                  group = "Sexo",
+                                  group.equal = c("configural","loadings","intercepts"))
+
+model.inv_int <- as.character(fcaasSEX.fit_int)
+
+fcaasSEX.fit2_int <- cfa(model.inv_int, data = invarianciaCAAS, group = "Sexo",
+                         ordered =colnames(invarianciaCAAS))
+summary(fcaasSEX.fit2_int,fit.measures=T,standardized=T)
+```
+
+
+```{r by coach and athlete}
+fcaasTA.fit_int <- measEq.syntax(configural.model = caas.model,
+                                  data = invarianciaTA,
+                                  ordered = colnames(invarianciaTA),
+                                  parameterization = "delta",
+                                  ID.fac = "std.lv",
+                                  ID.cat = "Wu.Estabrook.2016",
+                                  group = "TA",
+                                  group.equal = c("configural","loadings","intercepts"))
+
+modelTA.inv_int <- as.character(fcaasTA.fit_int)
+
+fcaasTA.fit2_int <- cfa(modelTA.inv_int, data = invarianciaTA, group = "TA",
+                         ordered =colnames(invarianciaTA))
+summary(fcaasTA.fit2_int,fit.measures=T,standardized=T)
+```
+
+
+
+##All the results summarized - how to report in the paper
+```{r by gender}
+all.results<-matrix(NA, nrow = 3, ncol = 6)
+all.results[1,]<-round(data.matrix(fitmeasures
+(fcaasSEX.fit2_conf, fit.measures = c("chisq.scaled","df.scaled","pvalue.scaled", "rmsea.scaled", "cfi.scaled", "tli.scaled"))), digits=3)
+all.results[2,]<-round(data.matrix(fitmeasures
+(fcaasSEX.fit2_load, fit.measures = c("chisq.scaled","df.scaled","pvalue.scaled", "rmsea.scaled", "cfi.scaled", "tli.scaled"))), digits=3)
+all.results[3,]<-round(data.matrix(fitmeasures
+(fcaasSEX.fit2_int, fit.measures = c("chisq.scaled","df.scaled","pvalue.scaled", "rmsea.scaled", "cfi.scaled", "tli.scaled"))), digits=3)
+colnames(all.results)<-c("chisq.scaled","df.scaled","pvalue.scaled", "rmsea.scaled", "cfi.scaled", "tli.scaled")
+all.results
+#Para verificar qual parametro comparar para confirmar a invariancia do modelo, ver:
+#https://www.tandfonline.com/doi/abs/10.1080/10705511.2019.1602776?journalCode=hsem20. Tem uma tabela otima, baseada em alguns criterios (numero de fatores, n dos grupos, etc.)
+```
+
+
+
+```{r by coach and athlete}
+all.results<-matrix(NA, nrow = 3, ncol = 6)
+all.results[1,]<-round(data.matrix(fitmeasures
+(fcaasTA.fit2_conf, fit.measures = c("chisq.scaled","df.scaled","pvalue.scaled", "rmsea.scaled", "cfi.scaled", "tli.scaled"))), digits=3)
+all.results[2,]<-round(data.matrix(fitmeasures
+(fcaasTA.fit2_load, fit.measures = c("chisq.scaled","df.scaled","pvalue.scaled", "rmsea.scaled", "cfi.scaled", "tli.scaled"))), digits=3)
+all.results[3,]<-round(data.matrix(fitmeasures
+(fcaasTA.fit2_int, fit.measures = c("chisq.scaled","df.scaled","pvalue.scaled", "rmsea.scaled", "cfi.scaled", "tli.scaled"))), digits=3)
+colnames(all.results)<-c("chisq.scaled","df.scaled","pvalue.scaled", "rmsea.scaled", "cfi.scaled", "tli.scaled")
+all.results
+```
+
+
+#Delta (chisq - chisq)
+```{r}
+1056.488 - 1138.614 #chisq[1] - chisq[2]
+1138.614 - 1131.666 #chisq[2] - chisq[3]
+
+0.964 - 0.961 #tli[1] - tli[2]
+0.961 - 0.961 #tli[2] - tli[3]
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

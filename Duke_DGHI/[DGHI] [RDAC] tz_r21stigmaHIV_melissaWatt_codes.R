@@ -36,7 +36,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read_spss("/Users/Joao/Downloads/Stigma_data.sav")
+data<-read_spss("/Users/joaovissoci/Downloads/Stigma_data.sav")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################

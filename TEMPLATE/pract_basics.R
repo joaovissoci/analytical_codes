@@ -24,51 +24,18 @@
 #Load packages neededz for the analysis
 #library(Hmisc)
 
+library(tidyverse)
+
 #All packages must be installes with install.packages() function
-lapply(c("readxl","xlsx"), 
+lapply(c("tidyverse"), 
 library, character.only=T)
 
 ######################################################################
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read_excel("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/snakebite_am/animpent_am_07_20.xlsx")#,sep=",")
+data<-read.csv("/Users/joaovissoci/Downloads/DUKEPRACTR01Trial_DATA_2020-12-22_2048.csv")#,sep=",")
 #information between " " are the path to the directory in your computer where the data is stored
-
-excel_sheets("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Brazil/snakebite_am/animpent_am_07_20.xlsx")
-
-str(data)
-
-table(data$CoCidTbNotificacao)
-
-table(data$StSoroterapia)
-
-table(data$TpAnimal,data$TpRacaCor)
-
-table(data$TpEvolucaoCaso)
-
-table(data$StComplicacaoLocal)
-prop.table(table(data$StComplicacaoLocal))
-
-table(data$StComplicacaoSistemica)
-prop.table(table(data$StComplicacaoSistemica))
-
-table(data$TpRacaCor)
-prop.table(table(data$TpRacaCor,data$TpEvolucaoCaso),1)
-
-prop.table(table(data$TpRacaCor,data$StComplicacaoSistemica),1)
-
-prop.table(table(data$TpRacaCor,data$StComplicacaoLocal),1)
-
-table(is.na(data$NoLogradouroResidencia))
-#27568 - info
-#29433 - logradouro
-
-snake_indigenous <- subset(data, TpRacaCor == 5 & TpAnimal == 1)
-
-dim(snake_indigenous)
-
-write.csv(snake_indigenous,"/Users/joaovissoci/Desktop/snake_indigenous.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -91,7 +58,21 @@ write.csv(snake_indigenous,"/Users/joaovissoci/Desktop/snake_indigenous.csv")
 #data$Classificacao<-car::recode(data$Classificacao,"#1='baixo';2='medio';
 #	3='alto'")
 
-data <- base::merge(data1,data2,by=c("nome"))
+data_enrolled<-data %>% drop_na(practid)
+
+rppr_data<-data_enrolled %>% 
+			as_tibble() %>%
+			select(practid,age,female) %>%
+				mutate(female=
+					recode(female,
+					'0' ="Male",
+					'1' ="Female"))
+
+rppr_data$race<-c("Black")
+rppr_data$ethnicity<-c("Not Hispanic")
+rppr_data$age_unit<-c("Years")
+
+write.csv(rppr_data[1:35,],"/Users/joaovissoci/Desktop/rppr_data.csv")
 
 #######################################################
 #ANALYZING MISSING DATA

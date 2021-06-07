@@ -17,6 +17,7 @@
 #VSS.scree(cor_data)
 #fa.parallel(cor_data,n.obs=36)
 
+library(psych)
 # Pricipal Components Analysis
 # entering raw data and extracting PCs 
 # from the correlation matrix 

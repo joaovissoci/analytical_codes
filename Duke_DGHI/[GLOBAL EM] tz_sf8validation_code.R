@@ -372,18 +372,18 @@ kmo$AIR #anti-image matrix
 
 cortest.bartlett(cor_auto(sf8_data), n = 297,diag=FALSE)
 
-# par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
-# ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
-# ev # Show eigend values
-# ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
-# summary(ap)
-# nS <- nScree(ev$values) #Set up the Scree Plot 
-# # plotnScree(nS) # Plot the ScreePlot Graph
-# my.vss <- VSS(cor_data,title="VSS of BEA data")
-# #print(my.vss[,1:12],digits =2)
-# VSS.plot(my.vss, title="VSS of 24 mental tests")
-# scree(cor_data)
-# VSS.scree(cor_data)
+par(mfrow=c(2,2)) #Command to configure the plot area for the scree plot graph
+ev <- eigen(cor_data) # get eigenvalues - insert the data you want to calculate the scree plot for
+ev # Show eigend values
+ap <- parallel(subject=nrow(cor_data),var=ncol(cor_data),rep=100,cent=.05) #Calculate the acceleration factor
+summary(ap)
+nS <- nScree(ev$values) #Set up the Scree Plot 
+# plotnScree(nS) # Plot the ScreePlot Graph
+my.vss <- VSS(cor_data,title="VSS of BEA data")
+#print(my.vss[,1:12],digits =2)
+VSS.plot(my.vss, title="VSS of 24 mental tests")
+scree(cor_data)
+VSS.scree(cor_data)
 fa.parallel(sf8_data,cor="poly")
 
 #PRINCIPAL COMPONENT ANALYSIS

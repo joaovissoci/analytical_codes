@@ -36,7 +36,7 @@ library, character.only=T)
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
-data<-read.csv("/Users/joaovissoci/Downloads/ToCTraumaRegistry_DATA_2020-03-02_1411.csv")
+data<-read.csv("/Users/joaovissoci/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/tocr21/tz_traumaregistry_dataAug2019.csv")
 #information between " " are the path to the directory in your computer where the data is stored
 
 ######################################################################

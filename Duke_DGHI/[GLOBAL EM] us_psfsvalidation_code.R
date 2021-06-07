@@ -20,7 +20,7 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("ggplot2","car", "vcd", "gridExtra","epicalc","gdata",
+lapply(c("ggplot2","car", "gridExtra","gdata",
 	"reshape2","dplyr","devtools","reshape","mice","haven",
   "data.table","psych"),
 library, character.only=T)
@@ -92,27 +92,44 @@ library, character.only=T)
 # write.csv(adys,"/Users/Joao/Desktop/deleteme_adys.csv")
 
 # add the path to you computer between " "
-data<-read.csv("/Users/Joao/Desktop/Add to box/US_snaekbitePSFS_data.csv",sep=',')
+data<-read.csv("/Users/joaovissoci/Downloads/US_snaekbitePSFS_data.csv",sep=',')
 
 #DASH, PGIC and LEFS
-data2<-setDT(read_sas("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adqs.sas7bdat"))
+data2<-setDT(read_sas("/Users/joaovissoci/Downloads/adqs.sas7bdat"))
 
 #PSFS
-data3<-setDT(read_sas("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adya.sas7bdat"))
+data3<-setDT(read_sas("/Users/joaovissoci/Downloads/adya.sas7bdat"))
 
 #PSFS Pilot
-data4<-setDT(read_sas("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/psfs.sas7bdat"))
+data4<-setDT(read_sas("/Users/joaovissoci/Downloads/psfs.sas7bdat"))
 
 #PGIC Pilot
-data5<-setDT(read_sas("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_Copperhead_Recovery_Pilot_20150903/pgic.sas7bdat"))
+data5<-setDT(read_sas("/Users/joaovissoci/Downloads/pgic.sas7bdat"))
 
 #SF36/PROMIS
-data6<-setDT(read_sas("/Users/Joao/Box/Home Folder jnv4/Data/Global EM/US/snakebites/snakebites_psychometrics/BTG_20160420_Final_adamdata/adys.sas7bdat"))
+data6<-setDT(read_sas("/Users/joaovissoci/Downloads/adys.sas7bdat"))
+
+#SES TRIAL
+data7<-setDT(read_sas("/Users/joaovissoci/Downloads/adsl.sas7bdat"))
+
+#SES PIlot
+EHSEV<-setDT(read_sas("/Users/joaovissoci/Downloads/dm.sas7bdat"))
+
+#Severity data Pilot study
+data9<-setDT(read_sas("/Users/joaovissoci/Downloads/ae.sas7bdat"))
+
+#Location of injury Pilot study
+data10<-setDT(read_sas("/Users/joaovissoci/Downloads/eh.sas7bdat"))
 
 ######################################################
 #DATA MANAGEMENT
 ######################################################
 
+#Pts excluded: BTG-PR005-002-009-001 - 68
+#              BTG-PR005-002-003-023 - 50
+#              BTG-PR005-002-003-004 - 32
+
+table(data7$EHSEV)
 #Organizing PSFS data
 ######################################################
 #subsetting data_3 to isolade the PSFS data only for the 4 data points
@@ -120,6 +137,8 @@ data_3_subset0<-subset(data3,data3$AVISIT=="Envenomation +14 Days" |
                              data3$AVISIT=="Envenomation +3 Days"  |
                              data3$AVISIT=="Envenomation +7 Days"  |
                              data3$AVISIT=="Envenomation +10 Days")
+
+# data_3_subset0<-subset(data3,data3$AVISIT=="Envenomation +3 Days")
 
 # subsetting the data to include only the summed PSFS score
 psfs_data_subset_total_temp1<-subset(data_3_subset0,data_3_subset0$PARAM=="PSFS Total Score")
@@ -904,8 +923,10 @@ data_COMBTSCO<-merge(x = psfs_data_tocombine,
              all.y = TRUE)
 
 
-# full dataset
+##Organizing SES data
+####################################
 
+# full dataset
 
 data_merged_1 <- merge(data_mcid,data_psfs_combined,all.y=TRUE,by.x="USUBJID.x",by.y="USUBJID")
 data_merged_2 <- merge(data_dash,data_merged_1,all.y=TRUE,by.x="USUBJID.x",by.y="USUBJID.x")
@@ -913,7 +934,44 @@ data_merged_3 <- merge(data_lefs,data_merged_2,all.y=TRUE,by.x="USUBJID.x",by.y=
 data_merged_4 <- merge(data_COMBTSCO,data_merged_3,all.y=TRUE,by.x="USUBJID.x",by.y="USUBJID.x")
 data_merged_5 <- merge(data_PFScore,data_merged_4,all.y=TRUE,by.x="USUBJID.x",by.y="USUBJID.x")
 
+#Selecting only the revelant SES data from the Trial
+data_ses_trial<-data7 %>% select(USUBJID,
+                           AGE,
+                           SEX,
+                           RACE,
+                           ETHNIC,
+                           ENVLOC,
+                           EHSEV)
 
+#selecting some of the ses data from the Pilot from the data8
+data_ses_pilot<-data8 %>% select(subjid,
+                                 age,
+                                 sex,
+                                 ethnic,
+                                 race___1)
+
+#selecting the severity of the data9
+data_severity_pilot<-data9 %>% select(subjid,aesev)
+
+#selecting the location of the data10
+data_location_pilot<-data10 %>% select(subjid,ehanaloc_env)
+
+#merging the pilot SES data with the severity information
+sesdatapilot_merged_1 <- merge(data_ses_pilot,data_severity_pilot[-c(4,7,10:11),],all.x=TRUE,by.x="subjid",by.y="subjid")
+
+#merging the pilot SES+severity data with the injury location
+sesdatapilot_merged_2 <- merge(sesdatapilot_merged_1,data_location_pilot,all.x=TRUE,by.x="subjid",by.y="subjid")
+
+#renaming columns to match the SES data from the Trial
+names(sesdatapilot_merged_2)<-c("USUBJID","AGE","SEX","ETHNIC","RACE","EHSEV","ENVLOC")
+
+#combining the trial and the pilot data
+data_ses_combined<-rbind(data_ses_trial,sesdatapilot_merged_2)
+
+#merging ses data with the master dataset
+data_merged_6 <- merge(data_ses_combined,data_merged_1,all.y=TRUE,by.x="USUBJID",by.y="USUBJID.x")
+
+#combining all datasets into one master database
 data_merged_all<-cbind(data_merged_1,data_merged_2,data_merged_3,data_merged_4,data_merged_5)
 
 write.csv(data_merged_all,"/Users/Joao/Desktop/psfs_all_data.csv")
@@ -927,13 +985,31 @@ write.csv(data_merged_all,"/Users/Joao/Desktop/psfs_all_data.csv")
 
 # Numerical descriptives
 #summary(data)#This comand will provide a whole set of descriptive #results for each variables
-# describe(data_validation$age)
+describe(data_merged_6$AGE)
 # describe(data_validation$home_people)
 
+table(data_merged_6$SEX)
+prop.table(table(data_merged_6$SEX))
+
+table(data_merged_6$RACE)
+prop.table(table(data_merged_6$RACE))
+
+table(data_merged_6$ETHNIC)
+prop.table(table(data_merged_6$ETHNIC))
+
+table(data_merged_6$ENVLOC)
+prop.table(table(data_merged_6$ENVLOC))
+
+table(data_merged_6$EHSEV)
+prop.table(table(data_merged_6$EHSEV))
+
+
 # Categorical Descriptives
-table<-with(data_mcid,table(change_cat_PGIC1_severe))
-table
-prop.table(table)
+# table<-with(data_mcid,table(change_cat_PGIC1_severe))
+# table
+# prop.table(table)
+
+describe(data_merged_6$psfs_FUP_3.x)
 
 ######################################################################
 #TABLE 2
@@ -948,6 +1024,7 @@ prop.table(table)
 
 # Categorical Descriptives
 with(psfs_data_tocombine,psych::describe(psfs_FUP_3))
+with(psfs_data_tocombine,summary(psfs_FUP_3))
 with(psfs_data_tocombine,psych::describe(psfs_FUP_7))
 with(psfs_data_tocombine,psych::describe(psfs_FUP_14))
 
@@ -1622,6 +1699,12 @@ library(SnowballC)
 library(wordcloud)
 library(ggplot2)
 library(textreg)
+
+full_psfsdata<-c(psfs_data$psfs_FUP_3_data_3_subset_activity_1,
+                 psfs_data$psfs_FUP_3_data_3_subset_activity_2,
+                 psfs_data$psfs_FUP_3_data_3_subset_activity_3)
+
+# write.csv(full_psfsdata,"/Users/joaovissoci/Desktop/full_psfsdata.csv")
 
 #recodeing activities item 1
 psfs_act1<-Corpus(VectorSource(psfs_data$psfs_FUP_3_data_3_subset_activity_1))

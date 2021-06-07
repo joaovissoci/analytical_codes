@@ -1,0 +1,413 @@
+---
+title: "Data and safety monitoring board report"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r data processing, echo=FALSE,results='hide',message=FALSE, warning=FALSE}
+
+library(gtsummary) # creates the cross tabulations to display distribution of data
+library(gt) # creates the cross tabulations to display distribution of data
+library(redcapAPI) # extract data from redcapAPI
+library(lubridate) # works with dates
+library(tidyverse) #works with data mugging
+
+# #load the datasets to process the data
+rcon <- redcapConnection(url='https://redcap.kcri.it/api/', token='F5E848AF96D0B5A6658C66260FDC8CC4')
+data <- exportRecords(rcon)
+
+token <- "FB966A1A4B78E03F9EFE2130AE6F23E5"
+url <- "https://redcap.duke.edu/redcap/api/"
+formData <- list("token"=token,
+                 content='record',
+                 format='csv',
+                 type='flat',
+                 csvDelimiter='',
+                 rawOrLabel='raw',
+                 rawOrLabelHeaders='raw',
+                 exportCheckboxLabel='false',
+                 exportSurveyFields='false',
+                 exportDataAccessGroups='false',
+                 returnFormat='csv'
+)
+response <- httr::POST(url, body = formData, encode = "form")
+reg_data <- httr::content(response)
+
+
+#Creates the week reference for the weekly base graphics
+start_date<-floor_date(today(), "week", 0) # if Monday the current day
+
+#subset the registry data of the week
+reg_data <- as.data.frame(reg_data)
+reg_data_date_subset <- subset(reg_data, reg_data$date >= start_date)
+# reg_data_date_subset2 <- subset(reg_data2, reg_data2$date >= start_date)
+#subset the enrollment data of the week
+data_date_subset <- subset(data, data$date >= start_date)
+
+#subset the randomized/screened data of the week
+screened<-subset(data,data$enrolled== 'Yes')
+screened_week<-subset(data_date_subset,data_date_subset$enrolled== 'Yes')
+
+#data frame object over the missing functions will run
+  
+data_useful<-with(data,data.frame(
+  date,
+  age=as.numeric(data$age),
+  female=as.factor(data$female),
+  edu_years=as.numeric(data$edu_years),
+  dateinjury,
+  drinkb4inj=as.factor(data$drinkb4inj),
+  etoh_breath_pos=as.factor(data$etoh_breath_pos),
+  edu=as.numeric(data$edu),
+  rel=as.factor(data$rel),
+  employ_yn=as.factor(data$employ_yn),
+  tribe=as.factor(data$tribe),
+  household=as.numeric(data$household),
+  income_self=as.numeric(data$income_self),
+  bacpositive=as.factor(data$bacpositive),
+  auditover8=as.factor(data$auditover8),
+  screen_audit_complete,
+  repalc=as.factor(data$repalc),
+  enrolled,
+  alcohol_related_complete,
+  health_psfs_complete,
+  health_support_complete,
+  mental_complete,
+  alcohol_psychology_complete,
+  fu_3m, 
+  # fu_6m,
+  # fu_9m,
+  # fu_12m,
+  # fu_24m,
+  m3_follow_up_drinc_complete))
+  # m6_follow_up_drinc_complete,
+  # m9_follow_up_drinc_complete,
+  # m12_follow_up_drinc_complete,
+  # m24_follow_up_drinc_complete
+
+
+  data_useful$NoSelection<-as.factor(c("No Selection"))
+
+  # Subset the data useful of the week
+  data_useful_week<-subset(data_useful, data_useful$date >= start_date)
+
+####compute enrollment 
+enrollment_participants <- dim(data)[1]
+screened_particip<-dim(subset(data,data$enrolled== 'Yes'))[1]
+  
+  
+####compute the follow up data
+data_followup <- with(screened,data.frame(
+    date,
+    regid,
+    practid,
+    practid_3mo,
+    fu_att_1_suc_3m,
+    fu_3m,
+    fu_6m,
+    fu_9m,
+    fu_12m,
+    fu_24m)) 
+
+data_followup %>%
+    select(date, regid,practid,practid_3mo, fu_3m,fu_6m,fu_9m,fu_12m,fu_24m) %>%
+    arrange(date) %>%
+    mutate(days_elapsed = (today()-as.Date(date)),
+           months_elapsed = as.numeric(floor(days_elapsed/30))) -> data_followup 
+
+
+data_followup_month = data_followup  %>% 
+  dplyr::group_by(months_elapsed)  %>%
+  dplyr::summarise(value = n(),
+                   follow_3m_complete = sum(fu_3m == "Yes and complete", na.rm = TRUE),
+                   follow_6m_complete = sum(fu_6m == "Yes and complete", na.rm = TRUE),
+                   follow_9m_complete = sum(fu_9m == "Yes and complete", na.rm = TRUE),
+                   follow_12m_complete = sum(fu_12m == "Yes and complete", na.rm = TRUE),
+                   follow_24m_complete = sum(fu_24m == "Yes and complete", na.rm = TRUE))
+data_followup_month
+
+data_followup_month <- as.data.frame(data_followup_month)
+followed_3months <- ifelse(dim(data_followup_month)[1]>=3,sum(data_followup_month$follow_3m_complete),0)
+followed_3months_complet <- ifelse(dim(data_followup_month)[1]>=3,sum(data_followup_month[data_followup_month$months_elapsed >=3,c("value")], na.rm=TRUE),0)
+
+followed_6months <- ifelse(dim(data_followup_month)[1]>=6,sum(data_followup_month$follow_6m_complete),0)
+followed_6months_complet <- ifelse(dim(data_followup_month)[1]>=6,sum(data_followup_month[data_followup_month$months_elapsed >=6,c("value")], na.rm=TRUE),0)
+
+followed_9months <- ifelse(dim(data_followup_month)[1]>=9,sum(data_followup_month$follow_9m_complete),0)
+followed_9months_complet <- ifelse(dim(data_followup_month)[1]>=9,sum(data_followup_month[data_followup_month$months_elapsed >=9,c("value")], na.rm=TRUE),0)
+
+followed_12months <- ifelse(dim(data_followup_month)[1]>=12,sum(data_followup_month$follow_12m_complete),0)
+followed_12months_complet <- ifelse(dim(data_followup_month)[1]>=12,sum(data_followup_month[data_followup_month$months_elapsed >=12,c("value")], na.rm=TRUE),0)
+
+followed_24months <- ifelse(dim(data_followup_month)[1]>=24,sum(data_followup_month$follow_24m_complete),0)
+followed_24months_complet <- ifelse(dim(data_followup_month)[1]>=24,sum(data_followup_month[data_followup_month$months_elapsed >=24,c("value")], na.rm=TRUE),0)
+
+# computes the data regarding table 2 of demographics.
+
+male <- summary(as.factor(screened$female))[1]
+female <- summary(as.factor(screened$female))[2]
+chagga <- summary(as.factor(screened$tribe))[1]
+pare <- summary(as.factor(screened$tribe))[2]
+other_tribe <- length(screened$tribe)-chagga-pare
+drink_yes <- summary(as.factor(screened$drinkb4inj))[2]
+drink_no <- summary(as.factor(screened$drinkb4inj))[1]
+bac_yes <- summary(as.factor(screened$bacpositive))[2]
+bac_no <- summary(as.factor(screened$bacpositive))[1]
+audit_yes <- summary(as.factor(screened$auditover8))[2]
+audit_no <- summary(as.factor(screened$auditover8))[1]
+
+#computes audit score 
+
+####### data safety suicidality calculations 
+cols_selec_audit <- c("audit1","audit2","audit3","audit4","audit5","audit6","audit7","audit8","audit9","audit10","screen_audit_complete")
+data_audit <- subset(data, select = cols_selec_audit)
+
+
+data_audit$audit1<- as.factor(data_audit$audit1)
+levels(data_audit$audit1) <- list(`0`="Hakuna (Never)",
+                          `1`="Kila mwezi au chini ya mwezi (Monthly or less)", 
+                          `2`="Mara 2 hadi 4 /mwezi (2 to 4 times a month )",
+                          `3`="Mara 2 hadi 3 /wiki (2 to 3 times a week)",
+                          `4`="4 au zaidi / wiki (4 or more times a week)") 
+data_audit$audit1_num <- as.numeric(as.character(data_audit$audit1))
+
+data_audit$audit2<- as.factor(data_audit$audit2)
+levels(data_audit$audit2) <- list(`0`="1 or 2",
+                          `1`="3 or 4", 
+                          `2`="5 or 6",
+                          `3`="7 to 9",
+                          `4`="10 or more") 
+data_audit$audit2_num <- as.numeric(as.character(data_audit$audit2))
+
+data_audit$audit3<- as.factor(data_audit$audit3)
+levels(data_audit$audit3) <- list(`0`="Haijawahi kutokea (Never)",
+                          `1`="Chini ya kila mwezi (Less than monthly)", 
+                          `2`="Kila Mwezi (Monthly)",
+                          `3`="Kwa wiki (Weekly)",
+                          `4`="Kila siku au karibu kila siku (Daily/ almost daily)")  
+data_audit$audit3_num <- as.numeric(as.character(data_audit$audit3))
+
+data_audit$audit4<- as.factor(data_audit$audit4)
+levels(data_audit$audit4) <- list(`0`="Haijawahi kutokea (Never)",
+                          `1`="Chini ya kila mwezi (Less than monthly)", 
+                          `2`="Kila Mwezi (Monthly)",
+                          `3`="Kwa wiki (Weekly)",
+                          `4`="Kila siku au karibu kila siku (Daily/ almost daily)")  
+data_audit$audit4_num <- as.numeric(as.character(data_audit$audit4))
+
+data_audit$audit5<- as.factor(data_audit$audit5)
+levels(data_audit$audit5) <- list(`0`="Haijawahi kutokea (Never)",
+                          `1`="Chini ya kila mwezi (Less than monthly)", 
+                          `2`="Kila Mwezi (Monthly)",
+                          `3`="Kwa wiki (Weekly)",
+                          `4`="Kila siku au karibu kila siku (Daily/ almost daily)")
+data_audit$audit5_num <- as.numeric(as.character(data_audit$audit5))
+
+data_audit$audit6<- as.factor(data_audit$audit6)
+levels(data_audit$audit6) <- list(`0`="Haijawahi kutokea (Never)",
+                          `1`="Chini ya kila mwezi (Less than monthly)", 
+                          `2`="Kila Mwezi (Monthly)",
+                          `3`="Kwa wiki (Weekly)",
+                          `4`="Kila siku au karibu kila siku (Daily/ almost daily)") 
+data_audit$audit6_num <- as.numeric(as.character(data_audit$audit6))
+
+data_audit$audit7<- as.factor(data_audit$audit7)
+levels(data_audit$audit7) <- list(`0`="Haijawahi kutokea (Never)",
+                          `1`="Chini ya kila mwezi (Less than monthly)", 
+                          `2`="Kila Mwezi (Monthly)",
+                          `3`="Kwa wiki (Weekly)",
+                          `4`="Kila siku au karibu kila siku (Daily/ almost daily)")
+data_audit$audit7_num <- as.numeric(as.character(data_audit$audit7))
+
+data_audit$audit8<- as.factor(data_audit$audit8)
+levels(data_audit$audit8) <- list(`0`="Haijawahi kutokea (Never)",
+                          `1`="Chini ya kila mwezi (Less than monthly)", 
+                          `2`="Kila Mwezi (Monthly)",
+                          `3`="Kwa wiki (Weekly)",
+                          `4`="Kila siku au karibu kila siku (Daily/ almost daily)")
+data_audit$audit8_num <- as.numeric(as.character(data_audit$audit8))
+
+data_audit$audit9<- as.factor(data_audit$audit9)
+levels(data_audit$audit9) <- list(`0`="Hapana (No)",
+                          `2`="Ndiyo, lakini si kwa mwaka uliopita (Yes, but not in the last year)",
+                          `4`="Ndiyo kwa mwaka uliopita (Yes, during the last year)")
+data_audit$audit9_num <- as.numeric(as.character(data_audit$audit9))
+
+data_audit$audit10<- as.factor(data_audit$audit10)
+levels(data_audit$audit10) <- list(`0`="Hapana (No)",
+                          `2`="Ndiyo, lakini si kwa mwaka uliopita (Yes, but not in the last year)",
+                          `4`="Ndiyo kwa mwaka uliopita (Yes, during the last year)")
+data_audit$audit10_num <- as.numeric(as.character(data_audit$audit10))
+
+data_audit$total_audit9_score <- (data_audit$audit1_num +
+                             data_audit$audit2_num +
+                             data_audit$audit3_num +
+                             data_audit$audit4_num +
+                             data_audit$audit5_num +
+                             data_audit$audit6_num +
+                             data_audit$audit7_num +
+                             data_audit$audit8_num +
+                             data_audit$audit9_num + 
+                               data_audit$audit10_num)
+
+
+```
+
+
+
+
+**Protocol Title:** | PRACT to Investigate Controlling Alcohol Related Harms in a Low-Income Setting; Emergency Department BIs in Tanzania (PRACT)
+------------------- | -------------------
+**Protocol Number:**| NCT04535011  
+**Protocol Version:**| Dec 9th, 2020
+**Principal Investigator:**| Catherine A. Staton<br /> Associate Professor<br /> Duke University Medical School<br /> 139 Trent Drive, Durham, NC 272710
+**Meeting date:** | March 14th, 2021  
+**Date Report Issued:** | `r format(Sys.time(), "%B, %dth %Y")`  
+**Data Cutoff Date:** |`r format(Sys.time(), "%B, %dth %Y")`  
+**Date of last data review:** | N/A  
+**Prepared by:** | Joao Ricardo Nickenig Vissoci<br /> Assistant Professor<br /> Duke University Medical School<br /> 138 Trent Drive, Durham, NC 272710
+
+**Table of Contents**
+
+<!-- provided in the body of the report. Additional tables and figures referenced in the report are provided in the Appendices.  -->
+
+**Executive Summary**  <br /><br />
+
+**Report Overview** | This report reviews enrollment and safety data available in the study database as of March 8, 2021. Summary tables are provided in the body of the report. Additional tables and figures referenced in the report are provided in the Appendices.
+------------------- | -------------------
+**Study Site Status** | Recruiting is ongoing at the participating site.  
+**Enrollment Status** | **`r enrollment_participants`** participants have been screened for this study<br /> **`r screened_particip`** participants have been enrolled.  
+**Subject Status** | **`r followed_3months`** participants have completed 3 Month follow-up<br /> **`r ifelse(followed_6months == 0,"No participants",followed_6months)`** participants have completed 6 Month follow-up<br />**`r ifelse(followed_9months == 0,"No participants",followed_9months)`** participants have completed 9 Month follow-up<br />**`r ifelse(followed_12months == 0,"No participants",followed_12months)`** participants have completed 12 Month follow-up<br />**`r ifelse(followed_24months == 0,"No participants",followed_24months)`** participants have completed 24 Month follow-up<br /> **No participants** have completed study protocol<br /> **1** have been missed at 3 Month follow-up<br /> **No participants** have withdrawn from the study  
+**Stopping Rules** | There have been no alerts since the previous DSMB review  
+**Safety Summary** | No adverse events have occurred.<br /> **2** deaths have occurred and reported to the DSMB.<br /> Both deaths were considered unrelated to the study protocol.  
+**Protocol Deviations** | No protocol deviations have been reported.<br /> None of the deviations has impacted subject safety.  
+**Quality Management** | Quality management reviews are performed bi-weekly and were last completed on March 5, 2021.  
+
+<!-- provided in the body of the report. Additional tables and figures referenced in the report are provided in the Appendices.  -->
+
+**Protocol Synopsis**  <br /><br />
+
+**Protocol Title** | PRACT to Investigate Controlling Alcohol Related Harms in a Low-Income Setting; Emergency Department BIs in Tanzania (PRACT)  
+------------------- | -------------------
+**Principal Investigator** | Catherine Staton  
+**Study Sites** | Kilimanjaro Christian Medical Center (KCMC), Moshi, Tanzania.  
+**Study Activation Date** | October 12, 2020  
+**Planned Accrual** | 1830  
+**Planned Accrual Period** | 40 months.  
+**Planned Duration** | 64 months.  
+**Study Design** | This study had been designed as an adaptive randomized control trial with 3 distinct stages of our intervention, the "Punguza Pombe Kwa Afya Yako" (PPKAY, Swahili for “Reduce Alcohol for Your Health”) (Figure 1).**Stage 1** of our PRACT is a superiority trial comparing usual care to receiving PPKAY + Text Booster (Standard or Personalized). We will have three arms (Usual care, PPKAY + Standard Text Booster or PPKAY + Personalized Text Booster) using a 1:1:1 allocation with a 12-block randomization. Hypothesis will be tested comparing Usual care to a pooled intervention arm aggregating both types of PPKAY + Text Boosters.<br /> **Stage 2** will be a non-inferiority trial of our PRACT where we will carry on the patients enrolled in the intervention arms during Stage 1. During Stage 2, we will continue enrolling patients until the targeted sample is obtained to compare the PPKAY + Standard Text Booster and PPKAY + Personalized Text Booster, at a 1:1 allocation with a 12-block randomization<br />In **Stage 3**, with a non-inferiority trial, we will continue the PPKAY + Standard Text Booster, if proven to be non-inferior to PPKAY + Personalized Text Booster, otherwise we will continue with the PPKAY + Personalized Text Booster arm from Phase 2. In comparison to the winner arm from Stage 2, we will start to enroll in a 1:4 allocation, a new arm with a PPKAY w/o Text Booster, using a 12-block randomization. Completion of our trial will occur when 1) we find statistical significance of one of the final intervention arms or 2) we have found no statistical significance with a maximum sample size. 
+**Study Objectives** | Our long-term goal is to create alcohol treatment services, which are evidence based and cost-effective for low-resource settings. The objective of this application is to evaluate the effectiveness of PPKAY for a patient-level intervention in this high-risk population with a PRACT with the following specific aims.<br />**Aim 1: To determine if “Punguza Pombe Kwa Afya Yako” (PPKAY) reduces alcohol use and alcohol-related harms among injury patients in Moshi, Tanzania**. _We hypothesize that PPKAY significantly lowers quantity and frequency (Q/F) of alcohol use, the number of binge drinking episodes and overall alcohol-related harms. We will also evaluate potential biologic, alcohol use or psychosocial mediators and moderators of intervention effectiveness._<br /> **Aim 2: To determine if a mobile health-based booster improves PPKAY effectiveness in our injury patient population in Moshi, Tanzania.** _We will compare PPKAY without booster to PPKAY with standard or personalized booster. We hypothesize PPKAY with personalized text booster will reduce alcohol use, binge drinking and alcohol-related harms more than PPKAY alone or with a standard booster. We will also evaluate potential biologic, alcohol use or psychosocial mediators and moderators of intervention effectiveness._  
+**Treatment Description** | **PPKAY**<br />PPKAY is a nurse-administered, one-on-one, 15-minute brief intervention (BI) for alcohol use using FRAMES motivational interviewing techniques. The BI is a four-step discussion: 1) Raise the Subject of Alcohol, 2) Provide Feedback, 3) Enhance Motivation 4) Negotiate and Advice.<br />**PPKAY with Standard Booster**<br />Besides the PPKAY, after discharge from the hospital, a standard motivational text message will be sent to their cell phone twice monthly for the duration of the study. In a rotating fashion, one of four standard motivational texts translated into Swahili will be sent to their cell phones.<br />**PPKAY with Personalized Booster**<br />Besides the PPKAY,  after discharge from the hospital, a standard motivational text message will be sent to their cell phone twice monthly for the duration of the study. In a rotating fashion, one of four standard motivational texts translated into Swahili will be sent to their cell phones.  
+**Inclusion Criteria** | - ≥18 years of age<br />- present seeking initial care at the KCMC ED for an acute (<24 hours) injury<br />- not clinically intoxicated (i.e., have capacity to consent)<br />- one or more of the following: 1) disclosed alcohol use prior to injury, 2) scored ≥8 on the AUDIT, 3) test positive (>0.0 g/dL) by alcohol breathalyzer.   
+**Exclusion Criteria** | - do not speak the native Swahili language<br />- too ill or unable to communicate<br />- prior enrollment in this study<br />- decline informed consent.   
+**Study Outcomes** | **Primary Outcome Measures**<br />**1.** Change in number of binge drinking days (previous 4 weeks) [Time Frame: Baseline, 3 months, 6 months, 9 months, 12 months, 24 months]<br />**Secondary Outcome Measures**<br />**1.** Change in frequency of alcohol use (previous 2 weeks) [ Time Frame: Baseline, 3 months, 6 months, 9 months, 12 months, 24 months]<br />**2.** Change in quantity of alcohol use (previous 2 weeks) [ Time Frame: Baseline, 3 months, 6 months, 9 months, 12 months, 24 months]<br />**3.**Change in alcohol-related harms measured by the Drinker Inventory of Consequences (DrInC) [ Time Frame: Baseline, 3 months, 6 months, 9 months, 12 months, 24 months].The Drinker Inventory of Consequences (DrInC) is a fifty-item questionnaire with scores ranging from 0 to 150, where a higher number indicates a greater number of negative consequences.<br />**4.** Change in alcohol use disorder [ Time Frame: Baseline, 3 months, 6 months, 9 months, 12 months, 24 months].Alcohol use disorder measured with AUDIT (alcohol use disorder identification test) score. AUDIT is a ten-item tool, with scores ranging from 0 to 40, where a higher score indicates higher risk alcohol use<br />**5.** Change in depression [ Time Frame: Baseline, 3 months, 6 months, 9 months, 12 months, 24 months ]Depression measured with Patient Health Questionnaire 9 (PHQ-9)
+**Stopping rules (Halting rules)** | **1.** Patients that has an SAE related to the study protocol<br />**2.** Patients alcohol use increases at follow-up<br />**3.** Patients reports of Alcohol Withdrawl Syndrome increases at follow-up  
+
+
+### **Report Overview**  <br /><br />
+The purpose of this report is to review cumulative enrollment and safety data for the subjects enrolled in the PRACT study. This report reflects data from the study database as of `r format(Sys.time(), "%B, %dth %Y")`. Within the body of the report are summary tables of enrollment, demographic characteristics, and adverse events. Additional tables, listings, and figures referenced in this report are provided in Appendices A. This is our second DSMB meeting, the first after recruiting have started. Readers of this report are asked to maintain the confidentiality of the information provided in this report.  
+
+
+### **Response to Most Recent DSMB Recommendations/Requests**  <br /><br />
+
+This is our first DSMB meeting after recruiting started  
+
+### **Enrollment Status**  <br /><br />
+To date, we have pre-screened and consented **`r enrollment_participants`** participants, from which **`r screened_particip`** were eligible and enrolled in out PRACT. All participants were enrolled at the KCMC (Table 1). Based on our feasibility study and prior research at the site, our expected enrollment after 6 months of recruiting was targeted to be 288, averaging 48 participants per month (Figure 1).<br />Up to now, we were able to enroll **`r screened_particip`** participants with an average of **`r round(screened_particip/length(unique(month(data_useful$date))),0)`** per month. We are enrolling about **`r round(round(screened_particip/length(unique(month(data_useful$date))),0)/48*100,0)`**% of the expect. In conversations with our study team, patient enrollment was impact by COVID-19. We have increased our ability to enroll to maximize our enrollment ability so that there is a research staff at the Emergency Department at every time. In preparation to a potential longer enrollment time, we developed alternative designs to stages 2 and 3 of the grant. Our alternative design includes combining Stages 2 and 3 into one stage, with 3 arms, adding the the PRACT without boosts arm. That alternative approach would only be used in case the pre-specified Stages 2 and 3 are not possible due to time constraints.<br /><br />
+**Table 1. Subject Enrollment Status for All Subjects**  <br />
+
+**Type** | **Total**  
+-------- | --------
+**Enrollment** |
+Consented and screened | `r enrollment_participants`
+Eligible | `r screened_particip`
+Enrolled | `r screened_particip`
+**Follow-up** | 
+3-Months | `r followed_3months`
+6-Months | `r followed_6months`
+9-Months | `r followed_9months`
+12-Months | `r followed_12months`
+24-Months | `r followed_24months`
+**Discontinuation** | 
+AE/SAE | 0
+Death | 2
+Withdrawal | 0
+Lost to Follow-up at 3-Months | 1
+Lost to Follow-up at 6-Months | N/A
+Lost to Follow-up at 9-Months | N/A
+Lost to Follow-up at 12-Months | N/A
+Lost to Follow-up at 24-Months | N/A
+
+
+**Figure 1. Expected versus Actual Accrual**  
+![alt text here](enrollment.png)
+  
+### **Subject Status**  <br /><br />
+From the enrolled participants, **20** completed our first projected follow-up time (3 months). No participants have reached the next follow-up times milestones so far (6, 9, 12, 24 months). One participant could not be located for the 3-months follow-up. Two participants died at the hospital after having been enrolled.   <br /><br />
+
+### **Demographics**  <br /><br />
+Our participants were mostly male (96.6%) and Chagga (62.9%). Median age was 33 years ranging from 19 to 84 years. More than three quarter of participants self-reported alcohol use prior injury and most had AUDIT score of at least 8. Binge drinking was rarely reported, the median (range) of binge drinking days was 0 (0 – 23) but the median (range) score of adverse consequences of alcohol abuse (DrInC) was 13 (0 – 55).   <br /><br />
+
+**Table 2. Subject Enrollment Status for All Subjects**  <br /><br />
+
+**Characteristics** |   | **n (%)** 
+-------- | -------- | --------  
+`r c("")` | Total enrolled: | `r screened_particip`
+Gender | Male<br />Female |  `r male` (`r round(male/length(screened$female)*100,1)`%) <br />`r female` (`r round(female/length(screened$female)*100,1)`%)
+Tribe | Chagga<br />Pare<br />Other | `r chagga` (`r round(chagga/length(screened$tribe)*100,1)`%)<br /> `r pare` (`r round(pare/length(screened$tribe)*100,1)`%)<br />`r other_tribe` (`r round(other_tribe/length(screened$tribe)*100,1)`%) 
+Age | Mean<br />Median<br />Standard deviation<br />Minimum<br />Maximum | `r round(mean(screened$age, na.rm = TRUE),2)`<br />`r round(median(screened$age, na.rm = TRUE),2)`<br />`r round(sd(screened$age, na.rm = TRUE),2)`<br /> `r min(screened$age)`<br />`r max(screened$age)` 
+Self-reported alcohol use prior injury | Yes<br />No |   `r drink_yes` (`r round(drink_yes/length(screened$drinkb4inj)*100,1)`%) <br />`r drink_no` (`r round(drink_no/length(screened$drinkb4inj)*100,1)`%) 
+BAC positive | Yes<br />No |   `r bac_yes` (`r round(bac_yes/length(screened$bacpositive)*100,1)`%) <br />`r bac_no` (`r round(bac_no/length(screened$bacpositive)*100,1)`%)  
+AUDIT >8 | Yes<br />No | `r audit_yes` (`r round(audit_yes/length(screened$auditover8)*100,1)`%) <br />`r audit_no` (`r round(audit_no/length(screened$auditover8)*100,1)`%) 
+AUDIT | Mean<br />Median<br />Standard deviation<br />Minimum<br />Maximum |  `r round(mean(data_audit$total_audit9_score, na.rm = TRUE),2)`<br />`r round(median(data_audit$total_audit9_score, na.rm = TRUE),2)`<br />`r round(sd(data_audit$total_audit9_score, na.rm = TRUE),2)`<br /> `r min(data_audit$total_audit9_score, na.rm=TRUE)`<br />`r max(data_audit$total_audit9_score, na.rm=TRUE)`  
+
+
+### **Safety Summary**<br />
+**1. Stopping Rules**  <br /><br />
+There were no alert since the previous DSMB review.  <br /><br />
+**2. Deaths**  <br /><br />
+**Two deaths** occured in our enrolled participants. Both deaths happened while the patient was in the hospital. Death reports were submitted to the DSMB and considered unrelated to the study protocols. Even though these events were not related to the study activities, the investigators have engaged the KCMC ED and Psychiatric teams in a quality improvement of treatment for patient with alcohol use, and trained the research team to identify potential alcohol withdrawal syndrome for early notification of clinical and psychiatric services.  <br /><br />
+
+**Table 3. Death reported of enrolled participants**  <br />
+
+**Participant ID** | **Date of Death** |**Cause of Death** |**Relationship to Intervention**
+------------------ | ------------------|------------------ | ------------------ 
+1012 | October 10,2021 | Respiratory failure, with antecedent pneumohemothorax, complicated by spinal cord injury and alcohol withdrawal syndrome | Unrelated  
+1059 | December 1, 2021 | Severe hypoxia with anemia secondary to unstable closed intertrochanteric fracture of the right femur | Unrelated  
+
+**3. Unanticipated Problems**  <br /><br />
+No unanticipated problems were observed until this report was built.  <br /><br />
+
+**4. Adverse Events**  <br /><br />
+To date, to deaths unrelated to the study protocol occurred and no adverse events were observed in the PRACT.  <br /><br />
+
+**5. Serious Adverse Events**  <br /><br />
+To date, to deaths unrelated to the study protocol occurred and no serious adverse events were observed in the PRACT.  <br /><br />
+
+### **Protocol Deviations**<br />
+No protocol deviations were observed until this report was built.  <br /><br />
+
+### **Quality Management**<br />
+Study team conducts weekly quality management meetings with the research staff. So far, based on the two deaths reported in our PRACT, we have implemented a protocol to monitor symptoms of Alcohol Withdrawal Syndrome for early notification of clinical and psychiatry services at KCMC. We built a web application to facilitate real-time data quality and monitoring (Figure 2).  <br /><br />
+**Figure 2. Data quality and monitoring dashboard**  <br />
+![alt text here](dashboard.png)
+
+### **Outcomes Data**<br />
+No interim analyses have been conducted yet.
+
+### Appendix A. Additional Data Listings<br />
+**Listing 1. Listing of Demographic Information for All Consented Subjects**  <br />
+
+
+
+
+
+
+
+

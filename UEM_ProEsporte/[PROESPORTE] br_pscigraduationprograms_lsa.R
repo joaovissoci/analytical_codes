@@ -3071,7 +3071,7 @@ rede3_edf<-qgraph(cor_c3,
 # dtm_c8_2<-removeSparseTerms(dtm_c8,0.99)
 # cor_c8 <- cor(as.matrix(dtm_c8_2),method = "spearman")
 # cor_c8<-ifelse(cor_c8<0,0,cor_c8)
-
+ 
 # #Ploting network
 # setEPS()
 # # tiff("/Users/joaovissoci/Desktop/depression_sr_network.tiff", width = 16, height = 8, units='in',compression = 'rle', res = 300)

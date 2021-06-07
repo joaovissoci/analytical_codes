@@ -11,7 +11,7 @@
 ######################################################################
 #PASCKAGES INSTALLATION CODES
 #install.packages("Hmisc")
-#install.packages("car")
+# install.packages("sem")
 #install.packages("psych")
 #install.packages("nortest")
 #install.packages("ggplot2")
@@ -19,30 +19,35 @@
 #install.packages("repmis")
 #install.packages("mvnormtest")
 #install.packages("polycor")
+# install.packages("semPlot")
 
 #PACKAGES LOADING CODE
 #Load packages neededz for the analysis
 #library(Hmisc)
+library(readr)
+library(tidyverse)
+library(mice)
+library(data.table)
+library(psych)
+library(semPlot)
 
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments",
-	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
-	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust",
-	"foreign","survival","memisc","foreign","mice","MissMech",
-	"haven","qgraph","semPlot","readr"), 
-library, character.only=T)
+# lapply(c("sem","ggplot2", "psych", "irr", "nortest", "moments",
+# 	"GPArotation","nFactors","boot","psy", "car","vcd", "gridExtra",
+# 	"mi","VIM","epicalc","gdata","sqldf","reshape2","mclust",
+# 	"foreign","survival","memisc","foreign","mice","MissMech",
+# 	"haven","qgraph","semPlot","readr"), 
+# library, character.only=T)
 
 ######################################################################
 #IMPORTING DATA
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-library(readr)
-
-data_residents<-read_csv("/Users/joaovissoci/Downloads/MERCResidentSurvey_DATA_2019-09-11_0745.csv")
+data_residents<-read_csv("/Users/joaovissoci/Downloads/MERCResidentSurvey_DATA_2020-05-28_1425.csv")
 #information between " " are the path to the directory in your computer where the data is stored
 
-data_faculty<-read_csv("/Users/joaovissoci/Downloads/MERCFacultySurvey_DATA_2019-09-11_0744.csv")
+data_faculty<-read_csv("/Users/joaovissoci/Downloads/MERCFacultySurvey_DATA_2020-05-28_1435.csv")
 
 ######################################################################
 #DATA MANAGEMENT
@@ -50,12 +55,34 @@ data_faculty<-read_csv("/Users/joaovissoci/Downloads/MERCFacultySurvey_DATA_2019
 
 # data <- base::merge(data1,data2,by=c("nome"))
 
-#SCALE DATA FRAME
-
+#Set up Residents data
 data_residents$group<-c("residents")
+
+#remove variables that are not in both datasets
+data_residents_tocombine<- data_residents %>% select(-resident_year,
+									  -resident_year_other,
+									  - resident_feedback_quality_survey_timestamp,
+									  - resident_feedback_quality_survey_complete,
+									  -general_3___6)
+
+#Set up Residents data
 data_faculty$group<-c("faculty")
 
-questions_data_residents<-with(data_residents,data.frame(question_1,
+#remove variables that are not in both datasets
+data_faculty_tocombine<- data_faculty %>% select(-years_since_residency,
+									  -faculty_feedback_quality_survey_timestamp,
+									  -faculty_feedback_quality_survey_complete)
+
+
+#merging both data
+
+# data_residents_tomerge<-with(data_residents,data.frame(age,
+													  # ))
+data_all<-rbind(data_residents_tocombine,data_faculty_tocombine)
+
+#Separate only the questions in a dataframe
+
+questions_data<-data_all %>% select (question_1,
 									 question_2,
 									 question_3,
 									 question_4,
@@ -79,36 +106,7 @@ questions_data_residents<-with(data_residents,data.frame(question_1,
 									 question_22,
 									 question_23,
 									 question_24,
-									 question_25))
-
-questions_data_faculty<-with(data_faculty,data.frame(question_1,
-									 question_2,
-									 question_3,
-									 question_4,
-									 question_5,
-									 question_6,
-									 question_7,
-									 question_8,
-									 question_9,
-									 question_10,
-									 question_11,
-									 question_12,
-									 question_13,
-									 question_14,
-									 question_15,
-									 question_16,
-									 question_17,
-									 question_18,
-									 question_19,
-									 question_20,
-									 question_21,
-									 question_22,
-									 question_23,
-									 question_24,
-									 question_25))
-
-data_question_all<-rbind(questions_data_residents,
-							questions_data_faculty)
+									 question_25)
 
 
 # data$hiv_related_stigma_sumscore<-rowSums(hiv_related_stigma)
@@ -132,7 +130,7 @@ data_question_all<-rbind(questions_data_residents,
 #Calculating frequency of missing data per variable
 propmiss <- function(dataframe) lapply(dataframe,function(x) data.frame(nmiss=sum(is.na(x)), n=length(x), propmiss=sum(is.na(x))/length(x)))
 
-propmiss(data_question_all)
+propmiss(questions_data)
 
 #inspecting measure random of missing data
 #Inspectif Weather Conditions
@@ -178,7 +176,7 @@ propmiss(data_question_all)
 # 	rd_size))
 
 # argument method=c("") indicated the imputation system (see Table 1 in http://www.jstatsoft.org/article/view/v045i03). Leaving "" to the position of the variable in the method argument excludes the targeted variable from the imputation.
-imp <- mice(data_question_all, seed = 2222, m=10)
+imp <- mice(questions_data, seed = 2222, m=10)
 
 # reports the complete dataset with missing imputated. It returns 5 options of datasets, witht he 5 imputation possibilities. To choose a specific option, add # as argument. Ex. complete(imp,2)
 data_question_all_imp<-mice::complete(imp,4)
@@ -199,6 +197,48 @@ data_question_all_imp<-mice::complete(imp,4)
 #TABLE 1 - DESCRIPTIVEs
 ######################################################################
 
+# Age
+with(data_all,summary(age))
+with(data_all,by(age,group,summary))
+# t-test: # independent 2-group, 2 level IV
+with(data_epi,t.test(age ~ class_crash))
+
+# Gender
+table<-with(data_all,table(gender))
+table
+prop.table(table)
+table<-with(data_all,table(gender,group))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Ethnicity
+table<-with(data_all,table(race_ethnicity))
+table
+prop.table(table)
+table<-with(data_all,table(race_ethnicity,group))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+# Ethnicity
+table<-with(data_residents,table(resident_year))
+table
+prop.table(table)
+table<-with(data_residents,table(resident_year,group))
+table
+prop.table(table,2)
+chisq.test(table)
+fisher.test(table)
+assocstats(table) #vcd package
+
+
+#psych KMO
+KMO(data_question_all_imp)
 ######################################################################
 #FIGURE 1 - ITEMs Descriptions
 ######################################################################
@@ -239,6 +279,8 @@ questions_data_categorical_plot<-plot(questions_data_categorical,
 					 		  "lightgrey",
 					 		  "#8595E1",
 					 		  "#4A6FE3"))
+
+questions_data_categorical_plot<-
 
 questions_data_categorical_plot<- questions_data_categorical_plot + 
 								# scale_x_discrete(labels=c(
@@ -394,17 +436,17 @@ cor_data<-cor_auto(data_question_all_imp)
 # tiff("/Users/jnv4/Desktop/bea_pca_network.tiff", width = 1200,
  # height = 700,compression = 'lzw')
 network <-qgraph(cor_data,
-	graph="glasso",
-	layout="spring",
-	sampleSize=nrow(data_question_all_imp),
+	# graph="cor",
+	layout="spring")#,
+	# sampleSize=nrow(data_question_all_imp),
 	legend.cex = 0.6,
-	cut = 0.3, 
-	maximum = 1, 
-	minimum = 0.1, 
-	esize = 20,
-	vsize = 5, 
-	repulsion = 0.8,
-	threshold=TRUE)#,
+	# cut = 0.3, 
+	# maximum = 1, 
+	minimum = 0.3, 
+	# esize = 20,
+	# vsize = 5, 
+	# repulsion = 0.8,
+	# threshold=TRUE)#,
 	# groups=network_groups,
 	# nodeNames=node_labels,
 	# color=c("gold","steelblue","red","grey80","green"),
@@ -444,6 +486,8 @@ community_network<-qgraph(cor_data,
 #TABLE 2 - RELIABILITY and FACTOR ANALYSIS RESULTS
 ######################################################################
 
+
+
 #ONE FACTOR
 #############################################################
 #psych::alpha(cor_data,n.iter=1000,check.keys=TRUE)
@@ -452,7 +496,8 @@ psych::alpha(data_question_all_imp,n.iter=1000,check.keys=TRUE)
 #CONFIRMATORY FACTOR ANALYSIS
 
 #identifying the model
-onefactor_model <- 'FEEDUP =~  question_1 +
+onefactor_model <- 'FEEDUP =~  question_22 +
+							   question_1 +
 							   question_2 +
 							   question_3 +
 							   question_4 +
@@ -461,27 +506,27 @@ onefactor_model <- 'FEEDUP =~  question_1 +
 							   question_7 +
 							   question_8 +
 							   question_9 +
-							   question_10 +
-							   # question_11 +
+							   # question_10 +
+							   question_11 +
 							   question_12 +
-							   # question_13 +
+							   question_13 +
 							   question_14 +
 							   question_15 +
 							   question_16 +
 							   question_17 +
 							   question_18 +
 							   question_19 +
-							   # question_20 +
-							   # question_21 +
+							   #question_20 +
+							   question_21 +
 							   question_22 +
-							   # question_23 +
+							   question_23 +
 							   question_24 +
 							   question_25
 									 
 #Errors correlation
- 			  # question_2 ~~  question_9
- 			  # question_7 ~~  question_3
- 			  # question_20 ~~  question_3				
+ 			  question_8 ~~  question_9
+ 			  question_16 ~~  question_17
+ 			  #question_20 ~~  question_3				
 '
 
 #estimating the model
@@ -492,7 +537,7 @@ fit <- lavaan::cfa(onefactor_model,
                    )
 
 #summary statistics of h mofrl
-summary(fit, fit.measures=TRUE)
+print(fit, fit.measures=TRUE)
 
 #fitness indicators
 lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
@@ -513,6 +558,9 @@ Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
 subset(Est, op == "=~")
 subset(Est, op == "~~")
 #lavInspect(fit,what="th") 
+
+describe(subset(Est, op == "=~"))
+
 
 # Plot with semPlot:
 # library(semPlot)
@@ -574,7 +622,7 @@ semPaths(fit,
     node.width = 2,
     exoCov = FALSE,
     thresholds = FALSE,
-    nodeLabels=c(paste0("Q",1:20),"FEED-UP"),
+    nodeLabels=c(paste0("Q",1:23),"FEED-UP"),
     edge.color="black"
     # shapeLat = "ellipse"
     # filetype = "pdf", width = 8, height = 6, filename = "StarWars" #  Save to PDF
@@ -585,8 +633,8 @@ Mod <- lavaan::modificationIndices(fit)
 subset(Mod, mi > 10)
 
 # Composite reliability
-sum(Est$std.all[1:19])^2/(sum(Est$std.all[1:19])^2+
-  sum(Est$std.all[95:113]))
+sum(Est$std.all[1:23])^2/(sum(Est$std.all[1:23])^2+
+  sum(Est$std.all[114:136]))
 
 #Average Extracted Variance
 sum(Est$std.all[1:18]^2)/length(Est$std.all[1:18])
@@ -609,10 +657,10 @@ fivefactor_model <- 'FEEDUP_timeliness =~  question_1 +
 
 			        FEEDUP_feedback_culture =~	question_2 +
 							   question_3 +
-							   question_10 +
-							   # question_13 +
-							   question_18
-							   # question_21
+							   # question_10 +
+							   question_13 +
+							   question_18 +
+							   question_21
 
 					FEEDUP_specificity =~  question_4 +
 							   question_14 +
@@ -621,20 +669,23 @@ fivefactor_model <- 'FEEDUP_timeliness =~  question_1 +
 
 					FEEDUP_actionplan =~ question_6 +
 							   question_9 +
-							   # question_11 +
+							   question_11 +
 							   question_15 +
 							   question_16
 
 					FEEDUP_respect =~ question_8 +
 							   question_19 +
 							   # question_20 +
-							   # question_23 +
+							   question_23 +
 							   question_25
+
+
 
 #Errors correlation
  			  # question_3 ~~  question_20
  			  # question_7 ~~  question_20
  			  # question_2 ~~ question_9
+
 '
 
 #estimating the model
@@ -727,7 +778,7 @@ semPaths(fit,
     node.width = 2,
     exoCov = FALSE,
     thresholds = FALSE,
-    nodeLabels=c(paste0("Q",1:20),"Timeliness",
+    nodeLabels=c(paste0("Q",1:23),"Timeliness",
     							  "Feedback \nCulture",
     							  "Specificity",
     							  "Action/\nPlan",
@@ -765,20 +816,29 @@ data_timeliness<-with(data_question_all_imp,data.frame(
 psych::alpha(data_timeliness,n.iter=1000,check.keys=TRUE)
 
 # Composite reliability
-sum(Est$std.all[15,])^2/(sum(Est$std.all[1:18])^2+
-  sum(Est$std.all[109:131]))
+sum(Est$std.all[1:5])^2/(sum(Est$std.all[1:5])^2+
+  sum(Est$std.all[112:116]))
+
+#Average Extracted Variance
+sum(Est$std.all[1:5])/length(Est$std.all[1:5])
 
 #Feedback Culture
 data_feedback<-with(data_question_all_imp,data.frame(
 			question_2,
 			question_3,
-			question_10,
-			# question_13,
+			#question_10,
+			question_13,
 			question_18))
 			# question_21))
 
 psych::alpha(data_feedback,n.iter=1000,check.keys=TRUE)
 
+# Composite reliability
+sum(Est$std.all[6:10])^2/(sum(Est$std.all[6:10])^2+
+  sum(Est$std.all[117:121]))
+
+#Average Extracted Variance
+sum(Est$std.all[6:10])/length(Est$std.all[6:10])
 
 #Specificity
 data_specificity<-with(data_question_all_imp,data.frame(
@@ -791,6 +851,13 @@ data_specificity<-with(data_question_all_imp,data.frame(
 
 psych::alpha(data_specificity,n.iter=1000,check.keys=TRUE)
 
+# Composite reliability
+sum(Est$std.all[11:14])^2/(sum(Est$std.all[11:14])^2+
+  sum(Est$std.all[122:125]))
+
+#Average Extracted Variance
+sum(Est$std.all[11:14])/length(Est$std.all[11:14])
+
 #Action/Plan
 data_actionplan<-with(data_question_all_imp,data.frame(
 			question_6,
@@ -801,97 +868,230 @@ data_actionplan<-with(data_question_all_imp,data.frame(
 
 psych::alpha(data_actionplan,n.iter=1000,check.keys=TRUE)
 
+# Composite reliability
+sum(Est$std.all[15:19])^2/(sum(Est$std.all[15:19])^2+
+  sum(Est$std.all[126:130]))
+
+#Average Extracted Variance
+sum(Est$std.all[15:19])/length(Est$std.all[15:19])
+
 #Respect
 data_respect<-with(data_question_all_imp,data.frame(
 			question_8,
 			question_19,
-			question_20,
+			#question_20,
 			question_23,
 			question_25))
 
 psych::alpha(data_respect,n.iter=1000,check.keys=TRUE)
 
-######################################################################
-#FIGURE 1 - EFA PATH DIAGRAM CFA
-######################################################################
+# Composite reliability
+sum(Est$std.all[20:23])^2/(sum(Est$std.all[20:23])^2+
+  sum(Est$std.all[131:134]))
 
-fa.poly(data_question_all_imp,5)
- 
-######################################################################
-#TABLE 3 - REGRESSION ADJUSTED STANDARDIZED SCORES
-######################################################################
+#Average Extracted Variance
+sum(Est$std.all[20:23])/length(Est$std.all[20:23])
 
-#GLM
-############################################
-require(ggplot2)
-require(pscl)
-require(boot)
+#identifying the model
+secondorder_model <- 'FEEDUP_timeliness =~  question_1 +
+							   question_5 +
+							   question_7 +
+							   question_12 +
+							   question_24
 
-summary(m1 <- zeroinfl(count ~ child + camper | persons, data = zinb))
+			        FEEDUP_feedback_culture =~	question_2 +
+							   question_3 +
+							   # question_10 +
+							   question_13 +
+							   question_18 +
+							   question_21
 
+					FEEDUP_specificity =~  question_4 +
+							   question_14 +
+							   question_17 +
+							   question_22
 
-logmodel<-zeroinfl(hiv_related_stigma_sumscore ~ 
-						DEM1 + 
-						as.numeric(DEM2) + 
-						DEM3
-                       , data=data)
-summary(logmodel)
-exp(coef(logmodel))
-exp(confint(logmodel,level=0.95))
-predicted_responses<-predict(logmodel) # predicted values
-#residuals(model1_death, type="deviance") # residuals
-#logistic.display(baselineXFUP3)
+					FEEDUP_actionplan =~ question_6 +
+							   question_9 +
+							   question_11 +
+							   question_15 +
+							   question_16
 
-######################################################################
-#FIGURE 2 - ITEM RESPONSE THEORY INFORMATION CURVES and PERSON MAP
-######################################################################
-library(eRm)
+					FEEDUP_respect =~ question_8 +
+							   question_19 +
+							   # question_20 +
+							   question_23 +
+							   question_25
 
-#### USING eRM Package
-IRTRolandMorris <- PCM(hiv_related_stigma_imputed)
-diff_index<-thresholds(IRTRolandMorris)
-summary(diff_index$threshtable[[1]][,1])
-sd(diff_index$threshtable[[1]][,1])/sqrt(length(diff_index$threshtable[[1]][,1]))
-plotICC(IRTRolandMorris,item.subset=18,ask=F,empICC=list("raw"),empCI=list(lty="solid"))
-plotPImap(IRTRolandMorris, sorted=FALSE)
-plotPWmap(IRTRolandMorris)
-pp<-person.parameter(IRTRolandMorris)
-#lrt<-LRtest(IRTRolandMorris,se=TRUE)
-#Waldtest(IRTRolandMorris)
-eRm::itemfit(pp)
-summary(eRm::itemfit(pp)$i.outfitMSQ)
-sd(eRm::itemfit(pp)$i.outfitMSQ)
-summary(eRm::itemfit(pp)$i.infitMSQ)
-sd(eRm::itemfit(pp)$i.infitMSQ)
-#NPtest(IRTRolandMorris,method="T11")
-#plotGOF(lrt,conf=list())
-#fscores(NeckDisabilityIndex, rotate = "oblimin", Target = NULL, full.scores = FALSE,method = "EAP", quadpts = NULL, response.pattern = NULL,plausible.draws = 0, returnER = FALSE, return.acov = FALSE,mean = NULL, cov = NULL, verbose = TRUE, full.scores.SE = FALSE,theta_lim = c(-6, 6), MI = 0, QMC = FALSE, custom_den = NULL, custom_theta = NULL, min_expected = 1)
+					FEEDUP =~ FEEDUP_timeliness	+
+							  FEEDUP_feedback_culture +
+							  FEEDUP_specificity +
+							  FEEDUP_actionplan +
+							  FEEDUP_respect
 
 
-# summary(pp$theta.table[,1])
+#Errors correlation
+ 			  # question_3 ~~  question_20
+ 			  # question_7 ~~  question_20
+ 			  # question_2 ~~ question_9
+'
+
+#estimating the model
+fit <- lavaan::cfa(secondorder_model,
+                   data = data_question_all_imp,
+                   estimator="WLSMV",
+                   ordered=colnames(data_question_all_imp)
+                   )
+
+#summary statistics of h mofrl
+summary(fit, fit.measures=TRUE)
+
+#fitness indicators
+lavaan::fitMeasures(fit, fit.measures = c("rmsea.scaled",
+                                          "rmsea.ci.lower.scaled",
+                                          "rmsea.ci.upper.scaled",
+                                          "cfi.scaled",
+                                          "tli.scaled",
+                                          "nnfi.scaled",
+                                          "chisq.scaled",
+                                          "pvalue.scaled",
+                                          "df"
+)
+)
+# AIC(fit)
+
+#Estimated
+Est <- lavaan::parameterEstimates(fit, ci = TRUE, standardized = TRUE)
+subset(Est, op == "=~")
+subset(Est, op == "~~")
+
+# Exploratory Structural Equation Modeling Approach
+###################################################
+
+# esem_efa <- fa.poly(data_question_all_imp[,-19], nfactors =5,rotate = "oblimin",
+#                fm = 'uls')
+
+# esem_loadings <- data.table(matrix(round(esem_efa$fa$loadings, 2),
+#                                    nrow = 25, ncol = 1))
+
+# names(esem_loadings) <- c("F1")
+# esem_loadings$item <- paste0("question_", c(1:25))
+# #setDT(esem_loadings)
+# esem_loadings <- melt(esem_loadings, "item", variable.name = "latent")
+
+# esem_loadings
+
+# anchors <- c(F1 = "x21")
+
+# #building the model syntax to pass to lavaan
+# make_esem_model <- function (loadings_dt, anchors){
+  
+#   # make is_anchor variable
+#   loadings_dt[, is_anchor := 0]
+#   for (l in names(anchors)) loadings_dt[latent != l & item == anchors[l], is_anchor := 1]
+  
+#   # make syntax column per item; syntax is different depending on is_anchor
+#   loadings_dt[is_anchor == 0, syntax := paste0("start(",value,")*", item)]
+#   loadings_dt[is_anchor == 1, syntax := paste0(value,"*", item)]
+  
+#   #Make syntax for each latent variable
+#    each_syntax <- function (l){
+#     paste(l, "=~", paste0(loadings_dt[latent == l, syntax], collapse = "+"),"\n")
+#    }
+   
+#    # Put all syntaxes together
+#    paste(sapply(unique(loadings_dt$latent), each_syntax), collapse = " ")
+# }
+# #make model
+# esem_model <- make_esem_model(esem_loadings, anchors)
+# #print model
+# #writeLines(esem_model)
+
+# library(lavaan)
+# install.packages("lavaanPlot")
+# library(lavaanPlot)
+# esem_fit <- cfa(esem_model, 
+# 				data_question_all_imp,
+# 				estimator="WLSMV",
+#                 ordered=colnames(data_question_all_imp),
+# 				std.lv=T)
+# summary(esem_fit, fit.measures = T, standardized = T)
+
+# ######################################################################
+# #TABLE 3 - REGRESSION ADJUSTED STANDARDIZED SCORES
+# ######################################################################
+
+# #GLM
+# ############################################
+# require(ggplot2)
+# require(pscl)
+# require(boot)
+
+# summary(m1 <- zeroinfl(count ~ child + camper | persons, data = zinb))
+
+
+# logmodel<-zeroinfl(hiv_related_stigma_sumscore ~ 
+# 						DEM1 + 
+# 						as.numeric(DEM2) + 
+# 						DEM3
+#                        , data=data)
+# summary(logmodel)
+# exp(coef(logmodel))
+# exp(confint(logmodel,level=0.95))
+# predicted_responses<-predict(logmodel) # predicted values
+# #residuals(model1_death, type="deviance") # residuals
+# #logistic.display(baselineXFUP3)
+
+# ######################################################################
+# #FIGURE 2 - ITEM RESPONSE THEORY INFORMATION CURVES and PERSON MAP
+# ######################################################################
+# library(eRm)
+
+# #### USING eRM Package
+# IRTRolandMorris <- PCM(hiv_related_stigma_imputed)
+# diff_index<-thresholds(IRTRolandMorris)
+# summary(diff_index$threshtable[[1]][,1])
+# sd(diff_index$threshtable[[1]][,1])/sqrt(length(diff_index$threshtable[[1]][,1]))
+# plotICC(IRTRolandMorris,item.subset=18,ask=F,empICC=list("raw"),empCI=list(lty="solid"))
+# plotPImap(IRTRolandMorris, sorted=FALSE)
+# plotPWmap(IRTRolandMorris)
+# pp<-person.parameter(IRTRolandMorris)
+# #lrt<-LRtest(IRTRolandMorris,se=TRUE)
+# #Waldtest(IRTRolandMorris)
+# eRm::itemfit(pp)
+# summary(eRm::itemfit(pp)$i.outfitMSQ)
+# sd(eRm::itemfit(pp)$i.outfitMSQ)
+# summary(eRm::itemfit(pp)$i.infitMSQ)
+# sd(eRm::itemfit(pp)$i.infitMSQ)
+# #NPtest(IRTRolandMorris,method="T11")
+# #plotGOF(lrt,conf=list())
+# #fscores(NeckDisabilityIndex, rotate = "oblimin", Target = NULL, full.scores = FALSE,method = "EAP", quadpts = NULL, response.pattern = NULL,plausible.draws = 0, returnER = FALSE, return.acov = FALSE,mean = NULL, cov = NULL, verbose = TRUE, full.scores.SE = FALSE,theta_lim = c(-6, 6), MI = 0, QMC = FALSE, custom_den = NULL, custom_theta = NULL, min_expected = 1)
+
+
+# # summary(pp$theta.table[,1])
+# # pp
+# ######################################################################
+# #TABLE 4 - ITEM RESPONSE THEORY FIT INDICATORS
+# ######################################################################
+
+# ######################################################################
+# #TABLE 5 - STANDAEDIZAtiON NORMS TABLE
+# ######################################################################
+
+# #raw score
+# quantile(data$hiv_related_stigma_sumscore, 
+# 				probs = seq(0, 1, by= 0.1),
+# 				na.rm=TRUE) # decile
+
+
+# #regression adjusted score
+# quantile(predicted_responses, 
+# 				probs = seq(0, 1, by= 0.1),
+# 				na.rm=TRUE) # decile
+
+# #IRT adjusted score
+# quantile(pp$theta.table[,1], 
+# 				probs = seq(0, 1, by= 0.1),
+# 				na.rm=TRUE) # decile
 # pp
-######################################################################
-#TABLE 4 - ITEM RESPONSE THEORY FIT INDICATORS
-######################################################################
-
-######################################################################
-#TABLE 5 - STANDAEDIZAtiON NORMS TABLE
-######################################################################
-
-#raw score
-quantile(data$hiv_related_stigma_sumscore, 
-				probs = seq(0, 1, by= 0.1),
-				na.rm=TRUE) # decile
-
-
-#regression adjusted score
-quantile(predicted_responses, 
-				probs = seq(0, 1, by= 0.1),
-				na.rm=TRUE) # decile
-
-#IRT adjusted score
-quantile(pp$theta.table[,1], 
-				probs = seq(0, 1, by= 0.1),
-				na.rm=TRUE) # decile
-pp
-3
+# 3

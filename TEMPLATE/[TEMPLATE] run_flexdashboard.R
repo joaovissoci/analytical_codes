@@ -4,6 +4,8 @@ devtools::install_github("hadley/shinySignals")
 devtools::install_github(c('yihui/knitr', 'rstudio/flexdashboard'))
 devtools::install_github("rstudio/rmarkdown")
 install.packages('rsconnect')
+install.packages("leaflet")
+devtools::install_github("mtennekes/tmaptools")
 
 rmarkdown::run("/Users/Joao/Desktop/v2_US_SAP_residents_dashboard.rmd")
 
@@ -13,6 +15,9 @@ rsconnect::deployApp('/Users/Joao/Desktop/v2_US_SAP_residents_dashboard.rmd')
 
 library(flexdashboard)
 
-rmarkdown::run("/Users/Joao/Git/analytical_codes/MATH/index_ptb_ufma_v2.Rmd")
+rmarkdown::run("/Users/joaovissoci/Downloads/index_ptb_ufma_v2.5.Rmd")
 
 rsconnect::deployApp('/Users/Joao/Downloads/index_ptb_ufma.Rmd')
+
+
+install.packages("car")

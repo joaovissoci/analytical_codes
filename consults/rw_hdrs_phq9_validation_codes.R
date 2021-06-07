@@ -14,15 +14,11 @@
 
 #Load packages neededz for the analysis
 #All packages must be installes with install.packages() function
-lapply(c("sem","ggplot2", "psych", "RCurl", "irr", "nortest", 
-	"moments","GPArotation","nFactors","boot","psy", "car",
-	"vcd", "gridExtra","mi","VIM","epicalc","gdata","sqldf",
-	"reshape2","mclust","foreign","survival","memisc","lme4",
-	"lmerTest","dplyr","QCA","VennDiagram","qgraph","igraph",
-	"ltm","gmodels","eRm","mirt","dplyr","devtools","reshape",
-  "mice","haven","pROC","Epi","OptimalCutpoints"),
+lapply(c("ggplot2", "psych","boot", "car", "gridExtra","gdata",
+	"reshape2","foreign","survival","lme4","dplyr","qgraph","igraph",
+  "dplyr","devtools","reshape",
+  "mice","haven","pROC","OptimalCutpoints"),
 library, character.only=T)
-
 
 #Package and codes to pull data from goodle sheets
 #devtools::install_github("jennybc/googlesheets")
@@ -473,6 +469,14 @@ youden_data16items$severe<-car::recode(youden_data16items$gold_standard,"
 
 #Roc curve for the experimental group - 16 items
 ROC(form=severe~value, data=youden_data16items)
+
+roc<-ROC(form=severe~value, 
+    data=youden_data16items,
+    PV=TRUE,
+    MX=TRUE,
+    MI=FALSE,
+    AUC=TRUE,
+    plot="")
 
 optimal.cutpoint.Youden <- optimal.cutpoints(X = "value", 
                                              status = "severe", 

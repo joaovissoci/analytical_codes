@@ -17,8 +17,8 @@ R
 
 
 seed=42
-blocksize = 5
-N = 30
+blocksize = 12
+N = 615
 set.seed(seed)
 block = rep(1:ceiling(N/blocksize), each = blocksize)
 a1 = data.frame(block, rand=runif(length(block)), envelope= 1: length(block))
@@ -29,23 +29,23 @@ assign_phase1 = a2[order(a2$envelope),]
 
 assign_phase1
 
-write.csv(assign_phase1,"/Users/Joao/Desktop/phase1_randomization.csv")
+write.csv(assign_phase1,"/Users/joaovissoci/Desktop/phase1_randomization.csv")
 
 
 seed=42
-blocksize = 5
-N = 25
+blocksize = 12
+N = 730
 set.seed(seed)
 block = rep(1:ceiling(N/blocksize), each = blocksize)
 a1 = data.frame(block, rand=runif(length(block)), envelope= 1: length(block))
 a2 = a1[order(a1$block,a1$rand),]
-a2$arm = rep(c("Arm 1", "Arm 2", "Arm 2", "Arm 2", "Arm 2"),times = length(block)/5)
+a2$arm = rep(c("Arm 1", "Arm 2"),times = length(block)/2)
 assign_phase3 = a2[order(a2$envelope),]
 
 
 assign_phase3
 
-write.csv(assign_phase3,"/Users/Joao/Desktop/phase3_randomization.csv")
+write.csv(assign_phase3,"/Users/joaovissoci/Desktop/phase2_randomization.csv")
 
 
 seed=42
@@ -62,4 +62,9 @@ assign_phase2 = a2[order(a2$envelope),]
 assign_phase2
 
 write.csv(assign_phase2,"/Users/Joao/Desktop/phase2_randomization.csv")
+
+library()
+
+blockrand(n=615,
+		  num.levels=3) #,id.prefix='F', block.prefix='F',stratum='Female')
 

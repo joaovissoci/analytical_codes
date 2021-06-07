@@ -9,14 +9,14 @@
 
 # install.packages("readstata13")
 #All packages must be installes with install.packages() function
-lapply(c("poLCA","ggplot2","devtools","ggradar","dplyr",
+lapply(c("poLCA","ggplot2","devtools","dplyr",
 		 "scales","tibble","fmsb","scales","reshape","mice"),
 library, character.only=T)
 # library("haven")
 ###################################################
 #IMPORTING DATA AND RECODING
 ###################################################
-data <- read.csv("/Users/Joao/Desktop/Add to box/br_immunizationLCA_data.csv")
+data <- read.csv("/Users/joaovissoci/Downloads/br_immunizationLCA_data.csv")
 # data<-as.data.frame(data)
 
 # data[] <- lapply(data, unclass)
@@ -287,7 +287,7 @@ set.seed(1002)
 # Fit for 2 latent classes: 
 #========================================================= 
 # ses_data<-na.omit(ses_data)
-lcamodel_2 <- poLCA(f, lca_data_cat, nclass = 2,
+lcamodel_2 <- poLCA(f, lca_data_imputed, nclass = 2,
 					maxiter=50000,
 					nrep=10)
 
@@ -322,7 +322,7 @@ R2_entropy
 # Fit for 3 latent classes: 
 # ========================================================= 
 # set.seed(1978)
-lcamodel <- poLCA(f, lca_data_cat, nclass = 3,
+lcamodel <- poLCA(f, lca_data_imputed, nclass = 3,
 					maxiter=50000,
 					nrep=10)
 # Entropy
@@ -352,6 +352,10 @@ R2_entropy
 #Entropy
 # Entropy = [1] 0.9992585
 
+data$lca_classe<-lcamodel$predclass
+data$lca_posterior<-lcamodel$posterior
+
+write.csv(data,"/Users/joaovissoci/Desktop/lca_rejane.csv")
 # ========================================================= 
 # Fit for 4 latent classes: 
 # ========================================================= 

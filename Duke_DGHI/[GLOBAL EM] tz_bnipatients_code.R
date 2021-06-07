@@ -31,9 +31,9 @@ lapply(c("Hmisc",
 		 "nortest",
 		 "ggplot2",
 		 # "pastecs",
-		 "repmis",
+		 # "repmis",
 		 # "mvnormtest",
-		 "polycor",
+		 # "polycor",
 		 "mice"), 
 library, character.only=T)
 
@@ -42,7 +42,7 @@ library, character.only=T)
 ######################################################################
 #LOADING DATA FROM A .CSV FILE
 
-data<-read.csv("/Users/Joao/Box Sync/Home Folder jnv4/Data/Global EM/Africa/Tz/BNI/Tz_bnipatients_data.csv")
+data<-read.csv("/Users/joaovissoci/Downloads/FeasibilityTrial_DATA_2020-03-31_0818.csv")
 
 ######################################################################
 #DATA MANAGEMENT

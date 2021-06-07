@@ -65,6 +65,14 @@ install.packages("tidyverse")
 install.packages("flexdashboard")
 install.packages("dygraphs")
 install.packages("plotly")
+install.packages("xgboost")
+install.packages("vcd")
+install.packages("mi")
+install.packages("eRm")
+install.packages("mirt")
+install.packages("Epi")
+install.packages("eeptools")
+
 
 
 devtools::install_github("jennybc/googlesheets")
